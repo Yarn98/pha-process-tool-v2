@@ -6,6 +6,9 @@ import { LineChart, Line, BarChart, Bar, RadarChart, PolarGrid, PolarAngleAxis, 
 const PHAPropertiesDashboard = () => {
   const [selectedPolymer, setSelectedPolymer] = useState('S1000P');
 
+  const renderMarkdown = (text) =>
+    text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
   const downloadThermalData = () => {
     const headers = ['temp', 'modulus', 'tanDelta'];
     const rows = thermalData[selectedPolymer]
@@ -159,7 +162,10 @@ const PHAPropertiesDashboard = () => {
             <CardContent>
               <div className="space-y-1 text-sm">
                 {spec.characteristics.map((char, idx) => (
-                  <div key={idx} dangerouslySetInnerHTML={{ __html: char }} />
+                  <div
+                    key={idx}
+                    dangerouslySetInnerHTML={{ __html: renderMarkdown(char) }}
+                  />
                 ))}
               </div>
             </CardContent>
