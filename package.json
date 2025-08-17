@@ -1,0 +1,8 @@
+{
+  "name": "pha-process-tool-v2",
+  "version": "1.0.0",
+  "description": "PHA Processing Optimization Tool - CJ BMS",
+  "scripts": {
+    "build": "echo 'No build step'"
+  }
+}
