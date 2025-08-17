@@ -10,4 +10,4 @@
 [[plugins]]
   package = "netlify-plugin-html-validate"
   [plugins.inputs]
-    directory = "dist"
+    path = "dist"
