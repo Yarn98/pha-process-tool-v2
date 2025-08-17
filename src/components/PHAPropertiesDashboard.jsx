@@ -7,8 +7,14 @@ const PHAPropertiesDashboard = () => {
   const [selectedPolymer, setSelectedPolymer] = useState('S1000P');
 
   const downloadThermalData = () => {
+    const data = thermalData[selectedPolymer];
+    if (!data) {
+      alert('No thermal data available for the selected polymer.');
+      return;
+    }
+
     const headers = ['temp', 'modulus', 'tanDelta'];
-    const rows = thermalData[selectedPolymer]
+    const rows = data
       .map(({ temp, modulus, tanDelta }) => `${temp},${modulus},${tanDelta}`)
       .join('\n');
     const csv = `${headers.join(',')}\n${rows}`;
