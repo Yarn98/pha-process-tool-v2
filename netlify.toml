@@ -5,9 +5,9 @@
 [[plugins]]
   package = "netlify-plugin-bundle-env"
   [plugins.inputs]
-    source = "src"
+    directories = ["src"]
 
 [[plugins]]
   package = "netlify-plugin-html-validate"
   [plugins.inputs]
-    directory = "dist"
+    path = "dist"
