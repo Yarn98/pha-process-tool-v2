@@ -6,6 +6,23 @@ import { LineChart, Line, BarChart, Bar, RadarChart, PolarGrid, PolarAngleAxis, 
 const PHAPropertiesDashboard = () => {
   const [selectedPolymer, setSelectedPolymer] = useState('S1000P');
 
+  const downloadThermalData = () => {
+    const headers = ['temp', 'modulus', 'tanDelta'];
+    const rows = thermalData[selectedPolymer]
+      .map(({ temp, modulus, tanDelta }) => `${temp},${modulus},${tanDelta}`)
+      .join('\n');
+    const csv = `${headers.join(',')}\n${rows}`;
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${selectedPolymer}_thermal_data.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   // Thermal Properties Data
   const thermalData = {
     S1000P: [
@@ -161,9 +178,17 @@ const PHAPropertiesDashboard = () => {
 
         <TabsContent value="thermal">
           <Card>
-            <CardHeader>
-              <CardTitle>Dynamic Mechanical Analysis</CardTitle>
-              <CardDescription>Temperature-dependent **viscoelastic** behavior</CardDescription>
+            <CardHeader className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <CardTitle>Dynamic Mechanical Analysis</CardTitle>
+                <CardDescription>Temperature-dependent **viscoelastic** behavior</CardDescription>
+              </div>
+              <button
+                onClick={downloadThermalData}
+                className="mt-2 sm:mt-0 px-3 py-1 text-sm border rounded hover:bg-gray-50"
+              >
+                Download CSV
+              </button>
             </CardHeader>
             <CardContent>
               <ResponsiveContainer width="100%" height={400}>
