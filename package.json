@@ -1,0 +1,9 @@
+{
+  "name": "pha-process-tool-v2",
+  "version": "1.0.0",
+  "description": "PHA Process Tool web app",
+  "scripts": {
+    "build": "mkdir -p dist && cp -r src/* dist/ && echo '<!DOCTYPE html><html><head><meta charset=\"utf-8\"><title>PHA Process Tool</title></head><body><div id=\"root\"></div></body></html>' > dist/index.html",
+    "test": "echo 'No tests specified'"
+  }
+}
