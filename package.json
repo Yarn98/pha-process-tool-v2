@@ -1,12 +1,16 @@
 {
   "name": "pha-process-tool-v2",
   "version": "1.0.0",
-  "description": "PHA Processing Optimization Tool - CJ BMS",
   "scripts": {
     "build": "echo 'No build step'"
   },
   "devDependencies": {
-    "netlify-plugin-bundle-env": "^0.7.2",
-    "netlify-plugin-html-validate": "^1.1.1"
+    "netlify-plugin-bundle-env": "^0.7.2"
   }
 }
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[[plugins]]
+  package = "netlify-plugin-bundle-env"
