@@ -3,8 +3,5 @@
   "version": "1.0.0",
   "scripts": {
     "build": "echo 'No build step'"
-  },
-  "devDependencies": {
-    "netlify-plugin-bundle-env": "^0.7.2"
   }
 }
