@@ -1,0 +1,3 @@
+# Wrangler config for Cloudflare Pages local preview
+pages_build_output_dir = "./dist"
+# No Workers bindings are required for static hosting.
