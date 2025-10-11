@@ -1,5 +1,5 @@
-name = "pha-process-tool-v2"
-
-# Wrangler config for Cloudflare Pages local preview
-pages_build_output_dir = "./dist"
-# No Workers bindings are required for static hosting.
+#:schema node_modules/wrangler/config-schema.json
+name = "pha-process-tool-v2"          # 대시보드의 Pages 프로젝트 이름과 같아야 함
+pages_build_output_dir = "./dist"     # 이 레포의 정적 출력 디렉토리
+# compatibility_date = "2025-09-30"   # (선택) Functions 쓸 계획이면 잠그기
+# compatibility_flags = ["nodejs_compat"]
