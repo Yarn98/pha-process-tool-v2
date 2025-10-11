@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const navItems = [
+  { to: '/', label: 'PHA Dashboard' },
   { to: '/tools/chi-delta', label: 'χ–δ Dashboard' },
   { to: '/tools/excel-toolkit', label: 'Excel Toolkit' },
   { to: '/tools/igc-chi', label: 'IGC → χ (Python)' },
