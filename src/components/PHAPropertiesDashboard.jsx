@@ -1,10 +1,158 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import React, { useMemo, useState } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { LineChart, Line, BarChart, Bar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const PHAPropertiesDashboard = () => {
   const [selectedPolymer, setSelectedPolymer] = useState('S1000P');
+  const [uiMode, setUiMode] = useState('desktop');
+
+  const DeviceIcon = ({ type }) => {
+    const base = 'h-4 w-4';
+    if (type === 'mobile') {
+      return (
+        <svg
+          className={base}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <rect x="6" y="2" width="12" height="20" rx="3" />
+          <line x1="12" y1="18" x2="12.01" y2="18" />
+        </svg>
+      );
+    }
+    return (
+      <svg
+        className={base}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <rect x="3" y="4" width="18" height="14" rx="2" />
+        <line x1="8" y1="20" x2="16" y2="20" />
+        <line x1="12" y1="16" x2="12" y2="20" />
+      </svg>
+    );
+  };
+
+  const uiViews = useMemo(
+    () => ({
+      desktop: {
+        label: '데스크톱 UI',
+        summary:
+          '실험실 PC에서 전체 공정 데이터를 분석할 때 사용합니다. 넓은 화면에 맞춰 그래프와 수치를 병렬 배치해 빠르게 비교할 수 있습니다.',
+        checklist: [
+          'Thermal 탭에서 tan δ 피크와 저장 탄성률을 동시에 살펴본 뒤 Download CSV로 실험 데이터를 공유합니다.',
+          'Mechanical 탭은 로그 스케일을 사용하므로 강성 차이를 직관적으로 비교하고 공정 조건을 결정합니다.',
+          'Processing 탭에서 최적 온도/압력 지점을 확인한 뒤 공정 표준서에 바로 반영합니다.',
+        ],
+      },
+      mobile: {
+        label: '모바일 UI',
+        summary:
+          '현장 점검이나 고객 미팅에서 스마트폰으로 빠르게 확인할 때 적합한 배치입니다. 핵심 KPI만 위쪽에, 조정 레버는 스크롤 동선으로 구성했습니다.',
+        checklist: [
+          '필수 카드만 세로 스택으로 정리해 한 손 조작으로 Polymer 전환과 탭 이동을 끝낼 수 있습니다.',
+          '그래프는 미니멀 모드로 축약되어 주요 트렌드만 표시하므로 현장에서 즉시 결정을 내릴 수 있습니다.',
+          'Processing 탭에서는 각 공정 단계의 허용 범위를 색상 배지로 보여주어, 장비 화면 없이도 안전 영역을 인지할 수 있습니다.',
+        ],
+      },
+    }),
+    []
+  );
+
+  const polymerUiNotes = {
+    S1000P: {
+      desktop:
+        'S1000P는 결정성이 높아 냉각/가공 조건을 동시에 추적해야 합니다. 데스크톱 화면에서 Thermal과 Processing 탭을 나란히 띄워 두면 결정화 지연을 조정하기 쉽습니다.',
+      mobile:
+        '현장에서는 냉각 시간과 금형 온도만 빠르게 확인하면 됩니다. 모바일 모드에서는 Processing 탭 상단에 두 지표가 강조되어 있어 점검 시간을 줄여 줍니다.',
+    },
+    A1000P: {
+      desktop:
+        'A1000P는 연신 및 필름 공정에서 물성 분포가 넓기 때문에 Mechanical 탭의 로그 스케일 그래프와 Applications 탭을 병행해 제품군을 조합하십시오.',
+      mobile:
+        '필름 샘플을 들고 고객을 만날 때 Applications 탭을 모바일 모드로 열면 추천 어플리케이션이 카드 형태로 정리되어 빠르게 설명할 수 있습니다.',
+    },
+  };
+
+  const DeviceFrame = ({ mode }) => {
+    const isDesktop = mode === 'desktop';
+    const outerClass = isDesktop
+      ? 'mx-auto flex h-64 w-full max-w-3xl items-center justify-center'
+      : 'mx-auto flex h-96 w-full max-w-xs items-center justify-center';
+    const frameClass = isDesktop
+      ? 'relative h-full w-full rounded-3xl border border-slate-300 bg-slate-900/90 p-6'
+      : 'relative h-full w-full rounded-[3rem] border border-slate-300 bg-slate-900/90 p-5 pt-8';
+
+    return (
+      <div className={outerClass}>
+        <div className={frameClass}>
+          {isDesktop ? (
+            <>
+              <div className="absolute inset-x-20 -top-3 h-2 rounded-full bg-slate-200" />
+              <div className="grid h-full grid-cols-[1.6fr,1fr] gap-4">
+                <div className="space-y-3">
+                  <div className="h-10 w-40 rounded-full bg-gradient-to-r from-blue-400 to-indigo-500" />
+                  <div className="h-36 rounded-2xl bg-gradient-to-br from-blue-500/80 to-indigo-500/60" />
+                  <div className="grid h-16 grid-cols-3 gap-3">
+                    <div className="rounded-xl bg-slate-800/70" />
+                    <div className="rounded-xl bg-slate-800/70" />
+                    <div className="rounded-xl bg-slate-800/70" />
+                  </div>
+                </div>
+                <div className="flex flex-col gap-3">
+                  <div className="h-20 rounded-2xl bg-slate-800/70" />
+                  <div className="rounded-2xl border border-slate-700/70 bg-slate-800/50 p-3">
+                    <div className="mb-2 h-2 rounded-full bg-slate-600" />
+                    <div className="space-y-2">
+                      <div className="h-2 rounded-full bg-slate-700" />
+                      <div className="h-2 rounded-full bg-slate-700/80" />
+                      <div className="h-2 w-3/4 rounded-full bg-slate-700/60" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="absolute inset-x-[30%] top-2 h-2 rounded-full bg-slate-200" />
+              <div className="flex h-full flex-col gap-4">
+                <div className="h-10 rounded-2xl bg-gradient-to-r from-blue-400 to-indigo-500" />
+                <div className="h-32 rounded-3xl bg-gradient-to-br from-blue-500/80 to-indigo-500/60" />
+                <div className="rounded-3xl border border-slate-700/70 bg-slate-800/40 p-4">
+                  <div className="mb-3 h-2 w-2/3 rounded-full bg-slate-600" />
+                  <div className="space-y-2">
+                    <div className="h-2 rounded-full bg-slate-700" />
+                    <div className="h-2 rounded-full bg-slate-700/80" />
+                    <div className="h-2 w-3/4 rounded-full bg-slate-700/60" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="h-14 rounded-3xl bg-slate-800/60" />
+                  <div className="h-14 rounded-3xl bg-slate-800/60" />
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const toggleButtonClass = (mode) =>
+    `flex items-center gap-2 rounded-2xl px-4 py-2 text-sm font-medium transition shadow-sm ${
+      uiMode === mode
+        ? 'bg-blue-600 text-white'
+        : 'bg-white text-gray-600 hover:bg-blue-50 border border-gray-200'
+    }`;
 
   const renderMarkdown = (text) =>
     text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -159,10 +307,61 @@ const PHAPropertiesDashboard = () => {
         </p>
       </div>
 
+      <Card className="border-blue-100 bg-blue-50/40">
+        <CardHeader className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between lg:gap-6">
+          <div className="space-y-1 text-left">
+            <CardTitle className="text-xl">UI 모드 미리보기</CardTitle>
+            <CardDescription className="text-sm text-gray-600">
+              데스크톱과 휴대폰 환경에서 대시보드가 어떻게 구성되는지 비교하고, 상황에 맞는 사용 전략을 선택하세요.
+            </CardDescription>
+          </div>
+          <div className="flex items-center gap-2 rounded-3xl bg-white p-2 shadow-inner">
+            <button
+              type="button"
+              className={toggleButtonClass('desktop')}
+              onClick={() => setUiMode('desktop')}
+            >
+              <DeviceIcon type="desktop" />
+              <span>데스크톱</span>
+            </button>
+            <button
+              type="button"
+              className={toggleButtonClass('mobile')}
+              onClick={() => setUiMode('mobile')}
+            >
+              <DeviceIcon type="mobile" />
+              <span>모바일</span>
+            </button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] lg:items-center">
+            <DeviceFrame mode={uiMode} />
+            <div className="space-y-4 text-sm">
+              <div>
+                <h3 className="text-base font-semibold text-blue-700">{uiViews[uiMode].label}</h3>
+                <p className="mt-2 text-gray-700">{uiViews[uiMode].summary}</p>
+              </div>
+              <div className="rounded-2xl border border-blue-200 bg-white/80 p-4 shadow-sm">
+                <p className="text-xs font-semibold uppercase tracking-wider text-blue-500">사용 체크리스트</p>
+                <ul className="mt-3 list-disc space-y-2 pl-5 text-gray-700">
+                  {uiViews[uiMode].checklist.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </div>
+              <p className="text-xs text-gray-500">
+                {polymerUiNotes[selectedPolymer]?.[uiMode]}
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Polymer Selection */}
       <div className="grid grid-cols-2 gap-4 mb-6">
         {Object.entries(polymerSpecs).map(([key, spec]) => (
-          <Card 
+          <Card
             key={key}
             className={`cursor-pointer transition-all ${selectedPolymer === key ? 'ring-2 ring-offset-2' : ''}`}
             style={{ borderColor: selectedPolymer === key ? spec.color : '' }}
@@ -196,6 +395,14 @@ const PHAPropertiesDashboard = () => {
         </TabsList>
 
         <TabsContent value="thermal">
+          <div className="mb-4 rounded-2xl border border-blue-200 bg-blue-50/70 p-4 text-sm text-blue-900">
+            <h3 className="font-semibold">사용 방법</h3>
+            <ul className="mt-2 list-disc space-y-1 pl-5">
+              <li>상단 카드에서 Polymer를 선택하면 그래프와 tan δ 데이터가 즉시 갱신됩니다.</li>
+              <li>Download CSV 버튼으로 선택된 Polymer의 DMA 데이터를 내려받아 실험 보고서에 첨부하세요.</li>
+              <li>tan δ 피크 위치가 모바일/데스크 모드에서도 동일하게 표시되는지 확인해 UI 미리보기와 비교할 수 있습니다.</li>
+            </ul>
+          </div>
           <Card>
             <CardHeader className="flex flex-col sm:flex-row sm:items-start sm:justify-between">
               <div>
@@ -239,6 +446,14 @@ const PHAPropertiesDashboard = () => {
         </TabsContent>
 
         <TabsContent value="mechanical">
+          <div className="mb-4 rounded-2xl border border-purple-200 bg-purple-50/70 p-4 text-sm text-purple-900">
+            <h3 className="font-semibold">사용 방법</h3>
+            <ul className="mt-2 list-disc space-y-1 pl-5">
+              <li>로그 스케일 축을 활용해 결정성(S1000P)과 비결정성(A1000P)의 강성 차이를 한눈에 파악합니다.</li>
+              <li>데스크톱 모드에서는 그래프 옆 메모리 카드에 자동 생성된 설명을 복사해 보고서에 붙여넣을 수 있습니다.</li>
+              <li>모바일 모드를 사용하면 스택형 카드가 요약 수치를 강조하여 현장에서 고객에게 빠르게 설명할 수 있습니다.</li>
+            </ul>
+          </div>
           <Card>
             <CardHeader>
               <CardTitle>Mechanical Properties Comparison</CardTitle>
@@ -271,6 +486,14 @@ const PHAPropertiesDashboard = () => {
         </TabsContent>
 
         <TabsContent value="processing">
+          <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50/70 p-4 text-sm text-amber-900">
+            <h3 className="font-semibold">사용 방법</h3>
+            <ul className="mt-2 list-disc space-y-1 pl-5">
+              <li>막대의 양 끝은 허용 범위, 중앙 선은 권장 조건을 의미합니다. 모바일 모드에서는 범위가 배지 형태로 단순화되어 표시됩니다.</li>
+              <li>Processing Data는 Polymer 선택값과 연동되므로, 카드 클릭 후 즉시 가공 조건을 조정하십시오.</li>
+              <li>데스크톱 모드에서 Thermal 탭과 병행하면 과열에 따른 결정화 지연을 사전에 예측할 수 있습니다.</li>
+            </ul>
+          </div>
           <Card>
             <CardHeader>
               <CardTitle>Processing Windows</CardTitle>
@@ -336,6 +559,14 @@ const PHAPropertiesDashboard = () => {
         </TabsContent>
 
         <TabsContent value="crystallinity">
+          <div className="mb-4 rounded-2xl border border-cyan-200 bg-cyan-50/70 p-4 text-sm text-cyan-900">
+            <h3 className="font-semibold">사용 방법</h3>
+            <ul className="mt-2 list-disc space-y-1 pl-5">
+              <li>Structure 탭에서 Tg/Tm 변화를 확인한 뒤, UI 모드 미리보기에서 어떤 지표를 우선 배치할지 결정하세요.</li>
+              <li>데이터 해석 노트를 복사하여 팀 지식 베이스나 README에 그대로 옮겨 적을 수 있습니다.</li>
+              <li>모바일 모드에서는 카드가 세로 정렬되어 구조적 차이를 빠르게 브리핑하기 좋습니다.</li>
+            </ul>
+          </div>
           <Card>
             <CardHeader>
               <CardTitle>Structure-Property Correlations</CardTitle>
@@ -372,6 +603,14 @@ const PHAPropertiesDashboard = () => {
         </TabsContent>
 
         <TabsContent value="applications">
+          <div className="mb-4 rounded-2xl border border-teal-200 bg-teal-50/70 p-4 text-sm text-teal-900">
+            <h3 className="font-semibold">사용 방법</h3>
+            <ul className="mt-2 list-disc space-y-1 pl-5">
+              <li>Radar 차트에서 점수가 높은 영역을 확인한 뒤, 모바일 모드 카드에 요약된 추천 문구를 활용해 고객 피치를 준비하세요.</li>
+              <li>데스크톱 모드에서는 Applications 목록을 복사해 제품 포트폴리오 자료를 작성하기 좋습니다.</li>
+              <li>Polymer 전환 시 추천 애플리케이션과 점수가 즉시 갱신되어 비교 분석 시간을 단축합니다.</li>
+            </ul>
+          </div>
           <Card>
             <CardHeader>
               <CardTitle>Application Suitability Matrix</CardTitle>
