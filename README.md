@@ -36,3 +36,13 @@ python igc_chi.py --csv igc_inputs.csv --temp_c 120 --vbar_cm3mol 100 --out resu
 ## Excel Toolkit
 
 `public/PHA_Blend_Chi_Delta_IGC_DSC_Toolkit.xlsx` 파일을 다운로드하여 χ–δ 추정, IGC 변환, 결정화 계획 도구를 오프라인에서도 사용할 수 있습니다. 정적 호스팅 시 해당 파일이 `public/` 경로에 배포되어야 하며, 싱글 페이지 앱 호스팅 시 `_redirects` 파일에 `/* /index.html 200` 규칙을 포함시키세요.
+
+## 개발 및 배포
+
+```bash
+npm install
+npm run dev    # 로컬 개발 서버 (http://localhost:5173)
+npm run build  # Cloudflare Pages 등 정적 호스팅용 번들 생성
+```
+
+Vite 빌드는 `public/` 디렉터리에 있는 Excel 툴킷과 `_redirects` 파일을 함께 복사합니다. Cloudflare Pages에서는 빌드 명령을 `npm run build`, 출력 디렉터리를 `dist`로 설정하면 됩니다.
