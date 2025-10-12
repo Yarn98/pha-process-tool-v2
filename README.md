@@ -1,29 +1,40 @@
 # PHA 공정 최적화 도구
 
-PHA(Polyhydroxyalkanoate) 공정과 소재 특성을 한 번에 비교·분석할 수 있는 대시보드 애플리케이션입니다. S1000P와 A1000P 두 등급을 대상으로 열적/기계적 특성, 가공 창, 구조-물성 상관성, 적용 가능 분야를 탭 단위로 살펴볼 수 있으며, IGC → χ 변환 스크립트와 Excel 툴킷도 함께 제공합니다.
+PHA(Polyhydroxyalkanoate) 공정과 소재 특성을 한 번에 비교·분석할 수 있는 리치 대시보드입니다. S1000P와 A1000P 두 등급을 대상으
+로 열적·기계적 특성, 가공 윈도우, 구조-물성 상관성, 적용 가능 분야를 탭 단위로 살펴볼 수 있으며, 현장 DOE를 바로 실행할 수 있는 CSV
+템플릿·파이썬 스크립트·SOP 패키지를 함께 제공합니다.
 
 ## 주요 기능
 
-- **UI 모드 전환**: 화면 상단의 `데스크톱`·`모바일` 토글을 통해 현장/사무 환경에 맞는 UI 미리보기를 즉시 확인하고, 각 모드별 사용 체크리스트를 참고할 수 있습니다.
 - **Polymer 선택 카드**: P34HB S1000P와 A1000P 카드 중 하나를 선택하면 모든 탭의 그래프, 수치, 설명이 즉시 갱신됩니다.
 - **Thermal 탭**: DMA 데이터(저장 탄성률, tan δ)를 온도 축으로 시각화하고 CSV로 내려받을 수 있습니다.
-- **Mechanical 탭**: 로그 스케일 막대그래프로 기계적 물성을 비교하고, 자동 생성된 해설을 통해 구조-물성 상관관계를 이해할 수 있습니다.
-- **Processing 탭**: 융점, 금형 온도, 사출 압력, 냉각 시간을 범위/권장치 형태로 표시하여 공정 윈도우를 빠르게 파악합니다.
-- **Structure 탭**: 결정성에 따른 Tg/Tm, 밀도, 생분해 속도 등의 변화를 그래프와 노트로 제공해 조성 설계에 도움을 줍니다.
-- **Applications 탭**: Radar 차트와 추천 리스트로 용도 적합성을 한눈에 확인해 제품 포트폴리오 기획을 지원합니다.
-- **보조 도구**: `public/`에 위치한 Excel 툴킷과 `igc_chi.py` 스크립트로 실험 데이터를 일괄 분석하거나 보고서에 활용할 수 있습니다.
+- **Mechanical 탭**: 로그 스케일 막대그래프로 기계적 물성을 비교하고 자동 생성된 해설을 제공합니다.
+- **Processing 탭**: 융점/금형 온도/사출 압력/냉각시간을 범위 + 권장치 형태로 표시해 세팅값을 빠르게 결정합니다.
+- **Structure 탭**: 결정성에 따른 Tg/Tm, 밀도, 생분해 속도 등의 변화를 그래프와 노트로 제공해 조성 설계를 돕습니다.
+- **Applications 탭**: Radar 차트와 추천 리스트로 용도 적합성을 한눈에 확인할 수 있습니다.
+- **Analytics 탭**: Crystallization window, modulus retention, 열분해 안전 여유 등 핵심 KPI를 실시간 계산해 보여줍니다.
+- **Field DOE Kit 탭**: 사출 플래시 DOE 템플릿, 자동 분석 스크립트, SOP 체크리스트를 바로 다운로드할 수 있습니다.
 
-## 탭별 사용 가이드
+## 현장 DOE 실행 세트
 
-| 탭 | 활용 포인트 |
+`public/` 디렉터리에 다음 파일이 포함되어 있어 정적 호스팅 시 그대로 배포할 수 있습니다.
+
+| 파일 | 설명 |
 | --- | --- |
-| Thermal | Polymer 카드 선택 → tan δ 피크 및 저장 탄성률 확인 → `Download CSV`로 실험 데이터를 공유합니다. |
-| Mechanical | 로그 스케일 그래프로 강성 차이를 파악하고, 설명 카드 내용을 보고서/프레젠테이션에 활용합니다. |
-| Processing | 허용 범위와 권장 값을 비교하여 세팅값을 결정하고, 주의 메시지로 열적 열화를 예방합니다. |
-| Structure | Tg/Tm 변화를 검토한 뒤 구조적 설명을 팀 위키나 문서에 바로 옮겨 적어 지식 공유를 촉진합니다. |
-| Applications | Radar 차트 상위 점수를 확인하고, 추천 목록을 복사해 고객 피치 및 제품 제안 자료를 만듭니다. |
+| `doe_injection_flash_template.csv` | S1000P/A1000P 사출 플래시 최소화 & 용접선 강도 확보 DOE 입력용 템플릿 (UTF-8, 헤더 고정) |
+| `analyze_doe_flash.py` | 2차 반응표면 + LASSO 선택 기반 플래시 최소화 권장조건 산출 스크립트 |
+| `SOP_field_run_checklist.md` | 현장 실험 전·중·후 체크리스트 및 데이터 품질 가이드 |
 
-## Python IGC → χ 변환
+### 빠른 실행 루프
+
+1. 템플릿 CSV에 실험값을 기록하고 빈 응답열(flash, weld strength 등)을 측정 후 채웁니다.
+2. `python analyze_doe_flash.py doe_injection_flash_template.csv`
+3. 생성된 `results/recommendations.txt` 조건으로 5주기 재검증을 수행합니다.
+4. 재검증 데이터를 CSV에 추가한 뒤 스크립트를 재실행해 모델을 업데이트합니다.
+
+`patches/tars_doe_autofit_loop_fix.patch`는 TARS DOE 탭의 자동 재피팅 루프를 방지하기 위한 선택적 패치입니다.
+
+## Python IGC → χ 변환 (기존 유틸리티)
 
 `igc_chi.py`는 역기체 크로마토그래피(IGC) 데이터에서 Hansen 거리 및 Flory–Huggins χ 값을 계산하는 유틸리티입니다.
 
@@ -33,10 +44,6 @@ python igc_chi.py --csv igc_inputs.csv --temp_c 120 --vbar_cm3mol 100 --out resu
 
 결과 파일에는 시료별 Ra, χ, 혼화성 판정이 포함됩니다.
 
-## Excel Toolkit
-
-`public/PHA_Blend_Chi_Delta_IGC_DSC_Toolkit.xlsx` 파일을 다운로드하여 χ–δ 추정, IGC 변환, 결정화 계획 도구를 오프라인에서도 사용할 수 있습니다. 정적 호스팅 시 해당 파일이 `public/` 경로에 배포되어야 하며, 싱글 페이지 앱 호스팅 시 `_redirects` 파일에 `/* /index.html 200` 규칙을 포함시키세요.
-
 ## 개발 및 배포
 
 ```bash
@@ -45,4 +52,5 @@ npm run dev    # 로컬 개발 서버 (http://localhost:5173)
 npm run build  # Cloudflare Pages 등 정적 호스팅용 번들 생성
 ```
 
-Vite 빌드는 `public/` 디렉터리에 있는 Excel 툴킷과 `_redirects` 파일을 함께 복사합니다. Cloudflare Pages에서는 빌드 명령을 `npm run build`, 출력 디렉터리를 `dist`로 설정하면 됩니다.
+Vite 빌드는 `public/` 디렉터리에 있는 DOE 세트, Excel 툴킷, `_redirects` 파일을 함께 복사합니다. Cloudflare Pages에서는 빌드 명령을
+`npm run build`, 출력 디렉터리를 `dist`로 설정하세요.
