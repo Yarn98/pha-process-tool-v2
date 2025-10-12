@@ -1,0 +1,6 @@
+run_id,material,gate_type,gate_width_mm,gate_thickness_mm,T_mold_C,nozzle_C,zone1_C,zone2_C,zone3_C,zone4_C,shot_size_cm3,injection_speed_mm3s,pack_time_s,pack_pressure_bar,cool_time_s,clamp_ton,delta_Tmold_C,ambient_RH_pct,notes,flash_um,weld_strength_MPa,max_inj_pressure_bar,gate_freeze_time_s,short_shot_pct,warpage_mm,cycle_time_s,scrap_flag
+1,S1000P,fan,1.0,0.40,25,195,165,175,185,190,8.5,60,2.8,450,7.2,180,1.5,45,"baseline",,,,,,,0
+2,S1000P,fan,1.0,0.40,35,195,165,175,185,190,8.5,60,2.8,450,6.9,180,1.2,45,"cool -0.3s",,,,,,,0
+3,A1000P,fan,1.0,0.45,35,200,170,180,190,195,8.5,60,3.2,470,7.0,180,1.5,46,"A1000P higher nozzle",,,,,,,0
+4,S1000P,fan,0.8,0.40,35,195,165,175,185,190,8.5,80,2.8,470,6.9,180,1.2,45,"high speed",,,,,,,0
+5,S1000P,fan,1.0,0.40,45,195,165,175,185,190,8.5,40,3.6,420,7.2,180,2.0,44,"slow speed, long pack",,,,,,,0
