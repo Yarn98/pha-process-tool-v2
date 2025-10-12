@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <title>Optimizer (PWA Bridge)</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Arial;
+           margin: 0; padding: 16px; line-height: 1.5; }
+    .wrap { max-width: 980px; margin: 0 auto; }
+    .hint { color: #6b7280; font-size: 12px; }
+    .pill { display:inline-block; border:1px solid #e5e7eb; border-radius:999px; padding:2px 8px; }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>Optimizer (PWA)</h1>
+    <p class="hint">테스트 페이지입니다. 쿼리 파라미터로 grade/process를 전달할 수 있습니다.<br/>
+    예) <code>?grade=CA1180P&amp;process=extrusion</code></p>
+
+    <div id="state"></div>
+
+    <hr/>
+    <p class="hint">
+      👉 <b>완전 통합 방법</b><br/>
+      (1) 여기 파일의 전체 내용을 지우고, ZIP의 <code>index.html</code> 전체를 붙여 넣으세요.<br/>
+      (2) <b>아래 "주입 스니펫"</b>을 <code>&lt;/body&gt;</code> 바로 위에 추가하세요.<br/>
+      (3) <code>sw.js</code>, <code>manifest.webmanifest</code>는 그대로 둬도 됩니다(필요시 교체 가능).
+    </p>
+  </main>
+
+  <!-- (임시) 프리로드: grade/process 쿼리 반영 + rebuildForm 호출 -->
+  <script>
+    (function(){
+      function preselectFromQuery(){
+        try{
+          var p = new URLSearchParams(location.search);
+          var g = p.get('grade') || '';
+          var proc = p.get('process') || '';
+          var s = document.getElementById('state');
+          s.innerHTML =
+            '<div class="pill">grade: <b>'+(g||'-')+'</b></div> '+
+            '<div class="pill">process: <b>'+(proc||'-')+'</b></div><br/>'+
+            '<div class="hint">※ 실제 PWA를 붙이면, 이 값으로 초기 선택 후 rebuildForm()이 호출됩니다.</div>';
+
+          // 실제 PWA가 로드되면 아래가 실행됩니다.
+          if (typeof rebuildForm === 'function') { rebuildForm(); }
+        }catch(e){}
+      }
+      window.addEventListener('DOMContentLoaded', preselectFromQuery);
+    })();
+  </script>
+</body>
+</html>
