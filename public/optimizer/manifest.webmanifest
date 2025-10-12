@@ -1,0 +1,9 @@
+{
+  "name": "PHA Optimizer",
+  "short_name": "Optimizer",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0ea5e9",
+  "icons": []
+}
