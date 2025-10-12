@@ -4,7 +4,7 @@ const highlights = [
   {
     title: '공정 인사이트 한눈에',
     description:
-      'PHA 레진별 핵심 특성과 장비 조건을 하나의 대시보드에서 정리합니다. 아직은 준비 중이지만, 곧 데이터 기반 의사결정이 가능해질 것입니다.'
+      'PHA 레진별 핵심 특성과 장비 조건을 하나의 대시보드에서 정리해 즉시 확인할 수 있습니다.'
   },
   {
     title: '실험부터 생산까지 연결',
@@ -14,7 +14,7 @@ const highlights = [
   {
     title: '협업을 위한 플랫폼',
     description:
-      '연구, 생산, 영업팀이 동일한 화면에서 진행 상황을 공유하고 주석을 남길 수 있도록 설계하고 있습니다.'
+      '연구, 생산, 영업팀이 동일한 화면에서 진행 상황을 공유하고 주석을 남길 수 있도록 지원합니다.'
   }
 ]
 
@@ -36,21 +36,6 @@ const roadmap = [
   }
 ]
 
-const contactChannels = [
-  {
-    label: '문의 메일',
-    value: 'pha-tools@sk.com'
-  },
-  {
-    label: '담당자',
-    value: '공정혁신팀 홍길동 책임'
-  },
-  {
-    label: 'Slack',
-    value: '#pha-process-tool'
-  }
-]
-
 export default function App() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-slate-100">
@@ -65,12 +50,6 @@ export default function App() {
               <p className="text-sm text-slate-300">차세대 공정 최적화 플랫폼</p>
             </div>
           </div>
-          <a
-            href="mailto:pha-tools@sk.com"
-            className="hidden rounded-full border border-blue-400/40 px-4 py-2 text-sm font-medium text-blue-100 transition hover:border-blue-300/70 hover:text-white md:inline-flex"
-          >
-            조기 도입 문의
-          </a>
         </div>
       </header>
 
@@ -82,31 +61,12 @@ export default function App() {
               Internal Preview
             </div>
             <h1 className="text-4xl font-semibold leading-tight tracking-tight text-white sm:text-5xl">
-              PHA 공정을 위한 데이터 기반 의사결정, 지금 준비 중입니다.
+              PHA 공정을 위한 데이터 기반 의사결정 플랫폼입니다.
             </h1>
             <p className="max-w-xl text-lg text-slate-300">
-              실험 데이터와 생산 설비 조건을 하나의 워크플로우로 묶어주는 PHA Processing Tool은 현재 내부 미리보기 단계에 있습니다.
-              곧 정식 버전을 통해 공정 혁신의 속도를 높일 수 있도록 준비하고 있습니다.
+              실험 데이터와 생산 설비 조건을 하나의 워크플로우로 묶어주는 PHA Processing Tool로 공정 혁신의 속도를 높여 보세요.
             </p>
             <div className="flex flex-wrap gap-3">
-              <a
-                href="mailto:pha-tools@sk.com?subject=PHA%20Processing%20Tool%20%EC%A1%B0%EA%B8%B0%20%EB%8F%84%EC%9E%85%20%EB%AC%B8%EC%9D%98"
-                className="inline-flex items-center gap-2 rounded-full bg-blue-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:bg-blue-400"
-              >
-                조기 도입 신청하기
-                <svg
-                  className="h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M5 12h14" />
-                  <path d="M12 5l7 7-7 7" />
-                </svg>
-              </a>
               <a
                 href="https://pha.sk.com"
                 className="inline-flex items-center gap-2 rounded-full border border-white/30 px-5 py-3 text-sm font-semibold text-white transition hover:border-white/60"
@@ -184,20 +144,6 @@ export default function App() {
           </div>
         </section>
 
-        <section className="mt-24 rounded-[3rem] border border-blue-400/30 bg-blue-500/10 px-8 py-12 text-center">
-          <h2 className="text-3xl font-semibold text-white">함께 공정 혁신을 만들어갈 파트너를 찾고 있습니다.</h2>
-          <p className="mt-4 text-base text-blue-100">
-            조기 도입에 관심이 있으시다면 아래 채널로 연락을 남겨 주세요. 정식 출시 전 소식을 가장 먼저 전달드리겠습니다.
-          </p>
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
-            {contactChannels.map((item) => (
-              <div key={item.label} className="rounded-2xl border border-blue-300/40 bg-blue-500/10 p-4">
-                <p className="text-xs uppercase tracking-wide text-blue-200/80">{item.label}</p>
-                <p className="mt-2 text-sm font-semibold text-white">{item.value}</p>
-              </div>
-            ))}
-          </div>
-        </section>
       </main>
 
       <footer className="border-t border-white/10 bg-black/40 py-6">
