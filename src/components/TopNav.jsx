@@ -2,7 +2,8 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const navItems = [
-  { to: '/', label: 'PHA Dashboard' },
+  { to: '/process', label: '공정 조건' },
+  { to: '/pha', label: 'PHA Dashboard' },
   { to: '/tools/chi-delta', label: 'χ–δ Dashboard' },
   { to: '/tools/excel-toolkit', label: 'Excel Toolkit' },
   { to: '/tools/igc-chi', label: 'IGC → χ (Python)' },
@@ -12,10 +13,12 @@ const TopNav = () => {
   const location = useLocation();
 
   const isActive = (path) => {
-    if (path === '/') {
-      return location.pathname === '/';
+    if (path === '/process') {
+      return ['/process', '/troubleshooting', '/history', '/analysis', '/settings'].some((target) =>
+        location.pathname.startsWith(target)
+      );
     }
-    return location.pathname.startsWith(path);
+    return location.pathname === path || location.pathname.startsWith(`${path}/`);
   };
 
   return (
