@@ -118,6 +118,93 @@ const PHAPropertiesDashboard = () => {
     { application: 'Fiber Spinning', S1000P: 75, A1000P: 35 }
   ];
 
+  const gradeLibrary = [
+    {
+      grade: 'CA1180P',
+      family: 'P34HB-co-P4HB toughness grade',
+      color: '#0ea5e9',
+      summary:
+        '**Impact-modified** commercial grade delivering balanced stiffness and ductility for demanding housings and packaging.',
+      keySpecs: [
+        { label: 'MFI (190°C/2.16 kg)', value: '12 g/10 min' },
+        { label: 'Density', value: '1.22 g/cm³' },
+        { label: 'Tg / Tm', value: '-5°C / 150°C' },
+        { label: 'Crystallinity', value: '20-25%' }
+      ],
+      differentiators: [
+        '**Impact modifier** package enables drop resistance down to -20°C.',
+        '**Lower crystallization temperature** accelerates cycle time versus neat P3HB grades.',
+        'Formulated for **medical and consumer** compliance (USP Class VI, food-contact ready).'
+      ],
+      processing: [
+        '**Injection:** Melt 150-170°C, mold 30-45°C, moderate shear to avoid flow marks.',
+        '**Extrusion:** Die 150-165°C with 2-3 bar back pressure for gauge control.',
+        '**Annealing:** 90°C for 30 min improves dimensional recovery after demold.'
+      ],
+      applications: [
+        '**Medical device housings** needing sterilizable toughness.',
+        '**Returnable logistics totes** with improved impact retention.',
+        '**Agricultural films** demanding cold-flex performance.'
+      ]
+    },
+    {
+      grade: 'S1000P',
+      family: 'P34HB semi-crystalline grade',
+      color: '#8b5cf6',
+      summary:
+        'Legacy **rigid** grade optimized for high modulus parts with excellent **dimensional stability** and creep resistance.',
+      keySpecs: [
+        { label: 'MFI (190°C/2.16 kg)', value: '8 g/10 min' },
+        { label: 'Density', value: '1.25 g/cm³' },
+        { label: 'Tg / Tm', value: '4°C / 165°C' },
+        { label: 'Crystallinity', value: '45-50%' }
+      ],
+      differentiators: [
+        'High **spherulitic crystallinity** delivers structural stiffness.',
+        '**Hydrolysis resistance** enables longer compost retention.',
+        'Supports **3D printing** filament extrusion with controlled shrinkage.'
+      ],
+      processing: [
+        '**Injection:** Melt 160-180°C, mold 40-80°C, packing 80-100 bar.',
+        '**Extrusion:** Barrel 165-175°C with active cooling to lock crystallinity.',
+        '**Annealing:** 110°C for 45 min maximizes modulus and heat deflection.'
+      ],
+      applications: [
+        '**Rigid packaging** for refrigerated goods.',
+        '**Thermoformed trays** requiring load bearing.',
+        '**3D printing** filaments and profiles.'
+      ]
+    },
+    {
+      grade: 'A1000P',
+      family: 'P34HB amorphous elastomer',
+      color: '#06b6d4',
+      summary:
+        'Legacy **elastomeric** grade with high **4HB comonomer** content for flexible films and adhesives.',
+      keySpecs: [
+        { label: 'MFI (190°C/2.16 kg)', value: '15 g/10 min' },
+        { label: 'Density', value: '1.20 g/cm³' },
+        { label: 'Tg / Tm', value: '-15°C / —' },
+        { label: 'Crystallinity', value: 'Amorphous' }
+      ],
+      differentiators: [
+        '**Extreme elongation** (>400%) without whitening.',
+        'Excellent **tack and clarity** for coating applications.',
+        'Compatible with **bio-based plasticizers** for softness tuning.'
+      ],
+      processing: [
+        '**Injection:** Melt 140-160°C, mold 20-35°C with release agents to prevent sticking.',
+        '**Extrusion:** 140-155°C die with chill-roll quench for film clarity.',
+        '**Compounding:** Blend with PBAT/PLA to tailor elastic modulus.'
+      ],
+      applications: [
+        '**Stretch films** and agricultural mulch.',
+        '**Pressure-sensitive adhesives** for labels.',
+        '**Elastomeric modifiers** in TPE and PLA blends.'
+      ]
+    }
+  ];
+
   const polymerSpecs = {
     S1000P: {
       name: 'P34HB S1000P',
@@ -187,12 +274,13 @@ const PHAPropertiesDashboard = () => {
       </div>
 
       <Tabs defaultValue="thermal" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-3 md:grid-cols-6">
           <TabsTrigger value="thermal">Thermal</TabsTrigger>
           <TabsTrigger value="mechanical">Mechanical</TabsTrigger>
           <TabsTrigger value="processing">Processing</TabsTrigger>
           <TabsTrigger value="crystallinity">Structure</TabsTrigger>
           <TabsTrigger value="applications">Applications</TabsTrigger>
+          <TabsTrigger value="library">Grade Library</TabsTrigger>
         </TabsList>
 
         <TabsContent value="thermal">
@@ -407,6 +495,69 @@ const PHAPropertiesDashboard = () => {
                     <li dangerouslySetInnerHTML={md('• **Elastomeric** compounds (TPE replacement)')} />
                   </ul>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="library">
+          <Card>
+            <CardHeader>
+              <CardTitle>PHA Grade Library</CardTitle>
+              <CardDescription dangerouslySetInnerHTML={md('Combined **current** and **legacy** commercial offerings.')} />
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-6 md:grid-cols-2">
+                {gradeLibrary.map((grade) => (
+                  <div
+                    key={grade.grade}
+                    className="border rounded-lg p-4 space-y-4 bg-white shadow-sm"
+                    style={{ borderColor: `${grade.color}33` }}
+                  >
+                    <div className="flex flex-col gap-1">
+                      <span className="text-xs uppercase tracking-wide text-gray-500">{grade.family}</span>
+                      <h3 className="text-2xl font-semibold" style={{ color: grade.color }}>
+                        {grade.grade}
+                      </h3>
+                      <div
+                        className="text-sm text-gray-600"
+                        dangerouslySetInnerHTML={md(grade.summary)}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      {grade.keySpecs.map((spec) => (
+                        <div key={spec.label} className="bg-gray-50 rounded-md p-3">
+                          <div className="text-xs uppercase tracking-wide text-gray-500">{spec.label}</div>
+                          <div className="font-medium text-gray-800">{spec.value}</div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="font-semibold text-sm text-gray-700">Differentiators</h4>
+                      <ul className="space-y-1 text-sm text-gray-600">
+                        {grade.differentiators.map((item, idx) => (
+                          <li key={idx} dangerouslySetInnerHTML={md(`• ${item}`)} />
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="font-semibold text-sm text-gray-700">Processing Guidance</h4>
+                      <ul className="space-y-1 text-sm text-gray-600">
+                        {grade.processing.map((item, idx) => (
+                          <li key={idx} dangerouslySetInnerHTML={md(`• ${item}`)} />
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="font-semibold text-sm text-gray-700">Target Applications</h4>
+                      <ul className="space-y-1 text-sm text-gray-600">
+                        {grade.applications.map((item, idx) => (
+                          <li key={idx} dangerouslySetInnerHTML={md(`• ${item}`)} />
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
