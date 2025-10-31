@@ -1,0 +1,81 @@
+{
+  "id": "CA1180P_talc10_wax0p3",
+  "title": "CA1180P (PLA80/aPHA20) + talc10phr + carnauba0.3phr",
+  "sources": [
+    "CJ Biomaterials Leaflet Injection Molding (MFR 7, shrinkage 0.2%, ABS mold compatibility)"
+  ],
+  "processing": {
+    "temps_c": {
+      "zone1": {
+        "min": 165,
+        "target": 175,
+        "max": 185
+      },
+      "zone2": {
+        "min": 170,
+        "target": 180,
+        "max": 185
+      },
+      "zone3_meter": {
+        "min": 172,
+        "target": 185,
+        "max": 185
+      },
+      "nozzle": {
+        "min": 175,
+        "target": 185,
+        "max": 190
+      }
+    },
+    "mold_temp_c": {
+      "lowHDT": {
+        "min": 30,
+        "target": 40,
+        "max": 55,
+        "coolant": "water"
+      },
+      "highHDT": {
+        "min": 110,
+        "target": 115,
+        "max": 120,
+        "coolant": "oil"
+      }
+    },
+    "drying": {
+      "temp_c": 60,
+      "time_h": 5,
+      "dew_point_c": -40
+    },
+    "injection": {
+      "fill_time_s": 1.0,
+      "speed_mm_s": {
+        "stage1": 110,
+        "stage2": 55
+      },
+      "vp_transfer": {
+        "method": "position",
+        "setpoint_pct": 96
+      }
+    },
+    "holding_profile": [
+      {
+        "pressure_bar": 380,
+        "time_s": 3.0
+      },
+      {
+        "pressure_bar": 220,
+        "time_s": 2.0
+      }
+    ],
+    "screw": {
+      "back_pressure_bar": 4,
+      "rpm": 50,
+      "decompression_mm": 4
+    }
+  },
+  "warnings": [
+    "Meter ≤ 185°C",
+    "PLA segment: avoid ≥210°C long residence",
+    "Moisture: DP ≤ -40°C; 60°C×5h"
+  ]
+}

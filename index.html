@@ -1,0 +1,647 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>PHA Process Optimizer – Pro v2</title>
+<style>
+  :root{
+    --primary:#2563eb;--primary-dark:#1e40af;--secondary:#10b981;--danger:#ef4444;--warning:#f59e0b;
+    --dark:#1f2937;--light:#f9fafb;--border:#e5e7eb;--radius:12px;--shadow:0 20px 25px -5px rgba(0,0,0,.1)
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;
+       background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px;color:#111827;-webkit-text-size-adjust:100%}
+  .container{max-width:1400px;margin:0 auto;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;background:#111827;color:#fff;padding:18px}
+  .header h1{font-size:20px;font-weight:700}
+  .header-controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  select#language{padding:8px 12px;border-radius:6px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff}
+  .view-toggle{display:flex;gap:8px;background:rgba(255,255,255,.12);padding:4px;border-radius:8px}
+  .view-toggle button{border:0;background:transparent;color:#fff;padding:8px 14px;border-radius:6px;cursor:pointer;font-weight:600}
+  .view-toggle button.active{background:var(--primary);box-shadow:0 2px 8px rgba(37,99,235,.3)}
+  .main{padding:24px}
+  .tabs{display:flex;gap:8px;border-bottom:2px solid var(--border);overflow-x:auto;padding-bottom:8px}
+  .tab{border:0;background:transparent;padding:10px 16px;font-weight:600;color:#374151;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
+  .tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+  .tabpage{display:none;animation:fade .25s}.tabpage.active{display:block}
+  @keyframes fade{from{opacity:.0;transform:translateY(6px)} to{opacity:1;transform:none}}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:16px 0 24px}
+  .group label{display:block;font-weight:700;margin:0 0 6px;color:#111827;font-size:14px}
+  .group input,.group select,.group textarea{width:100%;padding:12px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:15px;transition:.2s}
+  .group input:focus,.group select:focus,.group textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
+  .group textarea{min-height:100px;resize:vertical}
+  .hint{color:#6b7280;font-size:12px;margin-top:4px}
+  .tablewrap{overflow:auto;border:1px solid var(--border);border-radius:8px}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:10px;border-bottom:1px solid var(--border);text-align:left}
+  th{background:var(--light);position:sticky;top:0}
+  tr:hover{background:#f5f7ff}
+  .badge{display:inline-block;padding:4px 10px;border-radius:999px;font-weight:700;font-size:12px}
+  .ok{background:#d1fae5;color:#065f46}.warn{background:#fee7c2;color:#92400e}.crit{background:#ffe1e1;color:#9b1c1c}
+  .card{background:#f9fafb;border:1px solid var(--border);border-left:4px solid var(--warning);border-radius:10px;padding:16px;margin:12px 0}
+  .photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+  .photo{position:relative;border-radius:8px;overflow:hidden;aspect-ratio:1;background:#eef2ff}
+  .photo img{width:100%;height:100%;object-fit:cover}
+  .photo button{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;border:0;background:var(--danger);color:#fff;font-weight:900;cursor:pointer}
+  .btn{border:0;padding:12px 18px;border-radius:8px;font-weight:800;cursor:pointer}
+  .btn.primary{background:var(--primary);color:#fff}.btn.secondary{background:#f3f4f6;border:2px solid var(--border)}
+  .actions{display:flex;gap:12px;flex-wrap:wrap}
+  .fab{position:fixed;right:18px;bottom:18px;width:56px;height:56px;border-radius:50%;border:0;background:var(--primary);color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 25px rgba(37,99,235,.35);cursor:pointer}
+  .row{display:flex;gap:12px;flex-wrap:wrap}
+  .row .group{flex:1 1 220px}
+  .muted{color:#6b7280}
+  @media (max-width:768px){body{padding:0}.container{border-radius:0}.main{padding:16px}.group input,.group select,.group textarea{font-size:16px;min-height:44px}}
+</style>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#2563eb">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>🔬 <span data-i18n="title">PHA Process Optimizer</span></h1>
+    <div class="header-controls">
+      <select id="language"><option value="ko">한국어</option><option value="en">English</option></select>
+      <div class="view-toggle"><button id="btnDesktop" class="active" onclick="setView('desktop')">PC</button><button id="btnMobile" onclick="setView('mobile')">📱</button></div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="tabs">
+      <button class="tab active" data-tab="proc" data-i18n="tab_proc">공정 조건</button>
+      <button class="tab" data-tab="ts" data-i18n="tab_ts">트러블슈팅</button>
+      <button class="tab" data-tab="hist" data-i18n="tab_hist">이력 관리</button>
+      <button class="tab" data-tab="ana" data-i18n="tab_ana">데이터 분석</button>
+      <button class="tab" data-tab="calc" data-i18n="tab_calc">계산기</button>
+      <button class="tab" data-tab="props" data-i18n="tab_props">물성 DB</button>
+      <button class="tab" data-tab="photos" data-i18n="tab_photos">사진</button>
+    </div>
+
+    <!-- Process Conditions -->
+    <section id="proc" class="tabpage active">
+      <div class="grid">
+        <div class="group">
+          <label data-i18n="series">샘플 시리즈</label>
+          <select id="grade" onchange="rebuildForm()"></select>
+        </div>
+        <div class="group">
+          <label data-i18n="process">가공 유형</label>
+          <select id="process" onchange="rebuildForm()">
+            <option value="sheet">시트 압출 (Sheet)</option>
+            <option value="extrusion">프로파일/일반 압출 (Extrusion)</option>
+            <option value="injection">사출 성형 (Injection)</option>
+            <option value="blownfilm">블로운 필름 (Blown Film)</option>
+            <option value="blowmolding">블로우 몰딩 (Blow Molding)</option>
+            <option value="castfilm">캐스트 필름 (Cast Film)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="group">
+          <button class="btn secondary" onclick="openRecoEditor()">🛠 권장 가이드 수정</button>
+          <div class="hint">현재 선택한 <b>프로파일×공정</b>에 한해 min/max를 편집합니다. ‘초기화’로 원복 가능.</div>
+        </div>
+      </div>
+
+      <div id="dynamicFields" class="grid"></div>
+
+      <div class="group">
+        <label data-i18n="notes">📝 특이사항 메모</label>
+        <textarea id="notes" placeholder=""></textarea>
+        <div class="hint" id="tsHint"></div>
+      </div>
+
+      <div class="row">
+        <input id="importCSV" type="file" accept=".csv" style="display:none" />
+        <input id="importJSON" type="file" accept=".json,application/json" style="display:none" />
+        <button class="btn primary" onclick="saveEntry()" data-i18n="save">저장 및 분석</button>
+        <button class="btn secondary" onclick="exportHistory()" data-i18n="export">데이터 내보내기</button>
+        <button class="btn secondary" onclick="triggerImport('csv')">CSV 가져오기</button>
+        <button class="btn secondary" onclick="triggerImport('json')">JSON 가져오기</button>
+        <button class="btn secondary" onclick="resetForm()" data-i18n="reset">초기화</button>
+      </div>
+
+      <div class="tablewrap" style="margin-top:18px">
+        <table>
+          <thead><tr>
+            <th data-i18n="param">파라미터</th><th data-i18n="current">현재값</th>
+            <th data-i18n="range">권장 범위</th><th data-i18n="status">상태</th>
+          </tr></thead>
+          <tbody id="paramTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Troubleshooting -->
+    <section id="ts" class="tabpage">
+      <div id="tsContainer"></div>
+    </section>
+
+    <!-- History -->
+    <section id="hist" class="tabpage">
+      <div class="tablewrap">
+        <table>
+          <thead><tr>
+            <th data-i18n="when">날짜/시간</th><th data-i18n="h_grade">샘플</th><th data-i18n="h_proc">공정</th>
+            <th data-i18n="h_key">주요 파라미터</th><th data-i18n="h_result">결과</th><th data-i18n="h_note">메모</th>
+          </tr></thead>
+          <tbody id="histBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Analysis -->
+    <section id="ana" class="tabpage" style="text-align:center">
+      <div style="margin:24px 0"><h3>📊 <span data-i18n="ana_head">데이터 분석</span></h3></div>
+      <div class="card" id="anaCard"><div id="anaText" class="hint">분석 데이터 로딩 중...</div></div>
+    </section>
+
+    <!-- Calculators -->
+    <section id="calc" class="tabpage">
+      <h3 style="margin:8px 0">🧮 공정 KPI 계산기</h3>
+      <div class="card">
+        <h4>① 체류시간 (Residence Time)</h4>
+        <div class="row">
+          <div class="group"><label>재료 밀도 (용융, kg/m³)</label><input id="kpi_rho" type="number" placeholder="900~1250"></div>
+          <div class="group"><label>홀드업 용적 (L)</label><input id="kpi_holdVol" type="number" placeholder="예: 2.5"></div>
+          <div class="group"><label>홀드업 질량 (kg)</label><input id="kpi_holdMass" type="number" placeholder="미입력 시 밀도×용적으로 계산"></div>
+          <div class="group"><label>스루풋 (kg/h)</label><input id="kpi_rate" type="number" placeholder="예: 15"></div>
+        </div>
+        <div class="hint">※ 홀드업 질량 미입력 시 <b>질량 = 밀도×용적/1000</b>로 추정.</div>
+        <div class="row"><div class="group"><button class="btn primary" onclick="calcResidence()">계산</button></div><div class="group"><div id="kpi_res_out" class="muted">결과: -</div></div></div>
+      </div>
+
+      <div class="card">
+        <h4>② 사출품 냉각시간 예측</h4>
+        <div class="row">
+          <div class="group"><label>두께 t (mm)</label><input id="cool_t" type="number" placeholder="예: 2.0"></div>
+          <div class="group"><label>열확산율 α (mm²/s)</label><input id="cool_alpha" type="number" placeholder="예: 0.12"></div>
+          <div class="group"><label>용융온도 Tm (°C)</label><input id="cool_Tm" type="number" placeholder="예: 170"></div>
+          <div class="group"><label>금형온도 Tmold (°C)</label><input id="cool_Tmold" type="number" placeholder="예: 30"></div>
+          <div class="group"><label>이젝온도 Teject (°C)</label><input id="cool_Te" type="number" placeholder="예: 60"></div>
+        </div>
+        <div class="hint">모델: 1D 평판 냉각 근사치 <code>t_c ≈ (t²/(π²α))·ln[(T_m−T_mold)/(T_e−T_mold)]</code></div>
+        <div class="row"><div class="group"><button class="btn primary" onclick="calcCooling()">계산</button></div><div class="group"><div id="cool_out" class="muted">결과: -</div></div></div>
+      </div>
+
+      <div class="card">
+        <h4>③ 블로운 필름 두께</h4>
+        <div class="row">
+          <div class="group"><label>토출량 Q (kg/h)</label><input id="bf_Q" type="number" placeholder="예: 20"></div>
+          <div class="group"><label>용융 밀도 ρ (kg/m³)</label><input id="bf_rho" type="number" placeholder="예: 950"></div>
+          <div class="group"><label>금형 직경 D_die (mm)</label><input id="bf_D" type="number" placeholder="예: 80"></div>
+          <div class="group"><label>BUR</label><input id="bf_BUR" type="number" step="0.1" placeholder="예: 2.5"></div>
+          <div class="group"><label>테이크업 속도 v (m/min)</label><input id="bf_v" type="number" placeholder="예: 30"></div>
+          <div class="group"><label>다이 갭 g (mm, 선택)</label><input id="bf_gap" type="number" placeholder="예: 1.0"></div>
+        </div>
+        <div class="hint">기본식: <code>t ≈ (Q/ρ) / (π·D_die·BUR·v)</code> (µm 변환 포함). 선택적으로 갭 기반 <code>t0=g/2</code>, <code>DDR=v / v_exit</code> 사용.</div>
+        <div class="row"><div class="group"><button class="btn primary" onclick="calcBlownFilm()">계산</button></div><div class="group"><div id="bf_out" class="muted">결과: -</div></div></div>
+      </div>
+    </section>
+
+    <!-- Materials DB -->
+    <section id="props" class="tabpage">
+      <div class="row">
+        <div class="group">
+          <label>Grade</label>
+          <select id="mat_grade"></select>
+        </div>
+        <div class="group">
+          <label>동작</label>
+          <div class="row">
+            <button class="btn secondary" onclick="importMatJSON()">JSON 가져오기</button>
+            <button class="btn secondary" onclick="exportMatJSON()">JSON 내보내기</button>
+            <button class="btn secondary" onclick="editMat()">편집</button>
+          </div>
+        </div>
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>항목</th><th>값</th><th>단위/조건</th></tr></thead>
+          <tbody id="mat_tbody"></tbody>
+        </table>
+      </div>
+      <div class="hint">※ 웹에서 직접 TDS URL을 불러오려면 CORS 제약이 있어, 간단한 로컬 서버 사용 또는 JSON 업로드 방식 권장.</div>
+      <input id="mat_file" type="file" accept="application/json,.json" style="display:none">
+    </section>
+
+    <!-- Photos Tab -->
+    <section id="photos" class="tabpage">
+      <h3 style="margin:8px 0">📷 <span data-i18n="photos_head">Photo Manager</span></h3>
+      <div class="group">
+        <button class="btn primary" onclick="triggerPhotoUpload()">사진 업로드</button>
+        <input id="photoUpload" type="file" accept="image/*" multiple style="display:none">
+      </div>
+      <div id="photoGrid" class="photos"></div>
+    </section>
+  </div>
+</div>
+
+<button class="fab" title="Quick Save" onclick="saveEntry()">💾</button>
+
+<!-- Simple modal for reco editor -->
+<div id="modal" style="position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;z-index:9999">
+  <div style="background:#fff;max-width:720px;width:92%;border-radius:12px;box-shadow:var(--shadow);padding:16px">
+    <div class="row" style="justify-content:space-between;align-items:center">
+      <h3>권장 가이드 수정</h3>
+      <button class="btn secondary" onclick="closeModal()">닫기</button>
+    </div>
+    <div id="modalBody" class="grid" style="margin-top:8px"></div>
+    <div class="row" style="margin-top:8px">
+      <button class="btn primary" onclick="saveRecoOverrides()">저장</button>
+      <button class="btn secondary" onclick="resetOverridesCurrent()">현재 공정 초기화</button>
+      <button class="btn secondary" onclick="resetOverridesAll()">전체 초기화</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ========= i18n ========= */
+const I18N = {
+  ko:{title:"PHA 공정 최적화 도구",tab_proc:"공정 조건",tab_ts:"트러블슈팅",tab_hist:"이력 관리",tab_ana:"데이터 분석",tab_calc:"계산기",tab_props:"물성 DB",tab_photos:"사진",
+      series:"샘플 시리즈",process:"가공 유형",notes:"📝 특이사항 메모",save:"저장 및 분석",export:"데이터 내보내기",reset:"초기화",
+      param:"파라미터",current:"현재값",range:"권장 범위",status:"상태",ok:"정상",warn:"주의",crit:"위험",when:"날짜/시간",h_grade:"샘플",h_proc:"공정",h_key:"주요 파라미터",h_result:"결과",h_note:"메모",
+      ana_head:"데이터 분석",saved:"데이터가 저장되었습니다.",last:"마지막 업데이트",resetQ:"모든 입력을 초기화할까요?",
+      photos_head:"사진 관리"
+  },
+  en:{title:"PHA Process Optimizer",tab_proc:"Process Conditions",tab_ts:"Troubleshooting",tab_hist:"History",tab_ana:"Data Analysis",tab_calc:"Calculators",tab_props:"Materials DB",tab_photos:"Photos",
+      series:"Sample Series",process:"Process Type",notes:"📝 Process Notes",save:"Save & Analyze",export:"Export Data",reset:"Reset",
+      param:"Parameter",current:"Current",range:"Recommended",status:"Status",ok:"Normal",warn:"Warning",crit:"Critical",when:"Date/Time",h_grade:"Sample",h_proc:"Process",h_key:"Main Parameters",h_result:"Result",h_note:"Memo",
+      ana_head:"Data Analysis",saved:"Saved successfully.",last:"Last Update",resetQ:"Reset all inputs?",
+      photos_head:"Photo Manager"
+  }
+};
+let LANG = 'ko';
+
+/* ========= Base profiles ========= */
+const BASE={PHA_SEMI:'PHA_SEMI',PHA_AMOR:'PHA_AMOR',PLA:'PLA',PBAT:'PBAT',PBS:'PBS',PBSA:'PBSA',PHA_PLA:'PHA_PLA',PHA_PBS:'PHA_PBS',PHA_PBAT:'PHA_PBAT'};
+
+/* ========= Grade list ========= */
+const GRADES=[
+  {value:'S1000P',label:'S1000P (Semi-crystalline, 2–5% 4HB)',profile:BASE.PHA_SEMI},
+  {value:'A1000P',label:'A1000P (Amorphous, 30% 4HB)',profile:BASE.PHA_AMOR},
+  {value:'CB0400A',label:'CB0400A (P34HB series) – 내부가이드',profile:BASE.PHA_SEMI},
+  {value:'CB0104A',label:'CB0104A (P34HB series) – 내부가이드',profile:BASE.PHA_AMOR},
+  /* PLA/aPHA family (from website TDS list mentioned) */
+  {value:'CA1180P',label:'CA1180P (PLA/aPHA – Injection)',profile:BASE.PHA_PLA},
+  {value:'CA1170A',label:'CA1170A (PLA/aPHA – Injection)',profile:BASE.PHA_PLA},
+  {value:'CA1165A',label:'CA1165A (PLA/aPHA – Injection)',profile:BASE.PHA_PLA},
+  {value:'CA1670P',label:'CA1670P (PLA/aPHA – Sheet/Blow Molding)',profile:BASE.PHA_PLA},
+  {value:'CA1680', label:'CA1680 (PLA/aPHA – Sheet/Blow Molding)',profile:BASE.PHA_PLA},
+  {value:'CA1270P',label:'CA1270P (PLA/aPHA – Sheet)',profile:BASE.PHA_PLA},
+  /* blends + commodity */
+  {value:'PLA_aPHA_90_10',label:'PLA/aPHA (A1000P 10%)',profile:BASE.PHA_PLA},
+  {value:'PLA_aPHA_80_20',label:'PLA/aPHA (A1000P 20%)',profile:BASE.PHA_PLA},
+  {value:'PHA_PBSA_70_30',label:'PHA/PBSA (70/30)',profile:BASE.PBSA},
+  {value:'PHA_PBSA_50_50',label:'PHA/PBSA (50/50)',profile:BASE.PBSA},
+  {value:'PHA_PBS_70_30',label:'PHA/PBS (70/30)',profile:BASE.PHA_PBS},
+  {value:'PHA_PBS_50_50',label:'PHA/PBS (50/50)',profile:BASE.PHA_PBS},
+  {value:'PHA_PBAT_70_30',label:'PHA/PBAT (70/30)',profile:BASE.PHA_PBAT},
+  {value:'PHA_PBAT_50_50',label:'PHA/PBAT (50/50)',profile:BASE.PHA_PBAT},
+  {value:'PLA',label:'PLA',profile:BASE.PLA},
+  {value:'PBAT',label:'PBAT',profile:BASE.PBAT},
+  {value:'PBS',label:'PBS',profile:BASE.PBS},
+  {value:'PBSA',label:'PBSA',profile:BASE.PBSA},
+];
+
+/* ========= Recommended ranges ========= */
+const GRADE_JSON={"CA1180P":"data/grades/CA1180P_talc10_wax0p3.json"};
+const RECO={
+  [BASE.PHA_SEMI]:{
+    extrusion:{zone1:[140,155],zone2:[150,165],zone3:[160,170],zone4:[165,175],die:[165,180],screwRPM:[40,90],meltPressBar:[60,150],coolingRoll:[15,25],lineSpeed:[5,30]},
+    sheet:{zone1:[140,155],zone2:[150,165],zone3:[160,170],zone4:[165,175],zone5:[165,180],die:[170,180],chillTop:[15,25],chillMid:[15,25],chillBot:[15,25],rollRPM:[10,40],lineSpeed:[5,30],targetThickness:[200,2000],meltPressBar:[60,150]},
+    injection:{barrel1:[150,160],barrel2:[155,165],barrel3:[160,170],nozzle:[165,175],mold:[25,45],injSpeed:[30,120],injPressMPa:[60,120],packPressMPa:[30,70],packTime:[5,20],coolTime:[10,40],backPressBar:[30,80],screwRPM:[30,100],hold1P:[30,60],hold1T:[2,10],hold2P:[20,50],hold2T:[2,10]},
+    blownfilm:{zone1:[145,155],zone2:[155,165],zone3:[160,170],zone4:[165,175],die:[165,175],bur:[1.8,3.0],flh:[200,600],takeup:[10,60],dieGap:[0.8,1.5],meltPressBar:[80,180],airTemp:[15,25]},
+    blowmolding:{zone1:[150,160],zone2:[155,165],zone3:[160,170],head:[165,175],die:[165,175],accHead:[165,175],blowPressBar:[6,12],preBlowBar:[2,6],mold:[20,35],coolTime:[20,80]},
+    castfilm:{zone1:[150,160],zone2:[155,165],zone3:[160,170],die:[170,180],chillTop:[10,18],lineSpeed:[10,50],targetThickness:[20,200],meltPressBar:[60,150]}
+  },
+  [BASE.PHA_AMOR]:{
+    extrusion:{zone1:[130,145],zone2:[140,155],zone3:[150,165],zone4:[155,170],die:[160,170],screwRPM:[40,90],meltPressBar:[50,130],coolingRoll:[15,25],lineSpeed:[5,30]},
+    sheet:{zone1:[130,145],zone2:[140,155],zone3:[150,160],zone4:[155,165],zone5:[155,170],die:[160,170],chillTop:[15,25],chillMid:[15,25],chillBot:[15,25],rollRPM:[10,35],lineSpeed:[5,30],targetThickness:[200,2000],meltPressBar:[50,130]},
+    injection:{barrel1:[140,155],barrel2:[150,160],barrel3:[155,165],nozzle:[160,170],mold:[20,40],injSpeed:[30,120],injPressMPa:[50,100],packPressMPa:[25,60],packTime:[5,20],coolTime:[8,35],backPressBar:[20,60],screwRPM:[30,90],hold1P:[25,55],hold1T:[2,10],hold2P:[15,45],hold2T:[2,10]},
+    blownfilm:{zone1:[135,145],zone2:[145,155],zone3:[150,160],zone4:[155,165],die:[160,165],bur:[1.8,3.0],flh:[200,600],takeup:[10,60],dieGap:[0.8,1.5],meltPressBar:[70,160],airTemp:[15,25]},
+    blowmolding:{zone1:[140,150],zone2:[150,160],zone3:[155,165],head:[160,170],die:[160,170],accHead:[160,170],blowPressBar:[6,12],preBlowBar:[2,6],mold:[20,35],coolTime:[20,70]},
+    castfilm:{zone1:[140,150],zone2:[145,155],zone3:[150,160],die:[160,170],chillTop:[10,18],lineSpeed:[10,50],targetThickness:[20,200],meltPressBar:[50,130]}
+  },
+  [BASE.PLA]:{
+    extrusion:{zone1:[170,180],zone2:[180,190],zone3:[190,200],zone4:[195,205],die:[195,210],screwRPM:[40,80],meltPressBar:[70,150],coolingRoll:[15,25],lineSpeed:[5,30]},
+    sheet:{zone1:[170,180],zone2:[180,190],zone3:[190,200],zone4:[195,205],zone5:[195,210],die:[200,210],chillTop:[15,25],chillMid:[15,25],chillBot:[15,25],rollRPM:[10,35],lineSpeed:[5,25],targetThickness:[200,2000],meltPressBar:[70,150]},
+    injection:{barrel1:[180,190],barrel2:[190,200],barrel3:[195,205],nozzle:[200,210],mold:[20,35],injSpeed:[30,120],injPressMPa:[70,130],packPressMPa:[40,80],packTime:[5,20],coolTime:[10,40],backPressBar:[30,90],screwRPM:[30,90],hold1P:[40,80],hold1T:[2,10],hold2P:[30,70],hold2T:[2,10]},
+    blownfilm:{zone1:[175,185],zone2:[185,195],zone3:[190,200],zone4:[195,205],die:[200,210],bur:[1.8,3.0],flh:[200,600],takeup:[10,60],dieGap:[0.8,1.5],meltPressBar:[80,180],airTemp:[15,25]},
+    blowmolding:{zone1:[175,185],zone2:[185,195],zone3:[190,200],head:[200,210],die:[200,210],accHead:[200,210],blowPressBar:[6,12],preBlowBar:[2,6],mold:[15,25],coolTime:[20,80]},
+    castfilm:{zone1:[180,190],zone2:[190,200],zone3:[195,205],die:[200,210],chillTop:[10,18],lineSpeed:[10,40],targetThickness:[20,200],meltPressBar:[70,150]}
+  },
+  [BASE.PBAT]:{
+    extrusion:{zone1:[110,125],zone2:[120,135],zone3:[130,145],zone4:[135,150],die:[135,150],screwRPM:[40,90],meltPressBar:[50,120],coolingRoll:[15,25],lineSpeed:[5,30]},
+    sheet:{zone1:[110,125],zone2:[120,135],zone3:[130,145],zone4:[135,150],zone5:[135,150],die:[135,150],chillTop:[15,25],chillMid:[15,25],chillBot:[15,25],rollRPM:[10,35],lineSpeed:[5,30],targetThickness:[200,2000],meltPressBar:[50,120]},
+    injection:{barrel1:[120,130],barrel2:[130,140],barrel3:[135,145],nozzle:[140,150],mold:[20,35],injSpeed:[30,120],injPressMPa:[50,100],packPressMPa:[25,60],packTime:[5,18],coolTime:[8,30],backPressBar:[20,60],screwRPM:[30,90],hold1P:[25,60],hold1T:[2,10],hold2P:[15,45],hold2T:[2,10]},
+    blownfilm:{zone1:[115,125],zone2:[125,135],zone3:[135,145],zone4:[140,150],die:[140,150],bur:[1.8,3.0],flh:[200,600],takeup:[10,60],dieGap:[0.8,1.5],meltPressBar:[70,150],airTemp:[15,25]},
+    blowmolding:{zone1:[120,130],zone2:[130,140],zone3:[135,145],head:[140,150],die:[140,150],accHead:[140,150],blowPressBar:[5,10],preBlowBar:[2,5],mold:[20,30],coolTime:[20,60]},
+    castfilm:{zone1:[120,130],zone2:[130,140],zone3:[135,145],die:[140,150],chillTop:[10,18],lineSpeed:[10,40],targetThickness:[20,200],meltPressBar:[50,120]}
+  },
+  [BASE.PBS]:{
+    extrusion:{zone1:[140,150],zone2:[150,160],zone3:[155,165],zone4:[160,170],die:[160,170],screwRPM:[40,80],meltPressBar:[60,130],coolingRoll:[15,25],lineSpeed:[5,30]},
+    sheet:{zone1:[140,150],zone2:[150,160],zone3:[155,165],zone4:[160,170],zone5:[160,170],die:[165,170],chillTop:[15,25],chillMid:[15,25],chillBot:[15,25],rollRPM:[10,35],lineSpeed:[5,30],targetThickness:[200,2000],meltPressBar:[60,130]},
+    injection:{barrel1:[150,160],barrel2:[155,165],barrel3:[160,170],nozzle:[165,170],mold:[20,35],injSpeed:[30,120],injPressMPa:[60,110],packPressMPa:[30,70],packTime:[5,18],coolTime:[8,35],backPressBar:[20,60],screwRPM:[30,90],hold1P:[35,70],hold1T:[2,10],hold2P:[25,60],hold2T:[2,10]},
+    blownfilm:{zone1:[145,155],zone2:[150,160],zone3:[155,165],zone4:[160,170],die:[165,170],bur:[1.8,3.0],flh:[200,600],takeup:[10,60],dieGap:[0.8,1.5],meltPressBar:[70,150],airTemp:[15,25]},
+    blowmolding:{zone1:[150,160],zone2:[155,165],zone3:[160,170],head:[165,170],die:[165,170],accHead:[165,170],blowPressBar:[6,12],preBlowBar:[2,6],mold:[20,30],coolTime:[20,70]},
+    castfilm:{zone1:[150,160],zone2:[155,165],zone3:[160,170],die:[165,170],chillTop:[10,18],lineSpeed:[10,40],targetThickness:[20,200],meltPressBar:[60,130]}
+  },
+  [BASE.PBSA]:{
+    extrusion:{zone1:[125,135],zone2:[135,145],zone3:[140,150],zone4:[145,155],die:[150,160],screwRPM:[40,80],meltPressBar:[50,120],coolingRoll:[15,25],lineSpeed:[5,30]},
+    sheet:{zone1:[125,135],zone2:[135,145],zone3:[140,150],zone4:[145,155],zone5:[145,160],die:[150,160],chillTop:[15,25],chillMid:[15,25],chillBot:[15,25],rollRPM:[10,35],lineSpeed:[5,30],targetThickness:[200,2000],meltPressBar:[50,120]},
+    injection:{barrel1:[135,145],barrel2:[140,150],barrel3:[145,155],nozzle:[150,160],mold:[20,35],injSpeed:[30,120],injPressMPa:[50,90],packPressMPa:[25,60],packTime:[5,18],coolTime:[8,30],backPressBar:[20,60],screwRPM:[30,90],hold1P:[25,55],hold1T:[2,10],hold2P:[15,45],hold2T:[2,10]},
+    blownfilm:{zone1:[130,140],zone2:[140,150],zone3:[145,155],zone4:[150,160],die:[150,160],bur:[1.8,3.0],flh:[200,600],takeup:[10,60],dieGap:[0.8,1.5],meltPressBar:[60,140],airTemp:[15,25]},
+    blowmolding:{zone1:[135,145],zone2:[140,150],zone3:[145,155],head:[150,160],die:[150,160],accHead:[150,160],blowPressBar:[5,10],preBlowBar:[2,5],mold:[20,30],coolTime:[20,60]},
+    castfilm:{zone1:[135,145],zone2:[140,150],zone3:[145,155],die:[150,160],chillTop:[10,18],lineSpeed:[10,40],targetThickness:[20,200],meltPressBar:[50,120]}
+  },
+  [BASE.PHA_PLA]:{},[BASE.PHA_PBS]:{},[BASE.PHA_PBAT]:{}
+};
+
+/* ========= Schemas ========= */
+function f(id,ko,en,unit){return {id,ko,en,unit};}
+const SCHEMAS={
+  extrusion:[f('zone1','Zone 1 온도','Zone 1 Temp','°C'),f('zone2','Zone 2 온도','°C'),
+             f('zone3','Zone 3 온도','°C'),f('zone4','Zone 4 온도','°C'),f('die','다이 온도','°C'),
+             f('screwRPM','스크류 속도','RPM'),f('meltPressBar','용융 압력','bar'),
+             f('coolingRoll','쿨링롤 온도','°C'),f('lineSpeed','라인 속도','m/min')],
+  sheet:[f('zone1','Zone 1 온도','°C'),f('zone2','Zone 2 온도','°C'),f('zone3','Zone 3 온도','°C'),
+         f('zone4','Zone 4 온도','°C'),f('zone5','Zone 5 온도','°C'),f('die','다이 온도','°C'),
+         f('chillTop','칠롤 상단','°C'),f('chillMid','칠롤 중단','°C'),f('chillBot','칠롤 하단','°C'),
+         f('rollRPM','롤 회전수','RPM'),f('lineSpeed','라인 속도','m/min'),f('targetThickness','목표 두께','µm'),f('meltPressBar','용융 압력','bar')],
+  injection:[f('barrel1','배럴 1','°C'),f('barrel2','배럴 2','°C'),f('barrel3','배럴 3','°C'),f('nozzle','노즐','°C'),
+             f('mold','금형 온도','°C'),f('injSpeed','사출 속도','mm/s'),f('injPressMPa','사출 압력','MPa'),f('packPressMPa','보압','MPa'),
+             f('packTime','보압 시간','s'),f('coolTime','냉각 시간','s'),f('backPressBar','백프레셔','bar'),f('screwRPM','스크류 회전수','RPM'),
+             f('hold1P','보압1 압력','MPa'),f('hold1T','보압1 시간','s'),f('hold2P','보압2 압력','MPa'),f('hold2T','보압2 시간','s')],
+  blownfilm:[f('zone1','Zone 1 온도','°C'),f('zone2','Zone 2 온도','°C'),f('zone3','Zone 3 온도','°C'),f('zone4','Zone 4 온도','°C'),
+             f('die','다이 온도','°C'),f('bur','BUR','–'),f('flh','FLH','mm'),f('takeup','테이크업 속도','m/min'),
+             f('dieGap','다이 갭','mm'),f('meltPressBar','용융 압력','bar'),f('airTemp','냉각 공기 온도','°C')],
+  blowmolding:[f('zone1','Zone 1 온도','°C'),f('zone2','Zone 2 온도','°C'),f('zone3','Zone 3 온도','°C'),
+               f('head','헤드 온도','°C'),f('die','다이 온도','°C'),f('accHead','어큐뮬레이터 헤드','°C'),
+               f('blowPressBar','블로우 압력','bar'),f('preBlowBar','프리블로우 압력','bar'),f('mold','금형 온도','°C'),f('coolTime','냉각 시간','s')],
+  castfilm:[f('zone1','Zone 1 온도','°C'),f('zone2','Zone 2 온도','°C'),f('zone3','Zone 3 온도','°C'),
+            f('die','다이 온도','°C'),f('chillTop','칠롤 온도','°C'),f('lineSpeed','라인 속도','m/min'),f('targetThickness','목표 두께','µm'),f('meltPressBar','용융 압력','bar')]
+};
+
+/* ========= Troubleshooting content ========= */
+const TS={
+  ko:[{title:"🔴 표면 결함",items:[["샤크스킨","다이 온도 +5~10°C, 압력 낮춤, 가공조제 검토"],["멜트 프랙처","전단속도 낮춤, 온도 프로파일 최적화, 다이 갭 조정"],["다이 라인","다이 청소/온도 균일화, 압력 안정화"]]},
+      {title:"🟡 기계적 물성 저하",items:[["인장강도 부족","분자량 저하 확인, 가공온도↓, 체류시간↓"],["신율 감소","가소제/블렌드 비율 조정, 냉각 속도 최적화"],["충격 저하","상용화제, 어닐링"]]},
+      {title:"🔵 가공성 문제",items:[["토출 불안정","스크류 속도 안정화, 건조/공급 확인, 온도 균일화"],["압력 변동","스크류/필터 점검, 건조/수분관리"],["색상 불균일","MB 분산 개선, 혼합 시간 증가, 온도 재조정"]]},
+      {title:"🟢 열적 특성 이슈",items:[["열변형 낮음","결정화도↑, 핵제, 어닐링 최적화"],["용융 거동 이상","DSC, 블렌드 균일성 확인, 이력 검토"],["열안정성 부족","AO 패키지 보강, 온도/체류 최소화"]]}],
+  en:[{title:"🔴 Surface Defects",items:[["Sharkskin","Raise die temp +5–10°C, reduce pressure, processing aid"],["Melt Fracture","Lower shear rate, optimize temp profile, adjust die gap"],["Die Lines","Clean die / improve temperature uniformity / stabilize pressure"]]},
+      {title:"🟡 Mechanical",items:[["Low Tensile","Check MW degradation; lower temp; shorten residence"],["Low Elongation","Tune plasticizer/blend; optimize cooling"],["Low Impact","Compatibilizer; anneal"]]},
+      {title:"🔵 Processability",items:[["Output Instability","Stabilize screw speed; dry feed; improve uniformity"],["Pressure Variation","Inspect screw/filter; drying & moisture control"],["Color Inconsistency","Improve MB dispersion; longer mixing; retune"]]},
+      {title:"🟢 Thermal",items:[["Low HDT","Increase crystallinity; nucleating agent; anneal"],["Abnormal Melting","DSC; blend uniformity; history review"],["Poor Thermal Stability","Reinforce AO; minimize temp/residence"]]}
+]};
+
+/* ========= Materials DB (editable, import/export) ========= */
+const MAT_DEFAULT={
+  "S1000P":{"density_g_cm3":1.24,"MFR_g_10min_190_2_16":null,"Tg_C":null,"Tm_C":170,"Tc_C":null,"tensile_MPa":null,"elongation_%":null,"izod_kJ_m2":null,"HDT_C":null},
+  "A1000P":{"density_g_cm3":1.18,"MFR_g_10min_190_2_16":null,"Tg_C":null,"Tm_C":160,"Tc_C":null,"tensile_MPa":null,"elongation_%":null,"izod_kJ_m2":null,"HDT_C":null},
+  "CB0400A":{},"CB0104A":{},
+  "CA1180P":{"density_g_cm3":1.26,"MFR_g_10min_190_2_16":7,"Tg_C":-15,"Tm_C":162,"tensile_MPa":52,"elongation_%":23,"izod_kJ_m2":63,"HDT_C":51},"CA1170A":{},"CA1165A":{},"CA1670P":{},"CA1680":{},"CA1270P":{}
+};
+const MAT_KEY_ORDER=[
+  ["density_g_cm3","밀도","g/cm³"],["MFR_g_10min_190_2_16","MFR","g/10min @190°C/2.16kg"],
+  ["Tg_C","Tg","°C"],["Tm_C","Tm","°C"],["Tc_C","Tc","°C"],
+  ["tensile_MPa","인장강도","MPa"],["elongation_%","신율","%"],["izod_kJ_m2","아이조드","kJ/m²"],["HDT_C","HDT","°C"]
+];
+
+/* ========= Utilities ========= */
+function $(id){return document.getElementById(id)}; function allSel(s){return Array.from(document.querySelectorAll(s))};
+function setView(v){document.querySelector('.container').style.maxWidth=(v==='mobile'?'100%':'1400px');$('btnDesktop').classList.toggle('active',v==='desktop');$('btnMobile').classList.toggle('active',v==='mobile')}
+function i18nApply(){allSel('[data-i18n]').forEach(el=>{const k=el.dataset.i18n; if(I18N[LANG][k]) el.textContent=I18N[LANG][k];});
+  $('notes').placeholder=(LANG==='ko'?'가공 중 특이사항/개선 아이디어 기록':'Record anomalies or ideas');
+  $('tsHint').textContent=(LANG==='ko'?I18N.ko.last:I18N.en.last)+': '+new Date().toLocaleString(LANG==='ko'?'ko-KR':'en-US'); renderTS(); renderHistory(); refreshParamTable(); renderMat()}
+function renderTS(){
+  const cont = $('tsContainer');
+  cont.innerHTML = '';
+  // Use dynamic troubleshooting data if available
+  if (window.tsData && Array.isArray(window.tsData)) {
+    const groups = {};
+    window.tsData.forEach(item => {
+      const proc = item.process || 'general';
+      if (!groups[proc]) groups[proc] = [];
+      groups[proc].push(item);
+    });
+    Object.keys(groups).forEach(proc => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      const procName = proc.charAt(0).toUpperCase() + proc.slice(1);
+      let html = `<h3 style="margin-bottom:8px">${procName}</h3>`;
+      groups[proc].forEach(item => {
+        html += `<h4 style="margin-top:12px">${item.symptom}</h4>`;
+        if (item.likely_causes && item.likely_causes.length) {
+          html += `<strong>Likely causes:</strong><ul>` + item.likely_causes.map(x => `<li>${x}</li>`).join('') + `</ul>`;
+        }
+        if (item.diagnostics) {
+          html += `<strong>Diagnostics:</strong><p>${item.diagnostics}</p>`;
+        }
+        if (item.quick_fixes && item.quick_fixes.length) {
+          html += `<strong>Quick fixes:</strong><ul>` + item.quick_fixes.map(x => `<li>${x}</li>`).join('') + `</ul>`;
+        }
+        if (item.root_fixes && item.root_fixes.length) {
+          html += `<strong>Root fixes:</strong><ul>` + item.root_fixes.map(x => `<li>${x}</li>`).join('') + `</ul>`;
+        }
+        if (item.control_knobs && item.control_knobs.length) {
+          html += `<strong>Control knobs:</strong><p>${item.control_knobs.join(', ')}</p>`;
+        }
+        if (item.notes) {
+          html += `<p><em>${item.notes}</em></p>`;
+        }
+      });
+      card.innerHTML = html;
+      cont.appendChild(card);
+    });
+    return;
+  }
+  // fallback to legacy categories if no dynamic data
+  for (const b of TS[LANG]) {
+    const d = document.createElement('div');
+    d.className = 'card';
+    let html = `<h3 style="margin-bottom:8px">${b.title}</h3><ul style="list-style:none;padding-left:0">`;
+    for (const [n, s] of b.items) {
+      html += `<li style="margin:6px 0"><b>${n}:</b> ${s}</li>`;
+    }
+    html += '</ul>';
+    d.innerHTML = html;
+    cont.appendChild(d);
+  }
+}
+
+/* ========= Grade & profile helpers ========= */
+function buildGradeOptions(){const sel=$('grade'); sel.innerHTML=''; GRADES.forEach(g=>{const o=document.createElement('option');o.value=g.value;o.textContent=g.label;sel.appendChild(o)});
+  const msel=$('mat_grade'); msel.innerHTML=''; GRADES.forEach(g=>{const o=document.createElement('option');o.value=g.value;o.textContent=g.value;msel.appendChild(o)});}
+function profileOf(grade){const g=GRADES.find(x=>x.value===grade); return g?g.profile:BASE.PHA_SEMI}
+function mixReco(a,b,alpha){const out={}; for(const k of Object.keys(a)){if(!b[k]){out[k]=a[k];continue} out[k]=[ Math.round(a[k][0]*(1-alpha)+b[k][0]*alpha), Math.round(a[k][1]*(1-alpha)+b[k][1]*alpha) ];} return out}
+function getReco(profile,proc){
+  // overrides
+  const ov = JSON.parse(localStorage.getItem('reco_overrides')||'{}');
+  let base;
+  if(RECO[profile] && RECO[profile][proc]) base=RECO[profile][proc];
+  else if(profile===BASE.PHA_PLA) base=mixReco(RECO[BASE.PHA_AMOR][proc],RECO[BASE.PLA][proc],.5);
+  else if(profile===BASE.PHA_PBS) base=mixReco(RECO[BASE.PHA_SEMI][proc],RECO[BASE.PBS][proc],.5);
+  else if(profile===BASE.PHA_PBAT) base=mixReco(RECO[BASE.PHA_AMOR][proc],RECO[BASE.PBAT][proc],.5);
+  else base=RECO[BASE.PHA_SEMI][proc];
+  // apply overrides
+  const key=profile+'__'+proc; if(ov[key]){base={...base,...ov[key]}}
+  return base;
+}
+
+/* ========= Dynamic form ========= */
+function rebuildForm(){
+  const proc=$('process').value, grade=$('grade').value, profile=profileOf(grade), schema=SCHEMAS[proc], rec=getReco(profile,proc);
+  const wrap=$('dynamicFields'); wrap.innerHTML='';
+  for(const fld of schema){
+    const id='f_'+fld.id, label = fld.ko + (fld.unit?` (${fld.unit})`:''); const div=document.createElement('div'); div.className='group';
+    div.innerHTML=`<label for="${id}">${label}</label><input id="${id}" type="number" inputmode="decimal" placeholder="${rec[fld.id]?rec[fld.id][0]+'-'+rec[fld.id][1]:''}">`;
+    wrap.appendChild(div);
+  }
+  refreshParamTable();
+}
+
+/* ========= Table/status ========= */
+function statusOf(v,r){if(v===''||v==null||isNaN(v)) return 'warn'; const x=parseFloat(v); if(x>=r[0]&&x<=r[1])return'ok'; if(x<r[0]-10||x>r[1]+10)return'crit'; return'warn'}
+function refreshParamTable(){
+  const proc=$('process').value, grade=$('grade').value, profile=profileOf(grade), schema=SCHEMAS[proc], rec=getReco(profile,proc);
+  const tb=$('paramTable'); tb.innerHTML='';
+  schema.forEach(f=>{const val=$('f_'+f.id)?.value||''; const range=rec[f.id]||['-','-']; const s=statusOf(val,range);
+    const cls=s==='ok'?'ok':(s==='crit'?'crit':'warn'); const sText=(LANG==='ko'?(s==='ok'?'정상':s==='crit'?'위험':'주의'):(s==='ok'?'Normal':s==='crit'?'Critical':'Warning'));
+    const tr=document.createElement('tr'); tr.innerHTML=`<td>${f.ko}${f.unit?' ('+f.unit+')':''}</td><td>${val||'-'}</td><td>${range[0]}-${range[1]}</td><td><span class="badge ${cls}">${sText}</span></td>`; tb.appendChild(tr);
+  });
+}
+
+/* ========= Save/History/Import/Export ========= */
+function collectEntry(){const proc=$('process').value, grade=$('grade').value, schema=SCHEMAS[proc]; const data={ts:new Date().toISOString(),proc,grade,params:{},notes:$('notes').value};
+  schema.forEach(f=> data.params[f.id]=$('f_'+f.id)?.value||''); return data;}
+function saveEntry(){const data=collectEntry(); const hist=JSON.parse(localStorage.getItem('pha_hist')||'[]'); hist.push(data); localStorage.setItem('pha_hist',JSON.stringify(hist)); alert(I18N[LANG].saved); renderHistory(); analyze();}
+function exportHistory(){const hist=JSON.parse(localStorage.getItem('pha_hist')||'[]'); const blob=new Blob([JSON.stringify(hist,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`pha_history_${new Date().toISOString().slice(0,10)}.json`; a.click();}
+function renderHistory(){const hist=JSON.parse(localStorage.getItem('pha_hist')||'[]').slice().reverse(); const tb=$('histBody'); tb.innerHTML='';
+  hist.slice(0,200).forEach(r=>{const k=Object.entries(r.params).filter(([,v])=>v).slice(0,4).map(([k,v])=>k+':'+v).join(', ');
+    const tr=document.createElement('tr'); tr.innerHTML=`<td>${new Date(r.ts).toLocaleString(LANG==='ko'?'ko-KR':'en-US')}</td><td>${r.grade}</td><td>${r.proc}</td><td>${k}</td><td><span class="badge ok">${LANG==='ko'?'완료':'Complete'}</span></td><td>${r.notes||'-'}</td>`; tb.appendChild(tr);});}
+function triggerImport(type){(type==='csv'?$('importCSV'):$('importJSON')).click();}
+$('importCSV').addEventListener('change', e=>{const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>importCSV(r.result); r.readAsText(f,'utf-8'); e.target.value='';});
+$('importJSON').addEventListener('change', e=>{const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{try{const arr=JSON.parse(r.result); if(Array.isArray(arr)){ const hist=JSON.parse(localStorage.getItem('pha_hist')||'[]'); hist.push(...arr); localStorage.setItem('pha_hist',JSON.stringify(hist)); renderHistory(); alert('JSON import 완료'); } else alert('JSON 형식 오류'); }catch(err){alert('JSON 파싱 실패')}}; r.readAsText(f,'utf-8'); e.target.value='';});
+function importCSV(text){const lines=text.trim().split(/\r?\n/); const head=lines[0].split(',').map(s=>s.trim()); const hist=JSON.parse(localStorage.getItem('pha_hist')||'[]');
+  for(let i=1;i<lines.length;i++){const cols=lines[i].split(','); if(cols.length<3) continue; const obj={ts:cols[head.indexOf('ts')]||new Date().toISOString(),grade:cols[head.indexOf('grade')]||'S1000P',proc:cols[head.indexOf('proc')]||'extrusion',params:{},notes:cols[head.indexOf('notes')]||''};
+    head.forEach((h,idx)=>{if(!['ts','grade','proc','notes'].includes(h)) obj.params[h]=cols[idx]}); hist.push(obj);}
+  localStorage.setItem('pha_hist',JSON.stringify(hist)); renderHistory(); alert('CSV import 완료')}
+
+/* ========= Reco editor (overrides) ========= */
+function openRecoEditor(){const proc=$('process').value, grade=$('grade').value, profile=profileOf(grade), rec=getReco(profile,proc), schema=SCHEMAS[proc];
+  const body=$('modalBody'); body.innerHTML=''; schema.forEach(f=>{const r=rec[f.id]||['','']; const div=document.createElement('div'); div.className='group';
+    div.innerHTML=`<label>${f.ko}${f.unit?' ('+f.unit+')':''}</label><div class="row"><input id="ov_${f.id}_min" type="number" placeholder="min" value="${r[0]}"><input id="ov_${f.id}_max" type="number" placeholder="max" value="${r[1]}"></div>`; body.appendChild(div);});
+  $('modal').style.display='flex';}
+function closeModal(){$('modal').style.display='none'}
+function saveRecoOverrides(){const proc=$('process').value, profile=profileOf($('grade').value), schema=SCHEMAS[proc]; const key=profile+'__'+proc;
+  const ov=JSON.parse(localStorage.getItem('reco_overrides')||'{}'); ov[key]=ov[key]||{}; schema.forEach(f=>{const min=parseFloat($('ov_'+f.id+'_min').value); const max=parseFloat($('ov_'+f.id+'_max').value); if(!isNaN(min)&&!isNaN(max)) ov[key][f.id]=[min,max];}); localStorage.setItem('reco_overrides',JSON.stringify(ov)); closeModal(); rebuildForm();}
+function resetOverridesCurrent(){const proc=$('process').value, profile=profileOf($('grade').value); const key=profile+'__'+proc; const ov=JSON.parse(localStorage.getItem('reco_overrides')||'{}'); delete ov[key]; localStorage.setItem('reco_overrides',JSON.stringify(ov)); rebuildForm(); alert('현재 공정의 수정값을 초기화했습니다.')}
+function resetOverridesAll(){localStorage.removeItem('reco_overrides'); rebuildForm(); alert('모든 수정값 초기화 완료')}
+
+/* ========= Calculators ========= */
+function calcResidence(){const rho=parseFloat($('kpi_rho').value||'0'); const vL=parseFloat($('kpi_holdVol').value||'0'); let m=parseFloat($('kpi_holdMass').value||'0'); const rate=parseFloat($('kpi_rate').value||'0');
+  if(!m && rho && vL){m=rho*(vL/1000)} if(!m||!rate){$('kpi_res_out').textContent='입력 부족'; return} const t_min=60*m/rate; $('kpi_res_out').textContent=`체류시간 ≈ ${t_min.toFixed(2)} 분`}
+function calcCooling(){const t=parseFloat($('cool_t').value||'0'); const a=parseFloat($('cool_alpha').value||'0'); const Tm=parseFloat($('cool_Tm').value||'0'); const Tmold=parseFloat($('cool_Tmold').value||'0'); const Te=parseFloat($('cool_Te').value||'0');
+  if(!t||!a||!Tm||!Tmold||!Te){$('cool_out').textContent='입력 부족'; return} const num=Math.max( (Tm-Tmold)/(Te-Tmold), 1.0001); const tc=( (t*t)/(Math.PI*Math.PI*a) ) * Math.log(num); $('cool_out').textContent=`냉각시간 ≈ ${tc.toFixed(1)} s`}
+function calcBlownFilm(){const Q=parseFloat($('bf_Q').value||'0'); const rho=parseFloat($('bf_rho').value||'0'); const Dmm=parseFloat($('bf_D').value||'0'); const BUR=parseFloat($('bf_BUR').value||'0'); const v=parseFloat($('bf_v').value||'0'); const gap=parseFloat($('bf_gap').value||'0');
+  if(!Q||!rho||!Dmm||!BUR||!v){$('bf_out').textContent='입력 부족'; return} const Qm3s=(Q/rho)/3600; const D=Dmm/1000; const vs=v/60; const t_m=Qm3s/(Math.PI*D*BUR*vs); const t_um=t_m*1e6;
+  let txt=`평균 두께 ≈ ${t_um.toFixed(1)} µm`; if(gap){const t0=gap/2/1000; const A= Math.PI*D*(gap/1000); const v_exit=Qm3s/A; const DDR=vs/v_exit; const t2_um=(t0/(BUR*DDR))*1e6; txt += ` / 갭-기반 추정 ≈ ${t2_um.toFixed(1)} µm (DDR=${DDR.toFixed(2)})`;} $('bf_out').textContent=txt}
+
+/* ========= Materials DB ========= */
+function getMatDB(){const raw=localStorage.getItem('mat_db'); if(raw) return JSON.parse(raw); return JSON.parse(JSON.stringify(MAT_DEFAULT));}
+function setMatDB(db){localStorage.setItem('mat_db',JSON.stringify(db))}
+function renderMat(){const db=getMatDB(); const g=$('mat_grade').value||'S1000P'; const rec=db[g]||{}; const tb=$('mat_tbody'); tb.innerHTML='';
+  MAT_KEY_ORDER.forEach(([k,nm,unit])=>{const tr=document.createElement('tr'); tr.innerHTML=`<td>${nm}</td><td>${rec[k]??''}</td><td class="muted">${unit}</td>`; tb.appendChild(tr);});}
+$('mat_grade').addEventListener('change',renderMat);
+function importMatJSON(){const inp=$('mat_file'); inp.onchange=(e)=>{const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{try{const obj=JSON.parse(r.result); const db=getMatDB(); Object.assign(db,obj); setMatDB(db); renderMat(); alert('물성 DB import 완료');}catch(err){alert('JSON 파싱 실패')}}; r.readAsText(f,'utf-8'); inp.value='';}; inp.click();}
+function exportMatJSON(){const blob=new Blob([JSON.stringify(getMatDB(),null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='materials_db.json'; a.click();}
+function editMat(){const db=getMatDB(); const g=$('mat_grade').value||'S1000P'; const rec=Object.assign({},db[g]||{}); const vals={}; let html='<div class="grid">';
+  MAT_KEY_ORDER.forEach(([k,nm])=>{const v=rec[k]??''; html+=`<div class="group"><label>${nm}</label><input id="mat_${k}" type="number" step="any" value="${v}"></div>`}); html+='</div>';
+  const body=$('modalBody'); body.innerHTML=html; $('modal').style.display='flex';
+  // Replace modal buttons temporarily
+  const save=window.saveRecoOverrides; const resetC=window.resetOverridesCurrent; const resetA=window.resetOverridesAll;
+  window.saveRecoOverrides=function(){const rec2={}; MAT_KEY_ORDER.forEach(([k])=>{const v=$('mat_'+k).value; if(v!=='') rec2[k]=parseFloat(v)}); db[g]=rec2; setMatDB(db); renderMat(); alert('저장 완료'); closeModal(); window.saveRecoOverrides=save; window.resetOverridesCurrent=resetC; window.resetOverridesAll=resetA;};
+  window.resetOverridesCurrent=function(){db[g]={}; setMatDB(db); renderMat(); alert('초기화 완료')};
+  window.resetOverridesAll=function(){localStorage.removeItem('mat_db'); renderMat(); alert('전체 초기화 완료')};
+}
+
+/* ========= Tabs & events ========= */
+allSel('.tab').forEach(btn=> btn.addEventListener('click', e=>{const to=e.currentTarget.dataset.tab; allSel('.tab').forEach(b=>b.classList.remove('active')); e.currentTarget.classList.add('active'); allSel('.tabpage').forEach(p=>p.classList.remove('active')); $(to).classList.add('active');}));
+document.addEventListener('input', e=>{ if(e.target && e.target.id && e.target.id.startsWith('f_')) refreshParamTable(); });
+$('language').addEventListener('change',e=>{LANG=e.target.value; i18nApply();});
+
+/* ========= Init ========= */
+(function init(){
+  buildGradeOptions();
+  $('grade').value='S1000P'; $('process').value='extrusion'; rebuildForm(); i18nApply(); renderHistory(); analyze(); renderMat();
+})();
+function analyze(){const hist=JSON.parse(localStorage.getItem('pha_hist')||'[]'); const n=hist.length; const t=(n? (LANG==='ko'?'최근 저장: ':'Last: ')+new Date(hist[n-1].ts).toLocaleString(LANG==='ko'?'ko-KR':'en-US')+' · '+hist[n-1].grade+' · '+hist[n-1].proc : (LANG==='ko'?'데이터가 없습니다.':'No data yet.')); $('anaText').textContent=t;}
+function resetForm(){if(!confirm(I18N[LANG].resetQ)) return; $('notes').value=''; rebuildForm();}
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(console.error);
+  });
+}
+</script>
+
+<script>
+(function(){
+  function ensureCA1180PMat(){
+    try{
+      const raw=localStorage.getItem('mat_db'); const db = raw? JSON.parse(raw): {};
+      if(!db['CA1180P'] || Object.keys(db['CA1180P']).length===0){
+        db['CA1180P']={"density_g_cm3":1.26,"MFR_g_10min_190_2_16":7,"Tg_C":-15,"Tm_C":162,"tensile_MPa":52,"elongation_%":23,"izod_kJ_m2":63,"HDT_C":51};
+        localStorage.setItem('mat_db', JSON.stringify(db));
+      }
+    }catch(e){console.warn(e);}
+  }
+  async function applyCA1180P(){
+    ensureCA1180PMat();
+    const url = (window.GRADE_JSON && GRADE_JSON['CA1180P']) || 'data/grades/CA1180P_talc10_wax0p3.json';
+    try{
+      const res = await fetch(url + '?v=' + Date.now());
+      if(!res.ok) return;
+      const prof = await res.json();
+      const ov = JSON.parse(localStorage.getItem('reco_overrides')||'{}');
+      const key = 'PHA_PLA__injection';
+      ov[key]=ov[key]||{};
+      const t=prof.processing?.temps_c||{};
+      function setR(name,obj){ if(!obj) return; ov[key][name]=[Number(obj.min), Number(obj.max)]; }
+      setR('barrel1', t.zone1); setR('barrel2', t.zone2); setR('barrel3', t.zone3||t.zone3_meter); setR('nozzle', t.nozzle);
+      const mold=prof.processing?.mold_temp_c?.lowHDT; if(mold){ ov[key]['mold']=[mold.min, mold.max]; }
+      const inj=prof.processing?.injection?.speed_mm_s; if(inj){ const a=Math.min(inj.stage1||inj.stage2, inj.stage2||inj.stage1); const b=Math.max(inj.stage1||inj.stage2, inj.stage2||inj.stage1); ov[key]['injSpeed']=[a,b]; }
+      const hold=prof.processing?.holding_profile||[];
+      if(hold[0]?.pressure_bar!=null){ const p=hold[0].pressure_bar*0.1; ov[key]['hold1P']=[p*0.9,p*1.1]; ov[key]['hold1T']=[hold[0].time_s,hold[0].time_s]; }
+      if(hold[1]?.pressure_bar!=null){ const p=hold[1].pressure_bar*0.1; ov[key]['hold2P']=[p*0.9,p*1.1]; ov[key]['hold2T']=[hold[1].time_s,hold[1].time_s]; }
+      const screw=prof.processing?.screw||{};
+      if(screw.back_pressure_bar!=null){ ov[key]['backPressBar']=[Math.max(1,screw.back_pressure_bar-2), screw.back_pressure_bar+2]; }
+      if(screw.rpm!=null){ ov[key]['screwRPM']=[Math.max(20,screw.rpm-20), screw.rpm+20]; }
+      localStorage.setItem('reco_overrides', JSON.stringify(ov));
+      console.log('CA1180P profile applied');
+      if(window.rebuildForm) rebuildForm();
+    }catch(e){ console.warn('CA1180P load failed', e); }
+  }
+  window.addEventListener('load', ()=>{
+    const g=$('grade'); if(g){ g.value='CA1180P'; }
+    const p=$('process'); if(p){ p.value='injection'; }
+    applyCA1180P();
+  });
+})();
+</script>
+
+<!-- Additional scripts for dynamic material loading, troubleshooting, and photo gallery -->
+<!-- See custom.js for implementation -->
+
+  <!-- Load external script containing material/troubleshooting/photo logic -->
+  <script src="custom.js"></script>
+
+</body>
+</html>
