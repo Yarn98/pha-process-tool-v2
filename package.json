@@ -1,0 +1,19 @@
+{
+  "name": "pha-process-optimizer",
+  "version": "1.0.0",
+  "description": "PHA Process Optimizer & Convertor - Static HTML/JavaScript Application",
+  "type": "module",
+  "scripts": {
+    "build": "echo 'Static site - no build required' && exit 0",
+    "start": "echo 'This is a static site. Open index.html in a browser.' && exit 0"
+  },
+  "keywords": [
+    "pha",
+    "process-optimizer",
+    "injection-molding",
+    "static-site"
+  ],
+  "author": "",
+  "license": "ISC",
+  "private": true
+}
