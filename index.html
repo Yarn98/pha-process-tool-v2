@@ -100,6 +100,47 @@
   .calc-result h4{color:#1e3c72;margin-bottom:10px}
   .calc-result-value{font-size:1.8em;font-weight:bold;color:#2a5298;margin:10px 0}
   .formula{background:#f0f0f0;padding:15px;border-radius:5px;margin:15px 0;font-family:'Courier New',monospace;font-size:1.1em;border-left:4px solid #1e3c72}
+  /* Process Log Styles */
+  .log-container{background:#f8f9fa;padding:20px;border-radius:10px;margin:20px 0}
+  .log-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+  .log-table{width:100%;border-collapse:collapse;background:white;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+  .log-table thead{background:linear-gradient(135deg,#1e3c72,#2a5298);color:white}
+  .log-table th{padding:12px 8px;text-align:center;font-weight:bold;font-size:.9em;border-right:1px solid rgba(255,255,255,.2)}
+  .log-table th:last-child{border-right:none}
+  .log-table td{padding:8px 4px;text-align:center;border-bottom:1px solid #dee2e6;border-right:1px solid #dee2e6}
+  .log-table td:last-child{border-right:none}
+  .log-table tbody tr:hover{background:#f8f9fa}
+  .log-table tbody tr:nth-child(even){background:#f9fafb}
+  .number-input-group{display:flex;align-items:center;justify-content:center;gap:4px;min-width:100px}
+  .number-input-group input{width:70px;padding:8px 4px;border:2px solid #ced4da;border-radius:4px;text-align:center;font-size:14px;-moz-appearance:textfield}
+  .number-input-group input::-webkit-outer-spin-button,.number-input-group input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .number-input-group input:focus{outline:none;border-color:#1e3c72;box-shadow:0 0 0 2px rgba(30,60,114,.1)}
+  .btn-increment{width:28px;height:28px;border:none;background:linear-gradient(135deg,#2a5298,#1e3c72);color:white;border-radius:4px;cursor:pointer;font-weight:bold;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+  .btn-increment:hover{transform:scale(1.1);box-shadow:0 2px 8px rgba(30,60,114,.3)}
+  .btn-increment:active{transform:scale(.95)}
+  .log-note-input{width:100%;padding:8px;border:2px solid #ced4da;border-radius:4px;font-size:13px;resize:vertical;min-height:40px}
+  .log-note-input:focus{outline:none;border-color:#1e3c72;box-shadow:0 0 0 2px rgba(30,60,114,.1)}
+  .btn-log-action{padding:10px 20px;border:none;border-radius:5px;font-weight:bold;cursor:pointer;transition:all .2s;font-size:14px}
+  .btn-add-log{background:linear-gradient(135deg,#11998e,#38ef7d);color:white}
+  .btn-add-log:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(17,153,142,.3)}
+  .btn-delete-log{background:#ef4444;color:white;padding:6px 12px;font-size:12px;border-radius:4px}
+  .btn-delete-log:hover{background:#dc2626}
+  .btn-export-log{background:#f59e0b;color:white}
+  .btn-export-log:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(245,158,11,.3)}
+  .btn-clear-log{background:#6b7280;color:white}
+  .btn-clear-log:hover{background:#4b5563}
+  .log-empty{text-align:center;padding:40px;color:#6b7280;font-style:italic}
+  .log-timestamp{color:#6b7280;font-size:12px;font-style:italic}
+  @media (max-width:768px){
+    .log-table{font-size:12px}
+    .log-table th,.log-table td{padding:6px 3px}
+    .number-input-group{min-width:80px;gap:2px}
+    .number-input-group input{width:50px;font-size:12px;padding:6px 2px}
+    .btn-increment{width:24px;height:24px;font-size:14px}
+    .log-note-input{font-size:12px;min-height:35px}
+    .btn-log-action{padding:8px 16px;font-size:13px}
+    .log-header{flex-direction:column;align-items:stretch}
+  }
 </style>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#2563eb">
@@ -301,6 +342,7 @@
         <button class="flash-tab" onclick="showFlashTab(3)">📊 프로세스 플로우</button>
         <button class="flash-tab" onclick="showFlashTab(4)">✅ 체크리스트</button>
         <button class="flash-tab" onclick="showFlashTab(5)">🔧 문제 해결</button>
+        <button class="flash-tab" onclick="showFlashTab(6)">📝 공정 로그</button>
       </div>
 
       <!-- Flash Tab 0: Overview -->
@@ -889,6 +931,73 @@
           </ul>
         </div>
       </div>
+
+      <!-- Flash Tab 6: Process Log -->
+      <div class="flash-content" id="flash-tab-6">
+        <h3 style="color:#1e3c72;margin-bottom:20px">공정 조건 현장 기록 로그</h3>
+
+        <div class="success-box">
+          <h3>📋 현장 평가 및 조건 기록</h3>
+          <p><strong>공정 조건과 현상을 실시간으로 기록하여 문제 해결과 최적화에 활용하세요.</strong></p>
+          <p>각 파라미터는 직접 입력하거나 +/- 버튼으로 조정할 수 있으며, 모든 데이터는 자동으로 저장됩니다.</p>
+        </div>
+
+        <div class="log-container">
+          <div class="log-header">
+            <h4 style="color:#1e3c72;margin:0">📝 공정 조건 로그</h4>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <button class="btn-log-action btn-add-log" onclick="addProcessLogEntry()">➕ 로그 추가</button>
+              <button class="btn-log-action btn-export-log" onclick="exportProcessLog()">📥 CSV 내보내기</button>
+              <button class="btn-log-action btn-clear-log" onclick="clearProcessLog()">🗑️ 전체 삭제</button>
+            </div>
+          </div>
+
+          <div style="overflow-x:auto">
+            <table class="log-table" id="processLogTable">
+              <thead>
+                <tr>
+                  <th style="min-width:140px">일시</th>
+                  <th style="min-width:120px">실린더 온도 (°C)</th>
+                  <th style="min-width:120px">금형 온도 (°C)</th>
+                  <th style="min-width:130px">사출속도 (mm/s)</th>
+                  <th style="min-width:120px">사출압력 (bar)</th>
+                  <th style="min-width:120px">보압 (bar)</th>
+                  <th style="min-width:130px">보압시간 (s)</th>
+                  <th style="min-width:130px">냉각시간 (s)</th>
+                  <th style="min-width:200px">비고/현상</th>
+                  <th style="min-width:80px">동작</th>
+                </tr>
+              </thead>
+              <tbody id="processLogBody">
+                <tr>
+                  <td colspan="10" class="log-empty">로그가 없습니다. "➕ 로그 추가" 버튼을 눌러 첫 기록을 시작하세요.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="info-box" style="margin-top:30px">
+          <h3>💡 사용 안내</h3>
+          <ul style="margin-left:20px;margin-top:10px">
+            <li><strong>로그 추가:</strong> "➕ 로그 추가" 버튼을 클릭하면 새로운 기록 행이 추가됩니다</li>
+            <li><strong>값 입력:</strong> 숫자를 직접 입력하거나 +/- 버튼으로 조정할 수 있습니다</li>
+            <li><strong>모바일 사용:</strong> 모바일에서도 편리하게 사용할 수 있도록 최적화되어 있습니다</li>
+            <li><strong>자동 저장:</strong> 입력한 값은 자동으로 브라우저에 저장됩니다</li>
+            <li><strong>CSV 내보내기:</strong> 기록한 데이터를 CSV 파일로 다운로드할 수 있습니다</li>
+            <li><strong>비고란 활용:</strong> 현상, 불량 유형, 특이사항 등을 자유롭게 기록하세요</li>
+          </ul>
+        </div>
+
+        <div class="warning-box" style="margin-top:20px">
+          <h3>⚠️ 주의사항</h3>
+          <ul style="margin-left:20px;margin-top:10px">
+            <li>데이터는 브라우저에 저장되므로 <strong>브라우저 캐시를 삭제하면 데이터가 손실</strong>됩니다</li>
+            <li>중요한 데이터는 정기적으로 <strong>CSV 내보내기</strong>를 통해 백업하세요</li>
+            <li>다른 기기나 브라우저에서는 데이터가 공유되지 않습니다</li>
+          </ul>
+        </div>
+      </div>
     </section>
   </div>
 </div>
@@ -1397,8 +1506,198 @@ if ('serviceWorker' in navigator) {
     const g=$('grade'); if(g){ g.value='CA1180P'; }
     const p=$('process'); if(p){ p.value='injection'; }
     applyCA1180P();
+    loadProcessLog();
   });
 })();
+
+// Process Log Functions
+let processLogData = [];
+
+function loadProcessLog() {
+  const saved = localStorage.getItem('processLog');
+  if (saved) {
+    try {
+      processLogData = JSON.parse(saved);
+      renderProcessLog();
+    } catch (e) {
+      console.warn('Failed to load process log:', e);
+      processLogData = [];
+    }
+  }
+}
+
+function saveProcessLog() {
+  localStorage.setItem('processLog', JSON.stringify(processLogData));
+}
+
+function renderProcessLog() {
+  const tbody = document.getElementById('processLogBody');
+  if (!tbody) return;
+
+  if (processLogData.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="10" class="log-empty">로그가 없습니다. "➕ 로그 추가" 버튼을 눌러 첫 기록을 시작하세요.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = processLogData.map((entry, index) => `
+    <tr>
+      <td>
+        <div class="log-timestamp">${entry.timestamp}</div>
+      </td>
+      <td>${createNumberInput(index, 'cylinderTemp', entry.cylinderTemp, 1)}</td>
+      <td>${createNumberInput(index, 'moldTemp', entry.moldTemp, 1)}</td>
+      <td>${createNumberInput(index, 'injectionSpeed', entry.injectionSpeed, 1)}</td>
+      <td>${createNumberInput(index, 'injectionPressure', entry.injectionPressure, 5)}</td>
+      <td>${createNumberInput(index, 'holdingPressure', entry.holdingPressure, 5)}</td>
+      <td>${createNumberInput(index, 'holdingTime', entry.holdingTime, 0.1)}</td>
+      <td>${createNumberInput(index, 'coolingTime', entry.coolingTime, 0.5)}</td>
+      <td>
+        <textarea class="log-note-input"
+                  onchange="updateProcessLogNote(${index}, this.value)"
+                  placeholder="현상, 불량, 특이사항 기록...">${entry.note || ''}</textarea>
+      </td>
+      <td>
+        <button class="btn-delete-log" onclick="deleteProcessLogEntry(${index})" title="삭제">🗑️</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function createNumberInput(entryIndex, field, value, step) {
+  const val = value || 0;
+  return `
+    <div class="number-input-group">
+      <button class="btn-increment" onclick="adjustProcessLogValue(${entryIndex}, '${field}', ${-step})">−</button>
+      <input type="number"
+             step="${step}"
+             value="${val}"
+             onchange="updateProcessLogValue(${entryIndex}, '${field}', this.value)"
+             onclick="this.select()">
+      <button class="btn-increment" onclick="adjustProcessLogValue(${entryIndex}, '${field}', ${step})">+</button>
+    </div>
+  `;
+}
+
+function addProcessLogEntry() {
+  const now = new Date();
+  const timestamp = now.toLocaleString('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  });
+
+  const newEntry = {
+    timestamp: timestamp,
+    cylinderTemp: 0,
+    moldTemp: 0,
+    injectionSpeed: 0,
+    injectionPressure: 0,
+    holdingPressure: 0,
+    holdingTime: 0,
+    coolingTime: 0,
+    note: ''
+  };
+
+  processLogData.unshift(newEntry);
+  saveProcessLog();
+  renderProcessLog();
+}
+
+function updateProcessLogValue(index, field, value) {
+  if (processLogData[index]) {
+    processLogData[index][field] = parseFloat(value) || 0;
+    saveProcessLog();
+  }
+}
+
+function adjustProcessLogValue(index, field, delta) {
+  if (processLogData[index]) {
+    const currentValue = processLogData[index][field] || 0;
+    processLogData[index][field] = Math.max(0, currentValue + delta);
+    saveProcessLog();
+    renderProcessLog();
+  }
+}
+
+function updateProcessLogNote(index, value) {
+  if (processLogData[index]) {
+    processLogData[index].note = value;
+    saveProcessLog();
+  }
+}
+
+function deleteProcessLogEntry(index) {
+  if (confirm('이 로그 항목을 삭제하시겠습니까?')) {
+    processLogData.splice(index, 1);
+    saveProcessLog();
+    renderProcessLog();
+  }
+}
+
+function clearProcessLog() {
+  if (confirm('모든 로그 데이터를 삭제하시겠습니까?\n\n이 작업은 되돌릴 수 없습니다.')) {
+    if (confirm('정말로 삭제하시겠습니까? CSV로 백업하셨나요?')) {
+      processLogData = [];
+      saveProcessLog();
+      renderProcessLog();
+    }
+  }
+}
+
+function exportProcessLog() {
+  if (processLogData.length === 0) {
+    alert('내보낼 로그 데이터가 없습니다.');
+    return;
+  }
+
+  // CSV 헤더
+  const headers = [
+    '일시',
+    '실린더 온도 (°C)',
+    '금형 온도 (°C)',
+    '사출속도 (mm/s)',
+    '사출압력 (bar)',
+    '보압 (bar)',
+    '보압시간 (s)',
+    '냉각시간 (s)',
+    '비고/현상'
+  ];
+
+  // CSV 데이터 생성
+  let csv = '\uFEFF'; // UTF-8 BOM for Excel
+  csv += headers.join(',') + '\n';
+
+  processLogData.forEach(entry => {
+    const row = [
+      entry.timestamp,
+      entry.cylinderTemp,
+      entry.moldTemp,
+      entry.injectionSpeed,
+      entry.injectionPressure,
+      entry.holdingPressure,
+      entry.holdingTime,
+      entry.coolingTime,
+      '"' + (entry.note || '').replace(/"/g, '""') + '"'
+    ];
+    csv += row.join(',') + '\n';
+  });
+
+  // 파일 다운로드
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  const timestamp = new Date().toISOString().slice(0, 10);
+  link.setAttribute('href', url);
+  link.setAttribute('download', `PHA_공정로그_${timestamp}.csv`);
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
 </script>
 
 <!-- Additional scripts for dynamic material loading, troubleshooting, and photo gallery -->
