@@ -2,11 +2,11 @@
 # This is a static HTML/JavaScript application - no build process required
 
 [build]
-  # Use npm run build (which is a no-op script in package.json)
+  # Build script copies all static files to dist directory
   command = "npm run build"
 
-  # Publish from the root directory (where index.html is located)
-  publish = "."
+  # Publish from the dist directory (created by build.js)
+  publish = "dist"
 
 # Redirect rules (optional)
 [[redirects]]

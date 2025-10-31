@@ -2,9 +2,8 @@
   "name": "pha-process-optimizer",
   "version": "1.0.0",
   "description": "PHA Process Optimizer & Convertor - Static HTML/JavaScript Application",
-  "type": "module",
   "scripts": {
-    "build": "echo 'Static site - no build required' && exit 0",
+    "build": "node build.js",
     "start": "echo 'This is a static site. Open index.html in a browser.' && exit 0"
   },
   "keywords": [
