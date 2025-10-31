@@ -14,7 +14,8 @@ const FILES_TO_COPY = [
   'custom.js',
   'sw.js',
   'manifest.webmanifest',
-  'README.txt'
+  'README.txt',
+  'README.md'
 ];
 
 // Directories to copy to dist

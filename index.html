@@ -387,6 +387,7 @@
         <button class="flash-tab" onclick="showFlashTab(4)">✅ 체크리스트</button>
         <button class="flash-tab" onclick="showFlashTab(5)">🔧 문제 해결</button>
         <button class="flash-tab" onclick="showFlashTab(6)">📝 공정 로그</button>
+        <button class="flash-tab" onclick="showFlashTab(7)">📖 사용 설명서</button>
       </div>
 
       <!-- Flash Tab 0: Overview -->
@@ -1133,6 +1134,398 @@
             <li>중요한 데이터는 정기적으로 <strong>CSV 내보내기</strong>를 통해 백업하세요</li>
             <li>다른 기기나 브라우저에서는 데이터가 공유되지 않습니다</li>
           </ul>
+        </div>
+      </div>
+
+      <!-- Flash Tab 7: Documentation -->
+      <div class="flash-content" id="flash-tab-7">
+        <h3 style="color:#1e3c72;margin-bottom:20px">📖 PHA Process Optimizer & Convertor - 사용 설명서</h3>
+
+        <div class="success-box">
+          <h3>🎯 애플리케이션 개요</h3>
+          <p><strong>PHA Process Optimizer & Convertor</strong>는 PHA(Polyhydroxyalkanoate) 바이오플라스틱 사출 성형 공정의 현장 엔지니어와 품질 관리자를 위한 종합 도구입니다.</p>
+          <p style="margin-top:10px"><strong>버전:</strong> 1.0.0 | <strong>유형:</strong> 정적 웹 애플리케이션 (서버 불필요) | <strong>저장:</strong> 브라우저 로컬 저장소</p>
+        </div>
+
+        <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">📋 주요 기능</h4>
+
+        <table>
+          <thead>
+            <tr>
+              <th style="min-width:150px">기능</th>
+              <th>설명</th>
+              <th style="min-width:120px">위치</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>단위 변환기</strong></td>
+              <td>압력(bar/MPa/psi), 온도(°C/°F/K), 길이, 속도 단위 실시간 변환</td>
+              <td>메인 탭 1</td>
+            </tr>
+            <tr>
+              <td><strong>클램프 톤수 계산</strong></td>
+              <td>36 캐비티 금형의 최적 클램프 톤수 자동 산출 (안전계수 1.2 포함)</td>
+              <td>메인 탭 2</td>
+            </tr>
+            <tr>
+              <td><strong>플래시 저감 가이드</strong></td>
+              <td>체계적인 사출속도, 압력, 온도 최적화 방법론 (6개 서브탭)</td>
+              <td>메인 탭 3</td>
+            </tr>
+            <tr>
+              <td><strong>공정 조건 로그</strong></td>
+              <td>실시간 공정 기록, 차트 시각화, 검색/필터, 템플릿, 사진 첨부</td>
+              <td>플래시 탭 6</td>
+            </tr>
+            <tr>
+              <td><strong>플래시 저감 추천</strong></td>
+              <td>현재 공정 조건 분석 및 최적화 방안 자동 제시</td>
+              <td>플래시 탭 6</td>
+            </tr>
+            <tr>
+              <td><strong>무게 계산기</strong></td>
+              <td>제품/러너 무게 기반 샷 계량 및 용적 계산</td>
+              <td>플래시 탭 6</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">🔍 플래시 저감 추천 엔진 상세</h4>
+
+        <div class="info-box">
+          <h3>💡 분석 기준 및 추천 로직</h3>
+          <p>최신 로그 데이터를 실시간으로 분석하여 5가지 주요 파라미터에 대한 플래시 저감 방안을 자동 제시합니다.</p>
+        </div>
+
+        <table style="margin-top:15px">
+          <thead>
+            <tr>
+              <th>파라미터</th>
+              <th>기준값</th>
+              <th>추천 조치</th>
+              <th>기술적 근거</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>사출압력</strong></td>
+              <td>&gt; 900 bar</td>
+              <td>-50 bar 감소</td>
+              <td>과도한 압력 → 파팅라인 벌어짐 → 플래시 발생</td>
+            </tr>
+            <tr>
+              <td><strong>실린더 온도</strong></td>
+              <td>&gt; 185°C</td>
+              <td>-5°C 감소</td>
+              <td>고온 → 점도 감소 → 미세 틈새 침투 증가</td>
+            </tr>
+            <tr>
+              <td><strong>사출속도</strong></td>
+              <td>&gt; 180 mm/s</td>
+              <td>-20 mm/s 감소</td>
+              <td>고속 → 압력 스파이크 → 플래시 위험 증가</td>
+            </tr>
+            <tr>
+              <td><strong>보압</strong></td>
+              <td>&gt; 700 bar</td>
+              <td>-50 bar 감소</td>
+              <td>과도한 보압 → 지속적 압력 → 플래시 악화</td>
+            </tr>
+            <tr>
+              <td><strong>냉각시간</strong></td>
+              <td>&lt; 12초</td>
+              <td>+2초 증가</td>
+              <td>불충분한 냉각 → 취출 시 변형 → 치수 불안정</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="warning-box" style="margin-top:15px">
+          <h3>🔴 추천 심각도 구분</h3>
+          <ul style="margin-left:20px;margin-top:10px">
+            <li><strong>🔴 warning (빨간색):</strong> 즉시 조치 필요 - 사출압력 과다</li>
+            <li><strong>🟡 caution (노란색):</strong> 주의 및 개선 권장 - 온도/속도/보압 과다</li>
+            <li><strong>🟢 suggestion (녹색):</strong> 품질 향상 제안 - 냉각시간 증가</li>
+          </ul>
+        </div>
+
+        <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">📊 차트 시각화 기능</h4>
+
+        <div class="info-box">
+          <h3>📈 4가지 차트 유형 (Chart.js 4.4.0 기반)</h3>
+          <table style="margin-top:10px">
+            <thead>
+              <tr>
+                <th>차트 유형</th>
+                <th>표시 항목</th>
+                <th>활용</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>온도 차트</strong></td>
+                <td>실린더 온도 + 금형 온도</td>
+                <td>온도 트렌드 분석, 열 관리 최적화</td>
+              </tr>
+              <tr>
+                <td><strong>압력 차트</strong></td>
+                <td>사출압력 + 보압</td>
+                <td>압력 프로파일 분석, 플래시 발생 상관관계</td>
+              </tr>
+              <tr>
+                <td><strong>무게 차트</strong></td>
+                <td>제품 무게 + 러너 무게 + 총 무게</td>
+                <td>샷 간 변동성 분석, 공정 안정성 평가</td>
+              </tr>
+              <tr>
+                <td><strong>시간 차트</strong></td>
+                <td>보압시간 + 냉각시간</td>
+                <td>사이클 타임 최적화, 생산성 향상</td>
+              </tr>
+            </tbody>
+          </table>
+          <p style="margin-top:10px"><strong>특징:</strong> 최근 20개 데이터 표시 | 실시간 업데이트 | 인터랙티브 줌/팬 | 반응형 디자인</p>
+        </div>
+
+        <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">⚖️ 무게 측정 계산기 사용법</h4>
+
+        <div class="success-box">
+          <h3>계산 프로세스</h3>
+          <ol style="margin-left:20px;margin-top:10px">
+            <li><strong>제품 1개 무게 측정:</strong> 저울로 단일 캐비티 제품 무게 측정 (g 단위)</li>
+            <li><strong>러너 무게 측정:</strong> 러너 시스템 전체 무게 측정 (g 단위)</li>
+            <li><strong>캐비티 수 확인:</strong> 기본값 36 (필요 시 수정 가능)</li>
+            <li><strong>재료 밀도 입력:</strong> "Grade에서 불러오기" 버튼으로 자동 조회 또는 수동 입력</li>
+            <li><strong>자동 계산:</strong> 총 샷 계량(g) 및 샷 용적(cm³) 자동 표시</li>
+            <li><strong>로그 적용:</strong> "⬇️ 최신 로그에 무게 적용" 버튼 클릭</li>
+          </ol>
+        </div>
+
+        <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">📋 PHA 재료 밀도 데이터베이스</h4>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Grade</th>
+              <th>밀도 (g/cm³)</th>
+              <th>특징</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>CA1180P</strong></td>
+              <td>1.25</td>
+              <td>범용 등급</td>
+            </tr>
+            <tr>
+              <td><strong>S1000P</strong></td>
+              <td>1.24</td>
+              <td>표준 등급</td>
+            </tr>
+            <tr>
+              <td><strong>A1000P</strong></td>
+              <td>1.23</td>
+              <td>개선 등급</td>
+            </tr>
+            <tr>
+              <td><strong>P3HB</strong></td>
+              <td>1.25</td>
+              <td>순수 PHB</td>
+            </tr>
+            <tr>
+              <td><strong>P3HB4HB</strong></td>
+              <td>1.22</td>
+              <td>코폴리머</td>
+            </tr>
+            <tr>
+              <td><strong>PHB</strong></td>
+              <td>1.26</td>
+              <td>고밀도 등급</td>
+            </tr>
+            <tr>
+              <td><strong>기본값</strong></td>
+              <td>1.25</td>
+              <td>Grade 미선택 시</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">🔍 검색 및 필터 기능</h4>
+
+        <div class="info-box">
+          <h3>3가지 필터링 방식</h3>
+          <table style="margin-top:10px">
+            <thead>
+              <tr>
+                <th>방식</th>
+                <th>설명</th>
+                <th>사용 예시</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>키워드 검색</strong></td>
+                <td>비고란 텍스트 실시간 검색</td>
+                <td>"플래시", "불량", "정상"</td>
+              </tr>
+              <tr>
+                <td><strong>날짜 범위</strong></td>
+                <td>시작일 ~ 종료일 범위 선택</td>
+                <td>2025-10-01 ~ 2025-10-31</td>
+              </tr>
+              <tr>
+                <td><strong>복합 필터</strong></td>
+                <td>키워드 + 날짜 동시 적용</td>
+                <td>"플래시" + 10월 데이터</td>
+              </tr>
+            </tbody>
+          </table>
+          <p style="margin-top:10px"><strong>특징:</strong> 클라이언트 사이드 처리 (빠른 응답) | 실시간 필터링 | "필터 초기화" 버튼으로 전체 복원</p>
+        </div>
+
+        <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">📸 사진 첨부 기능</h4>
+
+        <div class="info-box">
+          <h3>IndexedDB 기반 사진 저장</h3>
+          <p><strong>지원 형식:</strong> JPEG, PNG, GIF, WebP | <strong>최대 크기:</strong> 5MB per file | <strong>다중 업로드:</strong> 한 번에 여러 장 첨부 가능</p>
+          <p style="margin-top:10px"><strong>사용 방법:</strong></p>
+          <ol style="margin-left:20px;margin-top:5px">
+            <li>로그 테이블의 "사진" 열에서 "📷 첨부" 버튼 클릭</li>
+            <li>파일 선택 다이얼로그에서 이미지 선택 (Ctrl+클릭으로 다중 선택)</li>
+            <li>업로드 완료 후 "📷 사진 (N개)" 형태로 표시</li>
+            <li>클릭하여 첨부된 사진 확인</li>
+          </ol>
+        </div>
+
+        <div class="warning-box" style="margin-top:15px">
+          <h3>⚠️ 사진 저장 주의사항</h3>
+          <ul style="margin-left:20px;margin-top:10px">
+            <li>IndexedDB는 브라우저별 저장 용량 제한이 있습니다 (일반적으로 50MB+)</li>
+            <li>브라우저 캐시 삭제 시 사진도 함께 삭제됩니다</li>
+            <li>중요 사진은 별도 백업을 권장합니다</li>
+            <li>5MB 초과 파일은 리사이즈 툴 사용 (TinyPNG, ImageOptim 등)</li>
+          </ul>
+        </div>
+
+        <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">📋 템플릿 시스템</h4>
+
+        <div class="success-box">
+          <h3>자주 사용하는 공정 조건 저장 및 재사용</h3>
+          <p><strong>저장 항목:</strong> 실린더 온도, 금형 온도, 사출속도, 사출압력, 보압, 보압시간, 냉각시간, 저장 일시</p>
+          <p style="margin-top:10px"><strong>사용 사례:</strong></p>
+          <ul style="margin-left:20px;margin-top:5px">
+            <li>표준 공정 조건 템플릿 (예: "표준_CA1180P")</li>
+            <li>계절별 조건 템플릿 (예: "여름용_저온", "겨울용_고온")</li>
+            <li>제품별 조건 템플릿 (예: "제품A_최적조건")</li>
+          </ul>
+          <p style="margin-top:10px"><strong>기능:</strong></p>
+          <ul style="margin-left:20px;margin-top:5px">
+            <li><strong>💾 템플릿 저장:</strong> 현재 최신 로그의 조건을 템플릿으로 저장</li>
+            <li><strong>📥 템플릿 불러오기:</strong> 저장된 템플릿 목록에서 선택하여 로그에 적용</li>
+            <li><strong>🗑️ 템플릿 관리:</strong> 저장된 템플릿 목록 확인 및 삭제</li>
+          </ul>
+        </div>
+
+        <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">❓ 자주 묻는 질문 (FAQ)</h4>
+
+        <div class="warning-box">
+          <h3>Q1: 로그 데이터가 사라졌어요</h3>
+          <p><strong>원인:</strong> 브라우저 캐시/쿠키 삭제, 시크릿 모드 사용, 브라우저 설정에서 "사이트 데이터 삭제" 실행</p>
+          <p><strong>해결:</strong></p>
+          <ul style="margin-left:20px;margin-top:5px">
+            <li>정기적으로 "CSV 다운로드" 버튼으로 백업</li>
+            <li>중요 데이터는 외부 저장소에 보관</li>
+            <li>시크릿 모드 사용 자제</li>
+          </ul>
+          <p><strong>예방:</strong> 주 1회 CSV 백업 실행, 브라우저 설정에서 localStorage 보존 설정</p>
+        </div>
+
+        <div class="warning-box" style="margin-top:15px">
+          <h3>Q2: 차트가 표시되지 않아요</h3>
+          <p><strong>원인:</strong> Chart.js CDN 로딩 실패, 인터넷 연결 문제, 브라우저 Canvas API 미지원</p>
+          <p><strong>해결:</strong></p>
+          <ul style="margin-left:20px;margin-top:5px">
+            <li>네트워크 연결 확인</li>
+            <li>F12 → Network 탭에서 Chart.js CDN 로딩 확인</li>
+            <li>브라우저 캐시 삭제 후 새로고침 (Ctrl + Shift + R)</li>
+          </ul>
+        </div>
+
+        <div class="warning-box" style="margin-top:15px">
+          <h3>Q3: CSV 다운로드 시 한글이 깨져요</h3>
+          <p><strong>원인:</strong> 엑셀의 기본 인코딩(ANSI)과 CSV 인코딩(UTF-8) 불일치</p>
+          <p><strong>해결:</strong> 이 앱은 <strong>UTF-8 BOM</strong>을 자동 추가하여 엑셀에서 한글 정상 표시됩니다</p>
+          <p><strong>그래도 깨질 경우:</strong></p>
+          <ol style="margin-left:20px;margin-top:5px">
+            <li>메모장에서 CSV 열기</li>
+            <li>"다른 이름으로 저장" → 인코딩: UTF-8</li>
+            <li>엑셀에서 "데이터 → 텍스트 파일 가져오기"</li>
+          </ol>
+        </div>
+
+        <div class="warning-box" style="margin-top:15px">
+          <h3>Q4: 오프라인에서 사용 가능한가요?</h3>
+          <p><strong>부분 가능:</strong> 일단 페이지를 로드하면 대부분 기능 사용 가능</p>
+          <p><strong>제약:</strong> Chart.js CDN은 오프라인에서 미작동 (차트 기능만 제한)</p>
+          <p><strong>완전 오프라인 사용:</strong> Chart.js를 로컬에 복사하여 `&lt;script src="./chart.min.js"&gt;`로 변경 필요</p>
+        </div>
+
+        <div class="warning-box" style="margin-top:15px">
+          <h3>Q5: 여러 사람이 동시에 사용할 수 있나요?</h3>
+          <p><strong>불가능:</strong> localStorage는 브라우저별로 독립적</p>
+          <p><strong>대안:</strong></p>
+          <ul style="margin-left:20px;margin-top:5px">
+            <li>각 사용자가 CSV로 내보내기 → 공유 폴더에 저장</li>
+            <li>Google Sheets 등 클라우드 도구와 병행 사용</li>
+            <li>서버 기반 백엔드 추가 (향후 개선 사항)</li>
+          </ul>
+        </div>
+
+        <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">🌐 브라우저 호환성</h4>
+
+        <table>
+          <thead>
+            <tr>
+              <th>플랫폼</th>
+              <th>지원 브라우저</th>
+              <th>최소 버전</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>데스크톱</strong></td>
+              <td>Chrome, Edge, Firefox, Safari</td>
+              <td>Chrome 90+, Edge 90+, Firefox 88+, Safari 14+</td>
+            </tr>
+            <tr>
+              <td><strong>모바일</strong></td>
+              <td>Chrome Android, Safari iOS, Samsung Internet</td>
+              <td>Chrome 90+, Safari iOS 14+, Samsung 14+</td>
+            </tr>
+            <tr>
+              <td><strong>미지원</strong></td>
+              <td>Internet Explorer 11</td>
+              <td>ES6 미지원으로 인한 호환성 부족</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">📄 기술 스택</h4>
+
+        <div class="info-box">
+          <h3>핵심 기술</h3>
+          <p><strong>프론트엔드:</strong> HTML5, CSS3 (Flexbox, Grid), JavaScript ES6+</p>
+          <p><strong>라이브러리:</strong> Chart.js 4.4.0 (CDN)</p>
+          <p><strong>브라우저 API:</strong> localStorage (영구 저장), IndexedDB (사진 저장), FileReader API, Blob API</p>
+          <p><strong>배포:</strong> Netlify (자동 배포) | <strong>빌드:</strong> Node.js + build.js</p>
+          <p><strong>특징:</strong> 완전 정적 웹사이트 (서버 불필요) | 반응형 디자인 (모바일 최적화)</p>
+        </div>
+
+        <div class="success-box" style="margin-top:30px">
+          <h3>📞 추가 지원 및 상세 문서</h3>
+          <p>이 애플리케이션의 전체 기술 문서, API 레퍼런스, 트러블슈팅 가이드는 프로젝트 루트의 <strong>README.md</strong> 파일을 참조하세요.</p>
+          <p style="margin-top:10px"><strong>버전:</strong> 1.0.0 | <strong>최종 업데이트:</strong> 2025-11-01 | <strong>빌드:</strong> production</p>
         </div>
       </div>
     </section>

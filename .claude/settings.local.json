@@ -4,7 +4,14 @@
       "Bash(git init:*)",
       "Bash(git branch:*)",
       "Bash(git remote add:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nReplace repository with PHA optimizer/convertor application\n\nComplete replacement of repository contents with PHA process optimization and conversion tool files including HTML interface, custom JavaScript, material data, and troubleshooting knowledge base.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)",
+      "Bash(git commit:*)",
+      "mcp__sequential-thinking__sequentialthinking",
+      "Bash(npm run build:*)",
+      "Bash(git restore:*)",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []
