@@ -1038,6 +1038,9 @@
             <div class="density-display">
               총 샷 계량: <span id="totalShotWeight">0.00</span> g (<span id="shotVolume">0.00</span> cm³)
             </div>
+            <button class="btn-log-action btn-add-log" style="width:100%;margin-top:10px" onclick="applyWeightToLog()">
+              ⬇️ 최신 로그에 무게 적용
+            </button>
           </div>
         </div>
 
@@ -1745,6 +1748,11 @@ function updateProcessLogValue(index, field, value) {
   if (processLogData[index]) {
     processLogData[index][field] = parseFloat(value) || 0;
     saveProcessLog();
+    // Trigger flash recommendations if modifying the first (latest) log
+    if (index === 0) {
+      generateFlashRecommendations();
+    }
+    updateCharts();
   }
 }
 
@@ -1754,6 +1762,11 @@ function adjustProcessLogValue(index, field, delta) {
     processLogData[index][field] = Math.max(0, currentValue + delta);
     saveProcessLog();
     renderProcessLog();
+    // Trigger flash recommendations if modifying the first (latest) log
+    if (index === 0) {
+      generateFlashRecommendations();
+    }
+    updateCharts();
   }
 }
 
@@ -1872,6 +1885,9 @@ function addProcessLogEntry() {
   saveProcessLog();
   renderProcessLog();
   updateCharts();
+
+  // Show flash recommendations area (will be populated when values are entered)
+  document.getElementById('flashRecommendations').style.display = 'none';
 }
 
 function renderProcessLog() {
@@ -2087,6 +2103,30 @@ function calculateShotWeight() {
   if (processLogData.length > 0) {
     generateFlashRecommendations();
   }
+}
+
+function applyWeightToLog() {
+  if (processLogData.length === 0) {
+    alert('먼저 로그를 추가해주세요.');
+    return;
+  }
+
+  const partWeight = parseFloat(document.getElementById('partWeight').value) || 0;
+  const runnerWeight = parseFloat(document.getElementById('runnerWeight').value) || 0;
+  const cavityCount = parseInt(document.getElementById('cavityCount').value) || 36;
+  const totalWeight = (partWeight * cavityCount) + runnerWeight;
+
+  // Apply to the latest log (index 0)
+  processLogData[0].partWeight = partWeight;
+  processLogData[0].runnerWeight = runnerWeight;
+  processLogData[0].totalWeight = totalWeight;
+
+  saveProcessLog();
+  renderProcessLog();
+  generateFlashRecommendations();
+  updateCharts();
+
+  alert('무게 데이터가 최신 로그에 적용되었습니다!');
 }
 
 function loadDensityFromGrade() {
