@@ -131,6 +131,49 @@
   .btn-clear-log:hover{background:#4b5563}
   .log-empty{text-align:center;padding:40px;color:#6b7280;font-style:italic}
   .log-timestamp{color:#6b7280;font-size:12px;font-style:italic}
+  /* Search/Filter Styles */
+  .filter-container{background:white;padding:15px;border-radius:8px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+  .filter-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .filter-input{flex:1;min-width:200px;padding:10px;border:2px solid #ced4da;border-radius:5px;font-size:14px}
+  .filter-input:focus{outline:none;border-color:#1e3c72;box-shadow:0 0 0 2px rgba(30,60,114,.1)}
+  .btn-filter{padding:10px 20px;background:#1e3c72;color:white;border:none;border-radius:5px;cursor:pointer;font-weight:bold}
+  .btn-filter:hover{background:#2a5298}
+  /* Template Styles */
+  .template-container{background:#f0f7ff;padding:15px;border-radius:8px;margin-bottom:20px;border-left:4px solid #1e3c72}
+  .template-buttons{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .btn-template{padding:8px 16px;background:#3b82f6;color:white;border:none;border-radius:5px;cursor:pointer;font-size:13px;font-weight:600}
+  .btn-template:hover{background:#2563eb}
+  .btn-template.load{background:#10b981}
+  .btn-template.load:hover{background:#059669}
+  .btn-template.delete{background:#ef4444}
+  .btn-template.delete:hover{background:#dc2626}
+  /* Photo Attachment Styles */
+  .photo-upload-area{background:#f9fafb;border:2px dashed #cbd5e1;border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:all .3s;margin:10px 0}
+  .photo-upload-area:hover{border-color:#1e3c72;background:#f0f7ff}
+  .photo-upload-area.dragover{border-color:#1e3c72;background:#e0f2fe;transform:scale(1.02)}
+  .photo-preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:10px;margin-top:10px}
+  .photo-preview-item{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+  .photo-preview-item img{width:100%;height:100%;object-fit:cover}
+  .photo-remove-btn{position:absolute;top:4px;right:4px;width:24px;height:24px;background:#ef4444;color:white;border:none;border-radius:50%;cursor:pointer;font-size:16px;line-height:1;font-weight:bold}
+  .photo-remove-btn:hover{background:#dc2626}
+  /* Calculator/Recommendation Styles */
+  .calc-recommendation{background:linear-gradient(135deg,#fef3c7,#fde68a);padding:20px;border-radius:10px;margin:20px 0;border-left:5px solid #f59e0b;box-shadow:0 4px 12px rgba(245,158,11,.2)}
+  .calc-recommendation h4{color:#92400e;margin-bottom:15px;font-size:1.2em}
+  .recommendation-item{background:white;padding:15px;border-radius:8px;margin:10px 0;border-left:4px solid #10b981}
+  .recommendation-item.warning{border-left-color:#ef4444}
+  .recommendation-item.caution{border-left-color:#f59e0b}
+  .weight-calc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin:15px 0}
+  .weight-input-box{background:white;padding:15px;border-radius:8px;border:2px solid #dee2e6}
+  .weight-input-box label{display:block;font-weight:bold;margin-bottom:8px;color:#495057;font-size:14px}
+  .weight-input-box input{width:100%;padding:10px;border:2px solid #ced4da;border-radius:5px;font-size:14px}
+  .weight-input-box input:focus{outline:none;border-color:#1e3c72}
+  .density-display{background:linear-gradient(135deg,#e0f2fe,#bae6fd);padding:15px;border-radius:8px;text-align:center;font-size:18px;font-weight:bold;color:#0c4a6e}
+  /* Chart Container Styles */
+  .chart-container{background:white;padding:20px;border-radius:10px;margin:20px 0;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+  .chart-controls{display:flex;gap:10px;margin-bottom:15px;flex-wrap:wrap}
+  .chart-toggle-btn{padding:8px 16px;border:2px solid #1e3c72;background:white;color:#1e3c72;border-radius:5px;cursor:pointer;font-weight:600;transition:all .2s}
+  .chart-toggle-btn.active{background:#1e3c72;color:white}
+  .chart-toggle-btn:hover:not(.active){background:#f0f7ff}
   @media (max-width:768px){
     .log-table{font-size:12px}
     .log-table th,.log-table td{padding:6px 3px}
@@ -147,6 +190,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
 <div class="container">
@@ -942,6 +986,87 @@
           <p>각 파라미터는 직접 입력하거나 +/- 버튼으로 조정할 수 있으며, 모든 데이터는 자동으로 저장됩니다.</p>
         </div>
 
+        <!-- Search and Filter -->
+        <div class="filter-container">
+          <h4 style="color:#1e3c72;margin-bottom:10px">🔍 검색 및 필터</h4>
+          <div class="filter-row">
+            <input type="text" id="filterKeyword" class="filter-input" placeholder="비고란 키워드 검색..." onkeyup="filterProcessLog()">
+            <input type="date" id="filterDateFrom" class="filter-input" style="max-width:180px" onchange="filterProcessLog()">
+            <span style="white-space:nowrap">~</span>
+            <input type="date" id="filterDateTo" class="filter-input" style="max-width:180px" onchange="filterProcessLog()">
+            <button class="btn-filter" onclick="clearFilter()">필터 초기화</button>
+          </div>
+        </div>
+
+        <!-- Template Management -->
+        <div class="template-container">
+          <h4 style="color:#1e3c72;margin-bottom:5px">📋 템플릿 관리</h4>
+          <p style="font-size:13px;color:#6b7280;margin-bottom:10px">자주 사용하는 공정 조건을 템플릿으로 저장하여 빠르게 불러올 수 있습니다.</p>
+          <div class="template-buttons">
+            <button class="btn-template" onclick="saveTemplate()">💾 현재 조건 템플릿 저장</button>
+            <button class="btn-template load" onclick="loadTemplate()">📥 템플릿 불러오기</button>
+            <button class="btn-template delete" onclick="manageTemplates()">🗑️ 템플릿 관리</button>
+          </div>
+        </div>
+
+        <!-- Weight Measurement and Shot Calculator -->
+        <div class="calc-recommendation">
+          <h4>⚖️ 무게 측정 및 계량 계산기</h4>
+          <p style="font-size:14px;margin-bottom:15px">제품과 러너 무게를 측정하여 샷 계량양과 플래시 저감 조건을 자동 산출합니다.</p>
+
+          <div class="weight-calc-grid">
+            <div class="weight-input-box">
+              <label>제품 1개 무게 (g)</label>
+              <input type="number" id="partWeight" step="0.01" placeholder="0.00" onchange="calculateShotWeight()">
+            </div>
+            <div class="weight-input-box">
+              <label>러너 무게 (g)</label>
+              <input type="number" id="runnerWeight" step="0.01" placeholder="0.00" onchange="calculateShotWeight()">
+            </div>
+            <div class="weight-input-box">
+              <label>캐비티 수</label>
+              <input type="number" id="cavityCount" value="36" step="1" onchange="calculateShotWeight()">
+            </div>
+            <div class="weight-input-box">
+              <label>재료 밀도 (g/cm³)</label>
+              <input type="number" id="materialDensity" value="1.25" step="0.01" placeholder="1.25" onchange="calculateShotWeight()">
+              <button class="btn-filter" style="margin-top:8px;width:100%;padding:6px" onclick="loadDensityFromGrade()">Grade에서 불러오기</button>
+            </div>
+          </div>
+
+          <div id="shotWeightResult" style="display:none;margin-top:15px">
+            <div class="density-display">
+              총 샷 계량: <span id="totalShotWeight">0.00</span> g (<span id="shotVolume">0.00</span> cm³)
+            </div>
+          </div>
+        </div>
+
+        <!-- Flash Reduction Recommendations -->
+        <div id="flashRecommendations" style="display:none">
+          <div class="calc-recommendation">
+            <h4>💡 플래시 저감 공정 조건 추천</h4>
+            <p style="font-size:14px;margin-bottom:15px">현재 공정 조건을 분석하여 플래시 발생을 줄이기 위한 최적화 방안을 제시합니다.</p>
+            <div id="recommendationContent"></div>
+          </div>
+        </div>
+
+        <!-- Chart Visualization -->
+        <div class="chart-container">
+          <div class="chart-controls">
+            <h4 style="color:#1e3c72;margin:0;flex:1">📊 공정 조건 트렌드 차트</h4>
+            <button class="chart-toggle-btn active" onclick="showChart('temp')" id="chartBtnTemp">온도</button>
+            <button class="chart-toggle-btn" onclick="showChart('pressure')" id="chartBtnPressure">압력</button>
+            <button class="chart-toggle-btn" onclick="showChart('weight')" id="chartBtnWeight">무게</button>
+            <button class="chart-toggle-btn" onclick="showChart('time')" id="chartBtnTime">시간</button>
+          </div>
+          <div style="position:relative;height:300px">
+            <canvas id="processChart"></canvas>
+          </div>
+          <p style="font-size:12px;color:#6b7280;margin-top:10px;text-align:center">
+            최근 20개 로그 데이터를 기준으로 트렌드를 표시합니다. 로그가 추가될수록 자동 업데이트됩니다.
+          </p>
+        </div>
+
         <div class="log-container">
           <div class="log-header">
             <h4 style="color:#1e3c72;margin:0">📝 공정 조건 로그</h4>
@@ -964,13 +1089,17 @@
                   <th style="min-width:120px">보압 (bar)</th>
                   <th style="min-width:130px">보압시간 (s)</th>
                   <th style="min-width:130px">냉각시간 (s)</th>
+                  <th style="min-width:120px">제품 무게 (g)</th>
+                  <th style="min-width:120px">러너 무게 (g)</th>
+                  <th style="min-width:130px">총 무게 (g)</th>
                   <th style="min-width:200px">비고/현상</th>
+                  <th style="min-width:100px">사진</th>
                   <th style="min-width:80px">동작</th>
                 </tr>
               </thead>
               <tbody id="processLogBody">
                 <tr>
-                  <td colspan="10" class="log-empty">로그가 없습니다. "➕ 로그 추가" 버튼을 눌러 첫 기록을 시작하세요.</td>
+                  <td colspan="14" class="log-empty">로그가 없습니다. "➕ 로그 추가" 버튼을 눌러 첫 기록을 시작하세요.</td>
                 </tr>
               </tbody>
             </table>
@@ -982,7 +1111,12 @@
           <ul style="margin-left:20px;margin-top:10px">
             <li><strong>로그 추가:</strong> "➕ 로그 추가" 버튼을 클릭하면 새로운 기록 행이 추가됩니다</li>
             <li><strong>값 입력:</strong> 숫자를 직접 입력하거나 +/- 버튼으로 조정할 수 있습니다</li>
-            <li><strong>모바일 사용:</strong> 모바일에서도 편리하게 사용할 수 있도록 최적화되어 있습니다</li>
+            <li><strong>무게 측정:</strong> 제품과 러너 무게를 입력하면 샷 계량과 플래시 저감 조건이 자동 계산됩니다</li>
+            <li><strong>검색/필터:</strong> 날짜 범위와 키워드로 원하는 로그를 빠르게 찾을 수 있습니다</li>
+            <li><strong>템플릿:</strong> 자주 사용하는 공정 조건을 저장하여 빠르게 재사용할 수 있습니다</li>
+            <li><strong>사진 첨부:</strong> 각 로그에 불량품 또는 제품 사진을 첨부하여 시각적으로 관리할 수 있습니다</li>
+            <li><strong>차트 뷰:</strong> 온도, 압력, 무게, 시간 파라미터의 트렌드를 실시간 차트로 확인하세요</li>
+            <li><strong>모바일 사용:</strong> PC와 휴대폰 모두에서 편리하게 사용할 수 있도록 최적화되어 있습니다</li>
             <li><strong>자동 저장:</strong> 입력한 값은 자동으로 브라우저에 저장됩니다</li>
             <li><strong>CSV 내보내기:</strong> 기록한 데이터를 CSV 파일로 다운로드할 수 있습니다</li>
             <li><strong>비고란 활용:</strong> 현상, 불량 유형, 특이사항 등을 자유롭게 기록하세요</li>
@@ -1664,6 +1798,9 @@ function exportProcessLog() {
     '보압 (bar)',
     '보압시간 (s)',
     '냉각시간 (s)',
+    '제품 무게 (g)',
+    '러너 무게 (g)',
+    '총 무게 (g)',
     '비고/현상'
   ];
 
@@ -1681,6 +1818,9 @@ function exportProcessLog() {
       entry.holdingPressure,
       entry.holdingTime,
       entry.coolingTime,
+      entry.partWeight || 0,
+      entry.runnerWeight || 0,
+      entry.totalWeight || 0,
       '"' + (entry.note || '').replace(/"/g, '""') + '"'
     ];
     csv += row.join(',') + '\n';
@@ -1698,6 +1838,595 @@ function exportProcessLog() {
   link.click();
   document.body.removeChild(link);
 }
+
+// Updated functions to support weight fields
+function addProcessLogEntry() {
+  const now = new Date();
+  const timestamp = now.toLocaleString('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  });
+
+  const newEntry = {
+    timestamp: timestamp,
+    cylinderTemp: 0,
+    moldTemp: 0,
+    injectionSpeed: 0,
+    injectionPressure: 0,
+    holdingPressure: 0,
+    holdingTime: 0,
+    coolingTime: 0,
+    partWeight: 0,
+    runnerWeight: 0,
+    totalWeight: 0,
+    note: '',
+    photos: []
+  };
+
+  processLogData.unshift(newEntry);
+  saveProcessLog();
+  renderProcessLog();
+  updateCharts();
+}
+
+function renderProcessLog() {
+  const tbody = document.getElementById('processLogBody');
+  if (!tbody) return;
+
+  let displayData = filteredLogData.length > 0 ? filteredLogData : processLogData;
+
+  if (displayData.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="14" class="log-empty">로그가 없습니다. "➕ 로그 추가" 버튼을 눌러 첫 기록을 시작하세요.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = displayData.map((entry, index) => {
+    const realIndex = processLogData.indexOf(entry);
+    return `
+    <tr>
+      <td><div class="log-timestamp">${entry.timestamp}</div></td>
+      <td>${createNumberInput(realIndex, 'cylinderTemp', entry.cylinderTemp, 1)}</td>
+      <td>${createNumberInput(realIndex, 'moldTemp', entry.moldTemp, 1)}</td>
+      <td>${createNumberInput(realIndex, 'injectionSpeed', entry.injectionSpeed, 1)}</td>
+      <td>${createNumberInput(realIndex, 'injectionPressure', entry.injectionPressure, 5)}</td>
+      <td>${createNumberInput(realIndex, 'holdingPressure', entry.holdingPressure, 5)}</td>
+      <td>${createNumberInput(realIndex, 'holdingTime', entry.holdingTime, 0.1)}</td>
+      <td>${createNumberInput(realIndex, 'coolingTime', entry.coolingTime, 0.5)}</td>
+      <td>${createNumberInput(realIndex, 'partWeight', entry.partWeight, 0.01)}</td>
+      <td>${createNumberInput(realIndex, 'runnerWeight', entry.runnerWeight, 0.01)}</td>
+      <td>${createNumberInput(realIndex, 'totalWeight', entry.totalWeight, 0.01)}</td>
+      <td>
+        <textarea class="log-note-input"
+                  onchange="updateProcessLogNote(${realIndex}, this.value)"
+                  placeholder="현상, 불량, 특이사항 기록...">${entry.note || ''}</textarea>
+      </td>
+      <td>
+        <button class="btn-template" style="font-size:11px;padding:4px 8px" onclick="attachPhoto(${realIndex})">📷 추가</button>
+        ${(entry.photos && entry.photos.length > 0) ? `<div style="font-size:11px;color:#6b7280;margin-top:4px">${entry.photos.length}장</div>` : ''}
+      </td>
+      <td>
+        <button class="btn-delete-log" onclick="deleteProcessLogEntry(${realIndex})" title="삭제">🗑️</button>
+      </td>
+    </tr>
+  `}).join('');
+}
+
+// Search and Filter Functions
+let filteredLogData = [];
+
+function filterProcessLog() {
+  const keyword = document.getElementById('filterKeyword').value.toLowerCase();
+  const dateFrom = document.getElementById('filterDateFrom').value;
+  const dateTo = document.getElementById('filterDateTo').value;
+
+  filteredLogData = processLogData.filter(entry => {
+    // Keyword filter
+    if (keyword && !entry.note.toLowerCase().includes(keyword)) {
+      return false;
+    }
+
+    // Date filter
+    if (dateFrom || dateTo) {
+      const entryDate = new Date(entry.timestamp).toISOString().slice(0, 10);
+      if (dateFrom && entryDate < dateFrom) return false;
+      if (dateTo && entryDate > dateTo) return false;
+    }
+
+    return true;
+  });
+
+  renderProcessLog();
+}
+
+function clearFilter() {
+  document.getElementById('filterKeyword').value = '';
+  document.getElementById('filterDateFrom').value = '';
+  document.getElementById('filterDateTo').value = '';
+  filteredLogData = [];
+  renderProcessLog();
+}
+
+// Template Management Functions
+let processTemplates = [];
+
+function loadTemplatesFromStorage() {
+  const saved = localStorage.getItem('processTemplates');
+  if (saved) {
+    try {
+      processTemplates = JSON.parse(saved);
+    } catch (e) {
+      processTemplates = [];
+    }
+  }
+}
+
+function saveTemplatesToStorage() {
+  localStorage.setItem('processTemplates', JSON.stringify(processTemplates));
+}
+
+function saveTemplate() {
+  const templateName = prompt('템플릿 이름을 입력하세요:');
+  if (!templateName) return;
+
+  if (processLogData.length === 0) {
+    alert('저장할 로그 데이터가 없습니다.');
+    return;
+  }
+
+  const latestEntry = processLogData[0];
+  const template = {
+    name: templateName,
+    cylinderTemp: latestEntry.cylinderTemp,
+    moldTemp: latestEntry.moldTemp,
+    injectionSpeed: latestEntry.injectionSpeed,
+    injectionPressure: latestEntry.injectionPressure,
+    holdingPressure: latestEntry.holdingPressure,
+    holdingTime: latestEntry.holdingTime,
+    coolingTime: latestEntry.coolingTime,
+    savedAt: new Date().toLocaleString('ko-KR')
+  };
+
+  processTemplates.push(template);
+  saveTemplatesToStorage();
+  alert(`템플릿 "${templateName}"이(가) 저장되었습니다.`);
+}
+
+function loadTemplate() {
+  loadTemplatesFromStorage();
+
+  if (processTemplates.length === 0) {
+    alert('저장된 템플릿이 없습니다.');
+    return;
+  }
+
+  const options = processTemplates.map((t, i) => `${i + 1}. ${t.name} (${t.savedAt})`).join('\n');
+  const selection = prompt(`불러올 템플릿 번호를 입력하세요:\n\n${options}`);
+
+  if (!selection) return;
+
+  const index = parseInt(selection) - 1;
+  if (index >= 0 && index < processTemplates.length) {
+    const template = processTemplates[index];
+    const newEntry = {
+      timestamp: new Date().toLocaleString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      }),
+      cylinderTemp: template.cylinderTemp,
+      moldTemp: template.moldTemp,
+      injectionSpeed: template.injectionSpeed,
+      injectionPressure: template.injectionPressure,
+      holdingPressure: template.holdingPressure,
+      holdingTime: template.holdingTime,
+      coolingTime: template.coolingTime,
+      partWeight: 0,
+      runnerWeight: 0,
+      totalWeight: 0,
+      note: `템플릿 "${template.name}" 적용`,
+      photos: []
+    };
+
+    processLogData.unshift(newEntry);
+    saveProcessLog();
+    renderProcessLog();
+    alert(`템플릿 "${template.name}"이(가) 적용되었습니다.`);
+  } else {
+    alert('올바른 번호를 입력하세요.');
+  }
+}
+
+function manageTemplates() {
+  loadTemplatesFromStorage();
+
+  if (processTemplates.length === 0) {
+    alert('저장된 템플릿이 없습니다.');
+    return;
+  }
+
+  const options = processTemplates.map((t, i) => `${i + 1}. ${t.name} (${t.savedAt})`).join('\n');
+  const selection = prompt(`삭제할 템플릿 번호를 입력하세요 (취소: 빈칸):\n\n${options}`);
+
+  if (!selection) return;
+
+  const index = parseInt(selection) - 1;
+  if (index >= 0 && index < processTemplates.length) {
+    const templateName = processTemplates[index].name;
+    if (confirm(`"${templateName}" 템플릿을 삭제하시겠습니까?`)) {
+      processTemplates.splice(index, 1);
+      saveTemplatesToStorage();
+      alert('템플릿이 삭제되었습니다.');
+    }
+  }
+}
+
+// Weight Calculation Functions
+function calculateShotWeight() {
+  const partWeight = parseFloat(document.getElementById('partWeight').value) || 0;
+  const runnerWeight = parseFloat(document.getElementById('runnerWeight').value) || 0;
+  const cavityCount = parseInt(document.getElementById('cavityCount').value) || 36;
+  const density = parseFloat(document.getElementById('materialDensity').value) || 1.25;
+
+  const totalWeight = (partWeight * cavityCount) + runnerWeight;
+  const volume = totalWeight / density;
+
+  document.getElementById('totalShotWeight').textContent = totalWeight.toFixed(2);
+  document.getElementById('shotVolume').textContent = volume.toFixed(2);
+  document.getElementById('shotWeightResult').style.display = 'block';
+
+  // Trigger flash reduction recommendations if we have log data
+  if (processLogData.length > 0) {
+    generateFlashRecommendations();
+  }
+}
+
+function loadDensityFromGrade() {
+  // PHA density database
+  const densityDB = {
+    'CA1180P': 1.25,
+    'S1000P': 1.24,
+    'A1000P': 1.23,
+    'P3HB': 1.25,
+    'P3HB4HB': 1.22,
+    'PHB': 1.26,
+    'default': 1.25
+  };
+
+  const gradeSelect = document.getElementById('grade');
+  let density = densityDB.default;
+
+  if (gradeSelect && gradeSelect.value) {
+    const grade = gradeSelect.value;
+    density = densityDB[grade] || densityDB.default;
+  }
+
+  document.getElementById('materialDensity').value = density;
+  calculateShotWeight();
+}
+
+// Flash Reduction Recommendation Engine
+function generateFlashRecommendations() {
+  if (processLogData.length === 0) return;
+
+  const latest = processLogData[0];
+  const recommendations = [];
+
+  // Analyze conditions and generate recommendations
+  if (latest.injectionPressure > 900) {
+    recommendations.push({
+      type: 'warning',
+      title: '사출압력 과다',
+      message: `현재 사출압력이 ${latest.injectionPressure} bar로 높습니다.`,
+      solution: `사출압력을 ${(latest.injectionPressure - 50).toFixed(0)} bar로 감소시키세요. (약 -50 bar)`
+    });
+  }
+
+  if (latest.cylinderTemp > 185) {
+    recommendations.push({
+      type: 'caution',
+      title: '실린더 온도 과다',
+      message: `현재 실린더 온도가 ${latest.cylinderTemp}°C로 높습니다.`,
+      solution: `실린더 온도를 ${(latest.cylinderTemp - 5).toFixed(0)}°C로 감소시키세요. (약 -5°C, 점도 증가로 플래시 감소)`
+    });
+  }
+
+  if (latest.injectionSpeed > 180) {
+    recommendations.push({
+      type: 'caution',
+      title: '사출속도 과다',
+      message: `현재 사출속도가 ${latest.injectionSpeed} mm/s로 높습니다.`,
+      solution: `사출속도를 ${(latest.injectionSpeed - 20).toFixed(0)} mm/s로 감소시키세요. (약 -20 mm/s, 피크 압력 감소)`
+    });
+  }
+
+  if (latest.holdingPressure > 700) {
+    recommendations.push({
+      type: 'caution',
+      title: '보압 과다',
+      message: `현재 보압이 ${latest.holdingPressure} bar로 높습니다.`,
+      solution: `보압을 ${(latest.holdingPressure - 50).toFixed(0)} bar로 감소시키세요. (약 -50 bar)`
+    });
+  }
+
+  if (latest.coolingTime < 12) {
+    recommendations.push({
+      type: 'normal',
+      title: '냉각시간 부족',
+      message: `현재 냉각시간이 ${latest.coolingTime}초로 짧을 수 있습니다.`,
+      solution: `냉각시간을 ${(latest.coolingTime + 2).toFixed(1)}초로 증가시켜 성형 안정성을 높이세요. (약 +2s)`
+    });
+  }
+
+  // Display recommendations
+  if (recommendations.length > 0) {
+    const html = recommendations.map(rec => `
+      <div class="recommendation-item ${rec.type}">
+        <h5 style="margin:0 0 8px 0;color:#1e3c72">${rec.title}</h5>
+        <p style="margin:0 0 8px 0;font-size:14px">${rec.message}</p>
+        <p style="margin:0;font-weight:bold;color:#059669">💡 ${rec.solution}</p>
+      </div>
+    `).join('');
+
+    document.getElementById('recommendationContent').innerHTML = html;
+    document.getElementById('flashRecommendations').style.display = 'block';
+  } else {
+    document.getElementById('recommendationContent').innerHTML = `
+      <div class="recommendation-item normal">
+        <h5 style="margin:0 0 8px 0;color:#1e3c72">✅ 공정 조건 양호</h5>
+        <p style="margin:0;font-size:14px">현재 공정 조건은 플래시 발생 위험이 낮은 범위에 있습니다. 계속 모니터링하세요.</p>
+      </div>
+    `;
+    document.getElementById('flashRecommendations').style.display = 'block';
+  }
+}
+
+// Photo Attachment (using IndexedDB)
+let photoDB;
+
+function initPhotoStorage() {
+  const request = indexedDB.open('ProcessLogPhotos', 1);
+
+  request.onerror = () => {
+    console.warn('IndexedDB not available, photo storage disabled');
+  };
+
+  request.onsuccess = (event) => {
+    photoDB = event.target.result;
+  };
+
+  request.onupgradeneeded = (event) => {
+    const db = event.target.result;
+    if (!db.objectStoreNames.contains('photos')) {
+      db.createObjectStore('photos', { keyPath: 'id', autoIncrement: true });
+    }
+  };
+}
+
+function attachPhoto(logIndex) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = 'image/*';
+  input.multiple = true;
+
+  input.onchange = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
+
+    files.forEach(file => {
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`파일 ${file.name}이(가) 너무 큽니다 (최대 5MB)`);
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const photoData = {
+          logIndex: logIndex,
+          data: event.target.result,
+          name: file.name,
+          timestamp: new Date().toISOString()
+        };
+
+        if (photoDB) {
+          const transaction = photoDB.transaction(['photos'], 'readwrite');
+          const store = transaction.objectStore('photos');
+          store.add(photoData);
+
+          transaction.oncomplete = () => {
+            if (!processLogData[logIndex].photos) {
+              processLogData[logIndex].photos = [];
+            }
+            processLogData[logIndex].photos.push(photoData.name);
+            saveProcessLog();
+            renderProcessLog();
+            alert('사진이 추가되었습니다.');
+          };
+        }
+      };
+
+      reader.readAsDataURL(file);
+    });
+  };
+
+  input.click();
+}
+
+// Chart Visualization
+let processChart;
+let currentChartType = 'temp';
+
+function initChart() {
+  const ctx = document.getElementById('processChart');
+  if (!ctx) return;
+
+  processChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: []
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'top'
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false
+        }
+      },
+      scales: {
+        x: {
+          display: true,
+          title: {
+            display: true,
+            text: '시간'
+          }
+        },
+        y: {
+          display: true,
+          title: {
+            display: true,
+            text: '값'
+          }
+        }
+      }
+    }
+  });
+
+  updateCharts();
+}
+
+function showChart(type) {
+  currentChartType = type;
+
+  // Update button states
+  document.querySelectorAll('.chart-toggle-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById(`chartBtn${type.charAt(0).toUpperCase() + type.slice(1)}`).classList.add('active');
+
+  updateCharts();
+}
+
+function updateCharts() {
+  if (!processChart) return;
+
+  const data = processLogData.slice(0, 20).reverse();
+  const labels = data.map(entry => {
+    const date = new Date(entry.timestamp);
+    return date.toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+  });
+
+  let datasets = [];
+
+  switch (currentChartType) {
+    case 'temp':
+      datasets = [
+        {
+          label: '실린더 온도 (°C)',
+          data: data.map(e => e.cylinderTemp),
+          borderColor: '#ef4444',
+          backgroundColor: 'rgba(239, 68, 68, 0.1)',
+          tension: 0.3
+        },
+        {
+          label: '금형 온도 (°C)',
+          data: data.map(e => e.moldTemp),
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          tension: 0.3
+        }
+      ];
+      break;
+
+    case 'pressure':
+      datasets = [
+        {
+          label: '사출압력 (bar)',
+          data: data.map(e => e.injectionPressure),
+          borderColor: '#8b5cf6',
+          backgroundColor: 'rgba(139, 92, 246, 0.1)',
+          tension: 0.3
+        },
+        {
+          label: '보압 (bar)',
+          data: data.map(e => e.holdingPressure),
+          borderColor: '#10b981',
+          backgroundColor: 'rgba(16, 185, 129, 0.1)',
+          tension: 0.3
+        }
+      ];
+      break;
+
+    case 'weight':
+      datasets = [
+        {
+          label: '제품 무게 (g)',
+          data: data.map(e => e.partWeight || 0),
+          borderColor: '#f59e0b',
+          backgroundColor: 'rgba(245, 158, 11, 0.1)',
+          tension: 0.3
+        },
+        {
+          label: '러너 무게 (g)',
+          data: data.map(e => e.runnerWeight || 0),
+          borderColor: '#6366f1',
+          backgroundColor: 'rgba(99, 102, 241, 0.1)',
+          tension: 0.3
+        },
+        {
+          label: '총 무게 (g)',
+          data: data.map(e => e.totalWeight || 0),
+          borderColor: '#ec4899',
+          backgroundColor: 'rgba(236, 72, 153, 0.1)',
+          tension: 0.3
+        }
+      ];
+      break;
+
+    case 'time':
+      datasets = [
+        {
+          label: '보압시간 (s)',
+          data: data.map(e => e.holdingTime),
+          borderColor: '#14b8a6',
+          backgroundColor: 'rgba(20, 184, 166, 0.1)',
+          tension: 0.3
+        },
+        {
+          label: '냉각시간 (s)',
+          data: data.map(e => e.coolingTime),
+          borderColor: '#0ea5e9',
+          backgroundColor: 'rgba(14, 165, 233, 0.1)',
+          tension: 0.3
+        }
+      ];
+      break;
+  }
+
+  processChart.data.labels = labels;
+  processChart.data.datasets = datasets;
+  processChart.update();
+}
+
+// Initialize on load
+window.addEventListener('load', () => {
+  loadTemplatesFromStorage();
+  initPhotoStorage();
+  if (typeof Chart !== 'undefined') {
+    initChart();
+  }
+});
 </script>
 
 <!-- Additional scripts for dynamic material loading, troubleshooting, and photo gallery -->
