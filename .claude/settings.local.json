@@ -11,7 +11,8 @@
       "mcp__sequential-thinking__sequentialthinking",
       "Bash(npm run build:*)",
       "Bash(git restore:*)",
-      "WebSearch"
+      "WebSearch",
+      "WebFetch(domain:nkkks-pha-process-v1.netlify.app)"
     ],
     "deny": [],
     "ask": []
