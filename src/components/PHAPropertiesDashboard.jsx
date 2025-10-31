@@ -277,8 +277,65 @@ const formatMetricValue = (value, unit) => {
 
 const PHAPropertiesDashboard = () => {
   const [selectedPolymer, setSelectedPolymer] = useState('S1000P')
+  const [injectionTab, setInjectionTab] = useState(0)
+
+  // Calculator states
+  const [calcInputs, setCalcInputs] = useState({
+    pAvg: 500,
+    aProj: 2000,
+    fClamp: 1200,
+    aProj2: 2000,
+    safetyFactor: 0.8,
+    flowRate: 50,
+    runnerRadius: 0.4,
+    pInjPeak: 1500
+  })
+
+  const [calcResults, setCalcResults] = useState({
+    clamp: null,
+    pressure: null,
+    shear: null,
+    packing: null
+  })
 
   const derived = useMemo(() => computeDerivedMetrics(selectedPolymer), [selectedPolymer])
+
+  // Calculator functions
+  const calculateClampTonnage = () => {
+    const tonnage = (calcInputs.pAvg * calcInputs.aProj) / 1000
+    const recommended = tonnage * 1.2
+    setCalcResults(prev => ({
+      ...prev,
+      clamp: { tonnage, recommended }
+    }))
+  }
+
+  const calculatePressureLimit = () => {
+    const pressureLimit = (calcInputs.safetyFactor * calcInputs.fClamp * 1000) / calcInputs.aProj2
+    setCalcResults(prev => ({
+      ...prev,
+      pressure: { pressureLimit, safetyFactor: calcInputs.safetyFactor }
+    }))
+  }
+
+  const calculateShearRate = () => {
+    const shearRate = (4 * calcInputs.flowRate) / (Math.PI * Math.pow(calcInputs.runnerRadius, 3))
+    setCalcResults(prev => ({
+      ...prev,
+      shear: { shearRate }
+    }))
+  }
+
+  const calculatePackingPressure = () => {
+    const p1Min = calcInputs.pInjPeak * 0.30
+    const p1Max = calcInputs.pInjPeak * 0.45
+    const p2Min = calcInputs.pInjPeak * 0.15
+    const p2Max = calcInputs.pInjPeak * 0.30
+    setCalcResults(prev => ({
+      ...prev,
+      packing: { p1Min, p1Max, p2Min, p2Max }
+    }))
+  }
 
   const downloadThermalData = () => {
     const headers = ['temp', 'modulus', 'tanDelta']
@@ -330,7 +387,7 @@ const PHAPropertiesDashboard = () => {
       </div>
 
       <Tabs defaultValue="thermal" className="w-full">
-        <TabsList className="grid w-full grid-cols-1 gap-2 sm:grid-cols-3 lg:grid-cols-7">
+        <TabsList className="grid w-full grid-cols-1 gap-2 sm:grid-cols-4 lg:grid-cols-8">
           <TabsTrigger value="thermal">Thermal</TabsTrigger>
           <TabsTrigger value="mechanical">Mechanical</TabsTrigger>
           <TabsTrigger value="processing">Processing</TabsTrigger>
@@ -338,6 +395,7 @@ const PHAPropertiesDashboard = () => {
           <TabsTrigger value="applications">Applications</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="fieldKit">Field DOE Kit</TabsTrigger>
+          <TabsTrigger value="injectionGuide">사출 가이드</TabsTrigger>
         </TabsList>
 
         <TabsContent value="thermal">
@@ -645,6 +703,573 @@ const PHAPropertiesDashboard = () => {
                   TARS DOE 탭 루프 이슈가 있는 경우 <code>patches/tars_doe_autofit_loop_fix.patch</code>를 적용해 자동 재피팅을 차단할 수 있습니다.
                 </p>
               </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="injectionGuide">
+          <Card>
+            <CardHeader className="bg-gradient-to-r from-blue-900 to-blue-700 text-white rounded-t-lg">
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle className="text-2xl mb-2">PHA 36-캐비티 플래시 제어 현장 가이드</CardTitle>
+                  <CardDescription className="text-blue-100">
+                    압력-동기형 4단 제어 + 러너 보호 통합 솔루션
+                  </CardDescription>
+                </div>
+                <div className="text-right text-sm">
+                  <div className="bg-white/20 px-3 py-1 rounded mb-1">재질: P3HB4 (S1000P/A1000P)</div>
+                  <div className="bg-white/20 px-3 py-1 rounded mb-1">캐비티: 36-drop 멀티 캐비티</div>
+                  <div className="bg-white/20 px-3 py-1 rounded">목표: 플래시 ≤0.02mm</div>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-6">
+              {/* Sub-tabs Navigation */}
+              <div className="flex flex-wrap gap-2 mb-6 border-b pb-4">
+                {['📋 전체 개요', '⚙️ 기계 설정', '🧮 계산기', '📊 프로세스 플로우', '✅ 체크리스트', '🔧 문제 해결'].map((label, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setInjectionTab(idx)}
+                    className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                      injectionTab === idx
+                        ? 'bg-blue-600 text-white shadow-md'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Tab 0: Overview */}
+              {injectionTab === 0 && (
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-bold text-blue-900 mb-4">제어 전략 핵심 개요</h2>
+
+                  <div className="bg-gradient-to-r from-green-50 to-green-100 p-6 rounded-lg border-l-4 border-green-500">
+                    <h3 className="text-xl font-bold mb-3 text-green-800">🎯 제어 원칙</h3>
+                    <p className="font-bold mb-2">"러너가 대부분 찰 때까지는 압력 제한으로 보호하고, 캐비티 충전 이후는 캐비티압 기반으로 달린다"</p>
+                    <p className="text-sm text-green-800">플래시의 근본 원인은 금형 손상 또는 캐비티압이 클램프 한계를 초과하는 것입니다. 이 전략은 두 가지 원인을 모두 구조적으로 차단합니다.</p>
+                  </div>
+
+                  <h3 className="text-xl font-bold text-blue-900 mt-6 mb-4">4단 제어 로직</h3>
+
+                  <div className="space-y-4">
+                    {[
+                      {
+                        stage: 'V0',
+                        title: 'Runner-Protect (압력 제한 속도 제어)',
+                        desc: '러너 체적의 약 90%까지는 압력 상한을 걸어 중속으로 채웁니다. 상한은 클램프 대비 80% 이내로 설정하여 스프루 플래시와 전단발열을 차단합니다.'
+                      },
+                      {
+                        stage: 'V1',
+                        title: '캐비티 충전 고속 (92-96%)',
+                        desc: '게이트 돌입 이후에는 얇은벽 충전성 확보를 위해 고속을 사용합니다. 단, 노즐/사출압 상한을 설정해 압력 폭주를 억제합니다.'
+                      },
+                      {
+                        stage: 'V2',
+                        title: 'EoF 브레이크 (종단 감속)',
+                        desc: '충전 끝(End of Fill) 4-8mm 구간에서 선형 감속으로 압력 오버슈트를 제거합니다.'
+                      },
+                      {
+                        stage: 'V3',
+                        title: '보압 램프-인/조기 종료',
+                        desc: '게이트 동결 시점을 산정하고 P1(짧게) → P2(낮게) 2단 램프로 유지한 뒤 동결 직후 즉시 종료합니다.'
+                      }
+                    ].map((item, idx) => (
+                      <div key={idx} className="flex items-start bg-white p-4 rounded-lg border-l-4 border-blue-500 shadow hover:shadow-lg transition-shadow">
+                        <div className="bg-gradient-to-br from-blue-600 to-blue-800 text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg mr-4 flex-shrink-0">
+                          {item.stage}
+                        </div>
+                        <div>
+                          <div className="font-bold text-lg text-blue-900 mb-2">{item.title}</div>
+                          <div className="text-gray-700 text-sm">{item.desc}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <h3 className="text-xl font-bold text-blue-900 mt-6 mb-4">보조 제어 요소</h3>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse bg-white shadow-md rounded-lg overflow-hidden">
+                      <thead>
+                        <tr className="bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+                          <th className="p-3 text-left font-bold">구분</th>
+                          <th className="p-3 text-left font-bold">제어 방법</th>
+                          <th className="p-3 text-left font-bold">목적</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[
+                          { name: '러너 전단 관리', method: '러너 R 증대 또는 V0 속도 하향', purpose: '전단률 억제로 전단발열·점도붕괴 방지' },
+                          { name: '스프루 국부 냉각', method: '스프루/1차 분기에 -2~-5°C 저온 인서트', purpose: '파팅 라인에 씰링 스킨 조기 형성' },
+                          { name: '게이트 동결 균질화', method: '게이트 구경 ±0.02mm 미세 조정', purpose: '동결 시간 편차 ≤0.1s로 균질화' },
+                          { name: '용융 안정성', method: '최저 용융온도, 체류시간·rpm·백프레셔 저감', purpose: 'PHA β-elimination 열분해 억제, MW 보존' },
+                          { name: '결정화 가속', method: 'BN·탈크 0.05-0.20 wt% 저농도 첨가', purpose: 'Tc 상승·t½ 단축으로 스킨 조기 형성' }
+                        ].map((row, idx) => (
+                          <tr key={idx} className="border-b hover:bg-blue-50 transition-colors">
+                            <td className="p-3 font-semibold">{row.name}</td>
+                            <td className="p-3">{row.method}</td>
+                            <td className="p-3">{row.purpose}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <div className="bg-gradient-to-r from-red-50 to-red-100 p-6 rounded-lg border-l-4 border-red-500 mt-6">
+                    <h3 className="text-xl font-bold mb-3 text-red-800">⚠️ PHA 재료 특성 주의사항</h3>
+                    <div className="space-y-2 text-sm">
+                      <p><strong className="text-red-700">β-elimination 열분해:</strong> PHB 계열은 약 190°C 이상에서 급속 열분해가 발생하며 분자량이 하락합니다.</p>
+                      <p><strong className="text-red-700">좁은 가공창:</strong> 융점 근처에서 가공해야 하며 과열 시 가스 발생과 점도 하락이 동반됩니다.</p>
+                      <p><strong className="text-red-700">느린 결정화:</strong> 일반 PE/PP 대비 결정화 속도가 느려 게이트 동결 시간이 길어질 수 있습니다.</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Tab 1: Machine Settings */}
+              {injectionTab === 1 && (
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-bold text-blue-900 mb-4">기계 설정 화면</h2>
+
+                  {/* V0 Stage */}
+                  <div className="bg-gradient-to-b from-gray-900 to-gray-800 p-6 rounded-lg shadow-xl">
+                    <div className="bg-gradient-to-r from-gray-800 to-gray-700 text-green-400 p-3 rounded mb-4 font-mono font-bold border-2 border-green-400 flex justify-between items-center">
+                      <span>V0 STAGE: RUNNER PROTECTION</span>
+                      <span className="text-sm opacity-80">러너 보호 구간</span>
+                    </div>
+                    <div className="bg-gray-800 text-yellow-400 p-3 rounded mb-4 font-bold border-2 border-yellow-400">
+                      ▶ 설정 목적: 러너 체적 90%까지 압력 제한 중속 충전 - 스프루 플래시 방지
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {[
+                        { label: 'Injection Velocity V0', value: '30-50 mm/s', note: '중속 설정 (러너 충전용)' },
+                        { label: 'Pressure Limit', value: '0.8 × F_clamp/A_proj bar', note: '클램프 한계의 80% 이내' },
+                        { label: 'Switchover Position', value: '0.9 × V_runner mm', note: '러너 체적의 90% 지점' },
+                        { label: 'Shear Rate Control', value: 'γ̇ = 4Q/(πR³) s⁻¹', note: '러너 전단률 모니터링' }
+                      ].map((param, idx) => (
+                        <div key={idx} className="bg-gray-700 p-4 rounded border-2 border-gray-600 hover:border-green-400 transition-colors">
+                          <div className="text-cyan-400 text-xs font-bold uppercase mb-2">{param.label}</div>
+                          <div className="text-white text-2xl font-bold font-mono mb-1">{param.value}</div>
+                          <div className="text-gray-400 text-xs italic">{param.note}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* V1 Stage */}
+                  <div className="bg-gradient-to-b from-gray-900 to-gray-800 p-6 rounded-lg shadow-xl">
+                    <div className="bg-gradient-to-r from-gray-800 to-gray-700 text-green-400 p-3 rounded mb-4 font-mono font-bold border-2 border-green-400 flex justify-between items-center">
+                      <span>V1 STAGE: HIGH-SPEED CAVITY FILL</span>
+                      <span className="text-sm opacity-80">캐비티 고속 충전</span>
+                    </div>
+                    <div className="bg-gray-800 text-yellow-400 p-3 rounded mb-4 font-bold border-2 border-yellow-400">
+                      ▶ 설정 목적: 얇은벽 충전성 확보 - 게이트 돌입 후 고속 충전
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {[
+                        { label: 'Injection Velocity V1', value: '80-150 mm/s', note: '얇은벽 충전용 고속' },
+                        { label: 'Injection Pressure Limit', value: '설정 유지 bar', note: '압력 폭주 방지' },
+                        { label: 'Fill Range', value: '92-96 %', note: 'V1 작동 구간' },
+                        { label: 'Cavity Pressure Sensor', value: 'dP/dt Peak 감지', note: '마지막 충전 캐비티 기준' }
+                      ].map((param, idx) => (
+                        <div key={idx} className="bg-gray-700 p-4 rounded border-2 border-gray-600 hover:border-green-400 transition-colors">
+                          <div className="text-cyan-400 text-xs font-bold uppercase mb-2">{param.label}</div>
+                          <div className="text-white text-2xl font-bold font-mono mb-1">{param.value}</div>
+                          <div className="text-gray-400 text-xs italic">{param.note}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* V2 & V3 Stages */}
+                  <div className="bg-gradient-to-b from-gray-900 to-gray-800 p-6 rounded-lg shadow-xl">
+                    <div className="bg-gradient-to-r from-gray-800 to-gray-700 text-green-400 p-3 rounded mb-4 font-mono font-bold border-2 border-green-400 flex justify-between items-center">
+                      <span>V2 STAGE: END-OF-FILL DECELERATION</span>
+                      <span className="text-sm opacity-80">충전 끝 감속</span>
+                    </div>
+                    <div className="bg-gray-800 text-yellow-400 p-3 rounded mb-4 font-bold border-2 border-yellow-400">
+                      ▶ 설정 목적: 압력 오버슈트 제거 - EoF 구간 선형 감속
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {[
+                        { label: 'Injection Velocity V2', value: '20-40 mm/s', note: '선형 감속 목표 속도' },
+                        { label: 'Deceleration Start Point', value: 'EoF -4~-8 mm', note: '충전 끝 4-8mm 전' }
+                      ].map((param, idx) => (
+                        <div key={idx} className="bg-gray-700 p-4 rounded border-2 border-gray-600 hover:border-green-400 transition-colors">
+                          <div className="text-cyan-400 text-xs font-bold uppercase mb-2">{param.label}</div>
+                          <div className="text-white text-2xl font-bold font-mono mb-1">{param.value}</div>
+                          <div className="text-gray-400 text-xs italic">{param.note}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-6 rounded-lg border-l-4 border-blue-500">
+                    <h3 className="text-lg font-bold mb-3 text-blue-800">📌 게이트 동결(Gate Seal) 시험 방법</h3>
+                    <ol className="list-decimal list-inside space-y-2 text-sm text-blue-900">
+                      <li><strong>1단계:</strong> 보압 시간을 0.5초부터 시작하여 0.5초씩 증가시키면서 샷을 진행합니다.</li>
+                      <li><strong>2단계:</strong> 각 샷마다 제품 무게를 정밀하게 측정합니다.</li>
+                      <li><strong>3단계:</strong> 무게가 더 이상 증가하지 않는 시점이 게이트 동결 시점입니다.</li>
+                      <li><strong>4단계:</strong> 최후 동결 캐비티 기준으로 보압 종료 시간을 설정합니다.</li>
+                    </ol>
+                  </div>
+                </div>
+              )}
+
+              {/* Tab 2: Calculator */}
+              {injectionTab === 2 && (
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-bold text-blue-900 mb-4">설정값 계산기</h2>
+
+                  {/* Clamp Tonnage Calculator */}
+                  <div className="bg-gray-50 p-6 rounded-lg border-2 border-gray-300">
+                    <h3 className="text-xl font-bold text-blue-900 mb-4">1. 클램프 톤수 계산기</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <label className="block font-bold mb-2 text-gray-700">캐비티 평균 압력 P_avg (bar):</label>
+                        <input
+                          type="number"
+                          value={calcInputs.pAvg}
+                          onChange={(e) => setCalcInputs(prev => ({ ...prev, pAvg: Number(e.target.value) }))}
+                          className="w-full p-3 border-2 border-gray-300 rounded focus:border-blue-600 focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold mb-2 text-gray-700">제품 투영 면적 A_proj (cm²):</label>
+                        <input
+                          type="number"
+                          value={calcInputs.aProj}
+                          onChange={(e) => setCalcInputs(prev => ({ ...prev, aProj: Number(e.target.value) }))}
+                          className="w-full p-3 border-2 border-gray-300 rounded focus:border-blue-600 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                    <button
+                      onClick={calculateClampTonnage}
+                      className="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-6 py-3 rounded font-bold hover:shadow-lg transition-shadow mr-2"
+                    >
+                      계산하기
+                    </button>
+                    {calcResults.clamp && (
+                      <div className="mt-4 bg-white p-4 rounded border-2 border-blue-600">
+                        <h4 className="font-bold text-blue-900 mb-2">계산 결과</h4>
+                        <div className="text-3xl font-bold text-blue-700 my-2">{calcResults.clamp.tonnage.toFixed(1)} tf</div>
+                        <p className="text-sm"><strong>권장 클램프 톤수 (20% 여유):</strong> {calcResults.clamp.recommended.toFixed(1)} tf</p>
+                        <p className="text-sm mt-1">현재 기계의 클램프 톤수가 {calcResults.clamp.recommended.toFixed(1)} tf 이상인지 확인하세요.</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Pressure Limit Calculator */}
+                  <div className="bg-gray-50 p-6 rounded-lg border-2 border-gray-300">
+                    <h3 className="text-xl font-bold text-blue-900 mb-4">2. V0 압력 리밋 계산기</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                      <div>
+                        <label className="block font-bold mb-2 text-gray-700">클램프 한계 (ton-force):</label>
+                        <input
+                          type="number"
+                          value={calcInputs.fClamp}
+                          onChange={(e) => setCalcInputs(prev => ({ ...prev, fClamp: Number(e.target.value) }))}
+                          className="w-full p-3 border-2 border-gray-300 rounded focus:border-blue-600 focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold mb-2 text-gray-700">제품 투영 면적 A_proj (cm²):</label>
+                        <input
+                          type="number"
+                          value={calcInputs.aProj2}
+                          onChange={(e) => setCalcInputs(prev => ({ ...prev, aProj2: Number(e.target.value) }))}
+                          className="w-full p-3 border-2 border-gray-300 rounded focus:border-blue-600 focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold mb-2 text-gray-700">안전 계수 (권장: 0.8):</label>
+                        <input
+                          type="number"
+                          step="0.05"
+                          value={calcInputs.safetyFactor}
+                          onChange={(e) => setCalcInputs(prev => ({ ...prev, safetyFactor: Number(e.target.value) }))}
+                          className="w-full p-3 border-2 border-gray-300 rounded focus:border-blue-600 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                    <button
+                      onClick={calculatePressureLimit}
+                      className="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-6 py-3 rounded font-bold hover:shadow-lg transition-shadow"
+                    >
+                      계산하기
+                    </button>
+                    {calcResults.pressure && (
+                      <div className="mt-4 bg-white p-4 rounded border-2 border-blue-600">
+                        <h4 className="font-bold text-blue-900 mb-2">V0 압력 리밋 설정값</h4>
+                        <div className="text-3xl font-bold text-blue-700 my-2">{calcResults.pressure.pressureLimit.toFixed(1)} bar</div>
+                        <p className="text-sm"><strong>V0 단계에서 이 값을 압력 리밋으로 설정하세요.</strong></p>
+                        <p className="text-sm mt-1">이 값은 클램프 한계의 {(calcResults.pressure.safetyFactor * 100).toFixed(0)}%로 계산되어 스프루 플래시를 방지합니다.</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Shear Rate Calculator */}
+                  <div className="bg-gray-50 p-6 rounded-lg border-2 border-gray-300">
+                    <h3 className="text-xl font-bold text-blue-900 mb-4">3. 러너 전단률 계산기</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <label className="block font-bold mb-2 text-gray-700">체적 유량 Q (cm³/s):</label>
+                        <input
+                          type="number"
+                          value={calcInputs.flowRate}
+                          onChange={(e) => setCalcInputs(prev => ({ ...prev, flowRate: Number(e.target.value) }))}
+                          className="w-full p-3 border-2 border-gray-300 rounded focus:border-blue-600 focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block font-bold mb-2 text-gray-700">러너 반경 R (cm):</label>
+                        <input
+                          type="number"
+                          step="0.1"
+                          value={calcInputs.runnerRadius}
+                          onChange={(e) => setCalcInputs(prev => ({ ...prev, runnerRadius: Number(e.target.value) }))}
+                          className="w-full p-3 border-2 border-gray-300 rounded focus:border-blue-600 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                    <button
+                      onClick={calculateShearRate}
+                      className="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-6 py-3 rounded font-bold hover:shadow-lg transition-shadow"
+                    >
+                      계산하기
+                    </button>
+                    {calcResults.shear && (
+                      <div className="mt-4 bg-white p-4 rounded border-2 border-blue-600">
+                        <h4 className="font-bold text-blue-900 mb-2">러너 벽면 전단률</h4>
+                        <div className="text-3xl font-bold text-blue-700 my-2">{calcResults.shear.shearRate.toFixed(0)} s⁻¹</div>
+                        {calcResults.shear.shearRate > 50000 ? (
+                          <p className="text-sm text-red-600"><strong>⚠️ 경고:</strong> 전단률이 매우 높습니다. V0 속도를 낮추거나 러너 직경을 증대하세요.</p>
+                        ) : calcResults.shear.shearRate > 20000 ? (
+                          <p className="text-sm text-orange-600"><strong>⚡ 주의:</strong> 전단률이 높은 편입니다. 모니터링이 필요합니다.</p>
+                        ) : (
+                          <p className="text-sm text-green-600"><strong>✅ 양호:</strong> 전단률이 적정 범위입니다.</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Packing Pressure Calculator */}
+                  <div className="bg-gray-50 p-6 rounded-lg border-2 border-gray-300">
+                    <h3 className="text-xl font-bold text-blue-900 mb-4">4. 보압 설정값 계산기</h3>
+                    <div className="mb-4">
+                      <label className="block font-bold mb-2 text-gray-700">최대 사출압 P_inj_peak (bar):</label>
+                      <input
+                        type="number"
+                        value={calcInputs.pInjPeak}
+                        onChange={(e) => setCalcInputs(prev => ({ ...prev, pInjPeak: Number(e.target.value) }))}
+                        className="w-full p-3 border-2 border-gray-300 rounded focus:border-blue-600 focus:outline-none"
+                      />
+                    </div>
+                    <button
+                      onClick={calculatePackingPressure}
+                      className="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-6 py-3 rounded font-bold hover:shadow-lg transition-shadow"
+                    >
+                      계산하기
+                    </button>
+                    {calcResults.packing && (
+                      <div className="mt-4 bg-white p-4 rounded border-2 border-blue-600">
+                        <h4 className="font-bold text-blue-900 mb-2">보압 설정 권장값</h4>
+                        <div className="text-2xl font-bold text-blue-700 my-2">
+                          P1: {calcResults.packing.p1Min.toFixed(0)} - {calcResults.packing.p1Max.toFixed(0)} bar<br/>
+                          P2: {calcResults.packing.p2Min.toFixed(0)} - {calcResults.packing.p2Max.toFixed(0)} bar
+                        </div>
+                        <p className="text-sm mt-2"><strong>P1 단계:</strong> {calcResults.packing.p1Min.toFixed(0)}-{calcResults.packing.p1Max.toFixed(0)} bar를 0.1-0.3초간 유지합니다.</p>
+                        <p className="text-sm"><strong>P2 단계:</strong> {calcResults.packing.p2Min.toFixed(0)}-{calcResults.packing.p2Max.toFixed(0)} bar를 게이트 동결까지 유지합니다.</p>
+                        <p className="text-sm mt-1">게이트 시일 시험으로 정확한 종료 시점을 결정하세요.</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Tab 3: Process Flow */}
+              {injectionTab === 3 && (
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-bold text-blue-900 mb-4">프로세스 플로우 다이어그램</h2>
+
+                  <div className="bg-white p-6 rounded-lg border-2 border-gray-300">
+                    <h3 className="text-center text-xl font-bold text-blue-900 mb-6">4단 제어 프로세스 흐름도</h3>
+                    <div className="space-y-4">
+                      {[
+                        { stage: 'V0', title: 'Runner Protection', color: 'blue', details: ['압력 제한 중속 (0-90% 러너)', '속도: 30-50 mm/s', '압력: 0.8 × F_clamp/A_proj', '목적: 스프루 플래시 방지', '전단발열·점도붕괴 차단'] },
+                        { stage: 'V1', title: 'High-Speed Cavity Fill', color: 'orange', details: ['캐비티 고속 충전 (90-96%)', '속도: 80-150 mm/s', '전환: 캐비티압 dP/dt 피크', '목적: 얇은벽 충전성 확보', '압력 상한 유지'] },
+                        { stage: 'V2', title: 'End-of-Fill Deceleration', color: 'purple', details: ['충전 끝 감속 (96-100%)', '속도: 20-40 mm/s (선형 감속)', '시작: EoF -4~-8 mm', '목적: 압력 오버슈트 제거', '플래시 방지'] },
+                        { stage: 'V3', title: 'Packing Pressure Control', color: 'green', details: ['보압 램프-인/조기 종료', 'P1: 30-45% × P_peak (0.1-0.3초)', 'P2: 15-30% × P_peak (게이트 동결까지)', '종료: 최후 동결 캐비티 기준', '목적: 과보압 방지'] }
+                      ].map((item, idx) => (
+                        <div key={idx} className={`bg-${item.color}-50 p-6 rounded-lg border-l-4 border-${item.color}-600 shadow-md`}>
+                          <div className="flex items-center mb-3">
+                            <div className={`bg-gradient-to-br from-${item.color}-600 to-${item.color}-800 text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg mr-4`}>
+                              {item.stage}
+                            </div>
+                            <h4 className="text-xl font-bold">{item.title}</h4>
+                          </div>
+                          <ul className="space-y-1 text-sm ml-16">
+                            {item.details.map((detail, detailIdx) => (
+                              <li key={detailIdx}>• {detail}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-6 rounded-lg border-l-4 border-blue-500">
+                    <h3 className="text-lg font-bold mb-3 text-blue-800">📊 프로세스 해석</h3>
+                    <div className="space-y-2 text-sm">
+                      <p><strong className="text-blue-700">V0 구간:</strong> 압력이 리밋 아래에서 완만하게 상승합니다. 러너 보호 단계로 과압을 구조적으로 차단합니다.</p>
+                      <p><strong className="text-orange-700">V1 구간:</strong> 고속 충전으로 압력이 급상승하지만 여전히 리밋 이내를 유지합니다.</p>
+                      <p><strong className="text-purple-700">V2 구간:</strong> 감속으로 압력 스파이크가 제어되며 완만하게 피크에 도달합니다.</p>
+                      <p><strong className="text-green-700">V3 구간:</strong> 보압 단계로 압력이 점진적으로 감소하며 게이트 동결 후 종료됩니다.</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Tab 4: Checklist */}
+              {injectionTab === 4 && (
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-bold text-blue-900 mb-4">현장 작업 체크리스트</h2>
+
+                  {[
+                    { title: '준비 단계 (Pre-Setup)', items: [
+                      '재료 건조 확인: PHA 펠렛을 65-80°C에서 6-24시간 건조했는지 확인',
+                      '러너 체적 계산: CAD 또는 금형 도면에서 러너 총 체적을 계산',
+                      '투영 면적 측정: 36개 캐비티의 총 투영 면적 계산',
+                      '클램프 톤수 확인: 필요 톤수를 산출하고 현재 기계 사양과 비교',
+                      '금형 온도 설정: 캐비티는 기준 온도로, 스프루는 -2~-5°C 낮게 설정'
+                    ]},
+                    { title: 'V0 단계 설정 (Runner Protection)', items: [
+                      'V0 속도 설정: 30-50 mm/s 범위에서 중속으로 설정',
+                      '압력 리밋 설정: 계산기에서 산출한 값을 기계에 입력',
+                      'V0→V1 전환점 설정: 러너 체적의 90% 지점을 스크류 위치로 설정',
+                      '러너 전단률 확인: 계산기로 전단률을 계산하고 과도한 전단 확인'
+                    ]},
+                    { title: 'V1 단계 설정 (High-Speed Fill)', items: [
+                      'V1 속도 설정: 얇은벽 충전을 위해 80-150 mm/s로 설정',
+                      '사출압 상한 유지: V0에서 설정한 압력 리밋이 V1에서도 적용되는지 확인',
+                      '캐비티압 센서 설치: 마지막으로 충전되는 캐비티에 센서 설치',
+                      'v/p 전환 설정: 캐비티압 dP/dt 피크 또는 스크류 위치 96%로 설정'
+                    ]},
+                    { title: 'V2 단계 설정 (Deceleration)', items: [
+                      'V2 속도 설정: 20-40 mm/s로 감속 목표 속도 설정',
+                      '감속 시작점 설정: EoF 4-8mm 전부터 감속 시작',
+                      '선형 램프 확인: 감속 프로파일이 선형으로 설정되어 있는지 확인'
+                    ]},
+                    { title: 'V3 단계 설정 (Packing)', items: [
+                      'P1 보압 설정: 최대 사출압의 30-45%로 설정, 시간은 0.1-0.3초',
+                      'P2 보압 설정: 최대 사출압의 15-30%로 낮게 설정',
+                      '게이트 시일 시험 수행: 보압 시간을 변경하며 제품 무게 측정',
+                      'P2 시간 설정: 최후 동결 캐비티 기준으로 게이트 시일 직후 종료'
+                    ]},
+                    { title: '검증 단계 (Verification)', items: [
+                      '플래시 측정: 파팅라인과 스프루에서 플래시 높이 측정 (목표: 0.02mm 이하)',
+                      '제품 무게 확인: 36개 캐비티의 제품 무게 측정 (변동 ±1% 이내)',
+                      '치수 측정: 핵심 치수를 측정하고 규격 내 확인',
+                      '사이클 타임 확인: 기준 대비 ±5% 이내인지 확인',
+                      '타이바 점검: 타이바 변형이나 금형 개방 징후 육안 점검',
+                      '압력 데이터 검토: 캐비티 압력 곡선 검토'
+                    ]},
+                    { title: '일일 점검 (Daily Check)', items: [
+                      '재료 건조 상태: 건조기 온도와 시간 확인',
+                      '금형 온도: 각 구역의 실제 온도가 설정값과 일치하는지 확인',
+                      '스프루 부싱 점검: 마모나 손상 확인',
+                      '파팅라인 청소: 이물질이나 잔류 플래시 확인',
+                      '품질 샘플링: 주기적으로 샘플 채취하여 플래시와 치수 확인'
+                    ]}
+                  ].map((section, sectionIdx) => (
+                    <div key={sectionIdx} className="bg-gray-50 p-6 rounded-lg">
+                      <h3 className="text-lg font-bold text-blue-900 mb-4">{section.title}</h3>
+                      <div className="space-y-2">
+                        {section.items.map((item, itemIdx) => (
+                          <div key={itemIdx} className="flex items-start bg-white p-3 rounded border hover:border-blue-600 transition-colors">
+                            <input type="checkbox" className="w-5 h-5 mr-3 mt-0.5 cursor-pointer flex-shrink-0" />
+                            <div className="text-sm">{item}</div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Tab 5: Troubleshooting */}
+              {injectionTab === 5 && (
+                <div className="space-y-6">
+                  <h2 className="text-2xl font-bold text-blue-900 mb-4">문제 해결 가이드</h2>
+
+                  {[
+                    { color: 'red', icon: '🔴', title: '스프루/러너 근처에 플래시 발생', solutions: [
+                      'V0 압력 리밋이 너무 높음 → 압력 리밋을 70%로 낮추고 재시험',
+                      '클램프 톤수 부족 → 계산기로 재확인하고 더 큰 기계로 전환 검토',
+                      '스프루 부싱 마모/손상 → 스프루 부싱을 교체하고 시트 형상 점검',
+                      '파팅라인 온도가 높음 → 국부 냉각을 -5°C까지 강화',
+                      '러너 전단발열 → V0 속도를 낮추거나 러너 직경 증대'
+                    ]},
+                    { color: 'orange', icon: '🟠', title: '캐비티 충전 불완전 (Short Shot)', solutions: [
+                      'V1 속도가 너무 낮음 → V1 속도를 단계적으로 증가',
+                      'V0 구간이 너무 길음 → V0→V1 전환점을 85%로 앞당김',
+                      '재료 온도가 너무 낮음 → 실린더 온도를 5-10°C 상승',
+                      '금형 온도가 너무 낮음 → 캐비티 온도 상승 (단, 스프루는 저온 유지)',
+                      '게이트 크기 부족 → 게이트 직경을 0.1-0.2mm 증대 검토'
+                    ]},
+                    { color: 'yellow', icon: '🟡', title: 'EoF에서 압력 스파이크 발생', solutions: [
+                      'V2 감속이 없거나 불충분 → V2 감속 구간을 8mm로 연장',
+                      '감속 프로파일이 급격함 → 선형 램프가 아닌 경우 설정 변경',
+                      'V1 속도가 과도하게 높음 → V1 속도를 10-20% 감소',
+                      '공기 포획(Air Trap) → 벤트 위치와 크기 점검'
+                    ]},
+                    { color: 'green', icon: '🟢', title: '캐비티 간 무게 편차가 큼', solutions: [
+                      '러너 밸런싱 불량 → 러너 설계 재검토 또는 게이트 구경 미세 조정',
+                      '게이트 동결 시간 편차 → 게이트 구경을 ±0.02mm 단위로 조정',
+                      '금형 온도 불균일 → 각 구역의 실제 온도 측정 및 균일화',
+                      '보압 시간이 최후 동결 캐비티 기준이 아님 → 게이트 시일 시험 재수행'
+                    ]},
+                    { color: 'blue', icon: '🔵', title: 'PHA 재료 열화 징후 (변색, 가스 발생)', solutions: [
+                      '실린더 온도가 과도함 → 후방대 온도를 5-10°C 낮춤',
+                      '체류시간이 길음 → 샷 크기 증대 또는 사이클 타임 단축',
+                      '스크류 rpm이 높음 → rpm을 30-50% 감소',
+                      '배압이 과도함 → 배압을 최소(5-10 bar)로 낮춤',
+                      '재료 건조 불충분 → 건조 시간 연장 및 온도 확인'
+                    ]}
+                  ].map((problem, idx) => (
+                    <div key={idx} className={`bg-gradient-to-r from-${problem.color}-50 to-${problem.color}-100 p-6 rounded-lg border-l-4 border-${problem.color}-500`}>
+                      <h3 className="text-xl font-bold mb-3 flex items-center">
+                        <span className="text-2xl mr-2">{problem.icon}</span>
+                        <span>문제: {problem.title}</span>
+                      </h3>
+                      <p className="font-bold mb-2">가능 원인과 해결책:</p>
+                      <ul className="space-y-2 ml-5">
+                        {problem.solutions.map((solution, solIdx) => (
+                          <li key={solIdx} className="text-sm">• {solution}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+
+                  <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-6 rounded-lg border-l-4 border-blue-500">
+                    <h3 className="text-lg font-bold mb-3 text-blue-800">💡 예방 조치 (Preventive Actions)</h3>
+                    <p className="font-bold mb-2">정기적으로 수행해야 할 작업:</p>
+                    <ul className="space-y-1 ml-5 text-sm">
+                      <li>• 주 1회: 스프루 부싱과 파팅라인의 마모/손상 점검</li>
+                      <li>• 주 1회: 타이바 변형 측정 및 클램프 톤수 재확인</li>
+                      <li>• 일 2회: 제품 무게와 치수 샘플링 (시작/종료 시)</li>
+                      <li>• 일 1회: 캐비티 압력 데이터 검토 및 트렌드 분석</li>
+                      <li>• 교대 시: 금형 온도 실측값 확인</li>
+                      <li>• 로트 변경 시: 재료 건조 상태 재확인</li>
+                    </ul>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
