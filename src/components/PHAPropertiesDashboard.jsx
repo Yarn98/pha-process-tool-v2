@@ -25,6 +25,38 @@ const renderMarkdown = (text) => text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</str
 
 const md = (text) => ({ __html: renderMarkdown(text) })
 
+// Helper functions to get static Tailwind classes based on color
+const getProcessFlowClasses = (color) => {
+  const classMap = {
+    blue: 'bg-blue-50 border-blue-600',
+    orange: 'bg-orange-50 border-orange-600',
+    purple: 'bg-purple-50 border-purple-600',
+    green: 'bg-green-50 border-green-600'
+  }
+  return classMap[color] || 'bg-gray-50 border-gray-600'
+}
+
+const getProcessFlowBadgeClasses = (color) => {
+  const classMap = {
+    blue: 'bg-gradient-to-br from-blue-600 to-blue-800',
+    orange: 'bg-gradient-to-br from-orange-600 to-orange-800',
+    purple: 'bg-gradient-to-br from-purple-600 to-purple-800',
+    green: 'bg-gradient-to-br from-green-600 to-green-800'
+  }
+  return classMap[color] || 'bg-gradient-to-br from-gray-600 to-gray-800'
+}
+
+const getTroubleshootingClasses = (color) => {
+  const classMap = {
+    red: 'bg-gradient-to-r from-red-50 to-red-100 border-red-500',
+    orange: 'bg-gradient-to-r from-orange-50 to-orange-100 border-orange-500',
+    yellow: 'bg-gradient-to-r from-yellow-50 to-yellow-100 border-yellow-500',
+    green: 'bg-gradient-to-r from-green-50 to-green-100 border-green-500',
+    blue: 'bg-gradient-to-r from-blue-50 to-blue-100 border-blue-500'
+  }
+  return classMap[color] || 'bg-gradient-to-r from-gray-50 to-gray-100 border-gray-500'
+}
+
 const thermalData = {
   S1000P: [
     { temp: -50, modulus: 2800, tanDelta: 0.02 },
@@ -311,6 +343,12 @@ const PHAPropertiesDashboard = () => {
   }
 
   const calculatePressureLimit = () => {
+    // Validate inputs to prevent division by zero
+    if (!calcInputs.aProj2 || calcInputs.aProj2 <= 0) {
+      alert('오류: 투영 면적(A_proj)은 0보다 커야 합니다.')
+      return
+    }
+
     const pressureLimit = (calcInputs.safetyFactor * calcInputs.fClamp * 1000) / calcInputs.aProj2
     setCalcResults(prev => ({
       ...prev,
@@ -319,6 +357,12 @@ const PHAPropertiesDashboard = () => {
   }
 
   const calculateShearRate = () => {
+    // Validate inputs to prevent division by zero
+    if (!calcInputs.runnerRadius || calcInputs.runnerRadius <= 0) {
+      alert('오류: 러너 반경은 0보다 커야 합니다.')
+      return
+    }
+
     const shearRate = (4 * calcInputs.flowRate) / (Math.PI * Math.pow(calcInputs.runnerRadius, 3))
     setCalcResults(prev => ({
       ...prev,
@@ -1106,9 +1150,9 @@ const PHAPropertiesDashboard = () => {
                         { stage: 'V2', title: 'End-of-Fill Deceleration', color: 'purple', details: ['충전 끝 감속 (96-100%)', '속도: 20-40 mm/s (선형 감속)', '시작: EoF -4~-8 mm', '목적: 압력 오버슈트 제거', '플래시 방지'] },
                         { stage: 'V3', title: 'Packing Pressure Control', color: 'green', details: ['보압 램프-인/조기 종료', 'P1: 30-45% × P_peak (0.1-0.3초)', 'P2: 15-30% × P_peak (게이트 동결까지)', '종료: 최후 동결 캐비티 기준', '목적: 과보압 방지'] }
                       ].map((item, idx) => (
-                        <div key={idx} className={`bg-${item.color}-50 p-6 rounded-lg border-l-4 border-${item.color}-600 shadow-md`}>
+                        <div key={idx} className={`${getProcessFlowClasses(item.color)} p-6 rounded-lg border-l-4 shadow-md`}>
                           <div className="flex items-center mb-3">
-                            <div className={`bg-gradient-to-br from-${item.color}-600 to-${item.color}-800 text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg mr-4`}>
+                            <div className={`${getProcessFlowBadgeClasses(item.color)} text-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg mr-4`}>
                               {item.stage}
                             </div>
                             <h4 className="text-xl font-bold">{item.title}</h4>
@@ -1242,7 +1286,7 @@ const PHAPropertiesDashboard = () => {
                       '재료 건조 불충분 → 건조 시간 연장 및 온도 확인'
                     ]}
                   ].map((problem, idx) => (
-                    <div key={idx} className={`bg-gradient-to-r from-${problem.color}-50 to-${problem.color}-100 p-6 rounded-lg border-l-4 border-${problem.color}-500`}>
+                    <div key={idx} className={`${getTroubleshootingClasses(problem.color)} p-6 rounded-lg border-l-4`}>
                       <h3 className="text-xl font-bold mb-3 flex items-center">
                         <span className="text-2xl mr-2">{problem.icon}</span>
                         <span>문제: {problem.title}</span>
