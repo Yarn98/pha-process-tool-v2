@@ -53,6 +53,53 @@
   .row .group{flex:1 1 220px}
   .muted{color:#6b7280}
   @media (max-width:768px){body{padding:0}.container{border-radius:0}.main{padding:16px}.group input,.group select,.group textarea{font-size:16px;min-height:44px}}
+  /* Flash Control Guide Styles */
+  .flash-tabs{display:flex;gap:8px;border-bottom:2px solid #dee2e6;overflow-x:auto;padding-bottom:8px;margin:16px 0}
+  .flash-tab{border:0;background:#f8f9fa;padding:10px 16px;font-weight:600;color:#495057;border-radius:6px 6px 0 0;cursor:pointer;white-space:nowrap;transition:.2s}
+  .flash-tab.active{background:linear-gradient(135deg,#1e3c72,#2a5298);color:#fff}
+  .flash-tab:hover:not(.active){background:#e9ecef}
+  .flash-content{display:none;animation:fade .25s}.flash-content.active{display:block}
+  .machine-screen{background:linear-gradient(to bottom,#1a1a1a,#0d0d0d);border-radius:10px;padding:25px;margin:25px 0;box-shadow:0 8px 25px rgba(0,0,0,.5);border:4px solid #333}
+  .screen-header{background:linear-gradient(to right,#2d2d2d,#1a1a1a);color:#00ff00;padding:12px 20px;border-radius:5px;margin-bottom:20px;font-family:'Courier New',monospace;font-size:1.2em;font-weight:bold;border:2px solid #00ff00;box-shadow:0 0 15px rgba(0,255,0,.3);display:flex;justify-content:space-between;align-items:center}
+  .screen-time{font-size:.9em;opacity:.8}
+  .parameter-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:15px;margin-top:20px}
+  .parameter{background:#2d2d2d;padding:18px;border-radius:8px;border:2px solid #444;transition:all .3s}
+  .parameter:hover{border-color:#00ff00;box-shadow:0 0 10px rgba(0,255,0,.2)}
+  .parameter-label{color:#00bfff;font-size:.9em;margin-bottom:8px;font-weight:bold;text-transform:uppercase;letter-spacing:.5px}
+  .parameter-value{color:#fff;font-size:1.4em;font-weight:bold;font-family:'Courier New',monospace;margin-bottom:5px}
+  .parameter-unit{color:#ffaa00;font-size:.85em;margin-left:5px}
+  .parameter-note{color:#999;font-size:.8em;margin-top:5px;font-style:italic}
+  .stage-indicator{background:#1a1a1a;border:2px solid #ffaa00;border-radius:8px;padding:15px;margin:20px 0;color:#ffaa00;font-weight:bold}
+  .process-flow{display:flex;flex-direction:column;gap:15px;margin:20px 0}
+  .flow-step{display:flex;align-items:center;background:white;padding:20px;border-radius:8px;border-left:5px solid #1e3c72;box-shadow:0 2px 8px rgba(0,0,0,.1);transition:transform .3s}
+  .flow-step:hover{transform:translateX(10px);box-shadow:0 4px 12px rgba(0,0,0,.15)}
+  .flow-number{background:linear-gradient(135deg,#1e3c72,#2a5298);color:white;width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5em;font-weight:bold;margin-right:20px;flex-shrink:0}
+  .flow-content{flex:1}
+  .flow-title{font-size:1.2em;font-weight:bold;color:#1e3c72;margin-bottom:8px}
+  .flow-description{color:#666;line-height:1.6}
+  .checklist{background:#f8f9fa;padding:20px;border-radius:8px;margin:20px 0}
+  .checklist-item{display:flex;align-items:flex-start;padding:12px;margin:8px 0;background:white;border-radius:5px;border:1px solid #dee2e6;transition:all .3s}
+  .checklist-item:hover{border-color:#1e3c72;box-shadow:0 2px 8px rgba(30,60,114,.1)}
+  .checklist-checkbox{width:24px;height:24px;margin-right:15px;cursor:pointer;flex-shrink:0}
+  .checklist-text{flex:1;line-height:1.6}
+  .diagram{background:white;padding:30px;border-radius:10px;margin:20px 0;border:2px solid #dee2e6}
+  .diagram svg{width:100%;height:auto}
+  .print-button{background:#28a745;color:white;padding:12px 25px;border:none;border-radius:5px;font-size:1em;font-weight:bold;cursor:pointer;margin:10px 5px;transition:background .3s}
+  .print-button:hover{background:#218838}
+  .success-box{background:linear-gradient(135deg,#11998e,#38ef7d);color:white;padding:20px;border-radius:8px;margin:20px 0;border-left:5px solid #099268}
+  .success-box h3{margin-bottom:10px;font-size:1.3em}
+  .emphasis{color:#1e3c72;font-weight:bold}
+  .calculator{background:#f8f9fa;padding:25px;border-radius:10px;margin:20px 0;border:2px solid #dee2e6}
+  .calc-input-group{margin:15px 0}
+  .calc-input-group label{display:block;font-weight:bold;margin-bottom:8px;color:#495057}
+  .calc-input-group input{width:100%;padding:12px;border:2px solid #ced4da;border-radius:5px;font-size:1em;transition:border-color .3s}
+  .calc-input-group input:focus{outline:none;border-color:#1e3c72}
+  .calc-button{background:linear-gradient(135deg,#1e3c72,#2a5298);color:white;padding:12px 30px;border:none;border-radius:5px;font-size:1.1em;font-weight:bold;cursor:pointer;transition:transform .2s;margin:10px 5px}
+  .calc-button:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(30,60,114,.3)}
+  .calc-result{background:white;padding:20px;border-radius:8px;margin-top:20px;border:2px solid #1e3c72}
+  .calc-result h4{color:#1e3c72;margin-bottom:10px}
+  .calc-result-value{font-size:1.8em;font-weight:bold;color:#2a5298;margin:10px 0}
+  .formula{background:#f0f0f0;padding:15px;border-radius:5px;margin:15px 0;font-family:'Courier New',monospace;font-size:1.1em;border-left:4px solid #1e3c72}
 </style>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#2563eb">
@@ -79,6 +126,7 @@
       <button class="tab" data-tab="calc" data-i18n="tab_calc">계산기</button>
       <button class="tab" data-tab="props" data-i18n="tab_props">물성 DB</button>
       <button class="tab" data-tab="photos" data-i18n="tab_photos">사진</button>
+      <button class="tab" data-tab="flash" data-i18n="tab_flash">플래시 제어</button>
     </div>
 
     <!-- Process Conditions -->
@@ -239,6 +287,609 @@
       </div>
       <div id="photoGrid" class="photos"></div>
     </section>
+
+    <!-- Flash Control Tab -->
+    <section id="flash" class="tabpage">
+      <h2 style="color:#1e3c72;margin-bottom:20px">🔧 PHA 36-캐비티 플래시 제어 현장 가이드</h2>
+      <p style="font-size:1.1em;color:#666;margin-bottom:20px">압력-동기형 4단 제어 + 러너 보호 통합 솔루션 (P3HB4: S1000P/A1000P | 36-캐비티 | 플래시 ≤0.02mm)</p>
+
+      <!-- Flash Control Sub-tabs -->
+      <div class="flash-tabs">
+        <button class="flash-tab active" onclick="showFlashTab(0)">📋 전체 개요</button>
+        <button class="flash-tab" onclick="showFlashTab(1)">⚙️ 기계 설정</button>
+        <button class="flash-tab" onclick="showFlashTab(2)">🧮 계산기</button>
+        <button class="flash-tab" onclick="showFlashTab(3)">📊 프로세스 플로우</button>
+        <button class="flash-tab" onclick="showFlashTab(4)">✅ 체크리스트</button>
+        <button class="flash-tab" onclick="showFlashTab(5)">🔧 문제 해결</button>
+      </div>
+
+      <!-- Flash Tab 0: Overview -->
+      <div class="flash-content active" id="flash-tab-0">
+        <h3 style="color:#1e3c72;margin-bottom:20px">제어 전략 핵심 개요</h3>
+
+        <div class="success-box">
+          <h3>🎯 제어 원칙</h3>
+          <p><strong>"러너가 대부분 찰 때까지는 압력 제한으로 보호하고, 캐비티 충전 이후는 캐비티압 기반으로 달린다"</strong></p>
+          <p>플래시의 근본 원인은 금형 손상 또는 캐비티압이 클램프 한계를 초과하는 것입니다. 이 전략은 두 가지 원인을 모두 구조적으로 차단합니다.</p>
+        </div>
+
+        <h3 style="color:#1e3c72;margin:30px 0 15px 0">4단 제어 로직</h3>
+
+        <div class="process-flow">
+          <div class="flow-step">
+            <div class="flow-number">V0</div>
+            <div class="flow-content">
+              <div class="flow-title">Runner-Protect (압력 제한 속도 제어)</div>
+              <div class="flow-description">
+                러너 체적의 약 90%까지는 <span class="emphasis">압력 상한을 걸어 중속</span>으로 채웁니다.
+                상한은 클램프 대비 80% 이내로 설정하여 스프루 플래시와 전단발열을 차단합니다.
+                러너에서의 과전단과 전단발열을 근본적으로 억제하는 단계입니다.
+              </div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="flow-number">V1</div>
+            <div class="flow-content">
+              <div class="flow-title">캐비티 충전 고속 (92-96%)</div>
+              <div class="flow-description">
+                게이트 돌입 이후에는 얇은벽 충전성 확보를 위해 <span class="emphasis">고속</span>을 사용합니다.
+                단, 노즐/사출압 상한을 설정해 압력 폭주를 억제합니다.
+                v/p 전환은 마지막 충전 캐비티의 압력 급상승점을 트리거로 사용합니다.
+              </div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="flow-number">V2</div>
+            <div class="flow-content">
+              <div class="flow-title">EoF 브레이크 (종단 감속)</div>
+              <div class="flow-description">
+                충전 끝(End of Fill) 4-8mm 구간에서 <span class="emphasis">선형 감속</span>으로
+                압력 오버슈트를 제거합니다. 급격한 압력 상승을 방지하여 플래시 발생 위험을 낮춥니다.
+              </div>
+            </div>
+          </div>
+
+          <div class="flow-step">
+            <div class="flow-number">V3</div>
+            <div class="flow-content">
+              <div class="flow-title">보압 램프-인/조기 종료</div>
+              <div class="flow-description">
+                게이트 동결 시점을 산정하고 <span class="emphasis">P1(짧게) → P2(낮게)</span> 2단 램프로 유지한 뒤
+                동결 직후 즉시 종료합니다. 멀티 캐비티의 비동시 동결에 대응하기 위해
+                최악 경로(최후 동결 캐비티) 기준으로 보압을 종료합니다.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h3 style="color:#1e3c72;margin:30px 0 15px 0">보조 제어 요소</h3>
+
+        <table>
+          <thead>
+            <tr>
+              <th>구분</th>
+              <th>제어 방법</th>
+              <th>목적</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>러너 전단 관리</strong></td>
+              <td>러너 R 증대 또는 V0 속도 하향</td>
+              <td>전단률 억제로 전단발열·점도붕괴 방지</td>
+            </tr>
+            <tr>
+              <td><strong>스프루 국부 냉각</strong></td>
+              <td>스프루/1차 분기에 -2~-5°C 저온 인서트</td>
+              <td>파팅 라인에 씰링 스킨 조기 형성</td>
+            </tr>
+            <tr>
+              <td><strong>게이트 동결 균질화</strong></td>
+              <td>게이트 구경 ±0.02mm 미세 조정</td>
+              <td>동결 시간 편차 ≤0.1s로 균질화</td>
+            </tr>
+            <tr>
+              <td><strong>용융 안정성</strong></td>
+              <td>최저 용융온도, 체류시간·rpm·백프레셔 저감</td>
+              <td>PHA β-elimination 열분해 억제, MW 보존</td>
+            </tr>
+            <tr>
+              <td><strong>결정화 가속</strong></td>
+              <td>BN·탈크 0.05-0.20 wt% 저농도 첨가</td>
+              <td>Tc 상승·t½ 단축으로 스킨 조기 형성</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="warning-box">
+          <h3>⚠️ PHA 재료 특성 주의사항</h3>
+          <p><strong>β-elimination 열분해:</strong> PHB 계열은 약 190°C 이상에서 급속 열분해가 발생하며 분자량이 하락합니다.
+          가능한 최저 용융온도로 가공하고 체류시간을 최소화해야 합니다.</p>
+          <p><strong>좁은 가공창:</strong> 융점 근처에서 가공해야 하며 과열 시 가스 발생과 점도 하락이 동반됩니다.</p>
+          <p><strong>느린 결정화:</strong> 일반 PE/PP 대비 결정화 속도가 느려 게이트 동결 시간이 길어질 수 있습니다.</p>
+        </div>
+      </div>
+
+      <!-- Flash Tab 1: Machine Settings -->
+      <div class="flash-content" id="flash-tab-1">
+        <h3 style="color:#1e3c72;margin-bottom:20px">기계 설정 화면</h3>
+        <button class="print-button" onclick="window.print()">🖨️ 설정값 인쇄</button>
+
+        <!-- V0 Stage -->
+        <div class="machine-screen">
+          <div class="screen-header">
+            <span>V0 STAGE: RUNNER PROTECTION</span>
+            <span class="screen-time">러너 보호 구간</span>
+          </div>
+          <div class="stage-indicator">▶ 설정 목적: 러너 체적 90%까지 압력 제한 중속 충전 - 스프루 플래시 방지</div>
+          <div class="parameter-grid">
+            <div class="parameter">
+              <div class="parameter-label">Injection Velocity V0</div>
+              <div class="parameter-value">30-50<span class="parameter-unit">mm/s</span></div>
+              <div class="parameter-note">중속 설정 (러너 충전용)</div>
+            </div>
+            <div class="parameter">
+              <div class="parameter-label">Pressure Limit</div>
+              <div class="parameter-value">0.8 × F_clamp/A_proj<span class="parameter-unit">bar</span></div>
+              <div class="parameter-note">클램프 한계의 80% 이내</div>
+            </div>
+            <div class="parameter">
+              <div class="parameter-label">Switchover Position</div>
+              <div class="parameter-value">0.9 × V_runner<span class="parameter-unit">mm</span></div>
+              <div class="parameter-note">러너 체적의 90% 지점</div>
+            </div>
+            <div class="parameter">
+              <div class="parameter-label">Shear Rate Control</div>
+              <div class="parameter-value">γ̇ = 4Q/(πR³)<span class="parameter-unit">s⁻¹</span></div>
+              <div class="parameter-note">러너 전단률 모니터링</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- V1 Stage -->
+        <div class="machine-screen">
+          <div class="screen-header">
+            <span>V1 STAGE: HIGH-SPEED CAVITY FILL</span>
+            <span class="screen-time">캐비티 고속 충전</span>
+          </div>
+          <div class="stage-indicator">▶ 설정 목적: 얇은벽 충전성 확보 - 게이트 돌입 후 고속 충전</div>
+          <div class="parameter-grid">
+            <div class="parameter">
+              <div class="parameter-label">Injection Velocity V1</div>
+              <div class="parameter-value">80-150<span class="parameter-unit">mm/s</span></div>
+              <div class="parameter-note">얇은벽 충전용 고속</div>
+            </div>
+            <div class="parameter">
+              <div class="parameter-label">Injection Pressure Limit</div>
+              <div class="parameter-value">설정 유지<span class="parameter-unit">bar</span></div>
+              <div class="parameter-note">압력 폭주 방지</div>
+            </div>
+            <div class="parameter">
+              <div class="parameter-label">Fill Range</div>
+              <div class="parameter-value">92-96<span class="parameter-unit">%</span></div>
+              <div class="parameter-note">V1 작동 구간</div>
+            </div>
+            <div class="parameter">
+              <div class="parameter-label">Cavity Pressure Sensor</div>
+              <div class="parameter-value">dP/dt Peak<span class="parameter-unit">감지</span></div>
+              <div class="parameter-note">마지막 충전 캐비티 기준</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- V2 Stage -->
+        <div class="machine-screen">
+          <div class="screen-header">
+            <span>V2 STAGE: END-OF-FILL DECELERATION</span>
+            <span class="screen-time">충전 끝 감속</span>
+          </div>
+          <div class="stage-indicator">▶ 설정 목적: 압력 오버슈트 제거 - EoF 구간 선형 감속</div>
+          <div class="parameter-grid">
+            <div class="parameter">
+              <div class="parameter-label">Injection Velocity V2</div>
+              <div class="parameter-value">20-40<span class="parameter-unit">mm/s</span></div>
+              <div class="parameter-note">선형 감속 목표 속도</div>
+            </div>
+            <div class="parameter">
+              <div class="parameter-label">Deceleration Start Point</div>
+              <div class="parameter-value">EoF -4~-8<span class="parameter-unit">mm</span></div>
+              <div class="parameter-note">충전 끝 4-8mm 전</div>
+            </div>
+            <div class="parameter">
+              <div class="parameter-label">Ramp Type</div>
+              <div class="parameter-value">Linear<span class="parameter-unit">Ramp-down</span></div>
+              <div class="parameter-note">선형 감속 프로파일</div>
+            </div>
+            <div class="parameter">
+              <div class="parameter-label">Pressure Monitoring</div>
+              <div class="parameter-value">실시간<span class="parameter-unit">모니터링</span></div>
+              <div class="parameter-note">압력 스파이크 감지</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- V3/Packing Stage -->
+        <div class="machine-screen">
+          <div class="screen-header">
+            <span>V3 STAGE: PACKING PRESSURE CONTROL</span>
+            <span class="screen-time">보압 제어</span>
+          </div>
+          <div class="stage-indicator">▶ 설정 목적: 게이트 동결까지만 보압 유지 - 과보압 방지</div>
+          <div class="parameter-grid">
+            <div class="parameter">
+              <div class="parameter-label">Packing Pressure P1</div>
+              <div class="parameter-value">30-45% × P_inj_peak<span class="parameter-unit">bar</span></div>
+              <div class="parameter-note">1단 보압 (짧게)</div>
+            </div>
+            <div class="parameter">
+              <div class="parameter-label">Packing Time P1</div>
+              <div class="parameter-value">0.1-0.3<span class="parameter-unit">s</span></div>
+              <div class="parameter-note">1단 보압 시간</div>
+            </div>
+            <div class="parameter">
+              <div class="parameter-label">Packing Pressure P2</div>
+              <div class="parameter-value">15-30% × P_inj_peak<span class="parameter-unit">bar</span></div>
+              <div class="parameter-note">2단 보압 (낮게)</div>
+            </div>
+            <div class="parameter">
+              <div class="parameter-label">Packing Time P2</div>
+              <div class="parameter-value">게이트 동결까지<span class="parameter-unit">s</span></div>
+              <div class="parameter-note">중량-시간 곡선으로 결정</div>
+            </div>
+          </div>
+          <div class="info-box">
+            <h3>📌 게이트 동결(Gate Seal) 시험 방법</h3>
+            <p><strong>1단계:</strong> 보압 시간을 0.5초부터 시작하여 0.5초씩 증가시키면서 샷을 진행합니다.</p>
+            <p><strong>2단계:</strong> 각 샷마다 제품 무게를 정밀하게 측정합니다.</p>
+            <p><strong>3단계:</strong> 무게가 더 이상 증가하지 않는 시점이 게이트 동결 시점입니다.</p>
+            <p><strong>4단계:</strong> 최후 동결 캐비티 기준으로 보압 종료 시간을 설정합니다.</p>
+          </div>
+        </div>
+
+        <!-- Temperature Control -->
+        <div class="machine-screen">
+          <div class="screen-header">
+            <span>TEMPERATURE CONTROL</span>
+            <span class="screen-time">온도 제어</span>
+          </div>
+          <div class="stage-indicator">▶ 설정 목적: 스프루 국부 냉각 + 용융 안정성 확보</div>
+          <div class="parameter-grid">
+            <div class="parameter">
+              <div class="parameter-label">Mold Temp (Cavity)</div>
+              <div class="parameter-value">T_base<span class="parameter-unit">°C</span></div>
+              <div class="parameter-note">캐비티 기준 온도</div>
+            </div>
+            <div class="parameter">
+              <div class="parameter-label">Mold Temp (Sprue/Parting)</div>
+              <div class="parameter-value">T_base -2~-5<span class="parameter-unit">°C</span></div>
+              <div class="parameter-note">스프루/파팅라인 저온대</div>
+            </div>
+            <div class="parameter">
+              <div class="parameter-label">Barrel Temp (Rear Zone)</div>
+              <div class="parameter-value">최저 가공온도<span class="parameter-unit">°C</span></div>
+              <div class="parameter-note">PHA 열분해 억제</div>
+            </div>
+            <div class="parameter">
+              <div class="parameter-label">Material Drying</div>
+              <div class="parameter-value">65-80°C, 6-24h<span class="parameter-unit"></span></div>
+              <div class="parameter-note">수분 제거 필수</div>
+            </div>
+            <div class="parameter">
+              <div class="parameter-label">Residence Time</div>
+              <div class="parameter-value">최소화<span class="parameter-unit">min</span></div>
+              <div class="parameter-note">열분해 방지</div>
+            </div>
+            <div class="parameter">
+              <div class="parameter-label">Screw RPM</div>
+              <div class="parameter-value">저감<span class="parameter-unit">rpm</span></div>
+              <div class="parameter-note">전단발열 억제</div>
+            </div>
+            <div class="parameter">
+              <div class="parameter-label">Back Pressure</div>
+              <div class="parameter-value">최소<span class="parameter-unit">bar</span></div>
+              <div class="parameter-note">과도한 전단 방지</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flash Tab 2: Calculator -->
+      <div class="flash-content" id="flash-tab-2">
+        <h3 style="color:#1e3c72;margin-bottom:20px">설정값 계산기</h3>
+
+        <!-- Clamp Tonnage Calculator -->
+        <div class="calculator">
+          <h3 style="color:#1e3c72;margin-bottom:20px">1. 클램프 톤수 계산기</h3>
+          <div class="calc-input-group">
+            <label>캐비티 평균 압력 P_avg (bar):</label>
+            <input type="number" id="flash-p-avg" placeholder="예: 500" value="500">
+          </div>
+          <div class="calc-input-group">
+            <label>제품 투영 면적 A_proj (cm²):</label>
+            <input type="number" id="flash-a-proj" placeholder="예: 2000" value="2000">
+          </div>
+          <button class="calc-button" onclick="calculateFlashClampTonnage()">계산하기</button>
+          <button class="calc-button" onclick="clearFlashInputs('clamp')">초기화</button>
+          <div class="calc-result" id="flash-clamp-result" style="display:none;">
+            <h4>계산 결과</h4>
+            <div class="calc-result-value" id="flash-clamp-value"></div>
+            <p id="flash-clamp-recommendation"></p>
+          </div>
+        </div>
+
+        <!-- Pressure Limit Calculator -->
+        <div class="calculator">
+          <h3 style="color:#1e3c72;margin-bottom:20px">2. V0 압력 리밋 계산기</h3>
+          <div class="calc-input-group">
+            <label>클램프 한계 (ton-force):</label>
+            <input type="number" id="flash-f-clamp" placeholder="예: 1200" value="1200">
+          </div>
+          <div class="calc-input-group">
+            <label>제품 투영 면적 A_proj (cm²):</label>
+            <input type="number" id="flash-a-proj-2" placeholder="예: 2000" value="2000">
+          </div>
+          <div class="calc-input-group">
+            <label>안전 계수 (권장: 0.8):</label>
+            <input type="number" id="flash-safety-factor" placeholder="0.8" value="0.8" step="0.05">
+          </div>
+          <button class="calc-button" onclick="calculateFlashPressureLimit()">계산하기</button>
+          <button class="calc-button" onclick="clearFlashInputs('pressure')">초기화</button>
+          <div class="calc-result" id="flash-pressure-result" style="display:none;">
+            <h4>V0 압력 리밋 설정값</h4>
+            <div class="calc-result-value" id="flash-pressure-value"></div>
+            <p id="flash-pressure-recommendation"></p>
+          </div>
+        </div>
+
+        <!-- Shear Rate Calculator -->
+        <div class="calculator">
+          <h3 style="color:#1e3c72;margin-bottom:20px">3. 러너 전단률 계산기</h3>
+          <div class="calc-input-group">
+            <label>체적 유량 Q (cm³/s):</label>
+            <input type="number" id="flash-flow-rate" placeholder="예: 50" value="50">
+          </div>
+          <div class="calc-input-group">
+            <label>러너 반경 R (cm):</label>
+            <input type="number" id="flash-runner-radius" placeholder="예: 0.4" value="0.4" step="0.1">
+          </div>
+          <button class="calc-button" onclick="calculateFlashShearRate()">계산하기</button>
+          <button class="calc-button" onclick="clearFlashInputs('shear')">초기화</button>
+          <div class="calc-result" id="flash-shear-result" style="display:none;">
+            <h4>러너 벽면 전단률</h4>
+            <div class="calc-result-value" id="flash-shear-value"></div>
+            <p id="flash-shear-recommendation"></p>
+          </div>
+        </div>
+
+        <!-- Packing Pressure Calculator -->
+        <div class="calculator">
+          <h3 style="color:#1e3c72;margin-bottom:20px">4. 보압 설정값 계산기</h3>
+          <div class="calc-input-group">
+            <label>최대 사출압 P_inj_peak (bar):</label>
+            <input type="number" id="flash-p-inj-peak" placeholder="예: 1500" value="1500">
+          </div>
+          <button class="calc-button" onclick="calculateFlashPackingPressure()">계산하기</button>
+          <button class="calc-button" onclick="clearFlashInputs('packing')">초기화</button>
+          <div class="calc-result" id="flash-packing-result" style="display:none;">
+            <h4>보압 설정 권장값</h4>
+            <div class="calc-result-value" id="flash-packing-value"></div>
+            <p id="flash-packing-recommendation"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flash Tab 3: Process Flow -->
+      <div class="flash-content" id="flash-tab-3">
+        <h3 style="color:#1e3c72;margin-bottom:20px">프로세스 플로우 다이어그램</h3>
+
+        <div class="diagram">
+          <h3 style="text-align:center;color:#1e3c72;margin-bottom:20px">4단 제어 프로세스 흐름도</h3>
+          <svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
+            <rect x="50" y="50" width="700" height="200" fill="#e3f2fd" stroke="#1e3c72" stroke-width="3" rx="10"/>
+            <text x="400" y="90" text-anchor="middle" font-size="24" font-weight="bold" fill="#1e3c72">V0: Runner Protection</text>
+            <text x="400" y="120" text-anchor="middle" font-size="16" fill="#333">압력 제한 중속 (0-90% 러너)</text>
+            <text x="400" y="145" text-anchor="middle" font-size="14" fill="#666">속도: 30-50 mm/s</text>
+            <text x="400" y="170" text-anchor="middle" font-size="14" fill="#666">압력: 0.8 × F_clamp/A_proj</text>
+            <text x="400" y="195" text-anchor="middle" font-size="14" fill="#666">목적: 스프루 플래시 방지</text>
+            <text x="400" y="220" text-anchor="middle" font-size="14" fill="#666">전단발열·점도붕괴 차단</text>
+
+            <path d="M 400 250 L 400 290" stroke="#1e3c72" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+
+            <rect x="50" y="290" width="700" height="200" fill="#fff3e0" stroke="#ff6f00" stroke-width="3" rx="10"/>
+            <text x="400" y="330" text-anchor="middle" font-size="24" font-weight="bold" fill="#ff6f00">V1: High-Speed Cavity Fill</text>
+            <text x="400" y="360" text-anchor="middle" font-size="16" fill="#333">캐비티 고속 충전 (90-96%)</text>
+            <text x="400" y="385" text-anchor="middle" font-size="14" fill="#666">속도: 80-150 mm/s</text>
+            <text x="400" y="410" text-anchor="middle" font-size="14" fill="#666">전환: 캐비티압 dP/dt 피크</text>
+            <text x="400" y="435" text-anchor="middle" font-size="14" fill="#666">목적: 얇은벽 충전성 확보</text>
+            <text x="400" y="460" text-anchor="middle" font-size="14" fill="#666">압력 상한 유지</text>
+
+            <path d="M 400 490 L 400 530" stroke="#1e3c72" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+
+            <rect x="50" y="530" width="700" height="200" fill="#f3e5f5" stroke="#7b1fa2" stroke-width="3" rx="10"/>
+            <text x="400" y="570" text-anchor="middle" font-size="24" font-weight="bold" fill="#7b1fa2">V2: End-of-Fill Deceleration</text>
+            <text x="400" y="600" text-anchor="middle" font-size="16" fill="#333">충전 끝 감속 (96-100%)</text>
+            <text x="400" y="625" text-anchor="middle" font-size="14" fill="#666">속도: 20-40 mm/s (선형 감속)</text>
+            <text x="400" y="650" text-anchor="middle" font-size="14" fill="#666">시작: EoF -4~-8 mm</text>
+            <text x="400" y="675" text-anchor="middle" font-size="14" fill="#666">목적: 압력 오버슈트 제거</text>
+            <text x="400" y="700" text-anchor="middle" font-size="14" fill="#666">플래시 방지</text>
+
+            <path d="M 400 730 L 400 770" stroke="#1e3c72" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+
+            <rect x="50" y="770" width="700" height="240" fill="#e8f5e9" stroke="#2e7d32" stroke-width="3" rx="10"/>
+            <text x="400" y="810" text-anchor="middle" font-size="24" font-weight="bold" fill="#2e7d32">V3: Packing Pressure Control</text>
+            <text x="400" y="840" text-anchor="middle" font-size="16" fill="#333">보압 램프-인/조기 종료</text>
+            <text x="400" y="865" text-anchor="middle" font-size="14" fill="#666">P1: 30-45% × P_peak (0.1-0.3초)</text>
+            <text x="400" y="890" text-anchor="middle" font-size="14" fill="#666">P2: 15-30% × P_peak (게이트 동결까지)</text>
+            <text x="400" y="915" text-anchor="middle" font-size="14" fill="#666">종료: 최후 동결 캐비티 기준</text>
+            <text x="400" y="940" text-anchor="middle" font-size="14" fill="#666">목적: 과보압 방지</text>
+            <text x="400" y="965" text-anchor="middle" font-size="14" fill="#666">게이트 시일 시험으로 최적화</text>
+            <text x="400" y="990" text-anchor="middle" font-size="14" fill="#666">중량-시간 곡선 활용</text>
+
+            <defs>
+              <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                <polygon points="0 0, 10 5, 0 10" fill="#1e3c72"/>
+              </marker>
+            </defs>
+          </svg>
+        </div>
+
+        <div class="info-box">
+          <h3>📊 그래프 해석</h3>
+          <p><strong>V0 구간:</strong> 압력이 리밋 아래에서 완만하게 상승합니다. 러너 보호 단계로 과압을 구조적으로 차단합니다.</p>
+          <p><strong>V1 구간:</strong> 고속 충전으로 압력이 급상승하지만 여전히 리밋 이내를 유지합니다.</p>
+          <p><strong>V2 구간:</strong> 감속으로 압력 스파이크가 제어되며 완만하게 피크에 도달합니다.</p>
+          <p><strong>V3 구간:</strong> 보압 단계로 압력이 점진적으로 감소하며 게이트 동결 후 종료됩니다.</p>
+        </div>
+      </div>
+
+      <!-- Flash Tab 4: Checklist -->
+      <div class="flash-content" id="flash-tab-4">
+        <h3 style="color:#1e3c72;margin-bottom:20px">현장 작업 체크리스트</h3>
+        <button class="print-button" onclick="window.print()">🖨️ 체크리스트 인쇄</button>
+
+        <div class="checklist">
+          <h3 style="color:#1e3c72;margin-bottom:15px">준비 단계 (Pre-Setup)</h3>
+          <div class="checklist-item">
+            <input type="checkbox" class="checklist-checkbox">
+            <div class="checklist-text"><strong>재료 건조 확인:</strong> PHA 펠렛을 65-80°C에서 6-24시간 건조했는지 확인합니다.</div>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" class="checklist-checkbox">
+            <div class="checklist-text"><strong>러너 체적 계산:</strong> CAD 또는 금형 도면에서 러너 총 체적(V_runner)을 계산하고 90% 지점을 스크류 위치로 환산합니다.</div>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" class="checklist-checkbox">
+            <div class="checklist-text"><strong>투영 면적 측정:</strong> 36개 캐비티의 총 투영 면적(A_proj)을 계산합니다.</div>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" class="checklist-checkbox">
+            <div class="checklist-text"><strong>클램프 톤수 확인:</strong> 계산기를 이용해 필요 톤수를 산출하고 현재 기계 사양과 비교합니다.</div>
+          </div>
+        </div>
+
+        <div class="checklist">
+          <h3 style="color:#1e3c72;margin-bottom:15px">V0 단계 설정 (Runner Protection)</h3>
+          <div class="checklist-item">
+            <input type="checkbox" class="checklist-checkbox">
+            <div class="checklist-text"><strong>V0 속도 설정:</strong> 30-50 mm/s 범위에서 중속으로 설정합니다.</div>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" class="checklist-checkbox">
+            <div class="checklist-text"><strong>압력 리밋 설정:</strong> 계산기에서 산출한 값(0.8 × F_clamp/A_proj)을 기계에 입력합니다.</div>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" class="checklist-checkbox">
+            <div class="checklist-text"><strong>V0→V1 전환점 설정:</strong> 러너 체적의 90% 지점을 스크류 위치로 설정합니다.</div>
+          </div>
+        </div>
+
+        <div class="checklist">
+          <h3 style="color:#1e3c72;margin-bottom:15px">V1 단계 설정 (High-Speed Fill)</h3>
+          <div class="checklist-item">
+            <input type="checkbox" class="checklist-checkbox">
+            <div class="checklist-text"><strong>V1 속도 설정:</strong> 얇은벽 충전을 위해 80-150 mm/s 범위에서 고속으로 설정합니다.</div>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" class="checklist-checkbox">
+            <div class="checklist-text"><strong>사출압 상한 유지:</strong> V0에서 설정한 압력 리밋이 V1에서도 적용되는지 확인합니다.</div>
+          </div>
+        </div>
+
+        <div class="checklist">
+          <h3 style="color:#1e3c72;margin-bottom:15px">검증 단계 (Verification)</h3>
+          <div class="checklist-item">
+            <input type="checkbox" class="checklist-checkbox">
+            <div class="checklist-text"><strong>플래시 측정:</strong> 파팅라인과 스프루 주변에서 플래시 높이를 측정합니다. 목표는 0.02mm 이하입니다.</div>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" class="checklist-checkbox">
+            <div class="checklist-text"><strong>제품 무게 확인:</strong> 36개 캐비티의 제품 무게를 측정하고 변동이 ±1% 이내인지 확인합니다.</div>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" class="checklist-checkbox">
+            <div class="checklist-text"><strong>치수 측정:</strong> 핵심 치수를 측정하고 규격 내에 있는지 확인합니다.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flash Tab 5: Troubleshooting -->
+      <div class="flash-content" id="flash-tab-5">
+        <h3 style="color:#1e3c72;margin-bottom:20px">문제 해결 가이드</h3>
+
+        <div class="warning-box">
+          <h3>🔴 문제: 스프루/러너 근처에 플래시 발생</h3>
+          <p><strong>가능 원인과 해결책:</strong></p>
+          <ul style="margin-left:20px;margin-top:10px">
+            <li><strong>V0 압력 리밋이 너무 높음</strong> → 압력 리밋을 70%로 낮추고 재시험합니다</li>
+            <li><strong>클램프 톤수 부족</strong> → 계산기로 재확인하고 더 큰 기계로 전환 검토합니다</li>
+            <li><strong>스프루 부싱 마모/손상</strong> → 스프루 부싱을 교체하고 시트 형상을 점검합니다</li>
+            <li><strong>파팅라인 온도가 높음</strong> → 국부 냉각을 -5°C까지 강화합니다</li>
+            <li><strong>러너 전단발열</strong> → V0 속도를 낮추거나 러너 직경을 증대합니다</li>
+          </ul>
+        </div>
+
+        <div class="warning-box">
+          <h3>🟠 문제: 캐비티 충전 불완전 (Short Shot)</h3>
+          <p><strong>가능 원인과 해결책:</strong></p>
+          <ul style="margin-left:20px;margin-top:10px">
+            <li><strong>V1 속도가 너무 낮음</strong> → V1 속도를 단계적으로 증가시킵니다</li>
+            <li><strong>V0 구간이 너무 길음</strong> → V0→V1 전환점을 85%로 앞당깁니다</li>
+            <li><strong>재료 온도가 너무 낮음</strong> → 실린더 온도를 5-10°C 상승시킵니다</li>
+            <li><strong>금형 온도가 너무 낮음</strong> → 캐비티 온도를 상승시킵니다(단, 스프루는 저온 유지)</li>
+            <li><strong>게이트 크기 부족</strong> → 게이트 직경을 0.1-0.2mm 증대 검토합니다</li>
+          </ul>
+        </div>
+
+        <div class="warning-box">
+          <h3>🟡 문제: EoF에서 압력 스파이크 발생</h3>
+          <p><strong>가능 원인과 해결책:</strong></p>
+          <ul style="margin-left:20px;margin-top:10px">
+            <li><strong>V2 감속이 없거나 불충분</strong> → V2 감속 구간을 8mm로 연장합니다</li>
+            <li><strong>감속 프로파일이 급격함</strong> → 선형 램프가 아닌 경우 설정을 변경합니다</li>
+            <li><strong>V1 속도가 과도하게 높음</strong> → V1 속도를 10-20% 감소시킵니다</li>
+            <li><strong>공기 포획(Air Trap)</strong> → 벤트 위치와 크기를 점검합니다</li>
+          </ul>
+        </div>
+
+        <div class="warning-box">
+          <h3>🟢 문제: 캐비티 간 무게 편차가 큼</h3>
+          <p><strong>가능 원인과 해결책:</strong></p>
+          <ul style="margin-left:20px;margin-top:10px">
+            <li><strong>러너 밸런싱 불량</strong> → 러너 설계를 재검토하거나 게이트 구경을 미세 조정합니다</li>
+            <li><strong>게이트 동결 시간 편차</strong> → 게이트 구경을 ±0.02mm 단위로 조정하여 동결 시간을 균질화합니다</li>
+            <li><strong>금형 온도 불균일</strong> → 각 구역의 실제 온도를 측정하고 균일화합니다</li>
+            <li><strong>보압 시간이 최후 동결 캐비티 기준이 아님</strong> → 게이트 시일 시험을 재수행합니다</li>
+          </ul>
+        </div>
+
+        <div class="warning-box">
+          <h3>🔵 문제: PHA 재료 열화 징후 (변색, 가스 발생)</h3>
+          <p><strong>가능 원인과 해결책:</strong></p>
+          <ul style="margin-left:20px;margin-top:10px">
+            <li><strong>실린더 온도가 과도함</strong> → 후방대 온도를 5-10°C 낮춥니다</li>
+            <li><strong>체류시간이 길음</strong> → 샷 크기를 증대하거나 사이클 타임을 단축합니다</li>
+            <li><strong>스크류 rpm이 높음</strong> → rpm을 30-50% 감소시킵니다</li>
+            <li><strong>배압이 과도함</strong> → 배압을 최소(5-10 bar)로 낮춥니다</li>
+            <li><strong>재료 건조 불충분</strong> → 건조 시간을 연장하고 온도를 확인합니다</li>
+          </ul>
+        </div>
+
+        <div class="info-box">
+          <h3>💡 예방 조치 (Preventive Actions)</h3>
+          <p><strong>정기적으로 수행해야 할 작업:</strong></p>
+          <ul style="margin-left:20px;margin-top:10px">
+            <li>주 1회: 스프루 부싱과 파팅라인의 마모/손상 점검</li>
+            <li>주 1회: 타이바 변형 측정 및 클램프 톤수 재확인</li>
+            <li>일 2회: 제품 무게와 치수 샘플링 (시작/종료 시)</li>
+            <li>일 1회: 캐비티 압력 데이터 검토 및 트렌드 분석</li>
+            <li>교대 시: 금형 온도 실측값 확인</li>
+            <li>로트 변경 시: 재료 건조 상태 재확인</li>
+          </ul>
+        </div>
+      </div>
+    </section>
   </div>
 </div>
 
@@ -263,13 +914,13 @@
 <script>
 /* ========= i18n ========= */
 const I18N = {
-  ko:{title:"PHA 공정 최적화 도구",tab_proc:"공정 조건",tab_ts:"트러블슈팅",tab_hist:"이력 관리",tab_ana:"데이터 분석",tab_calc:"계산기",tab_props:"물성 DB",tab_photos:"사진",
+  ko:{title:"PHA 공정 최적화 도구",tab_proc:"공정 조건",tab_ts:"트러블슈팅",tab_hist:"이력 관리",tab_ana:"데이터 분석",tab_calc:"계산기",tab_props:"물성 DB",tab_photos:"사진",tab_flash:"플래시 제어",
       series:"샘플 시리즈",process:"가공 유형",notes:"📝 특이사항 메모",save:"저장 및 분석",export:"데이터 내보내기",reset:"초기화",
       param:"파라미터",current:"현재값",range:"권장 범위",status:"상태",ok:"정상",warn:"주의",crit:"위험",when:"날짜/시간",h_grade:"샘플",h_proc:"공정",h_key:"주요 파라미터",h_result:"결과",h_note:"메모",
       ana_head:"데이터 분석",saved:"데이터가 저장되었습니다.",last:"마지막 업데이트",resetQ:"모든 입력을 초기화할까요?",
       photos_head:"사진 관리"
   },
-  en:{title:"PHA Process Optimizer",tab_proc:"Process Conditions",tab_ts:"Troubleshooting",tab_hist:"History",tab_ana:"Data Analysis",tab_calc:"Calculators",tab_props:"Materials DB",tab_photos:"Photos",
+  en:{title:"PHA Process Optimizer",tab_proc:"Process Conditions",tab_ts:"Troubleshooting",tab_hist:"History",tab_ana:"Data Analysis",tab_calc:"Calculators",tab_props:"Materials DB",tab_photos:"Photos",tab_flash:"Flash Control",
       series:"Sample Series",process:"Process Type",notes:"📝 Process Notes",save:"Save & Analyze",export:"Export Data",reset:"Reset",
       param:"Parameter",current:"Current",range:"Recommended",status:"Status",ok:"Normal",warn:"Warning",crit:"Critical",when:"Date/Time",h_grade:"Sample",h_proc:"Process",h_key:"Main Parameters",h_result:"Result",h_note:"Memo",
       ana_head:"Data Analysis",saved:"Saved successfully.",last:"Last Update",resetQ:"Reset all inputs?",
@@ -583,6 +1234,119 @@ $('language').addEventListener('change',e=>{LANG=e.target.value; i18nApply();});
 })();
 function analyze(){const hist=JSON.parse(localStorage.getItem('pha_hist')||'[]'); const n=hist.length; const t=(n? (LANG==='ko'?'최근 저장: ':'Last: ')+new Date(hist[n-1].ts).toLocaleString(LANG==='ko'?'ko-KR':'en-US')+' · '+hist[n-1].grade+' · '+hist[n-1].proc : (LANG==='ko'?'데이터가 없습니다.':'No data yet.')); $('anaText').textContent=t;}
 function resetForm(){if(!confirm(I18N[LANG].resetQ)) return; $('notes').value=''; rebuildForm();}
+
+/* ========= Flash Control Functions ========= */
+function showFlashTab(index) {
+  const tabs = document.querySelectorAll('.flash-tab');
+  const contents = document.querySelectorAll('.flash-content');
+  tabs.forEach((tab, i) => {
+    if (i === index) {
+      tab.classList.add('active');
+    } else {
+      tab.classList.remove('active');
+    }
+  });
+  contents.forEach((content, i) => {
+    if (i === index) {
+      content.classList.add('active');
+    } else {
+      content.classList.remove('active');
+    }
+  });
+}
+
+function calculateFlashClampTonnage() {
+  const pAvg = parseFloat($('flash-p-avg').value);
+  const aProj = parseFloat($('flash-a-proj').value);
+  if (isNaN(pAvg) || isNaN(aProj)) {
+    alert('모든 값을 입력해주세요.');
+    return;
+  }
+  const tonnage = (pAvg * aProj) / 1000;
+  const recommended = tonnage * 1.2;
+  $('flash-clamp-result').style.display = 'block';
+  $('flash-clamp-value').textContent = tonnage.toFixed(1) + ' tf';
+  $('flash-clamp-recommendation').innerHTML =
+    `<strong>권장 클램프 톤수 (20% 여유):</strong> ${recommended.toFixed(1)} tf<br>` +
+    `현재 기계의 클램프 톤수가 ${recommended.toFixed(1)} tf 이상인지 확인하세요.`;
+}
+
+function calculateFlashPressureLimit() {
+  const fClamp = parseFloat($('flash-f-clamp').value);
+  const aProj = parseFloat($('flash-a-proj-2').value);
+  const safetyFactor = parseFloat($('flash-safety-factor').value);
+  if (isNaN(fClamp) || isNaN(aProj) || isNaN(safetyFactor)) {
+    alert('모든 값을 입력해주세요.');
+    return;
+  }
+  const pressureLimit = (safetyFactor * fClamp * 1000) / aProj;
+  $('flash-pressure-result').style.display = 'block';
+  $('flash-pressure-value').textContent = pressureLimit.toFixed(1) + ' bar';
+  $('flash-pressure-recommendation').innerHTML =
+    `<strong>V0 단계에서 이 값을 압력 리밋으로 설정하세요.</strong><br>` +
+    `이 값은 클램프 한계의 ${(safetyFactor * 100).toFixed(0)}%로 계산되어 스프루 플래시를 방지합니다.`;
+}
+
+function calculateFlashShearRate() {
+  const Q = parseFloat($('flash-flow-rate').value);
+  const R = parseFloat($('flash-runner-radius').value);
+  if (isNaN(Q) || isNaN(R)) {
+    alert('모든 값을 입력해주세요.');
+    return;
+  }
+  const shearRate = (4 * Q) / (Math.PI * Math.pow(R, 3));
+  let recommendation = '';
+  if (shearRate > 50000) {
+    recommendation = '⚠️ <strong>경고:</strong> 전단률이 매우 높습니다 (>50,000 s⁻¹). V0 속도를 낮추거나 러너 직경을 증대하세요.';
+  } else if (shearRate > 20000) {
+    recommendation = '⚡ <strong>주의:</strong> 전단률이 높은 편입니다 (>20,000 s⁻¹). 모니터링이 필요합니다.';
+  } else {
+    recommendation = '✅ <strong>양호:</strong> 전단률이 적정 범위입니다.';
+  }
+  $('flash-shear-result').style.display = 'block';
+  $('flash-shear-value').textContent = shearRate.toFixed(0) + ' s⁻¹';
+  $('flash-shear-recommendation').innerHTML = recommendation;
+}
+
+function calculateFlashPackingPressure() {
+  const pInjPeak = parseFloat($('flash-p-inj-peak').value);
+  if (isNaN(pInjPeak)) {
+    alert('최대 사출압을 입력해주세요.');
+    return;
+  }
+  const p1Min = pInjPeak * 0.30;
+  const p1Max = pInjPeak * 0.45;
+  const p2Min = pInjPeak * 0.15;
+  const p2Max = pInjPeak * 0.30;
+  $('flash-packing-result').style.display = 'block';
+  $('flash-packing-value').innerHTML =
+    `P1: ${p1Min.toFixed(0)} - ${p1Max.toFixed(0)} bar<br>` +
+    `P2: ${p2Min.toFixed(0)} - ${p2Max.toFixed(0)} bar`;
+  $('flash-packing-recommendation').innerHTML =
+    `<strong>P1 단계:</strong> ${p1Min.toFixed(0)}-${p1Max.toFixed(0)} bar를 0.1-0.3초간 유지합니다.<br>` +
+    `<strong>P2 단계:</strong> ${p2Min.toFixed(0)}-${p2Max.toFixed(0)} bar를 게이트 동결까지 유지합니다.<br>` +
+    `게이트 시일 시험으로 정확한 종료 시점을 결정하세요.`;
+}
+
+function clearFlashInputs(type) {
+  if (type === 'clamp') {
+    $('flash-p-avg').value = '';
+    $('flash-a-proj').value = '';
+    $('flash-clamp-result').style.display = 'none';
+  } else if (type === 'pressure') {
+    $('flash-f-clamp').value = '';
+    $('flash-a-proj-2').value = '';
+    $('flash-safety-factor').value = '0.8';
+    $('flash-pressure-result').style.display = 'none';
+  } else if (type === 'shear') {
+    $('flash-flow-rate').value = '';
+    $('flash-runner-radius').value = '';
+    $('flash-shear-result').style.display = 'none';
+  } else if (type === 'packing') {
+    $('flash-p-inj-peak').value = '';
+    $('flash-packing-result').style.display = 'none';
+  }
+}
 </script>
 <script>
 if ('serviceWorker' in navigator) {
