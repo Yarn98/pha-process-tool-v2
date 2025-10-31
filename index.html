@@ -29,7 +29,7 @@
   @keyframes fade{from{opacity:.0;transform:translateY(6px)} to{opacity:1;transform:none}}
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:16px 0 24px}
   .group label{display:block;font-weight:700;margin:0 0 6px;color:#111827;font-size:14px}
-  .group input,.group select,.group textarea{width:100%;padding:12px;border:2px solid var(--border);border-radius:8px;background:#fff;font-size:15px;transition:.2s}
+  .group input,.group select,.group textarea{width:100%;padding:12px;border:2px solid var(--border);border-radius:8px;background:#fff;color:#212529;font-size:15px;transition:.2s}
   .group input:focus,.group select:focus,.group textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.15)}
   .group textarea{min-height:100px;resize:vertical}
   .hint{color:#6b7280;font-size:12px;margin-top:4px}
@@ -92,7 +92,7 @@
   .calculator{background:#f8f9fa;padding:25px;border-radius:10px;margin:20px 0;border:2px solid #dee2e6}
   .calc-input-group{margin:15px 0}
   .calc-input-group label{display:block;font-weight:bold;margin-bottom:8px;color:#495057}
-  .calc-input-group input{width:100%;padding:12px;border:2px solid #ced4da;border-radius:5px;font-size:1em;transition:border-color .3s}
+  .calc-input-group input{width:100%;padding:12px;border:2px solid #ced4da;border-radius:5px;font-size:1em;transition:border-color .3s;color:#212529;background:#fff}
   .calc-input-group input:focus{outline:none;border-color:#1e3c72}
   .calc-button{background:linear-gradient(135deg,#1e3c72,#2a5298);color:white;padding:12px 30px;border:none;border-radius:5px;font-size:1.1em;font-weight:bold;cursor:pointer;transition:transform .2s;margin:10px 5px}
   .calc-button:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(30,60,114,.3)}
@@ -107,18 +107,18 @@
   .log-table thead{background:linear-gradient(135deg,#1e3c72,#2a5298);color:white}
   .log-table th{padding:12px 8px;text-align:center;font-weight:bold;font-size:.9em;border-right:1px solid rgba(255,255,255,.2)}
   .log-table th:last-child{border-right:none}
-  .log-table td{padding:8px 4px;text-align:center;border-bottom:1px solid #dee2e6;border-right:1px solid #dee2e6}
+  .log-table td{padding:8px 4px;text-align:center;border-bottom:1px solid #dee2e6;border-right:1px solid #dee2e6;color:#212529}
   .log-table td:last-child{border-right:none}
   .log-table tbody tr:hover{background:#f8f9fa}
   .log-table tbody tr:nth-child(even){background:#f9fafb}
   .number-input-group{display:flex;align-items:center;justify-content:center;gap:4px;min-width:100px}
-  .number-input-group input{width:70px;padding:8px 4px;border:2px solid #ced4da;border-radius:4px;text-align:center;font-size:14px;-moz-appearance:textfield}
+  .number-input-group input{width:70px;padding:8px 4px;border:2px solid #ced4da;border-radius:4px;text-align:center;font-size:14px;-moz-appearance:textfield;color:#212529;background:#fff}
   .number-input-group input::-webkit-outer-spin-button,.number-input-group input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
   .number-input-group input:focus{outline:none;border-color:#1e3c72;box-shadow:0 0 0 2px rgba(30,60,114,.1)}
   .btn-increment{width:28px;height:28px;border:none;background:linear-gradient(135deg,#2a5298,#1e3c72);color:white;border-radius:4px;cursor:pointer;font-weight:bold;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s}
   .btn-increment:hover{transform:scale(1.1);box-shadow:0 2px 8px rgba(30,60,114,.3)}
   .btn-increment:active{transform:scale(.95)}
-  .log-note-input{width:100%;padding:8px;border:2px solid #ced4da;border-radius:4px;font-size:13px;resize:vertical;min-height:40px}
+  .log-note-input{width:100%;padding:8px;border:2px solid #ced4da;border-radius:4px;font-size:13px;resize:vertical;min-height:40px;color:#212529;background:#fff}
   .log-note-input:focus{outline:none;border-color:#1e3c72;box-shadow:0 0 0 2px rgba(30,60,114,.1)}
   .btn-log-action{padding:10px 20px;border:none;border-radius:5px;font-weight:bold;cursor:pointer;transition:all .2s;font-size:14px}
   .btn-add-log{background:linear-gradient(135deg,#11998e,#38ef7d);color:white}
@@ -134,7 +134,7 @@
   /* Search/Filter Styles */
   .filter-container{background:white;padding:15px;border-radius:8px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
   .filter-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  .filter-input{flex:1;min-width:200px;padding:10px;border:2px solid #ced4da;border-radius:5px;font-size:14px}
+  .filter-input{flex:1;min-width:200px;padding:10px;border:2px solid #ced4da;border-radius:5px;font-size:14px;color:#212529;background:#fff}
   .filter-input:focus{outline:none;border-color:#1e3c72;box-shadow:0 0 0 2px rgba(30,60,114,.1)}
   .btn-filter{padding:10px 20px;background:#1e3c72;color:white;border:none;border-radius:5px;cursor:pointer;font-weight:bold}
   .btn-filter:hover{background:#2a5298}
@@ -165,7 +165,7 @@
   .weight-calc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px;margin:15px 0}
   .weight-input-box{background:white;padding:15px;border-radius:8px;border:2px solid #dee2e6}
   .weight-input-box label{display:block;font-weight:bold;margin-bottom:8px;color:#495057;font-size:14px}
-  .weight-input-box input{width:100%;padding:10px;border:2px solid #ced4da;border-radius:5px;font-size:14px}
+  .weight-input-box input{width:100%;padding:10px;border:2px solid #ced4da;border-radius:5px;font-size:14px;color:#212529;background:#fff}
   .weight-input-box input:focus{outline:none;border-color:#1e3c72}
   .density-display{background:linear-gradient(135deg,#e0f2fe,#bae6fd);padding:15px;border-radius:8px;text-align:center;font-size:18px;font-weight:bold;color:#0c4a6e}
   /* Chart Container Styles */
