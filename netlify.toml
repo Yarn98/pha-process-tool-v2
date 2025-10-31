@@ -2,14 +2,11 @@
 # This is a static HTML/JavaScript application - no build process required
 
 [build]
-  # Explicitly set no build command for static site
-  command = "echo 'No build required for static HTML site'"
+  # Use npm run build (which is a no-op script in package.json)
+  command = "npm run build"
 
   # Publish from the root directory (where index.html is located)
   publish = "."
-
-  # Ignore any build command set in the UI
-  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF ."
 
 # Redirect rules (optional)
 [[redirects]]
