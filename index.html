@@ -105,7 +105,7 @@
   .log-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
   .log-table{width:100%;border-collapse:collapse;background:white;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.1)}
   .log-table thead{background:linear-gradient(135deg,#1e3c72,#2a5298);color:white}
-  .log-table th{padding:12px 8px;text-align:center;font-weight:bold;font-size:.9em;border-right:1px solid rgba(255,255,255,.2)}
+  .log-table th{padding:12px 8px;text-align:center;font-weight:bold;font-size:.9em;border-right:1px solid rgba(255,255,255,.2);background:transparent}
   .log-table th:last-child{border-right:none}
   .log-table td{padding:8px 4px;text-align:center;border-bottom:1px solid #dee2e6;border-right:1px solid #dee2e6;color:#212529}
   .log-table td:last-child{border-right:none}
@@ -1085,20 +1085,20 @@
             <table class="log-table" id="processLogTable">
               <thead>
                 <tr>
-                  <th style="min-width:140px;color:#fff">일시</th>
-                  <th style="min-width:120px;color:#fff">실린더 온도 (°C)</th>
-                  <th style="min-width:120px;color:#fff">금형 온도 (°C)</th>
-                  <th style="min-width:130px;color:#fff">사출속도 (mm/s)</th>
-                  <th style="min-width:120px;color:#fff">사출압력 (bar)</th>
-                  <th style="min-width:120px;color:#fff">보압 (bar)</th>
-                  <th style="min-width:130px;color:#fff">보압시간 (s)</th>
-                  <th style="min-width:130px;color:#fff">냉각시간 (s)</th>
-                  <th style="min-width:120px;color:#fff">제품 무게 (g)</th>
-                  <th style="min-width:120px;color:#fff">러너 무게 (g)</th>
-                  <th style="min-width:130px;color:#fff">총 무게 (g)</th>
-                  <th style="min-width:200px;color:#fff">비고/현상</th>
-                  <th style="min-width:100px;color:#fff">사진</th>
-                  <th style="min-width:80px;color:#fff">동작</th>
+                  <th style="min-width:140px">일시</th>
+                  <th style="min-width:120px">실린더 온도 (°C)</th>
+                  <th style="min-width:120px">금형 온도 (°C)</th>
+                  <th style="min-width:130px">사출속도 (mm/s)</th>
+                  <th style="min-width:120px">사출압력 (bar)</th>
+                  <th style="min-width:120px">보압 (bar)</th>
+                  <th style="min-width:130px">보압시간 (s)</th>
+                  <th style="min-width:130px">냉각시간 (s)</th>
+                  <th style="min-width:120px">제품 무게 (g)</th>
+                  <th style="min-width:120px">러너 무게 (g)</th>
+                  <th style="min-width:130px">총 무게 (g)</th>
+                  <th style="min-width:200px">비고/현상</th>
+                  <th style="min-width:100px">사진</th>
+                  <th style="min-width:80px">동작</th>
                 </tr>
               </thead>
               <tbody id="processLogBody">
