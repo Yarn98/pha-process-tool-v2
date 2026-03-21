@@ -14,6 +14,7 @@ const FILES_TO_COPY = [
   'custom.js',
   'compounding-guide.js',
   'straw-guide.js',
+  'pha-integration.js',
   'sw.js',
   'manifest.webmanifest',
   'README.txt',

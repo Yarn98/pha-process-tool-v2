@@ -1923,6 +1923,7 @@ function rebuildForm(){
     wrap.appendChild(div);
   }
   refreshParamTable();
+  if(typeof updateGuideLinks==='function') updateGuideLinks();
 }
 
 /* ========= Table/status ========= */
@@ -3107,11 +3108,13 @@ window.addEventListener('load', () => {
   <!-- Compounding & Straw guide modules -->
   <script src="compounding-guide.js"></script>
   <script src="straw-guide.js"></script>
+  <script src="pha-integration.js"></script>
   <script>
-    // Initialize guide tabs after all scripts loaded
+    // Initialize guide tabs and integration after all scripts loaded
     window.addEventListener('load', function(){
       if(typeof initCompoundingGuide==='function') initCompoundingGuide();
       if(typeof initStrawGuide==='function') initStrawGuide();
+      if(typeof updateGuideLinks==='function') updateGuideLinks();
     });
   </script>
 
