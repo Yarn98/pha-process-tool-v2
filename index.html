@@ -39,20 +39,80 @@
   th{background:var(--light);position:sticky;top:0}
   tr:hover{background:#f5f7ff}
   .badge{display:inline-block;padding:4px 10px;border-radius:999px;font-weight:700;font-size:12px}
-  .ok{background:#d1fae5;color:#065f46}.warn{background:#fee7c2;color:#92400e}.crit{background:#ffe1e1;color:#9b1c1c}
-  .card{background:#f9fafb;border:1px solid var(--border);border-left:4px solid var(--warning);border-radius:10px;padding:16px;margin:12px 0}
+  .ok{background:#d1fae5;color:#065f46}.warn{background:#fee7c2;color:#92400e}.crit{background:#ffe1e1;color:#9b1c1c}.empty{background:#f3f4f6;color:#9ca3af}
+  .card{background:#fff;border:1px solid var(--border);border-left:4px solid var(--warning);border-radius:var(--radius);padding:16px;margin:12px 0;box-shadow:0 2px 8px rgba(0,0,0,.06)}
   .photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
   .photo{position:relative;border-radius:8px;overflow:hidden;aspect-ratio:1;background:#eef2ff}
   .photo img{width:100%;height:100%;object-fit:cover}
   .photo button{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;border:0;background:var(--danger);color:#fff;font-weight:900;cursor:pointer}
   .btn{border:0;padding:12px 18px;border-radius:8px;font-weight:800;cursor:pointer}
-  .btn.primary{background:var(--primary);color:#fff}.btn.secondary{background:#f3f4f6;border:2px solid var(--border)}
+  .btn.primary{background:var(--primary);color:#fff}.btn.secondary{background:#f3f4f6;border:2px solid var(--border)}.btn.danger{background:var(--danger);color:#fff}.btn.success{background:var(--secondary);color:#fff}
+  .range-hint{display:block;font-size:11px;color:#9ca3af;margin-top:2px}
   .actions{display:flex;gap:12px;flex-wrap:wrap}
   .fab{position:fixed;right:18px;bottom:18px;width:56px;height:56px;border-radius:50%;border:0;background:var(--primary);color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 25px rgba(37,99,235,.35);cursor:pointer}
   .row{display:flex;gap:12px;flex-wrap:wrap}
   .row .group{flex:1 1 220px}
   .muted{color:#6b7280}
-  @media (max-width:768px){body{padding:0}.container{border-radius:0}.main{padding:16px}.group input,.group select,.group textarea{font-size:16px;min-height:44px}}
+  @media (max-width:768px){
+    body{padding:0;padding-bottom:68px}
+    .container{border-radius:0}
+    .main{padding:16px}
+    .grid{grid-template-columns:1fr}
+    .parameter-grid{grid-template-columns:1fr}
+    .weight-calc-grid{grid-template-columns:1fr}
+    .group input,.group select,.group textarea{font-size:16px;min-height:44px}
+    .tabs{display:none}
+    .mobile-tab-bar{display:flex!important}
+    .fab{bottom:80px}
+    .row{flex-direction:column}
+    .row .group{flex:1 1 auto}
+    .flash-tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;gap:4px;padding-bottom:12px;scrollbar-width:none}
+    .flash-tabs::-webkit-scrollbar{display:none}
+    .flash-tab{scroll-snap-align:start;flex-shrink:0;font-size:12px;padding:8px 10px}
+    .btn,.btn-template,.btn-filter,.btn-log-action,.calc-button,.print-button{min-height:44px}
+    .header{flex-direction:column;gap:8px;padding:12px}
+    .header h1{font-size:17px}
+    .tablewrap{margin:0 -16px;border-radius:0;border-left:0;border-right:0}
+    .hist-table-wrap{position:relative}
+    .hist-table-wrap td:first-child,.hist-table-wrap th:first-child{position:sticky;left:0;background:#fff;z-index:2}
+    .hist-table-wrap th:first-child{background:var(--light)}
+  }
+  /* force-mobile: mirrors @media rules when toggled via PC/Mobile button */
+  .force-mobile{padding-bottom:68px!important}
+  .force-mobile .container{border-radius:0}
+  .force-mobile .main{padding:16px}
+  .force-mobile .grid{grid-template-columns:1fr}
+  .force-mobile .parameter-grid{grid-template-columns:1fr}
+  .force-mobile .weight-calc-grid{grid-template-columns:1fr}
+  .force-mobile .group input,.force-mobile .group select,.force-mobile .group textarea{font-size:16px;min-height:44px}
+  .force-mobile .tabs{display:none}
+  .force-mobile .mobile-tab-bar{display:flex!important}
+  .force-mobile .fab{bottom:80px}
+  .force-mobile .row{flex-direction:column}
+  .force-mobile .row .group{flex:1 1 auto}
+  .force-mobile .flash-tabs{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;gap:4px}
+  .force-mobile .flash-tab{flex-shrink:0;font-size:12px;padding:8px 10px}
+  .force-mobile .header{flex-direction:column;gap:8px;padding:12px}
+  .force-mobile .header h1{font-size:17px}
+  /* Mobile Tab Bar */
+  .mobile-tab-bar{display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);z-index:1000;justify-content:space-around;padding:4px 0;padding-bottom:max(4px,env(safe-area-inset-bottom))}
+  .mtb-item{display:flex;flex-direction:column;align-items:center;border:0;background:transparent;padding:6px 4px;font-size:20px;color:#6b7280;cursor:pointer;min-width:56px;gap:2px}
+  .mtb-item span{font-size:10px;font-weight:600}
+  .mtb-item.active{color:var(--primary)}
+  .more-popover{position:fixed;bottom:62px;right:8px;background:#fff;border-radius:12px;box-shadow:0 -4px 20px rgba(0,0,0,.15);padding:8px;z-index:1001;min-width:180px}
+  .more-popover.hidden{display:none}
+  .more-popover button{display:block;width:100%;text-align:left;padding:12px 16px;border:0;background:transparent;font-size:14px;cursor:pointer;border-radius:8px;font-weight:600}
+  .more-popover button:hover{background:#f3f4f6}
+  /* Checklist UX improvements */
+  .checklist-checkbox{width:44px;height:44px;min-width:44px;min-height:44px;cursor:pointer;accent-color:var(--secondary)}
+  .checklist-item{transition:all .3s;cursor:pointer}
+  .checklist-item.checked{background:#d1fae5;border-color:#6ee7b7}
+  .checklist-item.checked .checklist-text{text-decoration:line-through;color:#6b7280}
+  /* Lightbox */
+  .lightbox{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;z-index:10000;cursor:pointer}
+  .lightbox.active{display:flex}
+  .lightbox img{max-width:92%;max-height:90%;border-radius:8px;object-fit:contain}
+  .lightbox-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,.2);border:0;color:#fff;font-size:28px;width:48px;height:48px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center}
   /* Flash Control Guide Styles */
   .flash-tabs{display:flex;flex-wrap:wrap;gap:8px;border-bottom:2px solid #dee2e6;padding-bottom:8px;margin:16px 0}
   .flash-tab{border:0;background:#f8f9fa;padding:8px 12px;font-weight:600;color:#495057;border-radius:6px 6px 0 0;cursor:pointer;white-space:nowrap;transition:.2s;font-size:14px}
@@ -277,7 +337,7 @@
 
     <!-- History -->
     <section id="hist" class="tabpage">
-      <div class="tablewrap">
+      <div class="tablewrap hist-table-wrap">
         <table>
           <thead><tr>
             <th data-i18n="when">날짜/시간</th><th data-i18n="h_grade">샘플</th><th data-i18n="h_proc">공정</th>
@@ -289,9 +349,19 @@
     </section>
 
     <!-- Analysis -->
-    <section id="ana" class="tabpage" style="text-align:center">
+    <section id="ana" class="tabpage">
       <div style="margin:24px 0"><h3>📊 <span data-i18n="ana_head">데이터 분석</span></h3></div>
       <div class="card" id="anaCard"><div id="anaText" class="hint">분석 데이터 로딩 중...</div></div>
+      <div id="anaChartContainer" class="chart-container" style="display:none;margin-top:16px;text-align:left">
+        <div class="chart-controls">
+          <h4 style="color:#1e3c72;margin:0;flex:1">📈 파라미터 트렌드</h4>
+          <select id="anaParamSelect" style="padding:6px 10px;border:2px solid #ced4da;border-radius:5px;font-size:13px;color:#212529;background:#fff"></select>
+        </div>
+        <div style="position:relative;height:300px">
+          <canvas id="anaChart"></canvas>
+        </div>
+        <p style="font-size:12px;color:#6b7280;margin-top:10px;text-align:center">저장된 이력 데이터에서 선택한 파라미터의 트렌드를 표시합니다.</p>
+      </div>
     </section>
 
     <!-- Calculators -->
@@ -1550,6 +1620,27 @@
   </div>
 </div>
 
+<!-- Mobile Bottom Tab Bar -->
+<nav id="mobileTabBar" class="mobile-tab-bar">
+  <button class="mtb-item active" data-tab="proc">⚙️<span>공정조건</span></button>
+  <button class="mtb-item" data-tab="hist">📋<span>이력</span></button>
+  <button class="mtb-item" data-tab="calc">🧮<span>계산기</span></button>
+  <button class="mtb-item" data-tab="flash">🔧<span>플래시</span></button>
+  <button class="mtb-item" data-tab="more" id="moreBtn">⋯<span>더보기</span></button>
+</nav>
+<div id="morePopover" class="more-popover hidden">
+  <button data-tab="ts">🔍 트러블슈팅</button>
+  <button data-tab="ana">📊 데이터 분석</button>
+  <button data-tab="props">📦 물성 DB</button>
+  <button data-tab="photos">📷 사진</button>
+</div>
+
+<!-- Lightbox for photo gallery -->
+<div id="lightbox" class="lightbox" onclick="if(event.target===this)closeLightbox()">
+  <img id="lightboxImg" alt="Photo preview">
+  <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+</div>
+
 <script>
 /* ========= i18n ========= */
 const I18N = {
@@ -1705,7 +1796,13 @@ const MAT_KEY_ORDER=[
 
 /* ========= Utilities ========= */
 function $(id){return document.getElementById(id)}; function allSel(s){return Array.from(document.querySelectorAll(s))};
-function setView(v){document.querySelector('.container').style.maxWidth=(v==='mobile'?'100%':'1400px');$('btnDesktop').classList.toggle('active',v==='desktop');$('btnMobile').classList.toggle('active',v==='mobile')}
+function setView(v){
+  document.body.classList.toggle('force-mobile',v==='mobile');
+  document.querySelector('.container').style.maxWidth=(v==='mobile'?'100%':'1400px');
+  $('btnDesktop').classList.toggle('active',v==='desktop');
+  $('btnMobile').classList.toggle('active',v==='mobile');
+  localStorage.setItem('pha_view_pref',v);
+}
 function i18nApply(){allSel('[data-i18n]').forEach(el=>{const k=el.dataset.i18n; if(I18N[LANG][k]) el.textContent=I18N[LANG][k];});
   $('notes').placeholder=(LANG==='ko'?'가공 중 특이사항/개선 아이디어 기록':'Record anomalies or ideas');
   $('tsHint').textContent=(LANG==='ko'?I18N.ko.last:I18N.en.last)+': '+new Date().toLocaleString(LANG==='ko'?'ko-KR':'en-US'); renderTS(); renderHistory(); refreshParamTable(); renderMat()}
@@ -1790,19 +1887,21 @@ function rebuildForm(){
   const wrap=$('dynamicFields'); wrap.innerHTML='';
   for(const fld of schema){
     const id='f_'+fld.id, label = fld.ko + (fld.unit?` (${fld.unit})`:''); const div=document.createElement('div'); div.className='group';
-    div.innerHTML=`<label for="${id}">${label}</label><input id="${id}" type="number" inputmode="decimal" placeholder="${rec[fld.id]?rec[fld.id][0]+'-'+rec[fld.id][1]:''}">`;
+    const rangeText=rec[fld.id]?`${LANG==='ko'?'권장':'Rec'}: ${rec[fld.id][0]}–${rec[fld.id][1]}${fld.unit?' '+fld.unit:''}`:'';
+    div.innerHTML=`<label for="${id}">${label}</label><input id="${id}" type="number" inputmode="decimal" placeholder="${rec[fld.id]?rec[fld.id][0]+'-'+rec[fld.id][1]:''}">${rangeText?'<span class="range-hint">'+rangeText+'</span>':''}`;
     wrap.appendChild(div);
   }
   refreshParamTable();
 }
 
 /* ========= Table/status ========= */
-function statusOf(v,r){if(v===''||v==null||isNaN(v)) return 'warn'; const x=parseFloat(v); if(x>=r[0]&&x<=r[1])return'ok'; if(x<r[0]-10||x>r[1]+10)return'crit'; return'warn'}
+function statusOf(v,r){if(v===''||v==null||isNaN(v)) return 'empty'; const x=parseFloat(v); if(x>=r[0]&&x<=r[1])return'ok'; if(x<r[0]-10||x>r[1]+10)return'crit'; return'warn'}
 function refreshParamTable(){
   const proc=$('process').value, grade=$('grade').value, profile=profileOf(grade), schema=SCHEMAS[proc], rec=getReco(profile,proc);
   const tb=$('paramTable'); tb.innerHTML='';
   schema.forEach(f=>{const val=$('f_'+f.id)?.value||''; const range=rec[f.id]||['-','-']; const s=statusOf(val,range);
-    const cls=s==='ok'?'ok':(s==='crit'?'crit':'warn'); const sText=(LANG==='ko'?(s==='ok'?'정상':s==='crit'?'위험':'주의'):(s==='ok'?'Normal':s==='crit'?'Critical':'Warning'));
+    const cls=s==='ok'?'ok':(s==='crit'?'crit':(s==='empty'?'empty':'warn'));
+    const sText=(LANG==='ko'?(s==='ok'?'정상':s==='crit'?'위험':s==='empty'?'미입력':'주의'):(s==='ok'?'Normal':s==='crit'?'Critical':s==='empty'?'Not entered':'Warning'));
     const tr=document.createElement('tr'); tr.innerHTML=`<td>${f.ko}${f.unit?' ('+f.unit+')':''}</td><td>${val||'-'}</td><td>${range[0]}-${range[1]}</td><td><span class="badge ${cls}">${sText}</span></td>`; tb.appendChild(tr);
   });
 }
@@ -1862,7 +1961,11 @@ function editMat(){const db=getMatDB(); const g=$('mat_grade').value||'S1000P'; 
 }
 
 /* ========= Tabs & events ========= */
-allSel('.tab').forEach(btn=> btn.addEventListener('click', e=>{const to=e.currentTarget.dataset.tab; allSel('.tab').forEach(b=>b.classList.remove('active')); e.currentTarget.classList.add('active'); allSel('.tabpage').forEach(p=>p.classList.remove('active')); $(to).classList.add('active');}));
+allSel('.tab').forEach(btn=> btn.addEventListener('click', e=>{
+  const to=e.currentTarget.dataset.tab;
+  if(typeof switchTab==='function'){switchTab(to);}
+  else{allSel('.tab').forEach(b=>b.classList.remove('active'));e.currentTarget.classList.add('active');allSel('.tabpage').forEach(p=>p.classList.remove('active'));$(to).classList.add('active');}
+}));
 document.addEventListener('input', e=>{ if(e.target && e.target.id && e.target.id.startsWith('f_')) refreshParamTable(); });
 $('language').addEventListener('change',e=>{LANG=e.target.value; i18nApply();});
 
@@ -1870,8 +1973,38 @@ $('language').addEventListener('change',e=>{LANG=e.target.value; i18nApply();});
 (function init(){
   buildGradeOptions();
   $('grade').value='S1000P'; $('process').value='extrusion'; rebuildForm(); i18nApply(); renderHistory(); analyze(); renderMat();
+  /* Restore view preference */
+  const savedView=localStorage.getItem('pha_view_pref');
+  if(savedView) setView(savedView);
 })();
-function analyze(){const hist=JSON.parse(localStorage.getItem('pha_hist')||'[]'); const n=hist.length; const t=(n? (LANG==='ko'?'최근 저장: ':'Last: ')+new Date(hist[n-1].ts).toLocaleString(LANG==='ko'?'ko-KR':'en-US')+' · '+hist[n-1].grade+' · '+hist[n-1].proc : (LANG==='ko'?'데이터가 없습니다.':'No data yet.')); $('anaText').textContent=t;}
+let anaChartInstance=null;
+function analyze(){
+  const hist=JSON.parse(localStorage.getItem('pha_hist')||'[]'); const n=hist.length;
+  const t=(n? (LANG==='ko'?'최근 저장: ':'Last: ')+new Date(hist[n-1].ts).toLocaleString(LANG==='ko'?'ko-KR':'en-US')+' · '+hist[n-1].grade+' · '+hist[n-1].proc+` (${n}${LANG==='ko'?'건':'entries'})` : (LANG==='ko'?'데이터가 없습니다.':'No data yet.'));
+  $('anaText').textContent=t;
+  /* Render analysis chart if 2+ entries */
+  const container=$('anaChartContainer');
+  if(!container)return;
+  if(n<2){container.style.display='none';return;}
+  container.style.display='block';
+  /* Build param selector */
+  const paramKeys={}; hist.forEach(h=>{if(h.params)Object.keys(h.params).forEach(k=>{const v=h.params[k];if(v!==''&&v!=null&&!isNaN(v))paramKeys[k]=(paramKeys[k]||0)+1;});});
+  const sel=$('anaParamSelect'); const prevVal=sel.value;
+  sel.innerHTML=''; Object.keys(paramKeys).sort((a,b)=>paramKeys[b]-paramKeys[a]).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=k;sel.appendChild(o);});
+  if(prevVal&&paramKeys[prevVal])sel.value=prevVal;
+  sel.onchange=function(){renderAnaChart(hist,sel.value);};
+  renderAnaChart(hist,sel.value);
+}
+function renderAnaChart(hist,paramKey){
+  if(!paramKey||typeof Chart==='undefined')return;
+  const data=hist.filter(h=>h.params&&h.params[paramKey]!==''&&h.params[paramKey]!=null&&!isNaN(h.params[paramKey])).slice(-30);
+  if(data.length<2){$('anaChartContainer').style.display='none';return;}
+  const labels=data.map(h=>new Date(h.ts).toLocaleDateString(LANG==='ko'?'ko-KR':'en-US',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}));
+  const values=data.map(h=>parseFloat(h.params[paramKey]));
+  const ctx=document.getElementById('anaChart');
+  if(anaChartInstance){anaChartInstance.destroy();}
+  anaChartInstance=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:paramKey,data:values,borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.1)',tension:.3,fill:true,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{x:{display:true,title:{display:true,text:LANG==='ko'?'시간':'Time'}},y:{display:true,title:{display:true,text:paramKey}}}}});
+}
 function resetForm(){if(!confirm(I18N[LANG].resetQ)) return; $('notes').value=''; rebuildForm();}
 
 /* ========= Flash Control Functions ========= */
@@ -2852,6 +2985,74 @@ function updateCharts() {
   processChart.update();
 }
 
+/* ========= Mobile Tab Bar ========= */
+function switchTab(tabId){
+  allSel('.tab').forEach(b=>b.classList.remove('active'));
+  allSel('.tabpage').forEach(p=>p.classList.remove('active'));
+  const topTab=allSel('.tab').find(b=>b.dataset.tab===tabId);
+  if(topTab) topTab.classList.add('active');
+  const page=$(tabId);
+  if(page) page.classList.add('active');
+  /* sync mobile tab bar */
+  document.querySelectorAll('.mtb-item').forEach(b=>{
+    b.classList.toggle('active',b.dataset.tab===tabId);
+  });
+  /* close more popover */
+  const pop=$('morePopover'); if(pop) pop.classList.add('hidden');
+  /* trigger chart init if switching to ana tab */
+  if(tabId==='ana') analyze();
+}
+function initMobileTabBar(){
+  document.querySelectorAll('.mtb-item').forEach(btn=>{
+    btn.addEventListener('click',function(){
+      const tab=this.dataset.tab;
+      if(tab==='more'){
+        $('morePopover').classList.toggle('hidden');
+        return;
+      }
+      switchTab(tab);
+    });
+  });
+  document.querySelectorAll('#morePopover button').forEach(btn=>{
+    btn.addEventListener('click',function(){
+      switchTab(this.dataset.tab);
+    });
+  });
+  /* close popover on outside click */
+  document.addEventListener('click',function(e){
+    const pop=$('morePopover');
+    if(!pop||pop.classList.contains('hidden'))return;
+    if(!e.target.closest('#morePopover')&&!e.target.closest('[data-tab="more"]')){
+      pop.classList.add('hidden');
+    }
+  });
+}
+
+/* ========= Checklist UX ========= */
+function initChecklist(){
+  const saved=JSON.parse(localStorage.getItem('flash_checklist')||'{}');
+  document.querySelectorAll('.checklist-checkbox').forEach((cb,i)=>{
+    if(saved[i]){cb.checked=true;cb.closest('.checklist-item').classList.add('checked');}
+    cb.addEventListener('change',function(){
+      this.closest('.checklist-item').classList.toggle('checked',this.checked);
+      const state={};
+      document.querySelectorAll('.checklist-checkbox').forEach((c,j)=>{if(c.checked)state[j]=true;});
+      localStorage.setItem('flash_checklist',JSON.stringify(state));
+    });
+  });
+}
+
+/* ========= Lightbox ========= */
+function openLightbox(src){
+  $('lightboxImg').src=src;
+  $('lightbox').classList.add('active');
+  document.body.style.overflow='hidden';
+}
+function closeLightbox(){
+  $('lightbox').classList.remove('active');
+  document.body.style.overflow='';
+}
+
 // Initialize on load
 window.addEventListener('load', () => {
   loadTemplatesFromStorage();
@@ -2859,6 +3060,8 @@ window.addEventListener('load', () => {
   if (typeof Chart !== 'undefined') {
     initChart();
   }
+  initMobileTabBar();
+  initChecklist();
 });
 </script>
 

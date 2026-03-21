@@ -437,9 +437,14 @@ function renderPhotos() {
     div.className = 'photo';
     const img = document.createElement('img');
     img.src = src;
+    img.style.cursor = 'pointer';
+    img.onclick = function () {
+      if (typeof openLightbox === 'function') openLightbox(src);
+    };
     const btn = document.createElement('button');
     btn.textContent = '×';
-    btn.onclick = function () {
+    btn.onclick = function (e) {
+      e.stopPropagation();
       window.photos.splice(i, 1);
       savePhotos();
       renderPhotos();
