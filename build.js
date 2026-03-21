@@ -12,6 +12,8 @@ const path = require('path');
 const FILES_TO_COPY = [
   'index.html',
   'custom.js',
+  'compounding-guide.js',
+  'straw-guide.js',
   'sw.js',
   'manifest.webmanifest',
   'README.txt',
