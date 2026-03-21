@@ -272,6 +272,8 @@
       <button class="tab" data-tab="props" data-i18n="tab_props">물성 DB</button>
       <button class="tab" data-tab="photos" data-i18n="tab_photos">사진</button>
       <button class="tab" data-tab="flash" data-i18n="tab_flash">플래시 제어</button>
+      <button class="tab" data-tab="compounding" data-i18n="tab_comp">컴파운딩 가이드</button>
+      <button class="tab" data-tab="straw" data-i18n="tab_straw">스트로 가이드</button>
     </div>
 
     <!-- Process Conditions -->
@@ -1599,6 +1601,16 @@
         </div>
       </div>
     </section>
+
+    <!-- Compounding Guide -->
+    <section id="compounding" class="tabpage">
+      <div id="compGuideContainer"></div>
+    </section>
+
+    <!-- Straw Guide -->
+    <section id="straw" class="tabpage">
+      <div id="strawGuideContainer"></div>
+    </section>
   </div>
 </div>
 
@@ -1633,6 +1645,8 @@
   <button data-tab="ana">📊 데이터 분석</button>
   <button data-tab="props">📦 물성 DB</button>
   <button data-tab="photos">📷 사진</button>
+  <button data-tab="compounding">🧪 컴파운딩</button>
+  <button data-tab="straw">🥤 스트로</button>
 </div>
 
 <!-- Lightbox for photo gallery -->
@@ -1644,13 +1658,13 @@
 <script>
 /* ========= i18n ========= */
 const I18N = {
-  ko:{title:"PHA 공정 최적화 도구",tab_proc:"공정 조건",tab_ts:"트러블슈팅",tab_hist:"이력 관리",tab_ana:"데이터 분석",tab_calc:"계산기",tab_props:"물성 DB",tab_photos:"사진",tab_flash:"플래시 제어",
+  ko:{title:"PHA 공정 최적화 도구",tab_proc:"공정 조건",tab_ts:"트러블슈팅",tab_hist:"이력 관리",tab_ana:"데이터 분석",tab_calc:"계산기",tab_props:"물성 DB",tab_photos:"사진",tab_flash:"플래시 제어",tab_comp:"컴파운딩 가이드",tab_straw:"스트로 가이드",
       series:"샘플 시리즈",process:"가공 유형",notes:"📝 특이사항 메모",save:"저장 및 분석",export:"데이터 내보내기",reset:"초기화",
       param:"파라미터",current:"현재값",range:"권장 범위",status:"상태",ok:"정상",warn:"주의",crit:"위험",when:"날짜/시간",h_grade:"샘플",h_proc:"공정",h_key:"주요 파라미터",h_result:"결과",h_note:"메모",
       ana_head:"데이터 분석",saved:"데이터가 저장되었습니다.",last:"마지막 업데이트",resetQ:"모든 입력을 초기화할까요?",
       photos_head:"사진 관리"
   },
-  en:{title:"PHA Process Optimizer",tab_proc:"Process Conditions",tab_ts:"Troubleshooting",tab_hist:"History",tab_ana:"Data Analysis",tab_calc:"Calculators",tab_props:"Materials DB",tab_photos:"Photos",tab_flash:"Flash Control",
+  en:{title:"PHA Process Optimizer",tab_proc:"Process Conditions",tab_ts:"Troubleshooting",tab_hist:"History",tab_ana:"Data Analysis",tab_calc:"Calculators",tab_props:"Materials DB",tab_photos:"Photos",tab_flash:"Flash Control",tab_comp:"Compounding Guide",tab_straw:"Straw Guide",
       series:"Sample Series",process:"Process Type",notes:"📝 Process Notes",save:"Save & Analyze",export:"Export Data",reset:"Reset",
       param:"Parameter",current:"Current",range:"Recommended",status:"Status",ok:"Normal",warn:"Warning",crit:"Critical",when:"Date/Time",h_grade:"Sample",h_proc:"Process",h_key:"Main Parameters",h_result:"Result",h_note:"Memo",
       ana_head:"Data Analysis",saved:"Saved successfully.",last:"Last Update",resetQ:"Reset all inputs?",
@@ -3070,6 +3084,16 @@ window.addEventListener('load', () => {
 
   <!-- Load external script containing material/troubleshooting/photo logic -->
   <script src="custom.js"></script>
+  <!-- Compounding & Straw guide modules -->
+  <script src="compounding-guide.js"></script>
+  <script src="straw-guide.js"></script>
+  <script>
+    // Initialize guide tabs after all scripts loaded
+    window.addEventListener('load', function(){
+      if(typeof initCompoundingGuide==='function') initCompoundingGuide();
+      if(typeof initStrawGuide==='function') initStrawGuide();
+    });
+  </script>
 
 </body>
 </html>
