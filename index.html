@@ -439,7 +439,7 @@
     <section id="photos" class="tabpage">
       <h3 style="margin:8px 0">📷 <span data-i18n="photos_head">Photo Manager</span></h3>
       <div class="group">
-        <button class="btn primary" onclick="triggerPhotoUpload()">사진 업로드</button>
+        <button class="btn primary" onclick="triggerPhotoUpload()" data-i18n="photo_upload">사진 업로드</button>
         <input id="photoUpload" type="file" accept="image/*" multiple style="display:none">
       </div>
       <div id="photoGrid" class="photos"></div>
@@ -1641,12 +1641,12 @@
   <button class="mtb-item" data-tab="more" id="moreBtn">⋯<span>더보기</span></button>
 </nav>
 <div id="morePopover" class="more-popover hidden">
-  <button data-tab="ts">🔍 트러블슈팅</button>
-  <button data-tab="ana">📊 데이터 분석</button>
-  <button data-tab="props">📦 물성 DB</button>
-  <button data-tab="photos">📷 사진</button>
-  <button data-tab="compounding">🧪 컴파운딩</button>
-  <button data-tab="straw">🥤 스트로</button>
+  <button data-tab="ts" data-i18n="tab_ts_m">🔍 트러블슈팅</button>
+  <button data-tab="ana" data-i18n="tab_ana_m">📊 데이터 분석</button>
+  <button data-tab="props" data-i18n="tab_props_m">📦 물성 DB</button>
+  <button data-tab="photos" data-i18n="tab_photos_m">📷 사진</button>
+  <button data-tab="compounding" data-i18n="tab_comp_m">🧪 컴파운딩</button>
+  <button data-tab="straw" data-i18n="tab_straw_m">🥤 스트로</button>
 </div>
 
 <!-- Lightbox for photo gallery -->
@@ -1662,13 +1662,29 @@ const I18N = {
       series:"샘플 시리즈",process:"가공 유형",notes:"📝 특이사항 메모",save:"저장 및 분석",export:"데이터 내보내기",reset:"초기화",
       param:"파라미터",current:"현재값",range:"권장 범위",status:"상태",ok:"정상",warn:"주의",crit:"위험",when:"날짜/시간",h_grade:"샘플",h_proc:"공정",h_key:"주요 파라미터",h_result:"결과",h_note:"메모",
       ana_head:"데이터 분석",saved:"데이터가 저장되었습니다.",last:"마지막 업데이트",resetQ:"모든 입력을 초기화할까요?",
-      photos_head:"사진 관리"
+      photos_head:"사진 관리",photo_upload:"사진 업로드",
+      tab_ts_m:"🔍 트러블슈팅",tab_ana_m:"📊 데이터 분석",tab_props_m:"📦 물성 DB",tab_photos_m:"📷 사진",tab_comp_m:"🧪 컴파운딩",tab_straw_m:"🥤 스트로",
+      json_import_ok:"JSON 가져오기 완료",json_format_err:"JSON 형식 오류",json_parse_err:"JSON 파싱 실패",csv_import_ok:"CSV 가져오기 완료",
+      reco_reset_cur:"현재 공정의 수정값을 초기화했습니다.",reco_reset_all:"모든 수정값 초기화 완료",mat_import_ok:"물성 DB 가져오기 완료",
+      save_ok:"저장 완료",reset_ok:"초기화 완료",reset_all_ok:"전체 초기화 완료",input_all:"모든 값을 입력해주세요.",input_peak:"최대 사출압을 입력해주세요.",
+      no_log:"내보낼 로그 데이터가 없습니다.",no_log_save:"저장할 로그 데이터가 없습니다.",no_template:"저장된 템플릿이 없습니다.",
+      tpl_saved:"템플릿이 저장되었습니다.",tpl_applied:"템플릿이 적용되었습니다.",tpl_deleted:"템플릿이 삭제되었습니다.",tpl_invalid:"올바른 번호를 입력하세요.",
+      add_log_first:"먼저 로그를 추가해주세요.",weight_applied:"무게 데이터가 최신 로그에 적용되었습니다!",
+      photo_too_big:"파일이 너무 큽니다 (최대 5MB)",photo_added:"사진이 추가되었습니다."
   },
   en:{title:"PHA Process Optimizer",tab_proc:"Process Conditions",tab_ts:"Troubleshooting",tab_hist:"History",tab_ana:"Data Analysis",tab_calc:"Calculators",tab_props:"Materials DB",tab_photos:"Photos",tab_flash:"Flash Control",tab_comp:"Compounding Guide",tab_straw:"Straw Guide",
       series:"Sample Series",process:"Process Type",notes:"📝 Process Notes",save:"Save & Analyze",export:"Export Data",reset:"Reset",
       param:"Parameter",current:"Current",range:"Recommended",status:"Status",ok:"Normal",warn:"Warning",crit:"Critical",when:"Date/Time",h_grade:"Sample",h_proc:"Process",h_key:"Main Parameters",h_result:"Result",h_note:"Memo",
       ana_head:"Data Analysis",saved:"Saved successfully.",last:"Last Update",resetQ:"Reset all inputs?",
-      photos_head:"Photo Manager"
+      photos_head:"Photo Manager",photo_upload:"Upload Photos",
+      tab_ts_m:"🔍 Troubleshooting",tab_ana_m:"📊 Analysis",tab_props_m:"📦 Materials",tab_photos_m:"📷 Photos",tab_comp_m:"🧪 Compounding",tab_straw_m:"🥤 Straw",
+      json_import_ok:"JSON import complete",json_format_err:"Invalid JSON format",json_parse_err:"JSON parse failed",csv_import_ok:"CSV import complete",
+      reco_reset_cur:"Current process overrides have been reset.",reco_reset_all:"All overrides have been reset.",mat_import_ok:"Materials DB import complete",
+      save_ok:"Saved",reset_ok:"Reset complete",reset_all_ok:"Full reset complete",input_all:"Please fill in all fields.",input_peak:"Please enter max injection pressure.",
+      no_log:"No log data to export.",no_log_save:"No log data to save.",no_template:"No saved templates.",
+      tpl_saved:"Template saved.",tpl_applied:"Template applied.",tpl_deleted:"Template deleted.",tpl_invalid:"Please enter a valid number.",
+      add_log_first:"Please add a log entry first.",weight_applied:"Weight data applied to latest log!",
+      photo_too_big:"File too large (max 5MB)",photo_added:"Photo added."
   }
 };
 let LANG = 'ko';
@@ -1810,6 +1826,7 @@ const MAT_KEY_ORDER=[
 
 /* ========= Utilities ========= */
 function $(id){return document.getElementById(id)}; function allSel(s){return Array.from(document.querySelectorAll(s))};
+function _t(key){return (I18N[LANG]&&I18N[LANG][key])||key}
 function setView(v){
   document.body.classList.toggle('force-mobile',v==='mobile');
   document.querySelector('.container').style.maxWidth=(v==='mobile'?'100%':'1400px');
@@ -1930,11 +1947,11 @@ function renderHistory(){const hist=JSON.parse(localStorage.getItem('pha_hist')|
     const tr=document.createElement('tr'); tr.innerHTML=`<td>${new Date(r.ts).toLocaleString(LANG==='ko'?'ko-KR':'en-US')}</td><td>${r.grade}</td><td>${r.proc}</td><td>${k}</td><td><span class="badge ok">${LANG==='ko'?'완료':'Complete'}</span></td><td>${r.notes||'-'}</td>`; tb.appendChild(tr);});}
 function triggerImport(type){(type==='csv'?$('importCSV'):$('importJSON')).click();}
 $('importCSV').addEventListener('change', e=>{const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>importCSV(r.result); r.readAsText(f,'utf-8'); e.target.value='';});
-$('importJSON').addEventListener('change', e=>{const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{try{const arr=JSON.parse(r.result); if(Array.isArray(arr)){ const hist=JSON.parse(localStorage.getItem('pha_hist')||'[]'); hist.push(...arr); localStorage.setItem('pha_hist',JSON.stringify(hist)); renderHistory(); alert('JSON import 완료'); } else alert('JSON 형식 오류'); }catch(err){alert('JSON 파싱 실패')}}; r.readAsText(f,'utf-8'); e.target.value='';});
+$('importJSON').addEventListener('change', e=>{const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{try{const arr=JSON.parse(r.result); if(Array.isArray(arr)){ const hist=JSON.parse(localStorage.getItem('pha_hist')||'[]'); hist.push(...arr); localStorage.setItem('pha_hist',JSON.stringify(hist)); renderHistory(); alert(_t('json_import_ok')); } else alert(_t('json_format_err')); }catch(err){alert(_t('json_parse_err'))}}; r.readAsText(f,'utf-8'); e.target.value='';});
 function importCSV(text){const lines=text.trim().split(/\r?\n/); const head=lines[0].split(',').map(s=>s.trim()); const hist=JSON.parse(localStorage.getItem('pha_hist')||'[]');
   for(let i=1;i<lines.length;i++){const cols=lines[i].split(','); if(cols.length<3) continue; const obj={ts:cols[head.indexOf('ts')]||new Date().toISOString(),grade:cols[head.indexOf('grade')]||'S1000P',proc:cols[head.indexOf('proc')]||'extrusion',params:{},notes:cols[head.indexOf('notes')]||''};
     head.forEach((h,idx)=>{if(!['ts','grade','proc','notes'].includes(h)) obj.params[h]=cols[idx]}); hist.push(obj);}
-  localStorage.setItem('pha_hist',JSON.stringify(hist)); renderHistory(); alert('CSV import 완료')}
+  localStorage.setItem('pha_hist',JSON.stringify(hist)); renderHistory(); alert(_t('csv_import_ok'))}
 
 /* ========= Reco editor (overrides) ========= */
 function openRecoEditor(){const proc=$('process').value, grade=$('grade').value, profile=profileOf(grade), rec=getReco(profile,proc), schema=SCHEMAS[proc];
@@ -1944,8 +1961,8 @@ function openRecoEditor(){const proc=$('process').value, grade=$('grade').value,
 function closeModal(){$('modal').style.display='none'}
 function saveRecoOverrides(){const proc=$('process').value, profile=profileOf($('grade').value), schema=SCHEMAS[proc]; const key=profile+'__'+proc;
   const ov=JSON.parse(localStorage.getItem('reco_overrides')||'{}'); ov[key]=ov[key]||{}; schema.forEach(f=>{const min=parseFloat($('ov_'+f.id+'_min').value); const max=parseFloat($('ov_'+f.id+'_max').value); if(!isNaN(min)&&!isNaN(max)) ov[key][f.id]=[min,max];}); localStorage.setItem('reco_overrides',JSON.stringify(ov)); closeModal(); rebuildForm();}
-function resetOverridesCurrent(){const proc=$('process').value, profile=profileOf($('grade').value); const key=profile+'__'+proc; const ov=JSON.parse(localStorage.getItem('reco_overrides')||'{}'); delete ov[key]; localStorage.setItem('reco_overrides',JSON.stringify(ov)); rebuildForm(); alert('현재 공정의 수정값을 초기화했습니다.')}
-function resetOverridesAll(){localStorage.removeItem('reco_overrides'); rebuildForm(); alert('모든 수정값 초기화 완료')}
+function resetOverridesCurrent(){const proc=$('process').value, profile=profileOf($('grade').value); const key=profile+'__'+proc; const ov=JSON.parse(localStorage.getItem('reco_overrides')||'{}'); delete ov[key]; localStorage.setItem('reco_overrides',JSON.stringify(ov)); rebuildForm(); alert(_t('reco_reset_cur'))}
+function resetOverridesAll(){localStorage.removeItem('reco_overrides'); rebuildForm(); alert(_t('reco_reset_all'))}
 
 /* ========= Calculators ========= */
 function calcResidence(){const rho=parseFloat($('kpi_rho').value||'0'); const vL=parseFloat($('kpi_holdVol').value||'0'); let m=parseFloat($('kpi_holdMass').value||'0'); const rate=parseFloat($('kpi_rate').value||'0');
@@ -1962,16 +1979,16 @@ function setMatDB(db){localStorage.setItem('mat_db',JSON.stringify(db))}
 function renderMat(){const db=getMatDB(); const g=$('mat_grade').value||'S1000P'; const rec=db[g]||{}; const tb=$('mat_tbody'); tb.innerHTML='';
   MAT_KEY_ORDER.forEach(([k,nm,unit])=>{const tr=document.createElement('tr'); tr.innerHTML=`<td>${nm}</td><td>${rec[k]??''}</td><td class="muted">${unit}</td>`; tb.appendChild(tr);});}
 $('mat_grade').addEventListener('change',renderMat);
-function importMatJSON(){const inp=$('mat_file'); inp.onchange=(e)=>{const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{try{const obj=JSON.parse(r.result); const db=getMatDB(); Object.assign(db,obj); setMatDB(db); renderMat(); alert('물성 DB import 완료');}catch(err){alert('JSON 파싱 실패')}}; r.readAsText(f,'utf-8'); inp.value='';}; inp.click();}
+function importMatJSON(){const inp=$('mat_file'); inp.onchange=(e)=>{const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{try{const obj=JSON.parse(r.result); const db=getMatDB(); Object.assign(db,obj); setMatDB(db); renderMat(); alert(_t('mat_import_ok'));}catch(err){alert(_t('json_parse_err'))}}; r.readAsText(f,'utf-8'); inp.value='';}; inp.click();}
 function exportMatJSON(){const blob=new Blob([JSON.stringify(getMatDB(),null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='materials_db.json'; a.click();}
 function editMat(){const db=getMatDB(); const g=$('mat_grade').value||'S1000P'; const rec=Object.assign({},db[g]||{}); const vals={}; let html='<div class="grid">';
   MAT_KEY_ORDER.forEach(([k,nm])=>{const v=rec[k]??''; html+=`<div class="group"><label>${nm}</label><input id="mat_${k}" type="number" step="any" value="${v}"></div>`}); html+='</div>';
   const body=$('modalBody'); body.innerHTML=html; $('modal').style.display='flex';
   // Replace modal buttons temporarily
   const save=window.saveRecoOverrides; const resetC=window.resetOverridesCurrent; const resetA=window.resetOverridesAll;
-  window.saveRecoOverrides=function(){const rec2={}; MAT_KEY_ORDER.forEach(([k])=>{const v=$('mat_'+k).value; if(v!=='') rec2[k]=parseFloat(v)}); db[g]=rec2; setMatDB(db); renderMat(); alert('저장 완료'); closeModal(); window.saveRecoOverrides=save; window.resetOverridesCurrent=resetC; window.resetOverridesAll=resetA;};
-  window.resetOverridesCurrent=function(){db[g]={}; setMatDB(db); renderMat(); alert('초기화 완료')};
-  window.resetOverridesAll=function(){localStorage.removeItem('mat_db'); renderMat(); alert('전체 초기화 완료')};
+  window.saveRecoOverrides=function(){const rec2={}; MAT_KEY_ORDER.forEach(([k])=>{const v=$('mat_'+k).value; if(v!=='') rec2[k]=parseFloat(v)}); db[g]=rec2; setMatDB(db); renderMat(); alert(_t('save_ok')); closeModal(); window.saveRecoOverrides=save; window.resetOverridesCurrent=resetC; window.resetOverridesAll=resetA;};
+  window.resetOverridesCurrent=function(){db[g]={}; setMatDB(db); renderMat(); alert(_t('reset_ok'))};
+  window.resetOverridesAll=function(){localStorage.removeItem('mat_db'); renderMat(); alert(_t('reset_all_ok'))};
 }
 
 /* ========= Tabs & events ========= */
@@ -1981,7 +1998,10 @@ allSel('.tab').forEach(btn=> btn.addEventListener('click', e=>{
   else{allSel('.tab').forEach(b=>b.classList.remove('active'));e.currentTarget.classList.add('active');allSel('.tabpage').forEach(p=>p.classList.remove('active'));$(to).classList.add('active');}
 }));
 document.addEventListener('input', e=>{ if(e.target && e.target.id && e.target.id.startsWith('f_')) refreshParamTable(); });
-$('language').addEventListener('change',e=>{LANG=e.target.value; i18nApply();});
+$('language').addEventListener('change',e=>{LANG=e.target.value; i18nApply();
+  if(typeof initCompoundingGuide==='function') initCompoundingGuide();
+  if(typeof initStrawGuide==='function') initStrawGuide();
+});
 
 /* ========= Init ========= */
 (function init(){
@@ -2045,7 +2065,7 @@ function calculateFlashClampTonnage() {
   const pAvg = parseFloat($('flash-p-avg').value);
   const aProj = parseFloat($('flash-a-proj').value);
   if (isNaN(pAvg) || isNaN(aProj)) {
-    alert('모든 값을 입력해주세요.');
+    alert(_t('input_all'));
     return;
   }
   const tonnage = (pAvg * aProj) / 1000;
@@ -2062,7 +2082,7 @@ function calculateFlashPressureLimit() {
   const aProj = parseFloat($('flash-a-proj-2').value);
   const safetyFactor = parseFloat($('flash-safety-factor').value);
   if (isNaN(fClamp) || isNaN(aProj) || isNaN(safetyFactor)) {
-    alert('모든 값을 입력해주세요.');
+    alert(_t('input_all'));
     return;
   }
   const pressureLimit = (safetyFactor * fClamp * 1000) / aProj;
@@ -2077,7 +2097,7 @@ function calculateFlashShearRate() {
   const Q = parseFloat($('flash-flow-rate').value);
   const R = parseFloat($('flash-runner-radius').value);
   if (isNaN(Q) || isNaN(R)) {
-    alert('모든 값을 입력해주세요.');
+    alert(_t('input_all'));
     return;
   }
   const shearRate = (4 * Q) / (Math.PI * Math.pow(R, 3));
@@ -2097,7 +2117,7 @@ function calculateFlashShearRate() {
 function calculateFlashPackingPressure() {
   const pInjPeak = parseFloat($('flash-p-inj-peak').value);
   if (isNaN(pInjPeak)) {
-    alert('최대 사출압을 입력해주세요.');
+    alert(_t('input_peak'));
     return;
   }
   const p1Min = pInjPeak * 0.30;
@@ -2337,7 +2357,7 @@ function clearProcessLog() {
 
 function exportProcessLog() {
   if (processLogData.length === 0) {
-    alert('내보낼 로그 데이터가 없습니다.');
+    alert(_t('no_log'));
     return;
   }
 
@@ -2530,7 +2550,7 @@ function saveTemplate() {
   if (!templateName) return;
 
   if (processLogData.length === 0) {
-    alert('저장할 로그 데이터가 없습니다.');
+    alert(_t('no_log_save'));
     return;
   }
 
@@ -2549,14 +2569,14 @@ function saveTemplate() {
 
   processTemplates.push(template);
   saveTemplatesToStorage();
-  alert(`템플릿 "${templateName}"이(가) 저장되었습니다.`);
+  alert(_t('tpl_saved'));
 }
 
 function loadTemplate() {
   loadTemplatesFromStorage();
 
   if (processTemplates.length === 0) {
-    alert('저장된 템플릿이 없습니다.');
+    alert(_t('no_template'));
     return;
   }
 
@@ -2595,9 +2615,9 @@ function loadTemplate() {
     processLogData.unshift(newEntry);
     saveProcessLog();
     renderProcessLog();
-    alert(`템플릿 "${template.name}"이(가) 적용되었습니다.`);
+    alert(_t('tpl_applied'));
   } else {
-    alert('올바른 번호를 입력하세요.');
+    alert(_t('tpl_invalid'));
   }
 }
 
@@ -2605,7 +2625,7 @@ function manageTemplates() {
   loadTemplatesFromStorage();
 
   if (processTemplates.length === 0) {
-    alert('저장된 템플릿이 없습니다.');
+    alert(_t('no_template'));
     return;
   }
 
@@ -2620,7 +2640,7 @@ function manageTemplates() {
     if (confirm(`"${templateName}" 템플릿을 삭제하시겠습니까?`)) {
       processTemplates.splice(index, 1);
       saveTemplatesToStorage();
-      alert('템플릿이 삭제되었습니다.');
+      alert(_t('tpl_deleted'));
     }
   }
 }
@@ -2647,7 +2667,7 @@ function calculateShotWeight() {
 
 function applyWeightToLog() {
   if (processLogData.length === 0) {
-    alert('먼저 로그를 추가해주세요.');
+    alert(_t('add_log_first'));
     return;
   }
 
@@ -2666,7 +2686,7 @@ function applyWeightToLog() {
   generateFlashRecommendations();
   updateCharts();
 
-  alert('무게 데이터가 최신 로그에 적용되었습니다!');
+  alert(_t('weight_applied'));
 }
 
 function loadDensityFromGrade() {
@@ -2803,7 +2823,7 @@ function attachPhoto(logIndex) {
 
     files.forEach(file => {
       if (file.size > 5 * 1024 * 1024) {
-        alert(`파일 ${file.name}이(가) 너무 큽니다 (최대 5MB)`);
+        alert(`${file.name}: ${_t('photo_too_big')}`);
         return;
       }
 
@@ -2828,7 +2848,7 @@ function attachPhoto(logIndex) {
             processLogData[logIndex].photos.push(photoData.name);
             saveProcessLog();
             renderProcessLog();
-            alert('사진이 추가되었습니다.');
+            alert(_t('photo_added'));
           };
         }
       };
