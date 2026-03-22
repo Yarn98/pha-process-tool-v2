@@ -1046,4 +1046,24 @@ function downloadCSV()
 
 ---
 
+## TARS API Integration (2026-03-23)
+
+TARS 중앙 API(`tars-api.sorisem98.workers.dev`)와 연동하여 grade/material 데이터를 에코시스템 전체에서 공유합니다.
+
+### 변경사항
+- `pha-integration.js` — TARS API grades를 `PHA_MATERIAL_REGISTRY`에 merge하고 grade dropdown에 추가
+
+### 사용자 체감 기능
+- **Grade 목록 자동 확장**: 페이지 로드 시 TARS DB의 grade가 `[TARS]` 접두사로 grade dropdown에 추가됨
+- **온도 자동 추천**: TARS grade 선택 시 Tm 기반 barrel peak 온도 자동 계산
+- **기존 기능 영향 없음**: 로컬 PHA_MATERIAL_REGISTRY, 컴파운딩 가이드, 단위 변환 등 모든 기존 기능 정상 동작
+
+### API 엔드포인트
+`/api/grades`
+
+### Fallback
+API 미연결 시 기존 하드코딩 material registry만 사용 (오프라인 기능 보존)
+
+---
+
 **End of Documentation**
