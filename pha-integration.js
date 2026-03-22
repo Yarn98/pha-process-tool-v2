@@ -291,6 +291,45 @@
         if (btn.dataset.tab === 'compounding') setTimeout(applyAutoClassification, 200);
       });
     });
+
+    // ── TARS API: merge grades into material registry (graceful fallback) ──
+    (function loadTarsGrades() {
+      var TARS_API = 'https://tars-api.sorisem98.workers.dev';
+      fetch(TARS_API + '/api/grades')
+        .then(function (res) { return res.ok ? res.json() : Promise.reject(); })
+        .then(function (grades) {
+          if (!Array.isArray(grades)) return;
+          var gradeSelect = el('grade');
+          var added = 0;
+          grades.forEach(function (g) {
+            var key = g.name || '';
+            if (!key || PHA_MATERIAL_REGISTRY[key]) return;
+            // Add to registry
+            var isHard = (g.polymer_type || '').indexOf('PHA') >= 0 && (g.hb4_mol_pct || 0) < 10;
+            PHA_MATERIAL_REGISTRY[key] = {
+              type: isHard ? 'H' : 'S',
+              subtype: g.polymer_type || 'unknown',
+              Tm: g.tm_c || null,
+              Tg: g.tg_c || null,
+              dryTemp: 60,
+              dryTime: 6,
+              barrelPeak: g.tm_c ? g.tm_c + 5 : 170,
+              notes_ko: (g.description || g.polymer_type || '') + ' (TARS)',
+              notes_en: (g.description || g.polymer_type || '') + ' (TARS)'
+            };
+            // Add to grade dropdown if exists
+            if (gradeSelect) {
+              var opt = document.createElement('option');
+              opt.value = key;
+              opt.textContent = '[TARS] ' + key;
+              gradeSelect.appendChild(opt);
+            }
+            added++;
+          });
+          if (added > 0) console.log('[TARS] Merged ' + added + ' grades into registry');
+        })
+        .catch(function () { /* TARS API offline */ });
+    })();
   });
 
 })();
