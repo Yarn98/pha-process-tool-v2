@@ -294,7 +294,8 @@
 
     // ── TARS API: merge grades into material registry (graceful fallback) ──
     (function loadTarsGrades() {
-      var TARS_API = 'https://tars-api.sorisem98.workers.dev';
+      var isPages = location.hostname.endsWith('.pages.dev') || location.hostname.endsWith('.tarspolymer.com');
+      var TARS_API = isPages ? '' : 'https://tars-api.sorisem98.workers.dev';
       fetch(TARS_API + '/api/grades')
         .then(function (res) { return res.ok ? res.json() : Promise.reject(); })
         .then(function (grades) {
