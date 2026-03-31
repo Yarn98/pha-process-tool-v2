@@ -1064,6 +1064,11 @@ TARS 중앙 API(`tars-api.sorisem98.workers.dev`)와 연동하여 grade/material
 ### Fallback
 API 미연결 시 기존 하드코딩 material registry만 사용 (오프라인 기능 보존)
 
+## Security Improvements (2026-04-01)
+
+- **XSS 방어**: `pha-integration.js`에 `escHtml()` 유틸리티 추가, grade/summary 변수에 HTML escape 적용
+- **방어적 렌더링**: innerHTML에 삽입되는 동적 데이터가 HTML 인젝션을 방지하도록 처리
+
 ---
 
 **End of Documentation**

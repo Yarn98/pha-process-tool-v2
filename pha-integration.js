@@ -35,6 +35,9 @@
 
   function t(ko, en) { return (typeof LANG !== 'undefined' && LANG === 'en') ? en : ko; }
   function el(id)    { return document.getElementById(id); }
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
 
   /* ── P2: Temperature auto-suggestion ─────────────────────────────────── */
 
@@ -168,7 +171,7 @@
       '<div class="card" style="border-left-color:var(--primary);margin:0 0 12px;background:#eff6ff">' +
         '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">' +
           '<span style="font-size:13px;color:#1e3c72;font-weight:700">ℹ️ ' +
-            t('현재 선택 Grade','Selected Grade') + ': <strong>' + grade + '</strong> → ' + summary +
+            t('현재 선택 Grade','Selected Grade') + ': <strong>' + escHtml(grade) + '</strong> → ' + escHtml(summary) +
           '</span>' +
           '<button class="btn secondary" style="font-size:12px;padding:5px 10px"' +
                   ' onclick="window._cgApplyPreset(' + JSON.stringify(preset) + ')">' +
@@ -209,8 +212,8 @@
     const plaNotice = isPlaBlend
       ? '<div style="margin-top:8px;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:8px 10px;font-size:12px;color:#92400e">' +
           '⚠️ <strong>' + t('PLA 블렌드 주의사항','PLA Blend Notice') + ':</strong> ' +
-          t(grade + ' → PLA 블렌드. 컴파운딩 시 별도 건조 필수.',
-            grade + ' → PLA blend. Separate drying mandatory.') +
+          t(escHtml(grade) + ' → PLA 블렌드. 컴파운딩 시 별도 건조 필수.',
+            escHtml(grade) + ' → PLA blend. Separate drying mandatory.') +
         '</div>'
       : '';
 
