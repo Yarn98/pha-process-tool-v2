@@ -949,3 +949,6 @@ function _cgEsc(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 }
+
+// Expose globally for cross-module use
+if (typeof window !== 'undefined') window._cgEsc = _cgEsc;
