@@ -414,6 +414,20 @@ npx http-server -p 8000
 - `data/`, `icons/` 디렉토리 재귀 복사
 - `dist/` 디렉토리 생성 및 파일 배치
 
+### Cloudflare Pages 배포
+
+현재 운영 경로는 Cloudflare Pages 기준으로도 정리되어 있습니다.
+
+- production domain: `https://pha-process.tarspolymer.com`
+- config file: `wrangler.toml`
+- static publish root: `.`
+
+점검 명령:
+```bash
+npm run build
+npx wrangler pages deploy . --project-name pha-process-tool-v2
+```
+
 ### 배포 요구사항
 
 **필수:**
