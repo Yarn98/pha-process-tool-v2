@@ -13,7 +13,19 @@
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;
        background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px;color:#111827;-webkit-text-size-adjust:100%}
+  body.app-locked{overflow:hidden}
+  body.app-locked .container{filter:blur(12px);pointer-events:none;user-select:none}
   .container{max-width:1400px;margin:0 auto;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .password-gate{position:fixed;inset:0;z-index:12000;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.72);backdrop-filter:blur(10px)}
+  .password-gate.hidden{display:none}
+  .password-gate-card{width:min(440px,100%);background:rgba(255,255,255,.98);border:1px solid rgba(255,255,255,.7);border-radius:20px;box-shadow:0 20px 60px rgba(15,23,42,.28);padding:28px}
+  .password-gate-card h2{font-size:26px;margin-bottom:10px;color:#111827}
+  .password-gate-card p{color:#4b5563;line-height:1.6;margin-bottom:14px}
+  .password-gate-field{display:flex;gap:10px;margin-top:12px}
+  .password-gate-field input{flex:1;padding:14px 16px;border:2px solid var(--border);border-radius:10px;font-size:18px;letter-spacing:.18em;text-align:center}
+  .password-gate-field input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px rgba(37,99,235,.14)}
+  .password-gate-error{min-height:20px;margin-top:12px;color:#b91c1c;font-size:13px;font-weight:700}
+  .password-gate-note{font-size:12px;color:#6b7280;margin-top:12px}
   .header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;background:#111827;color:#fff;padding:18px}
   .header h1{font-size:20px;font-weight:700}
   .header-controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
@@ -252,7 +264,19 @@
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
-<body>
+<body class="app-locked">
+<div id="passwordGate" class="password-gate" role="dialog" aria-modal="true" aria-labelledby="passwordGateTitle">
+  <div class="password-gate-card">
+    <h2 id="passwordGateTitle">PHA Process Access</h2>
+    <p>승인된 사용자만 사용할 수 있습니다. 비밀번호를 입력해야 공정 계산기와 가이드를 열 수 있습니다.</p>
+    <div class="password-gate-field">
+      <input id="passwordGateInput" type="password" inputmode="numeric" autocomplete="off" placeholder="비밀번호" aria-label="비밀번호">
+      <button id="passwordGateSubmit" class="btn primary" type="button">열기</button>
+    </div>
+    <div id="passwordGateError" class="password-gate-error" aria-live="polite"></div>
+    <div class="password-gate-note">현재 설정 비밀번호는 운영 요청값 기준으로 고정됩니다.</div>
+  </div>
+</div>
 <div class="container">
   <div class="header">
     <h1>🔬 <span data-i18n="title">PHA Process Optimizer</span></h1>
@@ -3116,6 +3140,62 @@ window.addEventListener('load', () => {
       if(typeof initStrawGuide==='function') initStrawGuide();
       if(typeof updateGuideLinks==='function') updateGuideLinks();
     });
+  </script>
+  <script>
+    (function(){
+      const SESSION_KEY = 'phaProcessUnlocked';
+      const COOKIE_KEY = 'pha_process_auth';
+      const PASSWORD = '314';
+
+      function unlock() {
+        document.body.classList.remove('app-locked');
+        const gate = document.getElementById('passwordGate');
+        if (gate) gate.classList.add('hidden');
+        try { sessionStorage.setItem(SESSION_KEY, '1'); } catch (e) {}
+      }
+
+      function fail() {
+        const error = document.getElementById('passwordGateError');
+        const input = document.getElementById('passwordGateInput');
+        if (error) error.textContent = '비밀번호가 맞지 않습니다.';
+        if (input) {
+          input.value = '';
+          input.focus();
+        }
+      }
+
+      function submitGate() {
+        const input = document.getElementById('passwordGateInput');
+        if (!input) return;
+        if (String(input.value || '').trim() === PASSWORD) {
+          unlock();
+        } else {
+          fail();
+        }
+      }
+
+      window.addEventListener('DOMContentLoaded', function(){
+        try {
+          if (document.cookie && document.cookie.includes(`${COOKIE_KEY}=`)) {
+            unlock();
+            return;
+          }
+          if (sessionStorage.getItem(SESSION_KEY) === '1') {
+            unlock();
+            return;
+          }
+        } catch (e) {}
+        const input = document.getElementById('passwordGateInput');
+        const submit = document.getElementById('passwordGateSubmit');
+        if (input) {
+          input.focus();
+          input.addEventListener('keydown', function(ev){
+            if (ev.key === 'Enter') submitGate();
+          });
+        }
+        if (submit) submit.addEventListener('click', submitGate);
+      });
+    })();
   </script>
 
 </body>
