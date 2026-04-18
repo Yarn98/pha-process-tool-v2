@@ -473,19 +473,29 @@
 
     <!-- Flash Control Tab -->
     <section id="flash" class="tabpage">
-      <h2 style="color:#1e3c72;margin-bottom:20px">🔧 PHA 36-캐비티 플래시 제어 현장 가이드</h2>
-      <p style="font-size:1.1em;color:#666;margin-bottom:20px">압력-동기형 4단 제어 + 러너 보호 통합 솔루션 (P3HB4: S1000P/A1000P | 36-캐비티 | 플래시 ≤0.02mm)</p>
+      <h2 data-i18n="flash_title" style="color:#1e3c72;margin-bottom:20px">🔧 PHA 36-캐비티 플래시 제어 현장 가이드</h2>
+      <p data-i18n="flash_desc" style="font-size:1.1em;color:#666;margin-bottom:20px">압력-동기형 4단 제어 + 러너 보호 통합 솔루션 (P3HB4: S1000P/A1000P | 36-캐비티 | 플래시 ≤0.02mm)</p>
+      <!--
+        Partial bilingual support: sub-tab navigation, top-level title and
+        description are translated via data-i18n. The detailed operational
+        body of each flash sub-tab remains Korean (domain-expert content);
+        the notice below tells English-mode users where they stand.
+      -->
+      <p id="flashLangNotice" data-i18n="flash_lang_notice"
+         style="display:none;margin:-8px 0 20px;padding:10px 14px;border:1px solid var(--rule-strong, #B8AF99);border-radius:2px;background:var(--paper-2, #EDE7D8);font-family:var(--serif-body, Georgia, serif);font-size:13px;color:var(--ink-soft, #3A352D);">
+        Detailed guidance below is maintained in Korean for field operators. English full translation is scheduled — contact the TARS team for a narrated walk-through until then.
+      </p>
 
       <!-- Flash Control Sub-tabs -->
       <div class="flash-tabs">
-        <button class="flash-tab active" onclick="showFlashTab(0)">📋 전체 개요</button>
-        <button class="flash-tab" onclick="showFlashTab(1)">⚙️ 기계 설정</button>
-        <button class="flash-tab" onclick="showFlashTab(2)">🧮 계산기</button>
-        <button class="flash-tab" onclick="showFlashTab(3)">📊 프로세스 플로우</button>
-        <button class="flash-tab" onclick="showFlashTab(4)">✅ 체크리스트</button>
-        <button class="flash-tab" onclick="showFlashTab(5)">🔧 문제 해결</button>
-        <button class="flash-tab" onclick="showFlashTab(6)">📝 공정 로그</button>
-        <button class="flash-tab" onclick="showFlashTab(7)">📖 사용 설명서</button>
+        <button class="flash-tab active" data-i18n="flash_t0" onclick="showFlashTab(0)">📋 전체 개요</button>
+        <button class="flash-tab" data-i18n="flash_t1" onclick="showFlashTab(1)">⚙️ 기계 설정</button>
+        <button class="flash-tab" data-i18n="flash_t2" onclick="showFlashTab(2)">🧮 계산기</button>
+        <button class="flash-tab" data-i18n="flash_t3" onclick="showFlashTab(3)">📊 프로세스 플로우</button>
+        <button class="flash-tab" data-i18n="flash_t4" onclick="showFlashTab(4)">✅ 체크리스트</button>
+        <button class="flash-tab" data-i18n="flash_t5" onclick="showFlashTab(5)">🔧 문제 해결</button>
+        <button class="flash-tab" data-i18n="flash_t6" onclick="showFlashTab(6)">📝 공정 로그</button>
+        <button class="flash-tab" data-i18n="flash_t7" onclick="showFlashTab(7)">📖 사용 설명서</button>
       </div>
 
       <!-- Flash Tab 0: Overview -->
@@ -1696,7 +1706,12 @@ const I18N = {
       no_log:"내보낼 로그 데이터가 없습니다.",no_log_save:"저장할 로그 데이터가 없습니다.",no_template:"저장된 템플릿이 없습니다.",
       tpl_saved:"템플릿이 저장되었습니다.",tpl_applied:"템플릿이 적용되었습니다.",tpl_deleted:"템플릿이 삭제되었습니다.",tpl_invalid:"올바른 번호를 입력하세요.",
       add_log_first:"먼저 로그를 추가해주세요.",weight_applied:"무게 데이터가 최신 로그에 적용되었습니다!",
-      photo_too_big:"파일이 너무 큽니다 (최대 5MB)",photo_added:"사진이 추가되었습니다."
+      photo_too_big:"파일이 너무 큽니다 (최대 5MB)",photo_added:"사진이 추가되었습니다.",
+      flash_title:"🔧 PHA 36-캐비티 플래시 제어 현장 가이드",
+      flash_desc:"압력-동기형 4단 제어 + 러너 보호 통합 솔루션 (P3HB4: S1000P/A1000P · 36-캐비티 · 플래시 ≤0.02mm)",
+      flash_lang_notice:"아래 상세 내용은 현장 작업자용 한국어로 유지됩니다. 영문 전체 번역은 별도 세션에서 준비 중입니다.",
+      flash_t0:"📋 전체 개요",flash_t1:"⚙️ 기계 설정",flash_t2:"🧮 계산기",flash_t3:"📊 프로세스 플로우",
+      flash_t4:"✅ 체크리스트",flash_t5:"🔧 문제 해결",flash_t6:"📝 공정 로그",flash_t7:"📖 사용 설명서"
   },
   en:{title:"PHA Process Optimizer",tab_proc:"Process Conditions",tab_ts:"Troubleshooting",tab_hist:"History",tab_ana:"Data Analysis",tab_calc:"Calculators",tab_props:"Materials DB",tab_photos:"Photos",tab_flash:"Flash Control",tab_comp:"Compounding Guide",tab_straw:"Straw Guide",
       series:"Sample Series",process:"Process Type",notes:"📝 Process Notes",save:"Save & Analyze",export:"Export Data",reset:"Reset",
@@ -1710,7 +1725,12 @@ const I18N = {
       no_log:"No log data to export.",no_log_save:"No log data to save.",no_template:"No saved templates.",
       tpl_saved:"Template saved.",tpl_applied:"Template applied.",tpl_deleted:"Template deleted.",tpl_invalid:"Please enter a valid number.",
       add_log_first:"Please add a log entry first.",weight_applied:"Weight data applied to latest log!",
-      photo_too_big:"File too large (max 5MB)",photo_added:"Photo added."
+      photo_too_big:"File too large (max 5MB)",photo_added:"Photo added.",
+      flash_title:"🔧 PHA 36-Cavity Flash Control Field Guide",
+      flash_desc:"Pressure-synchronized 4-stage control + runner protection (P3HB4: S1000P/A1000P · 36-cavity · flash ≤0.02 mm)",
+      flash_lang_notice:"Detailed content below is maintained in Korean for field operators. A full English translation is scheduled; contact the TARS team for a narrated walk-through until then.",
+      flash_t0:"📋 Overview",flash_t1:"⚙️ Machine Setup",flash_t2:"🧮 Calculator",flash_t3:"📊 Process Flow",
+      flash_t4:"✅ Checklist",flash_t5:"🔧 Troubleshooting",flash_t6:"📝 Process Log",flash_t7:"📖 User Manual"
   }
 };
 let LANG = 'ko';
@@ -1872,6 +1892,11 @@ function setView(v){
 }
 function i18nApply(){allSel('[data-i18n]').forEach(el=>{const k=el.dataset.i18n; if(I18N[LANG][k]) el.textContent=I18N[LANG][k];});
   $('notes').placeholder=(LANG==='ko'?'가공 중 특이사항/개선 아이디어 기록':'Record anomalies or ideas');
+  /* Flash Control language notice: only visible in English mode where the
+     untranslated body content would otherwise be confusing. In Korean the
+     detailed content IS the primary experience, so the notice is hidden. */
+  const flashNotice = $('flashLangNotice');
+  if (flashNotice) flashNotice.style.display = (LANG === 'en') ? 'block' : 'none';
   $('tsHint').textContent=(LANG==='ko'?I18N.ko.last:I18N.en.last)+': '+new Date().toLocaleString(LANG==='ko'?'ko-KR':'en-US'); renderTS(); renderHistory(); refreshParamTable(); renderMat()}
 function renderTS(){
   const cont = $('tsContainer');
