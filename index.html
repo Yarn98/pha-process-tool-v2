@@ -2192,11 +2192,81 @@ function clearFlashInputs(type) {
 }
 </script>
 <script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(console.error);
+/* ──────────────────────────────────────────────────────────
+   Service worker registration + data-safe update notifier.
+   Shows a bottom-right toast when a new SW version has claimed
+   the page, asking the user to reload. Reload is equivalent to
+   F5 — localStorage (processLog, pha_hist, pha_photos, mat_db,
+   reco_overrides, 체크리스트) is NEVER touched by this code.
+   ────────────────────────────────────────────────────────── */
+(function(){
+  if (!('serviceWorker' in navigator)) return;
+  var DISMISS_KEY = 'pha.swUpdate.dismissedAt';
+  var DISMISS_COOLDOWN_MS = 10 * 60 * 1000;
+  var banner = null;
+  function wasRecentlyDismissed(){
+    try {
+      var t = Number(sessionStorage.getItem(DISMISS_KEY) || 0);
+      return t && (Date.now() - t) < DISMISS_COOLDOWN_MS;
+    } catch(_) { return false; }
+  }
+  function buildBanner(){
+    if (banner) return banner;
+    banner = document.createElement('div');
+    banner.setAttribute('role','status');
+    banner.setAttribute('aria-live','polite');
+    banner.id = 'pha-sw-update-prompt';
+    banner.style.cssText = [
+      'position:fixed','right:16px','bottom:16px','z-index:11000',
+      'max-width:min(520px, calc(100vw - 32px))',
+      'background:#F5F1E8','border:1px solid rgba(26,24,20,0.8)',
+      'border-radius:2px','padding:16px','font-family:"Newsreader","Noto Sans KR",Georgia,serif',
+      'color:#1A1814','box-shadow:none'
+    ].join(';');
+    banner.innerHTML =
+      '<p style="margin:0 0 4px;font-family:\'JetBrains Mono\',monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#757065;">System update · 새 버전</p>' +
+      '<p style="margin:0 0 4px;font-size:14px;line-height:1.5;">새 버전이 준비됐습니다. <em style="color:#2C5D3F;font-style:italic;font-weight:500;font-family:Fraunces,serif;">기록한 이력·체크리스트·사진은 그대로 보존</em>됩니다.</p>' +
+      '<p style="margin:0 0 12px;font-size:12px;color:#757065;">A new build is available. Your saved logs and checklists stay intact.</p>' +
+      '<div style="display:flex;gap:8px;justify-content:flex-end;">' +
+        '<button type="button" id="pha-sw-later" style="border:1px solid rgba(26,24,20,0.4);background:transparent;color:#1A1814;font-family:\'JetBrains Mono\',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;padding:8px 12px;border-radius:2px;cursor:pointer;">Later</button>' +
+        '<button type="button" id="pha-sw-reload" style="border:1px solid #1A1814;background:#1A1814;color:#F5F1E8;font-family:\'JetBrains Mono\',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;padding:8px 12px;border-radius:2px;cursor:pointer;">Reload · 새로고침</button>' +
+      '</div>';
+    banner.querySelector('#pha-sw-later').addEventListener('click', function(){
+      try { sessionStorage.setItem(DISMISS_KEY, String(Date.now())); } catch(_) {}
+      banner.remove(); banner = null;
+    });
+    banner.querySelector('#pha-sw-reload').addEventListener('click', function(){
+      /* DATA SAFETY: reload() === F5. Nothing else is called. */
+      window.location.reload();
+    });
+    return banner;
+  }
+  function showBanner(){
+    if (wasRecentlyDismissed()) return;
+    if (document.getElementById('pha-sw-update-prompt')) return;
+    document.body.appendChild(buildBanner());
+  }
+  var hadControllerOnLoad = !!navigator.serviceWorker.controller;
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js').then(function(reg){
+      if (!reg) return;
+      if (reg.waiting && navigator.serviceWorker.controller) { showBanner(); return; }
+      reg.addEventListener('updatefound', function(){
+        var inst = reg.installing;
+        if (!inst) return;
+        inst.addEventListener('statechange', function(){
+          if (inst.state === 'installed' && navigator.serviceWorker.controller) showBanner();
+        });
+      });
+    }).catch(function(err){ console.error('[SW] register failed', err); });
   });
-}
+  navigator.serviceWorker.addEventListener('controllerchange', function(){
+    if (hadControllerOnLoad) showBanner();
+  });
+  navigator.serviceWorker.addEventListener('message', function(e){
+    if (e && e.data && e.data.type === 'SW_ACTIVATED' && hadControllerOnLoad) showBanner();
+  });
+})();
 </script>
 
 <script>

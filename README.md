@@ -19,6 +19,11 @@
 
 디자인 시스템 룰 7가지 (paper-over-chrome, italics-as-accent, mono-for-data, no shadows/gradients, 2px radius, bilingual-ready)는 원본 SKILL.md 참조.
 
+### Recent fixes (v1.1.x)
+
+- **v1.1.2** — Service-worker cache bump + network-first HTML shell + in-page auto-update banner. Previously sw.js served the cached `index.html` cache-first, so a new deploy only reached users after they hard-reloaded (Clear Site Data was being recommended, which WIPED localStorage). Now: (1) `CACHE` bumped to `pha-cache-v4-fmtR` so `activate` purges old entries, (2) fetch handler is **network-first for navigation/HTML** (shell) + cache-first for CSS/fonts/JSON (offline-friendly), (3) after activate the SW posts `{type:'SW_ACTIVATED'}` to every client, (4) inline `<script>` in index.html listens for that message + the `controllerchange` event + the registration's `updatefound` → installed transition, and renders a paper-toned toast ("System update · 새 버전") offering Reload / Later. **Data safety**: reload is just `window.location.reload()` — the notifier never touches `localStorage` (processLog, pha_hist, pha_photos, mat_db, reco_overrides, checklists). Dismissal uses a 10-min `sessionStorage` cooldown.
+- **v1.1.1** — Recommended-range values (권장: 19.8–24.2 ...) no longer leak IEEE-754 float tails. New `fmtR(n)` helper in `index.html` formats numbers to max 2 decimals and drops trailing zeros, applied to the three render sites (range hint under each field, input placeholder, parameter status table).
+
 ---
 
 ## 📋 목차
