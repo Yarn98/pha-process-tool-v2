@@ -1,6 +1,6 @@
 # PHA Process Optimizer & Convertor
 
-![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.4.0-blue.svg)
 ![Status](https://img.shields.io/badge/status-production-green.svg)
 ![Design](https://img.shields.io/badge/design-TARS%20Biopolymer%20Studio-2C5D3F.svg)
 ![License](https://img.shields.io/badge/license-ISC-lightgrey.svg)
@@ -19,8 +19,9 @@
 
 디자인 시스템 룰 7가지 (paper-over-chrome, italics-as-accent, mono-for-data, no shadows/gradients, 2px radius, bilingual-ready)는 원본 SKILL.md 참조.
 
-### Recent fixes (v1.1.x)
+### Recent fixes (v1.4.x)
 
+- **v1.4.0** — The entire Flash Control body now ships as full KO/EN content instead of “tabs-only bilingual, body mostly Korean”. All eight sub-tabs are re-rendered from locale-specific templates at runtime, the temporary language notice banner is removed, calculator help text / process-log controls / recommendations / chart labels / alerts / export headers all localize with the active language, and the existing batch-context banner remains untouched so Phase 2-3 data flow is preserved. The service-worker cache key is bumped to `pha-cache-v6-flash-body` so deployed operators pick up the new copy without clearing local data.
 - **v1.3.0** — Composition handoff from 4HB Properties Modeling now works without file upload. The 4HB app's "→ PHA Process" button ships a base64url-encoded `tars-composition-v1` payload via `?composition=<b64>`. On page load we decode (`_phaB64urlToUtf8` mirrors the encoder: pad → swap `-_`/`+/` → atob → TextDecoder; 64 KB cap; try/catch everywhere), schema-validate, feed the payload into the existing `currentBatchContext` pipeline (so log rows added afterward inherit `composition_code` + `composition_id` identically to a file-upload import), jump the operator straight to the Process Log sub-tab so they see the new banner light up, and strip the param via `history.replaceState` so reload is idempotent and the link is safe to share. Invalid/oversized/malformed payloads are silent no-ops.
 - **v1.2.0** — Process-log rows now carry a **batch id** and a **composition reference**. The Flash Control → Process Log tab gets a new "Current batch & composition" banner at the top: the operator types a batch ID, optionally uploads a `tars-composition-v1` JSON (produced by the 4HB Properties Modeling app's *Export ↓* button), and every subsequently-added log row auto-inherits those three fields (`batch_id`, `composition_id`, `composition_code`). The summary line also previews the designed composition's predicted tensile + HDT. The log table picks up two new columns (`배치 · Batch`, `조성 · Composition`, forest-tinted when present, dashed when empty), the CSV export gains three new columns (batch ID, composition code, composition UUID), and `Clear` resets the banner without touching historical rows. State lives in a single `pha.batchContext.v1` localStorage key, and the banner is backwards-compatible — old log entries with no batch field render cleanly as em-dashes. This is the Phase 2-3 schema extension that Phase 4 batch-session work will build on.
 - **v1.1.2** — Service-worker cache bump + network-first HTML shell + in-page auto-update banner. Previously sw.js served the cached `index.html` cache-first, so a new deploy only reached users after they hard-reloaded (Clear Site Data was being recommended, which WIPED localStorage). Now: (1) `CACHE` bumped to `pha-cache-v4-fmtR` so `activate` purges old entries, (2) fetch handler is **network-first for navigation/HTML** (shell) + cache-first for CSS/fonts/JSON (offline-friendly), (3) after activate the SW posts `{type:'SW_ACTIVATED'}` to every client, (4) inline `<script>` in index.html listens for that message + the `controllerchange` event + the registration's `updatefound` → installed transition, and renders a paper-toned toast ("System update · 새 버전") offering Reload / Later. **Data safety**: reload is just `window.location.reload()` — the notifier never touches `localStorage` (processLog, pha_hist, pha_photos, mat_db, reco_overrides, checklists). Dismissal uses a 10-min `sessionStorage` cooldown.
@@ -893,8 +894,8 @@ THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH RE
 
 ---
 
-**버전**: 1.0.0
-**최종 업데이트**: 2025-11-01
+**버전**: 1.4.0
+**최종 업데이트**: 2026-04-19
 **빌드**: production
 
 ---
