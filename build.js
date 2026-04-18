@@ -11,6 +11,8 @@ const path = require('path');
 // Files to copy to dist
 const FILES_TO_COPY = [
   'index.html',
+  'tokens.css',
+  'overrides.css',
   'custom.js',
   'compounding-guide.js',
   'straw-guide.js',

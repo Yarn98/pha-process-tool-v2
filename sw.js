@@ -1,7 +1,9 @@
-const CACHE = 'pha-cache-v2';
+const CACHE = 'pha-cache-v3-tars';
 const PRECACHE_URLS = [
   './',
   './index.html',
+  './tokens.css',
+  './overrides.css',
   './manifest.webmanifest',
   './data/grades/CA1180P_talc10_wax0p3.json'
 ];

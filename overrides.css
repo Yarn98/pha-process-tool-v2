@@ -1,0 +1,574 @@
+/* ─────────────────────────────────────────────────────────────
+   PHA Process Optimizer — TARS Design System Overrides
+   ───────────────────────────────────────────────────────────── */
+/* WHAT THIS DOES
+   This file is loaded AFTER the inline <style> block in index.html
+   and overrides the 2024 Tailwind-style chrome (blue/gradient/
+   shadow) with the TARS editorial system. No JS changes required.
+   Requires tokens.css to be loaded first.
+   ───────────────────────────────────────────────────────────── */
+
+/* ── 1. Reset custom properties used by the original stylesheet
+       — the app references --primary, --secondary, --border, etc.
+       throughout. We rebind them to TARS tokens so even
+       untouched rules inherit the new look. */
+:root {
+  --primary:       var(--accent);          /* forest replaces #2563eb */
+  --primary-dark:  var(--ink);
+  --secondary:     var(--accent);          /* all greens → forest */
+  --danger:        var(--err);
+  --warning:       var(--accent-warm);
+  --dark:          var(--ink);
+  --light:         var(--paper-2);
+  --border:        var(--rule);
+  --radius:        var(--rad-sm);
+  --shadow:        none;
+}
+
+/* ── 2. Body: kill the purple gradient, use warm paper. */
+body {
+  font-family: var(--serif-body) !important;
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+  padding: 0 !important;
+  min-height: 100vh;
+}
+html[lang="ko"] body,
+html[data-lang="ko"] body {
+  font-family: var(--korean) !important;
+}
+
+/* ── 3. Container: remove card shadow, use hairline border. */
+.container {
+  background: var(--paper) !important;
+  border: var(--hair) solid var(--rule) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  max-width: var(--max) !important;
+  margin: 24px auto !important;
+}
+
+/* ── 4. Header: paper with a hairline, not a black slab. */
+.header {
+  background: var(--paper-2) !important;
+  color: var(--ink) !important;
+  border-bottom: var(--stroke) solid var(--ink) !important;
+  padding: 18px 24px !important;
+}
+.header h1 {
+  font-family: var(--serif-display);
+  font-weight: 400;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+}
+.header h1 em { font-style: italic; color: var(--accent); }
+
+select#language {
+  background: transparent !important;
+  color: var(--ink) !important;
+  border: var(--hair) solid var(--ink) !important;
+  border-radius: var(--rad-sm) !important;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.view-toggle {
+  background: transparent !important;
+  padding: 0 !important;
+  gap: 0 !important;
+  border: var(--hair) solid var(--ink);
+  border-radius: var(--rad-sm);
+}
+.view-toggle button {
+  color: var(--ink) !important;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 8px 14px !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+.view-toggle button.active {
+  background: var(--ink) !important;
+  color: var(--paper) !important;
+}
+
+/* ── 5. Tabs: editorial list, not bright bar. */
+.tabs { border-bottom: var(--hair) solid var(--rule-strong) !important; }
+.tab {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted) !important;
+  padding: 12px 14px !important;
+  border-bottom-width: 2px !important;
+}
+.tab.active {
+  color: var(--ink) !important;
+  border-bottom-color: var(--accent) !important;
+}
+
+/* ── 6. Form groups: paper fields, hairlines, no heavy focus ring. */
+.group label {
+  font-family: var(--mono) !important;
+  font-size: 10.5px !important;
+  font-weight: 400 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--muted) !important;
+}
+.group input,
+.group select,
+.group textarea {
+  background: var(--paper) !important;
+  border: var(--hair) solid var(--rule-strong) !important;
+  border-radius: var(--rad-sm) !important;
+  color: var(--ink) !important;
+  font-family: var(--serif-body) !important;
+  font-size: 15px !important;
+  padding: 10px 12px !important;
+  transition: border-color var(--dur-fast) var(--ease) !important;
+}
+.group input:focus,
+.group select:focus,
+.group textarea:focus {
+  border-color: var(--ink) !important;
+  box-shadow: none !important;
+}
+.hint, .range-hint, .muted { color: var(--muted) !important; }
+
+/* ── 7. Buttons: mono caps, hairline, radius 2. */
+.btn {
+  font-family: var(--mono) !important;
+  font-weight: 400 !important;
+  font-size: 11px !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  padding: 12px 18px !important;
+  border-radius: var(--rad-sm) !important;
+  border: var(--hair) solid transparent !important;
+  box-shadow: none !important;
+  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease) !important;
+}
+.btn.primary {
+  background: var(--ink) !important;
+  color: var(--paper) !important;
+}
+.btn.primary:hover { background: var(--accent) !important; }
+.btn.secondary {
+  background: transparent !important;
+  color: var(--ink) !important;
+  border-color: var(--ink) !important;
+}
+.btn.secondary:hover { background: var(--paper-2) !important; }
+.btn.success {
+  background: var(--accent) !important;
+  color: var(--paper) !important;
+}
+.btn.danger {
+  background: var(--err) !important;
+  color: var(--paper) !important;
+}
+
+/* ── 8. Tables: newspaper rules, tabular numbers. */
+.tablewrap {
+  background: var(--paper) !important;
+  border: var(--hair) solid var(--rule) !important;
+  border-radius: 0 !important;
+}
+table { background: var(--paper); }
+th {
+  background: var(--paper-2) !important;
+  color: var(--muted) !important;
+  font-family: var(--mono) !important;
+  font-weight: 400 !important;
+  font-size: 10.5px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.15em !important;
+  border-bottom: var(--stroke) solid var(--ink) !important;
+  padding: 12px 10px !important;
+}
+td {
+  border-bottom: var(--hair) solid var(--rule) !important;
+  color: var(--ink) !important;
+  padding: 10px !important;
+}
+td.num, td:has(> .num), .log-table td {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+tr:hover { background: var(--paper-2) !important; }
+
+/* ── 9. Badges: quieter chips, no pastel fills. */
+.badge {
+  font-family: var(--mono) !important;
+  font-weight: 400 !important;
+  font-size: 10px !important;
+  letter-spacing: 0.15em !important;
+  text-transform: uppercase !important;
+  padding: 3px 8px !important;
+  border-radius: var(--rad-sm) !important;
+  border: var(--hair) solid currentColor;
+  background: transparent !important;
+}
+.badge.ok    { color: var(--accent) !important; }
+.badge.warn  { color: var(--accent-warm) !important; }
+.badge.crit  { color: var(--err) !important; }
+.badge.empty { color: var(--muted) !important; }
+
+/* ── 10. Cards: remove colored left-border accent, use top rule. */
+.card {
+  background: var(--paper) !important;
+  border: var(--hair) solid var(--rule) !important;
+  border-left: var(--hair) solid var(--rule) !important;
+  border-top: var(--stroke) solid var(--ink) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 18px 20px !important;
+}
+
+/* ── 11. FAB: circle but neutral, no indigo shadow. */
+.fab {
+  background: var(--ink) !important;
+  color: var(--paper) !important;
+  box-shadow: 0 2px 8px rgba(26,24,20,0.18) !important;
+  font-family: var(--mono);
+}
+
+/* ── 12. Password gate: editorial overlay. */
+.password-gate { background: rgba(26,24,20,0.72) !important; }
+.password-gate-card {
+  background: var(--paper) !important;
+  border: var(--hair) solid var(--rule-strong) !important;
+  border-radius: var(--rad-sm) !important;
+  box-shadow: none !important;
+}
+.password-gate-card h2 {
+  font-family: var(--serif-display);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+.password-gate-field input {
+  font-family: var(--mono) !important;
+  border: var(--hair) solid var(--rule-strong) !important;
+  border-radius: var(--rad-sm) !important;
+  background: var(--paper) !important;
+}
+
+/* ── 13. "Machine screen" block (dark terminal look): keep dark
+       monitor metaphor but swap neon green for terracotta so it
+       still reads as a machine HMI without the gamer LED vibe. */
+.machine-screen {
+  background: #0E0C09 !important;
+  border: var(--stroke) solid var(--rule-strong) !important;
+  border-radius: var(--rad-sm) !important;
+  box-shadow: none !important;
+}
+.screen-header {
+  background: #1A1814 !important;
+  color: var(--hi) !important;
+  border: var(--hair) solid var(--hi) !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+  font-family: var(--mono);
+  letter-spacing: 0.12em;
+}
+.parameter {
+  background: #1A1814 !important;
+  border: var(--hair) solid #3A352D !important;
+}
+.parameter:hover {
+  border-color: var(--hi) !important;
+  box-shadow: none !important;
+}
+.parameter-label {
+  color: var(--hi) !important;
+  font-family: var(--mono);
+  letter-spacing: 0.18em;
+}
+.parameter-value {
+  color: var(--paper) !important;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+.parameter-unit { color: var(--accent-warm) !important; }
+
+/* ── 14. Flow steps: remove lift animation + colored borders. */
+.flow-step {
+  background: var(--paper) !important;
+  border: var(--hair) solid var(--rule) !important;
+  border-left: var(--stroke) solid var(--ink) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.flow-step:hover { transform: none !important; box-shadow: none !important; }
+.flow-number {
+  background: var(--ink) !important;
+  color: var(--paper) !important;
+  font-family: var(--mono);
+  width: 40px !important;
+  height: 40px !important;
+  font-size: 14px !important;
+}
+.flow-title {
+  color: var(--ink) !important;
+  font-family: var(--serif-display);
+  font-weight: 400;
+  font-style: italic;
+}
+.flow-description { color: var(--ink-soft) !important; }
+
+/* ── 15. Flash control tabs + checklists. */
+.flash-tabs { border-bottom: var(--hair) solid var(--rule-strong) !important; }
+.flash-tab {
+  background: transparent !important;
+  color: var(--muted) !important;
+  font-family: var(--mono);
+  font-size: 10.5px !important;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border-radius: 0 !important;
+}
+.flash-tab.active {
+  background: var(--ink) !important;
+  color: var(--paper) !important;
+}
+.checklist { background: var(--paper-2) !important; border-radius: 0 !important; }
+.checklist-item {
+  background: var(--paper) !important;
+  border: var(--hair) solid var(--rule) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.checklist-item.checked {
+  background: var(--paper-2) !important;
+  border-color: var(--accent) !important;
+}
+.checklist-checkbox { accent-color: var(--accent) !important; }
+
+/* ── 16. Process log table buttons. */
+.log-table thead {
+  background: var(--ink) !important;
+  color: var(--paper) !important;
+}
+.log-table th { background: transparent !important; color: var(--paper) !important; border: 0 !important; }
+.btn-log-action, .btn-template, .btn-filter, .print-button {
+  font-family: var(--mono) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.15em !important;
+  text-transform: uppercase !important;
+  border-radius: var(--rad-sm) !important;
+  box-shadow: none !important;
+  background: var(--ink) !important;
+  color: var(--paper) !important;
+}
+.btn-log-action:hover, .btn-template:hover,
+.btn-filter:hover, .print-button:hover {
+  background: var(--accent) !important;
+  transform: none !important;
+}
+.btn-add-log { background: var(--accent) !important; }
+.btn-export-log { background: var(--accent-warm) !important; }
+.btn-clear-log, .btn-template.delete, .btn-delete-log { background: var(--err) !important; }
+
+.btn-increment {
+  background: var(--ink) !important;
+  border-radius: var(--rad-sm) !important;
+  box-shadow: none !important;
+}
+.btn-increment:hover { transform: none !important; background: var(--accent) !important; }
+
+.number-input-group input,
+.log-note-input,
+.filter-input,
+.calc-input-group input,
+.weight-input-box input {
+  background: var(--paper) !important;
+  border: var(--hair) solid var(--rule-strong) !important;
+  border-radius: var(--rad-sm) !important;
+  color: var(--ink) !important;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── 17. Recommendation / success / info boxes:
+       swap saturated gradients for paper + forest accent. */
+.calc-recommendation {
+  background: var(--paper-2) !important;
+  border: var(--hair) solid var(--rule) !important;
+  border-left: var(--stroke) solid var(--accent-warm) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.calc-recommendation h4 {
+  color: var(--ink) !important;
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-weight: 400;
+}
+.recommendation-item {
+  background: var(--paper) !important;
+  border-left: var(--stroke) solid var(--accent) !important;
+  border-radius: 0 !important;
+}
+.recommendation-item.warning { border-left-color: var(--err) !important; }
+.recommendation-item.caution { border-left-color: var(--accent-warm) !important; }
+.success-box {
+  background: var(--paper-2) !important;
+  color: var(--ink) !important;
+  border: var(--hair) solid var(--rule) !important;
+  border-left: var(--stroke) solid var(--accent) !important;
+  border-radius: 0 !important;
+}
+.success-box h3 {
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--accent);
+}
+.density-display {
+  background: var(--paper-2) !important;
+  color: var(--ink) !important;
+  border: var(--hair) solid var(--rule) !important;
+  border-radius: var(--rad-sm) !important;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+.stage-indicator {
+  background: var(--paper-2) !important;
+  border: var(--hair) solid var(--accent-warm) !important;
+  color: var(--accent-warm) !important;
+  border-radius: var(--rad-sm) !important;
+  font-family: var(--mono);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* ── 18. Formula blocks (keep code look but paper). */
+.formula {
+  background: var(--paper-2) !important;
+  border-left: var(--stroke) solid var(--ink) !important;
+  border-radius: 0 !important;
+  font-family: var(--mono) !important;
+}
+
+/* ── 19. Calc result. */
+.calc-result {
+  background: var(--paper) !important;
+  border: var(--hair) solid var(--rule) !important;
+  border-top: var(--stroke) solid var(--ink) !important;
+  border-radius: 0 !important;
+}
+.calc-result h4 {
+  color: var(--ink) !important;
+  font-family: var(--serif-display);
+  font-style: italic;
+  font-weight: 400;
+}
+.calc-result-value {
+  color: var(--accent) !important;
+  font-family: var(--mono) !important;
+  font-variant-numeric: tabular-nums;
+}
+
+.calc-button {
+  background: var(--ink) !important;
+  color: var(--paper) !important;
+  font-family: var(--mono) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  border-radius: var(--rad-sm) !important;
+  box-shadow: none !important;
+}
+.calc-button:hover { transform: none !important; background: var(--accent) !important; }
+
+/* ── 20. Diagram wrapper + chart container. */
+.diagram, .chart-container {
+  background: var(--paper) !important;
+  border: var(--hair) solid var(--rule) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 24px !important;
+}
+.chart-toggle-btn {
+  background: transparent !important;
+  color: var(--ink) !important;
+  border: var(--hair) solid var(--ink) !important;
+  border-radius: var(--rad-sm) !important;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+.chart-toggle-btn.active { background: var(--ink) !important; color: var(--paper) !important; }
+
+/* ── 21. Filter + template containers (remove blue accent strip). */
+.filter-container, .template-container {
+  background: var(--paper-2) !important;
+  border: var(--hair) solid var(--rule) !important;
+  border-left: var(--stroke) solid var(--ink) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* ── 22. Mobile tab bar: paper, not pure white. */
+.mobile-tab-bar {
+  background: var(--paper) !important;
+  border-top: var(--stroke) solid var(--ink) !important;
+}
+.mtb-item { color: var(--muted) !important; }
+.mtb-item.active { color: var(--accent) !important; }
+.more-popover {
+  background: var(--paper) !important;
+  border: var(--hair) solid var(--rule-strong) !important;
+  border-radius: var(--rad-sm) !important;
+  box-shadow: 0 2px 8px rgba(26,24,20,0.12) !important;
+}
+
+/* ── 23. Photo upload area. */
+.photo-upload-area {
+  background: var(--paper-2) !important;
+  border: var(--stroke) dashed var(--rule-strong) !important;
+  border-radius: var(--rad-sm) !important;
+  color: var(--muted) !important;
+}
+.photo-upload-area:hover,
+.photo-upload-area.dragover {
+  background: var(--paper) !important;
+  border-color: var(--ink) !important;
+  transform: none !important;
+}
+
+/* ── 24. Kill remaining gradients, shadows, animations that
+       bleed through more specific selectors. */
+[class]:where(.btn, .tab, .flash-tab, .card, .container,
+               .chart-container, .diagram,
+               .filter-container, .template-container,
+               .log-container, .calculator) {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* ── 25. Korean-specific letter-spacing tidy-up. */
+html[data-lang="ko"] .header h1,
+html[data-lang="ko"] .flow-title,
+html[data-lang="ko"] .success-box h3,
+html[data-lang="ko"] .calc-recommendation h4,
+html[data-lang="ko"] .calc-result h4,
+html[data-lang="ko"] .password-gate-card h2 {
+  font-family: var(--korean) !important;
+  font-style: normal !important;
+  letter-spacing: -0.02em !important;
+}
+
+/* ── 26. Focus visibility (accessibility). */
+:focus-visible {
+  outline: 2px solid var(--accent) !important;
+  outline-offset: 2px !important;
+}

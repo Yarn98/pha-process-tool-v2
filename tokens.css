@@ -1,0 +1,214 @@
+/* ─────────────────────────────────────────────────────────────
+   TARS Biopolymer Studio — Design Tokens
+   The editorial / scientific-paper system used across
+   polymer-hub and all companion apps.
+   ───────────────────────────────────────────────────────────── */
+
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..700,0..100;1,9..144,300..700,0..100&family=Newsreader:ital,opsz,wght@0,6..72,200..700;1,6..72,200..700&family=JetBrains+Mono:wght@300..700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap");
+
+:root {
+  /* ── Surface & ink ─────────────────────────────────────── */
+  --paper:        #F5F1E8;   /* primary background, warm off-white */
+  --paper-2:      #EDE7D8;   /* secondary surface, hover states */
+  --paper-3:      #E4DCC4;   /* pressed / raised alt */
+  --ink:          #1A1814;   /* primary text, strokes */
+  --ink-soft:     #3A352D;   /* body & secondary text */
+  --muted:        #757065;   /* captions, meta, caps */
+  --rule:         #D8D0BE;   /* 0.5 px hairlines */
+  --rule-strong:  #B8AF99;   /* emphasized rules, borders */
+
+  /* ── Accents ─────────────────────────────────────────────
+     Used sparingly. Forest green is the workhorse; warm
+     terracotta carries beta / in-progress signals; highlight
+     is reserved for selection and KPI flash only. */
+  --accent:       #2C5D3F;   /* forest — primary action, italic emphasis */
+  --accent-warm:  #B8632E;   /* terracotta — beta / caution */
+  --accent-cool:  #3A5E7A;   /* slate-blue — neutral info */
+  --hi:           #F5D88C;   /* highlighter yellow — selection, flags */
+
+  /* ── Signal (kept quiet; never gradients) ─────────────── */
+  --ok:           #2C5D3F;
+  --warn:         #B8632E;
+  --err:          #8E2B2B;
+
+  /* ── Type stacks ──────────────────────────────────────── */
+  --serif-display: "Fraunces", "Times New Roman", serif;
+  --serif-body:    "Newsreader", Georgia, serif;
+  --mono:          "JetBrains Mono", "SF Mono", Menlo, monospace;
+  --korean:        "Noto Sans KR", "Malgun Gothic", sans-serif;
+
+  /* ── Rhythm ───────────────────────────────────────────── */
+  --step-1: 4px;
+  --step-2: 8px;
+  --step-3: 12px;
+  --step-4: 16px;
+  --step-5: 24px;
+  --step-6: 32px;
+  --step-7: 48px;
+  --step-8: 72px;
+  --step-9: 96px;
+
+  /* ── Geometry ─────────────────────────────────────────── */
+  --rad-sm: 2px;
+  --rad-md: 4px;
+  --rad-lg: 8px;
+  --rad-pill: 999px;
+
+  --hair: 0.5px;
+  --stroke: 1px;
+
+  /* ── Elevation ─────────────────────────────────────────
+     This system almost never uses shadows. Rules carry the
+     weight. Keep these as emergency-only. */
+  --shadow-1: 0 1px 0 rgba(26, 24, 20, 0.04);
+  --shadow-2: 0 6px 18px rgba(26, 24, 20, 0.06);
+
+  /* ── Motion ───────────────────────────────────────────── */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur-fast: 160ms;
+  --dur-mid:  220ms;
+  --dur-slow: 360ms;
+
+  /* ── Layout ───────────────────────────────────────────── */
+  --max: 1320px;
+  --gutter: clamp(20px, 4vw, 48px);
+}
+
+/* ── Base ─────────────────────────────────────────────────── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--serif-body);
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--paper);
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(26,24,20,0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection { background: var(--hi); color: var(--ink); }
+
+a { color: inherit; text-decoration: none; }
+
+/* ── i18n visibility (mirror of polymer-hub) ──────────────── */
+html[data-lang="en"] [data-i18n="ko"] { display: none !important; }
+html[data-lang="ko"] [data-i18n="en"] { display: none !important; }
+html[data-lang="ko"] [data-i18n="ko"] { font-family: var(--korean); }
+html[data-lang="ko"] body { font-family: var(--korean); }
+
+/* ── Utility primitives ───────────────────────────────────── */
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
+
+.caps {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.mono {
+  font-family: var(--mono);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  font-feature-settings: "ss01", "ss02";
+}
+
+.serif-d { font-family: var(--serif-display); font-optical-sizing: auto; }
+
+.rule-h { border: 0; border-top: var(--hair) solid var(--rule); height: 0; margin: 0; }
+
+/* ── Page shell used by all preview pages ─────────────────── */
+.preview-page {
+  min-height: 100vh;
+  padding: 48px 0 120px;
+}
+.preview-head {
+  max-width: var(--max);
+  margin: 0 auto 48px;
+  padding: 0 var(--gutter);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: 28px;
+  padding-bottom: 18px;
+  border-bottom: var(--hair) solid var(--rule-strong);
+}
+.preview-num {
+  font-family: var(--serif-display);
+  font-variation-settings: "opsz" 144, "wght" 320, "SOFT" 100;
+  font-style: italic;
+  font-size: 58px;
+  line-height: 0.8;
+  color: var(--accent);
+  font-feature-settings: "tnum";
+}
+.preview-label { display: flex; flex-direction: column; gap: 8px; }
+.preview-title {
+  font-family: var(--serif-display);
+  font-variation-settings: "opsz" 72, "wght" 360, "SOFT" 40;
+  font-size: clamp(26px, 3.2vw, 40px);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+.preview-title em {
+  font-style: italic;
+  font-variation-settings: "opsz" 72, "wght" 360, "SOFT" 90;
+  color: var(--accent);
+}
+.preview-meta {
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+}
+.preview-body {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  display: grid;
+  gap: 72px;
+}
+.preview-sec { display: grid; gap: 20px; }
+.preview-sec > h2 {
+  font-family: var(--serif-display);
+  font-variation-settings: "opsz" 36, "wght" 400, "SOFT" 30;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  padding-bottom: 10px;
+  border-bottom: var(--hair) solid var(--rule);
+}
+.preview-sec > h2 em {
+  font-style: italic;
+  color: var(--accent);
+  font-variation-settings: "opsz" 36, "wght" 400, "SOFT" 90;
+}
+.preview-sec > .lede {
+  font-size: 15px;
+  color: var(--ink-soft);
+  max-width: 62ch;
+  line-height: 1.65;
+}
+
+/* Thin separator bar printed above each preview page */
+.folio-bar {
+  max-width: var(--max);
+  margin: 0 auto 24px;
+  padding: 0 var(--gutter);
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--muted);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.folio-bar strong { color: var(--ink); font-weight: 400; }
