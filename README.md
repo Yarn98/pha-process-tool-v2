@@ -1,10 +1,23 @@
 # PHA Process Optimizer & Convertor
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)
 ![Status](https://img.shields.io/badge/status-production-green.svg)
+![Design](https://img.shields.io/badge/design-TARS%20Biopolymer%20Studio-2C5D3F.svg)
 ![License](https://img.shields.io/badge/license-ISC-lightgrey.svg)
 
 **완전 정적(static) HTML/JavaScript 웹 애플리케이션**으로 PHA(Polyhydroxyalkanoate) 사출 성형 공정 최적화 및 단위 변환을 지원합니다.
+
+## 🎨 디자인 시스템
+
+이 앱은 **TARS Biopolymer Studio 디자인 시스템**을 따릅니다 (paper-over-chrome, hairline rules, mono-caps numerics, Fraunces/Newsreader/JetBrains Mono/Noto Sans KR).
+
+- 토큰 단일 출처: [`tokens.css`](./tokens.css) — 팔레트·폰트·리듬 정의
+- 본체 오버라이드: [`overrides.css`](./overrides.css) — 인라인 `<style>` 블록 위에 올라가 디자인 시스템으로 덮어씀 (`!important`)
+- 비밀번호 게이트: [`functions/_middleware.js`](./functions/_middleware.js) — 서버 측 로그인 페이지도 동일 디자인 시스템으로 렌더
+- 로드 순서: index.html 인라인 `<style>` → `tokens.css` → `overrides.css`
+- theme-color: `#2C5D3F` (forest green)
+
+디자인 시스템 룰 7가지 (paper-over-chrome, italics-as-accent, mono-for-data, no shadows/gradients, 2px radius, bilingual-ready)는 원본 SKILL.md 참조.
 
 ---
 
