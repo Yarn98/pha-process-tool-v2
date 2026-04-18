@@ -2397,6 +2397,18 @@ function clearFlashInputs(type) {
     loadBatchContext();
     renderBatchContextSummary();
     loadProcessLog();
+    /* Phase 3c — consume ?composition=<b64> passed from the 4HB
+       'Send to PHA Process' button. Runs AFTER loadBatchContext so a
+       URL-borne composition overrides whatever was persisted, which
+       matches operator intent (they just clicked a handoff button).
+       Strips the param regardless so reload is idempotent. */
+    try{
+      const incoming = _phaDecodeHandoffFromUrl();
+      if(incoming){
+        applyPhaHandoffComposition(incoming);
+        _phaCleanHandoffFromUrl();
+      }
+    }catch(_){ /* never block app init on a bad URL */ }
   });
 })();
 
@@ -2481,6 +2493,85 @@ function clearBatchContext() {
   const file = document.getElementById('compositionFile');
   if (file) file.value = '';
   renderBatchContextSummary();
+}
+
+/* Phase 3c — URL-param composition handoff from 4HB.
+   Mirrors the base64url encoder on the 4HB side: we pad back to a
+   multiple of 4, swap `-_` for `+/`, atob, then decode UTF-8. All
+   steps are wrapped in try/catch so any crafted URL is at worst a
+   silent no-op. 64 KB cap prevents pathological payloads from
+   hanging the tab. Schema must match tars-composition-v1 exactly. */
+const PHA_HANDOFF_MAX_BYTES = 64 * 1024;
+function _phaB64urlToUtf8(payload){
+  if(!payload || payload.length > PHA_HANDOFF_MAX_BYTES) return null;
+  try{
+    const padded = (payload + '==='.slice((payload.length + 3) % 4)).replace(/-/g,'+').replace(/_/g,'/');
+    const bin = atob(padded);
+    const bytes = new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+    return typeof TextDecoder !== 'undefined' ? new TextDecoder().decode(bytes) : bin;
+  }catch(_){ return null; }
+}
+function _phaDecodeHandoffFromUrl(){
+  try{
+    const params = new URLSearchParams(location.search);
+    const raw = params.get('composition');
+    if(!raw) return null;
+    const s = _phaB64urlToUtf8(raw);
+    if(!s) return null;
+    const parsed = JSON.parse(s);
+    if(!parsed || parsed.$schema !== 'tars-composition-v1') return null;
+    return parsed;
+  }catch(_){ return null; }
+}
+function _phaCleanHandoffFromUrl(){
+  try{
+    const u = new URL(location.href);
+    if(!u.searchParams.has('composition')) return;
+    u.searchParams.delete('composition');
+    history.replaceState({}, '', u.toString());
+  }catch(_){}
+}
+/* Apply an incoming 4HB composition to the batch-context banner.
+   Reuses the same state shape that loadCompositionFromFile() produces
+   so log entries added after the handoff pick up the same composition
+   fields (composition_id, composition_code, composition) as a file
+   import would. Strips the URL param and tab-activates the Process
+   Log flash sub-tab so the operator actually sees the banner light up
+   without having to click around. DATA SAFETY: never touches existing
+   processLog entries, only writes the batchContext key. */
+function applyPhaHandoffComposition(json){
+  try{
+    const code = String(json.code || json.name || '').trim() || '(unnamed)';
+    const id = String(json.id || `${code}::${json.created_at || ''}`);
+    if(typeof updateBatchContext === 'function'){
+      updateBatchContext({
+        composition_id: id,
+        composition_code: code,
+        composition: json,
+      });
+    }
+    /* Jump the user to the Process Log sub-tab so the newly-loaded
+       banner is visible. We only navigate if they aren't already
+       somewhere within the flash tab group. */
+    try{
+      const flashTab = document.querySelector('.tab[data-tab="flash"]');
+      if(flashTab && typeof flashTab.click === 'function') flashTab.click();
+      if(typeof showFlashTab === 'function') showFlashTab(6);
+    }catch(_){}
+    /* Best-effort notify. Use native alert fallback if no toast. */
+    const parts = [`Imported from 4HB: ${code}`];
+    const p = json.predicted_properties;
+    if(p){
+      const ms = [];
+      if(Number.isFinite(Number(p.tensile_mpa))) ms.push(`σ ${Number(p.tensile_mpa).toFixed(1)} MPa`);
+      if(Number.isFinite(Number(p.hdt_c)))       ms.push(`HDT ${Number(p.hdt_c).toFixed(1)} °C`);
+      if(ms.length) parts.push(ms.join(' · '));
+    }
+    console.log('[PHA handoff]', parts.join('  ·  '));
+  }catch(e){
+    console.warn('[PHA handoff] apply failed:', e);
+  }
 }
 
 function loadCompositionFromFile(file) {
