@@ -1876,6 +1876,18 @@ function i18nApply(){allSel('[data-i18n]').forEach(el=>{const k=el.dataset.i18n;
 function renderTS(){
   const cont = $('tsContainer');
   cont.innerHTML = '';
+  // Section-header labels per language. Korean versions come from the same
+  // voice as the translated KB so everything reads consistently.
+  const TS_LABELS = LANG === 'ko'
+    ? { plain: '현장 한줄 설명', causes: '주요 원인', diagnostics: '진단 방법', quick: '빠른 조치', root: '근본 해결', knobs: '조절 변수' }
+    : { plain: 'In plain words', causes: 'Likely causes', diagnostics: 'Diagnostics', quick: 'Quick fixes', root: 'Root fixes', knobs: 'Control knobs' };
+  const pick = (item, field) => (typeof tsFieldByLang === 'function') ? tsFieldByLang(item, field, LANG) : item[field];
+  const pickPlain = (item) => {
+    // plain-language summary only exists in the Korean translation table for now.
+    if (LANG !== 'ko' || typeof TS_KO === 'undefined') return null;
+    const t = TS_KO[item.symptom];
+    return t && t.plain ? t.plain : null;
+  };
   // Use dynamic troubleshooting data if available
   if (window.tsData && Array.isArray(window.tsData)) {
     const groups = {};
@@ -1887,27 +1899,38 @@ function renderTS(){
     Object.keys(groups).forEach(proc => {
       const card = document.createElement('div');
       card.className = 'card';
-      const procName = proc.charAt(0).toUpperCase() + proc.slice(1);
+      const procName = (typeof tsProcLabel === 'function') ? tsProcLabel(proc, LANG) : (proc.charAt(0).toUpperCase() + proc.slice(1));
       let html = `<h3 style="margin-bottom:8px">${procName}</h3>`;
       groups[proc].forEach(item => {
-        html += `<h4 style="margin-top:12px">${item.symptom}</h4>`;
-        if (item.likely_causes && item.likely_causes.length) {
-          html += `<strong>Likely causes:</strong><ul>` + item.likely_causes.map(x => `<li>${x}</li>`).join('') + `</ul>`;
+        const symptom = pick(item, 'symptom');
+        const causes = pick(item, 'likely_causes');
+        const diagnostics = pick(item, 'diagnostics');
+        const quickFixes = pick(item, 'quick_fixes');
+        const rootFixes = pick(item, 'root_fixes');
+        const knobs = pick(item, 'control_knobs');
+        const notes = pick(item, 'notes');
+        const plain = pickPlain(item);
+        html += `<h4 style="margin-top:12px">${symptom}</h4>`;
+        if (plain) {
+          html += `<p style="color:var(--muted);font-style:italic;margin:4px 0 8px;">${TS_LABELS.plain}: ${plain}</p>`;
         }
-        if (item.diagnostics) {
-          html += `<strong>Diagnostics:</strong><p>${item.diagnostics}</p>`;
+        if (Array.isArray(causes) && causes.length) {
+          html += `<strong>${TS_LABELS.causes}:</strong><ul>` + causes.map(x => `<li>${x}</li>`).join('') + `</ul>`;
         }
-        if (item.quick_fixes && item.quick_fixes.length) {
-          html += `<strong>Quick fixes:</strong><ul>` + item.quick_fixes.map(x => `<li>${x}</li>`).join('') + `</ul>`;
+        if (diagnostics) {
+          html += `<strong>${TS_LABELS.diagnostics}:</strong><p>${diagnostics}</p>`;
         }
-        if (item.root_fixes && item.root_fixes.length) {
-          html += `<strong>Root fixes:</strong><ul>` + item.root_fixes.map(x => `<li>${x}</li>`).join('') + `</ul>`;
+        if (Array.isArray(quickFixes) && quickFixes.length) {
+          html += `<strong>${TS_LABELS.quick}:</strong><ul>` + quickFixes.map(x => `<li>${x}</li>`).join('') + `</ul>`;
         }
-        if (item.control_knobs && item.control_knobs.length) {
-          html += `<strong>Control knobs:</strong><p>${item.control_knobs.join(', ')}</p>`;
+        if (Array.isArray(rootFixes) && rootFixes.length) {
+          html += `<strong>${TS_LABELS.root}:</strong><ul>` + rootFixes.map(x => `<li>${x}</li>`).join('') + `</ul>`;
         }
-        if (item.notes) {
-          html += `<p><em>${item.notes}</em></p>`;
+        if (Array.isArray(knobs) && knobs.length) {
+          html += `<strong>${TS_LABELS.knobs}:</strong><p>${knobs.join(', ')}</p>`;
+        }
+        if (notes) {
+          html += `<p><em>${notes}</em></p>`;
         }
       });
       card.innerHTML = html;
