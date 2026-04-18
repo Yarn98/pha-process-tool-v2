@@ -1095,6 +1095,40 @@
           <p>각 파라미터는 직접 입력하거나 +/- 버튼으로 조정할 수 있으며, 모든 데이터는 자동으로 저장됩니다.</p>
         </div>
 
+        <!--
+          Batch context banner (Phase 2-3).
+          Each process-log entry now remembers which batch it belongs to and,
+          if loaded, which 4HB-designed composition it was run against
+          (tars-composition-v1 JSON from the 4HB Properties Modeling Export
+          button). This pre-wires the Phase 4 batch-session work: operators
+          can start a batch, log many runs under one id, and the review
+          screen later can group and compare plan vs. actual.
+          Data is stored in the single key 'pha.batchContext.v1' so it
+          coexists cleanly with the rest of pha_* localStorage keys.
+        -->
+        <div id="batchContextBanner" class="calc-recommendation" style="border-left-color:#2C5D3F;background:linear-gradient(135deg,#EDE7D8,#F5F1E8);">
+          <h4 style="color:#2C5D3F;">🔗 현재 배치 & 조성 / Current batch &amp; composition</h4>
+          <p style="font-size:13px;color:#6b7280;margin-bottom:12px">
+            배치 ID를 입력하고 4HB 앱에서 내보낸 조성 JSON을 불러오면, 이 탭에서 추가되는 모든 로그 항목에 자동으로 연결됩니다.
+            <br/>Set the batch ID and optionally load a composition JSON exported from the 4HB Properties app. New log rows will automatically record these.
+          </p>
+          <div style="display:grid;grid-template-columns:minmax(180px,1fr) auto auto auto;gap:10px;align-items:end;">
+            <div>
+              <label for="batchIdInput" style="display:block;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#757065;margin-bottom:4px;font-family:'JetBrains Mono',monospace;">Batch ID · 배치</label>
+              <input type="text" id="batchIdInput" placeholder="e.g. 20260419-A · free form" style="width:100%;padding:8px 10px;border:1px solid #D8D0BE;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:13px;background:#FAF7EE;" onchange="updateBatchContext({ batch_id: this.value.trim() })">
+            </div>
+            <div>
+              <label style="display:block;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#757065;margin-bottom:4px;font-family:'JetBrains Mono',monospace;">Composition · 조성</label>
+              <input type="file" id="compositionFile" accept=".json,application/json" style="display:none" onchange="loadCompositionFromFile(this.files?.[0])">
+              <button type="button" onclick="document.getElementById('compositionFile').click()" style="padding:8px 14px;background:#1A1814;color:#F5F1E8;border:0;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;">Load JSON</button>
+            </div>
+            <button type="button" id="batchContextClear" onclick="clearBatchContext()" style="padding:8px 14px;background:transparent;color:#1A1814;border:1px solid #B8AF99;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;">Clear</button>
+            <div id="batchContextSummary" style="grid-column:1/-1;padding:10px 12px;background:#FAF7EE;border:1px solid #D8D0BE;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#3A352D;min-height:36px;display:flex;align-items:center;">
+              <span style="color:#757065;">No batch or composition loaded yet · 아직 설정된 배치/조성이 없습니다</span>
+            </div>
+          </div>
+        </div>
+
         <!-- Search and Filter -->
         <div class="filter-container">
           <h4 style="color:#1e3c72;margin-bottom:10px">🔍 검색 및 필터</h4>
@@ -1194,6 +1228,8 @@
               <thead>
                 <tr>
                   <th style="min-width:140px">일시</th>
+                  <th style="min-width:120px">배치 · Batch</th>
+                  <th style="min-width:160px">조성 · Composition</th>
                   <th style="min-width:120px">실린더 온도 (°C)</th>
                   <th style="min-width:120px">금형 온도 (°C)</th>
                   <th style="min-width:130px">사출속도 (mm/s)</th>
@@ -1211,7 +1247,7 @@
               </thead>
               <tbody id="processLogBody">
                 <tr>
-                  <td colspan="14" class="log-empty">로그가 없습니다. "➕ 로그 추가" 버튼을 눌러 첫 기록을 시작하세요.</td>
+                  <td colspan="16" class="log-empty">로그가 없습니다. "➕ 로그 추가" 버튼을 눌러 첫 기록을 시작하세요.</td>
                 </tr>
               </tbody>
             </table>
@@ -2358,12 +2394,124 @@ function clearFlashInputs(type) {
     const g=$('grade'); if(g){ g.value='CA1180P'; }
     const p=$('process'); if(p){ p.value='injection'; }
     applyCA1180P();
+    loadBatchContext();
+    renderBatchContextSummary();
     loadProcessLog();
   });
 })();
 
 // Process Log Functions
 let processLogData = [];
+
+/* ──────────────────────────────────────────────────────────────────
+   Phase 2-3: Batch / composition context.
+   Stored as one object under 'pha.batchContext.v1' so every new
+   processLog entry can record which batch ran it AND which designed
+   composition (from 4HB Properties Modeling Export) it was targeted
+   against. The banner UI above the process log writes this state.
+   ────────────────────────────────────────────────────────────────── */
+const BATCH_CTX_KEY = 'pha.batchContext.v1';
+let currentBatchContext = { batch_id: '', composition_id: '', composition_code: '', composition: null };
+
+function loadBatchContext() {
+  try {
+    const saved = localStorage.getItem(BATCH_CTX_KEY);
+    if (!saved) return;
+    const parsed = JSON.parse(saved);
+    if (parsed && typeof parsed === 'object') {
+      currentBatchContext = {
+        batch_id: String(parsed.batch_id || ''),
+        composition_id: String(parsed.composition_id || ''),
+        composition_code: String(parsed.composition_code || ''),
+        composition: parsed.composition && typeof parsed.composition === 'object' ? parsed.composition : null,
+      };
+    }
+  } catch (e) {
+    console.warn('[batch] Could not load context:', e);
+  }
+}
+
+function saveBatchContext() {
+  try {
+    localStorage.setItem(BATCH_CTX_KEY, JSON.stringify(currentBatchContext));
+  } catch (e) {
+    console.warn('[batch] Could not save context:', e);
+  }
+}
+
+function renderBatchContextSummary() {
+  const banner = document.getElementById('batchContextSummary');
+  if (!banner) return;
+  const batchIdInput = document.getElementById('batchIdInput');
+  if (batchIdInput && batchIdInput.value !== currentBatchContext.batch_id) {
+    batchIdInput.value = currentBatchContext.batch_id;
+  }
+  const parts = [];
+  if (currentBatchContext.batch_id) {
+    parts.push(`<span style="color:#2C5D3F;font-weight:500;">Batch</span> <span style="color:#1A1814;">${currentBatchContext.batch_id.replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]))}</span>`);
+  }
+  if (currentBatchContext.composition_code) {
+    const c = currentBatchContext.composition;
+    const extras = [];
+    if (c && c.predicted_properties) {
+      const p = c.predicted_properties;
+      if (Number.isFinite(Number(p.tensile_mpa))) extras.push(`σ ${Number(p.tensile_mpa).toFixed(1)} MPa`);
+      if (Number.isFinite(Number(p.hdt_c))) extras.push(`HDT ${Number(p.hdt_c).toFixed(1)} °C`);
+    }
+    parts.push(`<span style="color:#2C5D3F;font-weight:500;">Composition</span> <span style="color:#1A1814;">${currentBatchContext.composition_code.replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]))}</span>${extras.length ? ' <span style="color:#757065;">· ' + extras.join(' · ') + '</span>' : ''}`);
+  }
+  if (parts.length === 0) {
+    banner.innerHTML = '<span style="color:#757065;">No batch or composition loaded yet · 아직 설정된 배치/조성이 없습니다</span>';
+  } else {
+    banner.innerHTML = parts.join(' &nbsp;·&nbsp; ');
+  }
+}
+
+function updateBatchContext(patch) {
+  currentBatchContext = { ...currentBatchContext, ...patch };
+  saveBatchContext();
+  renderBatchContextSummary();
+}
+
+function clearBatchContext() {
+  currentBatchContext = { batch_id: '', composition_id: '', composition_code: '', composition: null };
+  saveBatchContext();
+  const input = document.getElementById('batchIdInput');
+  if (input) input.value = '';
+  const file = document.getElementById('compositionFile');
+  if (file) file.value = '';
+  renderBatchContextSummary();
+}
+
+function loadCompositionFromFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const json = JSON.parse(String(e.target.result || ''));
+      /* Accept tars-composition-v1 (produced by 4HB Export button). Fail
+         gracefully on anything else so operators see a clear message
+         rather than silent corruption. */
+      if (!json || json.$schema !== 'tars-composition-v1') {
+        alert('Invalid composition JSON · 지원하지 않는 JSON 형식입니다.\n\nExpected $schema: "tars-composition-v1" (generated by 4HB Properties app → Export ↓ button).');
+        return;
+      }
+      const code = String(json.code || json.name || '').trim() || '(unnamed)';
+      /* Consumers may not carry a persistent id; derive one from code +
+         timestamp so cross-app references are stable per-export. */
+      const id = String(json.id || `${code}::${json.created_at || ''}`);
+      updateBatchContext({
+        composition_id: id,
+        composition_code: code,
+        composition: json,
+      });
+    } catch (err) {
+      console.error('[batch] composition load failed:', err);
+      alert('Composition JSON parse failed · JSON 파싱 실패: ' + (err && err.message ? err.message : 'unknown'));
+    }
+  };
+  reader.readAsText(file);
+}
 
 function loadProcessLog() {
   const saved = localStorage.getItem('processLog');
@@ -2387,7 +2535,7 @@ function renderProcessLog() {
   if (!tbody) return;
 
   if (processLogData.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="10" class="log-empty">로그가 없습니다. "➕ 로그 추가" 버튼을 눌러 첫 기록을 시작하세요.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="16" class="log-empty">로그가 없습니다. "➕ 로그 추가" 버튼을 눌러 첫 기록을 시작하세요.</td></tr>';
     return;
   }
 
@@ -2395,6 +2543,12 @@ function renderProcessLog() {
     <tr>
       <td>
         <div class="log-timestamp">${entry.timestamp}</div>
+      </td>
+      <td>
+        <div class="log-timestamp" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${entry.batch_id ? '#2C5D3F' : '#9ca3af'};">${entry.batch_id ? entry.batch_id.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '—'}</div>
+      </td>
+      <td>
+        <div class="log-timestamp" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${entry.composition_code ? '#2C5D3F' : '#9ca3af'};" title="${entry.composition_id || ''}">${entry.composition_code ? entry.composition_code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '—'}</div>
       </td>
       <td>${createNumberInput(index, 'cylinderTemp', entry.cylinderTemp, 1)}</td>
       <td>${createNumberInput(index, 'moldTemp', entry.moldTemp, 1)}</td>
@@ -2442,8 +2596,15 @@ function addProcessLogEntry() {
     hour12: false
   });
 
+  /* Phase 2-3: inherit the active batch / composition context (set via the
+     banner above this tab). Fields are optional — null values render as
+     an em-dash, and old entries without these keys keep working. */
+  const ctx = (typeof currentBatchContext !== 'undefined' && currentBatchContext) ? currentBatchContext : {};
   const newEntry = {
     timestamp: timestamp,
+    batch_id: ctx.batch_id || '',
+    composition_id: ctx.composition_id || '',
+    composition_code: ctx.composition_code || '',
     cylinderTemp: 0,
     moldTemp: 0,
     injectionSpeed: 0,
@@ -2519,6 +2680,9 @@ function exportProcessLog() {
   // CSV 헤더
   const headers = [
     '일시',
+    '배치 ID',
+    '조성 코드',
+    '조성 UUID',
     '실린더 온도 (°C)',
     '금형 온도 (°C)',
     '사출속도 (mm/s)',
@@ -2532,13 +2696,21 @@ function exportProcessLog() {
     '비고/현상'
   ];
 
+  const csvCell = v => {
+    const s = (v == null) ? '' : String(v);
+    return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+  };
+
   // CSV 데이터 생성
   let csv = '\uFEFF'; // UTF-8 BOM for Excel
   csv += headers.join(',') + '\n';
 
   processLogData.forEach(entry => {
     const row = [
-      entry.timestamp,
+      csvCell(entry.timestamp),
+      csvCell(entry.batch_id || ''),
+      csvCell(entry.composition_code || ''),
+      csvCell(entry.composition_id || ''),
       entry.cylinderTemp,
       entry.moldTemp,
       entry.injectionSpeed,
@@ -2549,7 +2721,7 @@ function exportProcessLog() {
       entry.partWeight || 0,
       entry.runnerWeight || 0,
       entry.totalWeight || 0,
-      '"' + (entry.note || '').replace(/"/g, '""') + '"'
+      csvCell(entry.note || '')
     ];
     csv += row.join(',') + '\n';
   });
@@ -2580,8 +2752,13 @@ function addProcessLogEntry() {
     hour12: false
   });
 
+  /* Phase 2-3: inherit active batch + composition context from the banner. */
+  const ctx = (typeof currentBatchContext !== 'undefined' && currentBatchContext) ? currentBatchContext : {};
   const newEntry = {
     timestamp: timestamp,
+    batch_id: ctx.batch_id || '',
+    composition_id: ctx.composition_id || '',
+    composition_code: ctx.composition_code || '',
     cylinderTemp: 0,
     moldTemp: 0,
     injectionSpeed: 0,
@@ -2612,15 +2789,18 @@ function renderProcessLog() {
   let displayData = filteredLogData.length > 0 ? filteredLogData : processLogData;
 
   if (displayData.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="14" class="log-empty">로그가 없습니다. "➕ 로그 추가" 버튼을 눌러 첫 기록을 시작하세요.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="16" class="log-empty">로그가 없습니다. "➕ 로그 추가" 버튼을 눌러 첫 기록을 시작하세요.</td></tr>';
     return;
   }
 
+  const esc = s => String(s == null ? '' : s).replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
   tbody.innerHTML = displayData.map((entry, index) => {
     const realIndex = processLogData.indexOf(entry);
     return `
     <tr>
       <td><div class="log-timestamp">${entry.timestamp}</div></td>
+      <td><div class="log-timestamp" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${entry.batch_id ? '#2C5D3F' : '#9ca3af'};">${entry.batch_id ? esc(entry.batch_id) : '&mdash;'}</div></td>
+      <td><div class="log-timestamp" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${entry.composition_code ? '#2C5D3F' : '#9ca3af'};" title="${esc(entry.composition_id || '')}">${entry.composition_code ? esc(entry.composition_code) : '&mdash;'}</div></td>
       <td>${createNumberInput(realIndex, 'cylinderTemp', entry.cylinderTemp, 1)}</td>
       <td>${createNumberInput(realIndex, 'moldTemp', entry.moldTemp, 1)}</td>
       <td>${createNumberInput(realIndex, 'injectionSpeed', entry.injectionSpeed, 1)}</td>
@@ -2743,6 +2923,8 @@ function loadTemplate() {
   const index = parseInt(selection) - 1;
   if (index >= 0 && index < processTemplates.length) {
     const template = processTemplates[index];
+    /* Template-load path also inherits current batch context. */
+    const ctx = (typeof currentBatchContext !== 'undefined' && currentBatchContext) ? currentBatchContext : {};
     const newEntry = {
       timestamp: new Date().toLocaleString('ko-KR', {
         year: 'numeric',
@@ -2753,6 +2935,9 @@ function loadTemplate() {
         second: '2-digit',
         hour12: false
       }),
+      batch_id: ctx.batch_id || '',
+      composition_id: ctx.composition_id || '',
+      composition_code: ctx.composition_code || '',
       cylinderTemp: template.cylinderTemp,
       moldTemp: template.moldTemp,
       injectionSpeed: template.injectionSpeed,
