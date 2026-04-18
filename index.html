@@ -1853,6 +1853,16 @@ const MAT_KEY_ORDER=[
 /* ========= Utilities ========= */
 function $(id){return document.getElementById(id)}; function allSel(s){return Array.from(document.querySelectorAll(s))};
 function _t(key){return (I18N[LANG]&&I18N[LANG][key])||key}
+/* Display-only number formatter: trims IEEE-754 float tails (e.g. 24.200000000000003 → 24.2)
+   while preserving integers as whole numbers. Returns non-numeric inputs unchanged so
+   placeholder/fallback strings like "-" still render. */
+function fmtR(n){
+  if(n===null||n===undefined) return '';
+  if(typeof n==='string' && !/^-?\d/.test(n)) return n; // keep '-' etc.
+  const x=Number(n);
+  if(!Number.isFinite(x)) return String(n);
+  return Number.isInteger(x) ? String(x) : parseFloat(x.toFixed(2)).toString();
+}
 function setView(v){
   document.body.classList.toggle('force-mobile',v==='mobile');
   document.querySelector('.container').style.maxWidth=(v==='mobile'?'100%':'1400px');
@@ -1944,8 +1954,8 @@ function rebuildForm(){
   const wrap=$('dynamicFields'); wrap.innerHTML='';
   for(const fld of schema){
     const id='f_'+fld.id, label = fld.ko + (fld.unit?` (${fld.unit})`:''); const div=document.createElement('div'); div.className='group';
-    const rangeText=rec[fld.id]?`${LANG==='ko'?'권장':'Rec'}: ${rec[fld.id][0]}–${rec[fld.id][1]}${fld.unit?' '+fld.unit:''}`:'';
-    div.innerHTML=`<label for="${id}">${label}</label><input id="${id}" type="number" inputmode="decimal" placeholder="${rec[fld.id]?rec[fld.id][0]+'-'+rec[fld.id][1]:''}">${rangeText?'<span class="range-hint">'+rangeText+'</span>':''}`;
+    const rangeText=rec[fld.id]?`${LANG==='ko'?'권장':'Rec'}: ${fmtR(rec[fld.id][0])}–${fmtR(rec[fld.id][1])}${fld.unit?' '+fld.unit:''}`:'';
+    div.innerHTML=`<label for="${id}">${label}</label><input id="${id}" type="number" inputmode="decimal" placeholder="${rec[fld.id]?fmtR(rec[fld.id][0])+'-'+fmtR(rec[fld.id][1]):''}">${rangeText?'<span class="range-hint">'+rangeText+'</span>':''}`;
     wrap.appendChild(div);
   }
   refreshParamTable();
@@ -1960,7 +1970,7 @@ function refreshParamTable(){
   schema.forEach(f=>{const val=$('f_'+f.id)?.value||''; const range=rec[f.id]||['-','-']; const s=statusOf(val,range);
     const cls=s==='ok'?'ok':(s==='crit'?'crit':(s==='empty'?'empty':'warn'));
     const sText=(LANG==='ko'?(s==='ok'?'정상':s==='crit'?'위험':s==='empty'?'미입력':'주의'):(s==='ok'?'Normal':s==='crit'?'Critical':s==='empty'?'Not entered':'Warning'));
-    const tr=document.createElement('tr'); tr.innerHTML=`<td>${f.ko}${f.unit?' ('+f.unit+')':''}</td><td>${val||'-'}</td><td>${range[0]}-${range[1]}</td><td><span class="badge ${cls}">${sText}</span></td>`; tb.appendChild(tr);
+    const tr=document.createElement('tr'); tr.innerHTML=`<td>${f.ko}${f.unit?' ('+f.unit+')':''}</td><td>${val||'-'}</td><td>${fmtR(range[0])}-${fmtR(range[1])}</td><td><span class="badge ${cls}">${sText}</span></td>`; tb.appendChild(tr);
   });
 }
 
