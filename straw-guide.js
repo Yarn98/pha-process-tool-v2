@@ -225,9 +225,42 @@
     const wrap = el('div', { className: 'flash-content', id: 'straw-tab-1' });
     wrap.innerHTML = `
       <h3 style="color:#1e3c72;margin-bottom:16px">${t('권장 공정 조건', 'Recommended Process Conditions')}</h3>
+      <p style="color:#6b7280;line-height:1.7;margin-bottom:16px">
+        ${t(
+          '스트로(빨대) 압출 라인에서 가장 많이 조정하는 5가지: ① 라인 속도 ② 수조 온도 ③ 칠 롤 프로파일 ④ 다이 갭 ⑤ 사이징 보정. 이 5가지만 정리해도 대부분의 치수 · 휨 · 표면 문제를 줄일 수 있습니다.',
+          'The five knobs field teams adjust most on straw lines: (1) line speed, (2) water-bath temperature, (3) chill-roll profile, (4) die gap, and (5) sizing correction. Those five resolve most dimensional, bend, and surface defects.'
+        )}
+      </p>
 
-      <!-- Section A: Barrel/Die Temperature -->
-      <h4 style="color:#1e3c72;margin:20px 0 10px">${t('A. 배럴/다이 온도 설정', 'A. Barrel / Die Temperature Settings')}</h4>
+      <!-- Section A: Morphology-tiered bath strategy -->
+      <h4 style="color:#1e3c72;margin:20px 0 10px">${t('A. 형태학별 수조 전략', 'A. Morphology-tiered water-bath strategy')}</h4>
+      <div class="tablewrap" style="margin-bottom:20px">
+        <table>
+          <thead>
+            <tr>
+              <th>${t('조성 구간', 'Composition window')}</th>
+              <th>${t('권장 전략', 'Recommended strategy')}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>${t('PLA 연속상 (PHA < 30 %)', 'PLA-continuous (PHA < 30%)')}</td>
+              <td>${t('저온 사이징 15–25 °C. 가장 빠른 냉각을 우선.', 'Cold sizing at 15–25 °C. Fastest cooling wins.')}</td>
+            </tr>
+            <tr>
+              <td>${t('전이 구간 (PHA 30–60 %)', 'Transition window (PHA 30–60%)')}</td>
+              <td>${t('3단 수조 60–70 °C → 85–95 °C → 40–45 °C. 결정화를 먼저 유도하고 그 다음 냉각.', 'Three-stage bath: 60–70 °C → 85–95 °C → 40–45 °C. Induce crystallization first, then chill.')}</td>
+            </tr>
+            <tr>
+              <td>${t('PHA 연속상 (PHA ≥ 60 %)', 'PHA-continuous (PHA ≥ 60%)')}</td>
+              <td>${t('온수 프리사이징 55–70 °C. 급냉은 표면 결함과 취성 파단을 부를 수 있음.', 'Warm pre-sizing at 55–70 °C. Quench can trigger surface defects and brittle breakage.')}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Section B: Barrel/Die Temperature -->
+      <h4 style="color:#1e3c72;margin:20px 0 10px">${t('B. 배럴/다이 온도 설정', 'B. Barrel / Die Temperature Settings')}</h4>
       <div class="tablewrap" style="margin-bottom:20px">
         <table>
           <thead>
@@ -248,8 +281,8 @@
         </table>
       </div>
 
-      <!-- Section B: Formulation Direction -->
-      <h4 style="color:#1e3c72;margin:20px 0 10px">${t('B. 배합 방향', 'B. Formulation Direction')}</h4>
+      <!-- Section C: Formulation Direction -->
+      <h4 style="color:#1e3c72;margin:20px 0 10px">${t('C. 배합 방향', 'C. Formulation Direction')}</h4>
       <div class="tablewrap" style="margin-bottom:20px">
         <table>
           <thead>
@@ -267,8 +300,8 @@
         </table>
       </div>
 
-      <!-- Section C: Productivity by Booster -->
-      <h4 style="color:#1e3c72;margin:20px 0 10px">${t('C. 부스터 함량별 안정 속도', 'C. Stable Speed by Booster Content')}</h4>
+      <!-- Section D: Productivity by Booster -->
+      <h4 style="color:#1e3c72;margin:20px 0 10px">${t('D. 부스터 함량별 안정 속도', 'D. Stable Speed by Booster Content')}</h4>
       <div class="tablewrap" style="margin-bottom:20px">
         <table>
           <thead>
@@ -286,8 +319,8 @@
         </table>
       </div>
 
-      <!-- Section D: Problem Combinations -->
-      <h4 style="color:#1e3c72;margin:20px 0 10px">${t('D. 피해야 할 조합 (경고)', 'D. Problem Combinations to Avoid (Warnings)')}</h4>
+      <!-- Section E: Problem Combinations -->
+      <h4 style="color:#1e3c72;margin:20px 0 10px">${t('E. 피해야 할 조합 (경고)', 'E. Problem Combinations to Avoid (Warnings)')}</h4>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:20px">
         <div class="card" style="border-left-color:#ef4444">
           <strong style="color:#ef4444">Peroxide</strong><br>
@@ -299,12 +332,22 @@
         </div>
         <div class="card" style="border-left-color:#ef4444">
           <strong style="color:#ef4444">PLA</strong><br>
-          <span style="color:#374151">${t('→ warm bath 붕괴', '→ Warm bath collapse')}</span>
+          <span style="color:#374151">${t('→ 온수 프리사이징 붕괴', '→ Warm pre-sizing collapse')}</span>
         </div>
         <div class="card" style="border-left-color:#ef4444">
           <strong style="color:#ef4444">${t('Carrier mismatch MB', 'Carrier mismatch MB')}</strong><br>
           <span style="color:#374151">${t('→ 즉시 단선', '→ Immediate strand breakage')}</span>
         </div>
+      </div>
+
+      <div class="card" style="border-left-color:#2C5D3F">
+        <strong style="color:#2C5D3F">${t('커터 온도 SOP', 'Cutter-temperature SOP')}</strong><br>
+        <span style="color:#374151;line-height:1.7">
+          ${t(
+            '컷오프 시점 수지 온도는 25 ± 5 °C로 유지하세요. 너무 뜨거우면 절단면이 일그러지고, 너무 차가우면 취성 균열이 납니다.',
+            'Hold the resin temperature at the cutter to 25 ± 5 °C. Too hot skews the cut face; too cold causes brittle cracking.'
+          )}
+        </span>
       </div>
     `;
     return wrap;
@@ -341,10 +384,10 @@
         action: t('Peroxide 제거, talc 의존 저감', 'Remove peroxide, reduce reliance on talc'),
       },
       {
-        title:  t('수조 진입 취성 파단', 'Brittle Fracture at Water-Bath Entry'),
-        cause:  t('결정화 너무 빠름', 'Crystallization too fast'),
-        check:  t('Bath entry 직후 부러짐?', 'Breaks immediately after bath entry?'),
-        action: t('Fast-setting booster 단독 사용 금지, baseline으로 희석', 'Do not use fast-setting booster alone; dilute with baseline'),
+        title:  t('수조 진입 직후 취성 파단', 'Brittle Fracture at Bath Entry'),
+        cause:  t('결정화가 너무 빠르거나 초기 수조 조건이 과격함', 'Crystallization is too fast or the first bath step is too aggressive'),
+        check:  t('수조에 닿자마자 부러지나?', 'Does it break as soon as it enters the bath?'),
+        action: t('Fast-setting booster 단독 사용을 피하고 baseline 조성으로 희석', 'Do not run the fast-setting booster alone; dilute it with the baseline recipe'),
       },
       {
         title:  t('500 str/min 부근 걸림', 'Jamming Near 500 str/min'),
@@ -359,10 +402,10 @@
         action: t('동일 계열 PHA carrier MB 사용', 'Use MB with same PHA-family carrier'),
       },
       {
-        title:  t('PLA 혼합 — warm bath 붕괴', 'PLA Blend — Warm Bath Collapse'),
-        cause:  t('Bath temp > Tg(PLA)', 'Bath temp > Tg(PLA)'),
-        check:  t('Cold bath에서 OK, main에서 붕괴?', 'OK in cold bath, collapse in main bath?'),
-        action: t('현 PHA bath recipe에 PLA 공용 금지', 'Do not combine PLA in current PHA bath recipe'),
+        title:  t('PLA 혼합 — 온수 프리사이징 붕괴', 'PLA Blend — Warm Pre-Sizing Collapse'),
+        cause:  t('수조 온도가 PLA의 Tg보다 높음', 'Bath temperature sits above PLA Tg'),
+        check:  t('저온 사이징에서는 유지되고 온수 단계에서만 무너지나?', 'Does it hold in cold sizing and collapse only in the warm stage?'),
+        action: t('현재 PHA 온수 수조 레시피를 PLA와 공용하지 말고 PLA 연속상은 15–25 °C 저온 사이징으로 분리', 'Do not share the current warm PHA bath recipe with PLA; keep PLA-continuous runs on 15–25 °C cold sizing'),
       },
     ];
 
@@ -641,8 +684,8 @@
     root.appendChild(el('p', {
       style: 'color:#6b7280;margin-bottom:0',
       text: t(
-        '생산속도 계산 · 공정 조건 · 트러블슈팅 · 운영자 체크포인트 · Die-exit 온도 가이드',
-        'Production speed · Process conditions · Troubleshooting · Operator checkpoints · Die-exit temperature guide'
+        '스트로(빨대) 압출 공정에서 가장 자주 조정하는 5가지: ① 라인 속도 ② 수조 온도 ③ 칠 롤 프로파일 ④ 다이 갭 ⑤ 사이징 보정. 이 5가지만 정리해도 대부분의 치수 · 휨 · 표면 이슈를 줄일 수 있습니다.',
+        'The five knobs field teams adjust most on straw extrusion lines: (1) line speed, (2) water-bath temperature, (3) chill-roll profile, (4) die gap, and (5) sizing correction. These five cover most dimensional, bend, and surface defects.'
       ),
     }));
 

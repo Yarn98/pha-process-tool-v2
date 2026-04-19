@@ -2,7 +2,7 @@
    The activate handler deletes any cache whose name !== CACHE, so bumping the
    version string is how we force a full refresh of cached assets. Keep a short
    trailing token describing the change so the log is auditable. */
-const CACHE = 'pha-cache-v10-compounding-copy';
+const CACHE = 'pha-cache-v11-straw-copy';
 const PRECACHE_URLS = [
   './',
   './index.html',
