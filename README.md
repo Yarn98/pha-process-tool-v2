@@ -1,6 +1,6 @@
 # PHA Process Optimizer & Convertor
 
-![Version](https://img.shields.io/badge/version-1.6.4-blue.svg)
+![Version](https://img.shields.io/badge/version-1.6.5-blue.svg)
 ![Status](https://img.shields.io/badge/status-production-green.svg)
 ![Design](https://img.shields.io/badge/design-TARS%20Biopolymer%20Studio-2C5D3F.svg)
 ![License](https://img.shields.io/badge/license-ISC-lightgrey.svg)
@@ -20,6 +20,8 @@
 디자인 시스템 룰 7가지 (paper-over-chrome, italics-as-accent, mono-for-data, no shadows/gradients, 2px radius, bilingual-ready)는 원본 SKILL.md 참조.
 
 ### Recent fixes (v1.6.x)
+
+- **v1.6.5** — Materials DB labels now use the same bilingual engineering terminology as the rest of the app (`Density`, `Melt Flow Rate`, `Glass transition temp`, `Heat deflection temp`, etc.). The edit modal now opens with `그레이드 편집 / Edit grade` chrome, carries a density-range hint, and no longer leaves stale button handlers behind when the modal is closed without saving.
 
 - **v1.6.4** — Flash Tab 6 now explains the weight / shot-size calculator and the flash-reduction engine in the same plain-language style as the troubleshooting KB. The weight block spells out its two outputs, the grade-density button carries explicit Materials-DB tooltip copy, the clamp-tonnage calculator shows its formula note, and the recommendation engine now evaluates all 5 parameters every time with red / yellow / green cards instead of only emitting alerts when a single threshold is crossed.
 

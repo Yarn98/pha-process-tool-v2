@@ -554,14 +554,14 @@
 <div id="modal" style="position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;z-index:9999">
   <div style="background:#fff;max-width:720px;width:92%;border-radius:12px;box-shadow:var(--shadow);padding:16px">
     <div class="row" style="justify-content:space-between;align-items:center">
-      <h3>권장 가이드 수정</h3>
-      <button class="btn secondary" onclick="closeModal()">닫기</button>
+      <h3 id="modalTitle">권장 가이드 수정</h3>
+      <button id="modalCloseBtn" class="btn secondary" onclick="closeModal()">닫기</button>
     </div>
     <div id="modalBody" class="grid" style="margin-top:8px"></div>
     <div class="row" style="margin-top:8px">
-      <button class="btn primary" onclick="saveRecoOverrides()">저장</button>
-      <button class="btn secondary" onclick="resetOverridesCurrent()">현재 공정 초기화</button>
-      <button class="btn secondary" onclick="resetOverridesAll()">전체 초기화</button>
+      <button id="modalSaveBtn" class="btn primary" onclick="saveRecoOverrides()">저장</button>
+      <button id="modalResetCurrentBtn" class="btn secondary" onclick="resetOverridesCurrent()">현재 공정 초기화</button>
+      <button id="modalResetAllBtn" class="btn secondary" onclick="resetOverridesAll()">전체 초기화</button>
     </div>
   </div>
 </div>
@@ -1794,9 +1794,15 @@ const MAT_DEFAULT={
   "CA1180P":{"density_g_cm3":1.26,"MFR_g_10min_190_2_16":7,"Tg_C":-15,"Tm_C":162,"tensile_MPa":52,"elongation_%":23,"izod_kJ_m2":63,"HDT_C":51},"CA1170A":{},"CA1165A":{},"CA1670P":{},"CA1680":{},"CA1270P":{}
 };
 const MAT_KEY_ORDER=[
-  ["density_g_cm3","밀도","g/cm³"],["MFR_g_10min_190_2_16","MFR","g/10min @190°C/2.16kg"],
-  ["Tg_C","Tg","°C"],["Tm_C","Tm","°C"],["Tc_C","Tc","°C"],
-  ["tensile_MPa","인장강도","MPa"],["elongation_%","신율","%"],["izod_kJ_m2","아이조드","kJ/m²"],["HDT_C","HDT","°C"]
+  ["density_g_cm3","밀도 · Density","g/cm³"],
+  ["MFR_g_10min_190_2_16","용융지수 (MFR, 190 °C · 2.16 kg) · Melt Flow Rate","g/10min"],
+  ["Tg_C","유리전이 (Tg) · Glass transition temp","°C"],
+  ["Tm_C","융점 (Tm) · Melt temperature","°C"],
+  ["Tc_C","결정화 온도 (Tc) · Crystallization temp","°C"],
+  ["tensile_MPa","인장강도 · Tensile strength","MPa"],
+  ["elongation_%","파단신율 (ε_b) · Elongation at break","%"],
+  ["izod_kJ_m2","아이조드 충격강도 · Izod impact","kJ/m²"],
+  ["HDT_C","열변형 온도 (HDT, 0.455 MPa) · Heat deflection temp","°C"]
 ];
 
 /* ========= Utilities ========= */
@@ -1970,11 +1976,31 @@ function importCSV(text){const lines=text.trim().split(/\r?\n/); const head=line
   localStorage.setItem('pha_hist',JSON.stringify(hist)); renderHistory(); alert(_t('csv_import_ok'))}
 
 /* ========= Reco editor (overrides) ========= */
+let modalRestoreFns = null;
+function setModalChrome(copy){
+  if ($('modalTitle')) $('modalTitle').textContent = copy.title;
+  if ($('modalCloseBtn')) $('modalCloseBtn').textContent = copy.close;
+  if ($('modalSaveBtn')) $('modalSaveBtn').textContent = copy.save;
+  if ($('modalResetCurrentBtn')) $('modalResetCurrentBtn').textContent = copy.resetCurrent;
+  if ($('modalResetAllBtn')) $('modalResetAllBtn').textContent = copy.resetAll;
+}
+function recoModalCopy(){
+  return LANG==='ko'
+    ? { title:'권장 가이드 수정', close:'닫기', save:'저장', resetCurrent:'현재 공정 초기화', resetAll:'전체 초기화' }
+    : { title:'Edit recommended ranges', close:'Close', save:'Save', resetCurrent:'Reset current process', resetAll:'Reset all' };
+}
+function materialModalCopy(){
+  return LANG==='ko'
+    ? { title:'그레이드 편집', close:'취소', save:'저장', resetCurrent:'현재 그레이드 초기화', resetAll:'전체 DB 초기화' }
+    : { title:'Edit grade', close:'Cancel', save:'Save', resetCurrent:'Clear this grade', resetAll:'Reset full DB' };
+}
 function openRecoEditor(){const proc=$('process').value, grade=$('grade').value, profile=profileOf(grade), rec=getReco(profile,proc), schema=SCHEMAS[proc];
+  modalRestoreFns = null;
+  setModalChrome(recoModalCopy());
   const body=$('modalBody'); body.innerHTML=''; schema.forEach(f=>{const r=rec[f.id]||['','']; const div=document.createElement('div'); div.className='group';
     div.innerHTML=`<label>${f.ko}${f.unit?' ('+f.unit+')':''}</label><div class="row"><input id="ov_${f.id}_min" type="number" placeholder="min" value="${r[0]}"><input id="ov_${f.id}_max" type="number" placeholder="max" value="${r[1]}"></div>`; body.appendChild(div);});
   $('modal').style.display='flex';}
-function closeModal(){$('modal').style.display='none'}
+function closeModal(){if(typeof modalRestoreFns==='function') modalRestoreFns(); $('modal').style.display='none'; setModalChrome(recoModalCopy())}
 function saveRecoOverrides(){const proc=$('process').value, profile=profileOf($('grade').value), schema=SCHEMAS[proc]; const key=profile+'__'+proc;
   const ov=JSON.parse(localStorage.getItem('reco_overrides')||'{}'); ov[key]=ov[key]||{}; schema.forEach(f=>{const min=parseFloat($('ov_'+f.id+'_min').value); const max=parseFloat($('ov_'+f.id+'_max').value); if(!isNaN(min)&&!isNaN(max)) ov[key][f.id]=[min,max];}); localStorage.setItem('reco_overrides',JSON.stringify(ov)); closeModal(); rebuildForm();}
 function resetOverridesCurrent(){const proc=$('process').value, profile=profileOf($('grade').value); const key=profile+'__'+proc; const ov=JSON.parse(localStorage.getItem('reco_overrides')||'{}'); delete ov[key]; localStorage.setItem('reco_overrides',JSON.stringify(ov)); rebuildForm(); alert(_t('reco_reset_cur'))}
@@ -1997,11 +2023,13 @@ function renderMat(){const db=getMatDB(); const g=$('mat_grade').value||'S1000P'
 $('mat_grade').addEventListener('change',renderMat);
 function importMatJSON(){const inp=$('mat_file'); inp.onchange=(e)=>{const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{try{const obj=JSON.parse(r.result); const db=getMatDB(); Object.assign(db,obj); setMatDB(db); renderMat(); alert(_t('mat_import_ok'));}catch(err){alert(_t('json_parse_err'))}}; r.readAsText(f,'utf-8'); inp.value='';}; inp.click();}
 function exportMatJSON(){const blob=new Blob([JSON.stringify(getMatDB(),null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='materials_db.json'; a.click();}
-function editMat(){const db=getMatDB(); const g=$('mat_grade').value||'S1000P'; const rec=Object.assign({},db[g]||{}); const vals={}; let html='<div class="grid">';
-  MAT_KEY_ORDER.forEach(([k,nm])=>{const v=rec[k]??''; html+=`<div class="group"><label>${nm}</label><input id="mat_${k}" type="number" step="any" value="${v}"></div>`}); html+='</div>';
+function editMat(){const db=getMatDB(); const g=$('mat_grade').value||'S1000P'; const rec=Object.assign({},db[g]||{}); let html='<div class="grid">';
+  setModalChrome(materialModalCopy());
+  MAT_KEY_ORDER.forEach(([k,nm,unit])=>{const v=rec[k]??''; const densityHint=k==='density_g_cm3'?(LANG==='ko'?' title=\"밀도 범위: 0.5 – 5.0 g/cm³\" placeholder=\"0.5 – 5.0\"':' title=\"Density range: 0.5–5.0 g/cm³\" placeholder=\"0.5–5.0\"'):''; html+=`<div class="group"><label>${nm}${unit?` (${unit})`:''}</label><input id="mat_${k}" type="number" step="any" value="${v}"${densityHint}></div>`}); html+='</div>';
   const body=$('modalBody'); body.innerHTML=html; $('modal').style.display='flex';
   // Replace modal buttons temporarily
   const save=window.saveRecoOverrides; const resetC=window.resetOverridesCurrent; const resetA=window.resetOverridesAll;
+  modalRestoreFns = function(){window.saveRecoOverrides=save; window.resetOverridesCurrent=resetC; window.resetOverridesAll=resetA; modalRestoreFns=null;};
   window.saveRecoOverrides=function(){const rec2={}; MAT_KEY_ORDER.forEach(([k])=>{const v=$('mat_'+k).value; if(v!=='') rec2[k]=parseFloat(v)}); db[g]=rec2; setMatDB(db); renderMat(); alert(_t('save_ok')); closeModal(); window.saveRecoOverrides=save; window.resetOverridesCurrent=resetC; window.resetOverridesAll=resetA;};
   window.resetOverridesCurrent=function(){db[g]={}; setMatDB(db); renderMat(); alert(_t('reset_ok'))};
   window.resetOverridesAll=function(){localStorage.removeItem('mat_db'); renderMat(); alert(_t('reset_all_ok'))};
