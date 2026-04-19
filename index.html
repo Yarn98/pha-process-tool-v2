@@ -2071,6 +2071,7 @@ function renderFlashContent(){
   restoreFlashInput('runnerWeight', snapshot.weights.runner);
   restoreFlashInput('cavityCount', snapshot.weights.cavity || '36');
   restoreFlashInput('materialDensity', snapshot.weights.density || '1.25');
+  if (typeof applyProcessChartToggleCopy === 'function') applyProcessChartToggleCopy();
   renderBatchContextBanner();
   if (typeof window.bindBatchSessionControls === 'function') window.bindBatchSessionControls();
   if (typeof loadProcessLog === 'function') loadProcessLog();
@@ -3384,6 +3385,77 @@ function attachPhoto(logIndex) {
 // Chart Visualization
 let processChart;
 let currentChartType = 'temp';
+const PROCESS_CHART_COPY = {
+  temp: {
+    button: { ko: '온도 · Temperature', en: 'Temperature' },
+    title: {
+      ko: '실린더 · 금형 · 노즐 온도 트렌드 (최근 20개 로그)',
+      en: 'Barrel, mold, nozzle temperatures (last 20 logs)'
+    },
+    series: {
+      barrel: { ko: '실린더 온도 (°C) · Barrel (°C)', en: 'Barrel (°C)' },
+      mold: { ko: '금형 온도 (°C) · Mold (°C)', en: 'Mold (°C)' }
+    }
+  },
+  pressure: {
+    button: { ko: '압력 · Pressure', en: 'Pressure' },
+    title: {
+      ko: '사출압 · 보압 · 다이 압력 트렌드',
+      en: 'Injection, hold, die pressure trends'
+    },
+    series: {
+      injection: { ko: '사출압 (bar) · Injection (bar)', en: 'Injection (bar)' },
+      hold: { ko: '보압 (bar) · Hold (bar)', en: 'Hold (bar)' }
+    }
+  },
+  weight: {
+    button: { ko: '무게 · Weight', en: 'Weight' },
+    title: {
+      ko: '제품 · 러너 · 총 무게 트렌드',
+      en: 'Part, runner, total weight trends'
+    },
+    series: {
+      part: { ko: '제품 무게 (g) · Part (g)', en: 'Part (g)' },
+      runner: { ko: '러너 무게 (g) · Runner (g)', en: 'Runner (g)' },
+      total: { ko: '총 무게 (g) · Total (g)', en: 'Total (g)' }
+    }
+  },
+  time: {
+    button: { ko: '시간 · Time', en: 'Time' },
+    title: {
+      ko: '보압 · 냉각 · 사이클 시간 트렌드',
+      en: 'Hold, cool, cycle times'
+    },
+    series: {
+      hold: { ko: '보압 시간 (s) · Hold (s)', en: 'Hold (s)' },
+      cool: { ko: '냉각 (s) · Cool (s)', en: 'Cool (s)' }
+    }
+  }
+};
+
+function processChartText(group, key, lang = LANG) {
+  return PROCESS_CHART_COPY[group]?.[key]?.[lang] ?? PROCESS_CHART_COPY[group]?.[key]?.ko ?? '';
+}
+
+function processChartSeries(group, key, lang = LANG) {
+  return PROCESS_CHART_COPY[group]?.series?.[key]?.[lang] ?? PROCESS_CHART_COPY[group]?.series?.[key]?.ko ?? '';
+}
+
+function applyProcessChartToggleCopy() {
+  const targets = {
+    temp: 'chartBtnTemp',
+    pressure: 'chartBtnPressure',
+    weight: 'chartBtnWeight',
+    time: 'chartBtnTime'
+  };
+  Object.entries(targets).forEach(([group, id]) => {
+    const btn = $(id);
+    if (!btn) return;
+    btn.textContent = processChartText(group, 'button');
+    btn.title = processChartText(group, 'title');
+    btn.setAttribute('aria-label', btn.title);
+  });
+}
 
 function initChart() {
   const ctx = document.getElementById('processChart');
@@ -3454,14 +3526,14 @@ function updateCharts() {
     case 'temp':
       datasets = [
         {
-          label: LANG === 'ko' ? '실린더 온도 (°C)' : 'Barrel temp (°C)',
+          label: processChartSeries('temp', 'barrel'),
           data: data.map(e => e.cylinderTemp),
           borderColor: '#ef4444',
           backgroundColor: 'rgba(239, 68, 68, 0.1)',
           tension: 0.3
         },
         {
-          label: LANG === 'ko' ? '금형 온도 (°C)' : 'Mold temp (°C)',
+          label: processChartSeries('temp', 'mold'),
           data: data.map(e => e.moldTemp),
           borderColor: '#3b82f6',
           backgroundColor: 'rgba(59, 130, 246, 0.1)',
@@ -3473,14 +3545,14 @@ function updateCharts() {
     case 'pressure':
       datasets = [
         {
-          label: LANG === 'ko' ? '사출압력 (bar)' : 'Injection pressure (bar)',
+          label: processChartSeries('pressure', 'injection'),
           data: data.map(e => e.injectionPressure),
           borderColor: '#8b5cf6',
           backgroundColor: 'rgba(139, 92, 246, 0.1)',
           tension: 0.3
         },
         {
-          label: LANG === 'ko' ? '보압 (bar)' : 'Packing pressure (bar)',
+          label: processChartSeries('pressure', 'hold'),
           data: data.map(e => e.holdingPressure),
           borderColor: '#10b981',
           backgroundColor: 'rgba(16, 185, 129, 0.1)',
@@ -3492,21 +3564,21 @@ function updateCharts() {
     case 'weight':
       datasets = [
         {
-          label: LANG === 'ko' ? '제품 무게 (g)' : 'Part weight (g)',
+          label: processChartSeries('weight', 'part'),
           data: data.map(e => e.partWeight || 0),
           borderColor: '#f59e0b',
           backgroundColor: 'rgba(245, 158, 11, 0.1)',
           tension: 0.3
         },
         {
-          label: LANG === 'ko' ? '러너 무게 (g)' : 'Runner weight (g)',
+          label: processChartSeries('weight', 'runner'),
           data: data.map(e => e.runnerWeight || 0),
           borderColor: '#6366f1',
           backgroundColor: 'rgba(99, 102, 241, 0.1)',
           tension: 0.3
         },
         {
-          label: LANG === 'ko' ? '총 무게 (g)' : 'Total weight (g)',
+          label: processChartSeries('weight', 'total'),
           data: data.map(e => e.totalWeight || 0),
           borderColor: '#ec4899',
           backgroundColor: 'rgba(236, 72, 153, 0.1)',
@@ -3518,14 +3590,14 @@ function updateCharts() {
     case 'time':
       datasets = [
         {
-          label: LANG === 'ko' ? '보압시간 (s)' : 'Packing time (s)',
+          label: processChartSeries('time', 'hold'),
           data: data.map(e => e.holdingTime),
           borderColor: '#14b8a6',
           backgroundColor: 'rgba(20, 184, 166, 0.1)',
           tension: 0.3
         },
         {
-          label: LANG === 'ko' ? '냉각시간 (s)' : 'Cooling time (s)',
+          label: processChartSeries('time', 'cool'),
           data: data.map(e => e.coolingTime),
           borderColor: '#0ea5e9',
           backgroundColor: 'rgba(14, 165, 233, 0.1)',

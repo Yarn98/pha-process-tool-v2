@@ -1,6 +1,6 @@
 # PHA Process Optimizer & Convertor
 
-![Version](https://img.shields.io/badge/version-1.6.2-blue.svg)
+![Version](https://img.shields.io/badge/version-1.6.3-blue.svg)
 ![Status](https://img.shields.io/badge/status-production-green.svg)
 ![Design](https://img.shields.io/badge/design-TARS%20Biopolymer%20Studio-2C5D3F.svg)
 ![License](https://img.shields.io/badge/license-ISC-lightgrey.svg)
@@ -20,6 +20,8 @@
 디자인 시스템 룰 7가지 (paper-over-chrome, italics-as-accent, mono-for-data, no shadows/gradients, 2px radius, bilingual-ready)는 원본 SKILL.md 참조.
 
 ### Recent fixes (v1.6.x)
+
+- **v1.6.3** — Process-log trend toggles now render localized button copy and engineering tooltips (`온도 · Temperature`, `압력 · Pressure`, `무게 · Weight`, `시간 · Time`) instead of static Korean-only labels. Chart legends also switch to the refined Barrel / Mold / Injection / Hold / Cool vocabulary, and the service worker cache is bumped to `pha-cache-v9-chart-copy` while precaching the new `glossary.js` asset.
 
 - **v1.6.2** — All 11 Troubleshooting KB entries now carry bilingual JSON fields directly in `data/troubleshooting_kb.json`, including `symptom_ko`, `plain_ko`, `plain_en`, list-level `*_ko`, and operator-facing note copy. The troubleshooting tab can now render the full KB from the JSON contract alone, with `TS_KO` kept only as an emergency fallback path instead of the primary translation source.
 
