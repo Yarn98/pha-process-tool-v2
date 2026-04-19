@@ -1,6 +1,6 @@
 # PHA Process Optimizer & Convertor
 
-![Version](https://img.shields.io/badge/version-1.5.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.6.0-blue.svg)
 ![Status](https://img.shields.io/badge/status-production-green.svg)
 ![Design](https://img.shields.io/badge/design-TARS%20Biopolymer%20Studio-2C5D3F.svg)
 ![License](https://img.shields.io/badge/license-ISC-lightgrey.svg)
@@ -19,7 +19,9 @@
 
 디자인 시스템 룰 7가지 (paper-over-chrome, italics-as-accent, mono-for-data, no shadows/gradients, 2px radius, bilingual-ready)는 원본 SKILL.md 참조.
 
-### Recent fixes (v1.5.x)
+### Recent fixes (v1.6.x)
+
+- **v1.6.0** — Flash Tab 6 now includes a mobile-first batch-event sheet under the existing session banner. Operators can log `snapshot`, `addition`, `anomaly`, `scrap`, and `note` events into `currentBatchSession.events[]`, with the latest 5 events rendered as a live session timeline. Anomaly / scrap codes are sourced from the shared `anomaly-codes.js` catalog, anomaly events can link a photo reference from the existing `pha_photos` gallery, and non-note events capture an injection-floor `process_snapshot` plus the generic `state_snapshot` required by the shared `tars-batch-v1` validator. The service-worker cache key is bumped to `pha-cache-v8-batch-events`, and the static build copier now includes `anomaly-codes.js` so dist builds stay aligned with the root deployment.
 
 - **v1.5.0** — Flash Tab 6 now stores its active run context as a schema-validated `tars-batch-v1` session under `pha.batchSession.v1`. The banner shows session `status`, `operator`, and relative `started_at`, and new `Start batch` / `End batch` controls move the session between planning → running → finalized without changing existing process-log row fields. Legacy `pha.batchContext.v1` is still read once as a fallback migration source and is deliberately left in place for rollback safety. The 4HB `?composition=` URL handoff and manual JSON import now write through the session's `planned_composition`, and the service-worker cache key is bumped to `pha-cache-v7-batch-session` so deployed clients pick up the new inline migration code without wiping local data.
 

@@ -203,6 +203,44 @@
   .btn-clear-log:hover{background:#4b5563}
   .log-empty{text-align:center;padding:40px;color:#6b7280;font-style:italic}
   .log-timestamp{color:#6b7280;font-size:12px;font-style:italic}
+  .batch-event-sheet{position:sticky;bottom:12px;z-index:15;margin:20px 0;background:#fff;border:1px solid #d8d0be;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.08);overflow:hidden}
+  .batch-event-summary{display:flex;flex-direction:column;gap:4px;padding:14px 16px;cursor:pointer;background:linear-gradient(135deg,#ede7d8,#f5f1e8);list-style:none}
+  .batch-event-summary::-webkit-details-marker{display:none}
+  .batch-event-summary strong{color:#1a1814;font-size:14px}
+  .batch-event-summary span{font-size:12px;color:#6b7280}
+  .batch-event-body{padding:16px;background:#fff}
+  .batch-event-notice{margin-bottom:14px;padding:10px 12px;border-radius:8px;background:#faf7ee;color:#5b5447;font-size:13px;border:1px solid #d8d0be}
+  .batch-event-kind-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:14px}
+  .batch-event-kind-btn,.batch-event-action-btn,.batch-event-photo-btn{min-height:44px;padding:10px 12px;border-radius:8px;border:1px solid #b8af99;background:#fff;color:#1a1814;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:all .2s}
+  .batch-event-kind-btn.active{background:#2c5d3f;color:#f5f1e8;border-color:#2c5d3f}
+  .batch-event-kind-btn:disabled,.batch-event-action-btn:disabled,.batch-event-photo-btn:disabled{opacity:.45;cursor:not-allowed}
+  .batch-event-grid{display:grid;gap:12px}
+  .batch-event-block{background:#faf7ee;border:1px solid #e3dccb;border-radius:8px;padding:12px}
+  .batch-event-block h4{margin:0 0 8px;color:#1e3c72;font-size:14px}
+  .batch-event-field-grid{display:grid;gap:10px}
+  .batch-event-field-grid.two-col{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .batch-event-field label{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#757065;margin-bottom:4px;font-family:'JetBrains Mono',monospace}
+  .batch-event-field input,.batch-event-field select,.batch-event-field textarea{width:100%;padding:10px;border:1px solid #d8d0be;border-radius:6px;background:#fff;color:#1a1814;font-size:14px}
+  .batch-event-field textarea{min-height:84px;resize:vertical}
+  .batch-event-photo-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .batch-event-photo-status{font-size:12px;color:#6b7280}
+  .batch-event-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+  .batch-event-action-btn.primary{background:#2c5d3f;border-color:#2c5d3f;color:#f5f1e8}
+  .batch-event-action-btn.secondary{background:#fff}
+  .batch-event-recent{margin-top:14px;background:#fff;border:1px solid #d8d0be;border-radius:10px;padding:14px}
+  .batch-event-recent h4{margin:0 0 10px;color:#1e3c72}
+  .batch-event-recent-list{display:grid;gap:8px}
+  .batch-event-item{display:grid;grid-template-columns:auto 1fr;gap:10px;padding:10px 12px;border-radius:8px;background:#faf7ee;border:1px solid #ece5d6}
+  .batch-event-item-time{font-family:'JetBrains Mono',monospace;font-size:11px;color:#757065}
+  .batch-event-item-title{font-size:13px;font-weight:700;color:#1a1814}
+  .batch-event-item-meta{font-size:12px;color:#6b7280}
+  .batch-event-empty{padding:10px 12px;border-radius:8px;background:#faf7ee;color:#757065;font-size:13px;border:1px dashed #d8d0be}
+  .batch-event-section[hidden]{display:none !important}
+  @media (min-width: 768px){
+    .batch-event-sheet{position:static}
+    .batch-event-kind-row{grid-template-columns:repeat(5,minmax(0,1fr))}
+    .batch-event-grid{grid-template-columns:1.2fr .8fr}
+  }
   /* Search/Filter Styles */
   .filter-container{background:white;padding:15px;border-radius:8px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
   .filter-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
@@ -644,6 +682,156 @@ const FLASH_BATCH_CONTEXT_BANNER = {
     </div>
   `
 };
+const FLASH_EVENT_LOGGER_PANEL = {
+  ko: `
+    <details class="batch-event-sheet" id="batchEventSheet" open>
+      <summary class="batch-event-summary">
+        <strong>Log event · 이벤트 기록</strong>
+        <span>배치 세션 안에 snapshot · addition · anomaly · scrap · note를 남깁니다.</span>
+      </summary>
+      <div class="batch-event-body">
+        <div id="batchEventNotice" class="batch-event-notice">배치를 시작한 뒤 현장 이벤트를 저장하세요.</div>
+        <div class="batch-event-kind-row" role="group" aria-label="Event kind">
+          <button type="button" class="batch-event-kind-btn" data-event-kind="temp_reading">📸 Snapshot</button>
+          <button type="button" class="batch-event-kind-btn" data-event-kind="addition">➕ Addition</button>
+          <button type="button" class="batch-event-kind-btn" data-event-kind="anomaly">⚠️ Anomaly</button>
+          <button type="button" class="batch-event-kind-btn" data-event-kind="scrap">🗑 Scrap</button>
+          <button type="button" class="batch-event-kind-btn" data-event-kind="note">📝 Note</button>
+        </div>
+        <div class="batch-event-grid">
+          <div class="batch-event-block">
+            <h4>이벤트 입력</h4>
+            <div class="batch-event-field-grid">
+              <div class="batch-event-section" id="batchEventAdditionFields" hidden>
+                <div class="batch-event-field-grid two-col">
+                  <div class="batch-event-field"><label for="eventAdditionMaterial">추가 재료</label><input id="eventAdditionMaterial" type="text" placeholder="예: talc"></div>
+                  <div class="batch-event-field"><label for="eventAdditionQty">추가량 (g)</label><input id="eventAdditionQty" type="number" step="0.1" placeholder="50"></div>
+                </div>
+                <div class="batch-event-field"><label for="eventAdditionReason">추가 이유</label><input id="eventAdditionReason" type="text" placeholder="예: color_adjust"></div>
+              </div>
+              <div class="batch-event-section" id="batchEventAnomalyFields" hidden>
+                <div class="batch-event-field-grid two-col">
+                  <div class="batch-event-field"><label for="eventAnomalyCode">이상 코드</label><select id="eventAnomalyCode"></select></div>
+                  <div class="batch-event-field"><label for="eventAnomalySeverity">심각도</label><select id="eventAnomalySeverity"><option value="low">low</option><option value="medium" selected>medium</option><option value="high">high</option></select></div>
+                </div>
+                <div class="batch-event-field"><label for="eventAnomalyAction">즉시 조치</label><textarea id="eventAnomalyAction" placeholder="현장에서 바로 취한 조치"></textarea></div>
+                <div class="batch-event-photo-row">
+                  <button type="button" class="batch-event-photo-btn" id="batchEventPhotoBtn">📷 사진 촬영/선택</button>
+                  <button type="button" class="batch-event-photo-btn" id="batchEventUseLatestPhotoBtn">🖼 최근 갤러리 사진 사용</button>
+                  <span id="batchEventPhotoStatus" class="batch-event-photo-status">연결된 사진 없음</span>
+                  <input id="eventPhotoInput" type="file" accept="image/*" capture="environment" hidden>
+                </div>
+              </div>
+              <div class="batch-event-section" id="batchEventScrapFields" hidden>
+                <div class="batch-event-field-grid two-col">
+                  <div class="batch-event-field"><label for="eventScrapCount">폐기 수량 (ea)</label><input id="eventScrapCount" type="number" step="1" placeholder="4"></div>
+                  <div class="batch-event-field"><label for="eventScrapMass">폐기 질량 (g)</label><input id="eventScrapMass" type="number" step="0.1" placeholder="120"></div>
+                </div>
+                <div class="batch-event-field"><label for="eventScrapReason">폐기 사유</label><select id="eventScrapReason"></select></div>
+              </div>
+              <div class="batch-event-field"><label for="eventCommonNote">현장 메모</label><textarea id="eventCommonNote" placeholder="관찰 내용 · 불량 형태 · 추가 메모"></textarea></div>
+            </div>
+          </div>
+          <div class="batch-event-block batch-event-section" id="batchEventSnapshotBlock">
+            <h4>현재 조건 snapshot</h4>
+            <div class="batch-event-field-grid two-col">
+              <div class="batch-event-field"><label for="eventStateCylinder">실린더 온도 (°C)</label><input id="eventStateCylinder" type="number" step="0.1"></div>
+              <div class="batch-event-field"><label for="eventStateMold">금형 온도 (°C)</label><input id="eventStateMold" type="number" step="0.1"></div>
+              <div class="batch-event-field"><label for="eventStateSpeed">사출 속도 (mm/s)</label><input id="eventStateSpeed" type="number" step="0.1"></div>
+              <div class="batch-event-field"><label for="eventStatePressure">사출압력 (bar)</label><input id="eventStatePressure" type="number" step="0.1"></div>
+              <div class="batch-event-field"><label for="eventStatePacking">보압 (bar)</label><input id="eventStatePacking" type="number" step="0.1"></div>
+              <div class="batch-event-field"><label for="eventStateCooling">냉각 시간 (s)</label><input id="eventStateCooling" type="number" step="0.1"></div>
+            </div>
+          </div>
+        </div>
+        <div class="batch-event-actions">
+          <button type="button" class="batch-event-action-btn primary" id="batchEventSaveBtn">Add event · 추가</button>
+          <button type="button" class="batch-event-action-btn secondary" id="batchEventCancelBtn">Cancel · 취소</button>
+        </div>
+      </div>
+    </details>
+    <div class="batch-event-recent">
+      <h4>최근 배치 이벤트 (최신 5개)</h4>
+      <div id="batchEventRecentList" class="batch-event-recent-list">
+        <div class="batch-event-empty">아직 저장된 이벤트가 없습니다.</div>
+      </div>
+    </div>
+  `,
+  en: `
+    <details class="batch-event-sheet" id="batchEventSheet" open>
+      <summary class="batch-event-summary">
+        <strong>Log event · Event recorder</strong>
+        <span>Store snapshot, addition, anomaly, scrap, and note events inside the active batch session.</span>
+      </summary>
+      <div class="batch-event-body">
+        <div id="batchEventNotice" class="batch-event-notice">Start the batch first, then save field events as they happen.</div>
+        <div class="batch-event-kind-row" role="group" aria-label="Event kind">
+          <button type="button" class="batch-event-kind-btn" data-event-kind="temp_reading">📸 Snapshot</button>
+          <button type="button" class="batch-event-kind-btn" data-event-kind="addition">➕ Addition</button>
+          <button type="button" class="batch-event-kind-btn" data-event-kind="anomaly">⚠️ Anomaly</button>
+          <button type="button" class="batch-event-kind-btn" data-event-kind="scrap">🗑 Scrap</button>
+          <button type="button" class="batch-event-kind-btn" data-event-kind="note">📝 Note</button>
+        </div>
+        <div class="batch-event-grid">
+          <div class="batch-event-block">
+            <h4>Event payload</h4>
+            <div class="batch-event-field-grid">
+              <div class="batch-event-section" id="batchEventAdditionFields" hidden>
+                <div class="batch-event-field-grid two-col">
+                  <div class="batch-event-field"><label for="eventAdditionMaterial">Material added</label><input id="eventAdditionMaterial" type="text" placeholder="e.g. talc"></div>
+                  <div class="batch-event-field"><label for="eventAdditionQty">Qty (g)</label><input id="eventAdditionQty" type="number" step="0.1" placeholder="50"></div>
+                </div>
+                <div class="batch-event-field"><label for="eventAdditionReason">Reason</label><input id="eventAdditionReason" type="text" placeholder="e.g. color_adjust"></div>
+              </div>
+              <div class="batch-event-section" id="batchEventAnomalyFields" hidden>
+                <div class="batch-event-field-grid two-col">
+                  <div class="batch-event-field"><label for="eventAnomalyCode">Anomaly code</label><select id="eventAnomalyCode"></select></div>
+                  <div class="batch-event-field"><label for="eventAnomalySeverity">Severity</label><select id="eventAnomalySeverity"><option value="low">low</option><option value="medium" selected>medium</option><option value="high">high</option></select></div>
+                </div>
+                <div class="batch-event-field"><label for="eventAnomalyAction">Immediate action</label><textarea id="eventAnomalyAction" placeholder="What was done on the floor right away"></textarea></div>
+                <div class="batch-event-photo-row">
+                  <button type="button" class="batch-event-photo-btn" id="batchEventPhotoBtn">📷 Capture / choose photo</button>
+                  <button type="button" class="batch-event-photo-btn" id="batchEventUseLatestPhotoBtn">🖼 Use latest gallery photo</button>
+                  <span id="batchEventPhotoStatus" class="batch-event-photo-status">No photo linked yet.</span>
+                  <input id="eventPhotoInput" type="file" accept="image/*" capture="environment" hidden>
+                </div>
+              </div>
+              <div class="batch-event-section" id="batchEventScrapFields" hidden>
+                <div class="batch-event-field-grid two-col">
+                  <div class="batch-event-field"><label for="eventScrapCount">Rejected count (ea)</label><input id="eventScrapCount" type="number" step="1" placeholder="4"></div>
+                  <div class="batch-event-field"><label for="eventScrapMass">Rejected mass (g)</label><input id="eventScrapMass" type="number" step="0.1" placeholder="120"></div>
+                </div>
+                <div class="batch-event-field"><label for="eventScrapReason">Reason code</label><select id="eventScrapReason"></select></div>
+              </div>
+              <div class="batch-event-field"><label for="eventCommonNote">Floor note</label><textarea id="eventCommonNote" placeholder="Observation, defect pattern, or freeform note"></textarea></div>
+            </div>
+          </div>
+          <div class="batch-event-block batch-event-section" id="batchEventSnapshotBlock">
+            <h4>Current-state snapshot</h4>
+            <div class="batch-event-field-grid two-col">
+              <div class="batch-event-field"><label for="eventStateCylinder">Barrel temp (°C)</label><input id="eventStateCylinder" type="number" step="0.1"></div>
+              <div class="batch-event-field"><label for="eventStateMold">Mold temp (°C)</label><input id="eventStateMold" type="number" step="0.1"></div>
+              <div class="batch-event-field"><label for="eventStateSpeed">Injection speed (mm/s)</label><input id="eventStateSpeed" type="number" step="0.1"></div>
+              <div class="batch-event-field"><label for="eventStatePressure">Injection pressure (bar)</label><input id="eventStatePressure" type="number" step="0.1"></div>
+              <div class="batch-event-field"><label for="eventStatePacking">Packing pressure (bar)</label><input id="eventStatePacking" type="number" step="0.1"></div>
+              <div class="batch-event-field"><label for="eventStateCooling">Cooling time (s)</label><input id="eventStateCooling" type="number" step="0.1"></div>
+            </div>
+          </div>
+        </div>
+        <div class="batch-event-actions">
+          <button type="button" class="batch-event-action-btn primary" id="batchEventSaveBtn">Add event</button>
+          <button type="button" class="batch-event-action-btn secondary" id="batchEventCancelBtn">Cancel</button>
+        </div>
+      </div>
+    </details>
+    <div class="batch-event-recent">
+      <h4>Recent batch events (latest 5)</h4>
+      <div id="batchEventRecentList" class="batch-event-recent-list">
+        <div class="batch-event-empty">No batch events have been saved yet.</div>
+      </div>
+    </div>
+  `
+};
 const FLASH_TAB_HTML = {
   ko: {
     t0: `
@@ -990,6 +1178,7 @@ const FLASH_TAB_HTML = {
         <p>각 파라미터는 <strong>숫자 직접 입력</strong> 또는 <strong>+/- 버튼</strong>으로 조정. 입력값은 <strong>자동 저장</strong>.</p>
       </div>
       ${FLASH_BATCH_CONTEXT_BANNER.ko}
+      ${FLASH_EVENT_LOGGER_PANEL.ko}
       <div class="filter-container">
         <h4 style="color:#1e3c72;margin-bottom:10px">🔍 검색 · 필터</h4>
         <div class="filter-row">
@@ -1423,6 +1612,7 @@ const FLASH_TAB_HTML = {
       <h3 style="color:#1e3c72;margin-bottom:20px">Field Process Log (batch-scoped, templated, photo-attached, charted)</h3>
       <div class="success-box"><h3>📋 On-the-floor condition logging</h3><p><strong>Log conditions and observations in real time</strong> to drive troubleshooting and optimization.</p><p>Type values directly or tap <strong>+/- buttons</strong>. Every change is <strong>auto-saved</strong>.</p></div>
       ${FLASH_BATCH_CONTEXT_BANNER.en}
+      ${FLASH_EVENT_LOGGER_PANEL.en}
       <div class="filter-container"><h4 style="color:#1e3c72;margin-bottom:10px">🔍 Search &amp; filter</h4><div class="filter-row"><input type="text" id="filterKeyword" class="filter-input" placeholder="Keyword search in notes..." onkeyup="filterProcessLog()"><input type="date" id="filterDateFrom" class="filter-input" style="max-width:180px" onchange="filterProcessLog()"><span style="white-space:nowrap">~</span><input type="date" id="filterDateTo" class="filter-input" style="max-width:180px" onchange="filterProcessLog()"><button class="btn-filter" onclick="clearFilter()">Clear filters</button></div></div>
       <div class="template-container"><h4 style="color:#1e3c72;margin-bottom:5px">📋 Template management (save frequent setups)</h4><p style="font-size:13px;color:#6b7280;margin-bottom:10px">Save a frequently-used configuration as a template to recall it fast next time.</p><div class="template-buttons"><button class="btn-template" onclick="saveTemplate()">💾 Save current as template</button><button class="btn-template load" onclick="loadTemplate()">📥 Load template</button><button class="btn-template delete" onclick="manageTemplates()">🗑️ Manage templates</button></div></div>
       <div class="calc-recommendation"><h4>⚖️ Weight &amp; shot-size calculator</h4><p style="font-size:14px;margin-bottom:15px">Enter part and runner weights — shot size and flash-reduction recommendations fill in automatically.</p><div class="weight-calc-grid"><div class="weight-input-box"><label>Part weight (g)</label><input type="number" id="partWeight" step="0.01" placeholder="0.00" onchange="calculateShotWeight()"></div><div class="weight-input-box"><label>Runner weight (g)</label><input type="number" id="runnerWeight" step="0.01" placeholder="0.00" onchange="calculateShotWeight()"></div><div class="weight-input-box"><label>Cavity count</label><input type="number" id="cavityCount" value="36" step="1" onchange="calculateShotWeight()"></div><div class="weight-input-box"><label>Material density (g/cm³)</label><input type="number" id="materialDensity" value="1.25" step="0.01" placeholder="1.25" onchange="calculateShotWeight()"><button class="btn-filter" style="margin-top:8px;width:100%;padding:6px" onclick="loadDensityFromGrade()">Lookup by grade</button></div></div><div id="shotWeightResult" style="display:none;margin-top:15px"><div class="density-display">Total shot: <span id="totalShotWeight">0.00</span> g (<span id="shotVolume">0.00</span> cm³)</div><button class="btn-log-action btn-add-log" style="width:100%;margin-top:10px" onclick="applyWeightToLog()">⬇️ Apply to latest log</button></div></div>
@@ -1885,6 +2075,8 @@ function renderFlashContent(){
   if (typeof loadProcessLog === 'function') loadProcessLog();
   if ((snapshot.filters.keyword || snapshot.filters.from || snapshot.filters.to) && typeof filterProcessLog === 'function') filterProcessLog();
   else if (typeof renderProcessLog === 'function') renderProcessLog();
+  if (typeof window.bindBatchEventControls === 'function') window.bindBatchEventControls();
+  if (typeof window.renderBatchEventPanel === 'function') window.renderBatchEventPanel();
   if (typeof initChecklist === 'function') initChecklist();
   if (typeof calculateShotWeight === 'function' && (snapshot.weights.part || snapshot.weights.runner)) calculateShotWeight();
   if (typeof currentChartType !== 'undefined') currentChartType = snapshot.chartType;
@@ -2382,6 +2574,7 @@ function renderBatchContextBanner() {
       ? '<span style="color:#757065;">아직 시작된 배치 세션이 없습니다. 필요하면 조성을 먼저 불러온 뒤 배치를 시작하세요.</span>'
       : '<span style="color:#757065;">No batch session has been started yet. Load a composition first if you want to stage it before the run.</span>';
     if (typeof window.bindBatchSessionControls === 'function') window.bindBatchSessionControls();
+    if (typeof window.renderBatchEventPanel === 'function') window.renderBatchEventPanel();
     return;
   }
 
@@ -2412,6 +2605,7 @@ function renderBatchContextBanner() {
   }
   banner.innerHTML = parts.join(' &nbsp;·&nbsp; ');
   if (typeof window.bindBatchSessionControls === 'function') window.bindBatchSessionControls();
+  if (typeof window.renderBatchEventPanel === 'function') window.renderBatchEventPanel();
 }
 
 function loadBatchContext() {
