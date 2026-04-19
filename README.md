@@ -1,6 +1,6 @@
 # PHA Process Optimizer & Convertor
 
-![Version](https://img.shields.io/badge/version-1.6.3-blue.svg)
+![Version](https://img.shields.io/badge/version-1.6.4-blue.svg)
 ![Status](https://img.shields.io/badge/status-production-green.svg)
 ![Design](https://img.shields.io/badge/design-TARS%20Biopolymer%20Studio-2C5D3F.svg)
 ![License](https://img.shields.io/badge/license-ISC-lightgrey.svg)
@@ -20,6 +20,8 @@
 디자인 시스템 룰 7가지 (paper-over-chrome, italics-as-accent, mono-for-data, no shadows/gradients, 2px radius, bilingual-ready)는 원본 SKILL.md 참조.
 
 ### Recent fixes (v1.6.x)
+
+- **v1.6.4** — Flash Tab 6 now explains the weight / shot-size calculator and the flash-reduction engine in the same plain-language style as the troubleshooting KB. The weight block spells out its two outputs, the grade-density button carries explicit Materials-DB tooltip copy, the clamp-tonnage calculator shows its formula note, and the recommendation engine now evaluates all 5 parameters every time with red / yellow / green cards instead of only emitting alerts when a single threshold is crossed.
 
 - **v1.6.3** — Process-log trend toggles now render localized button copy and engineering tooltips (`온도 · Temperature`, `압력 · Pressure`, `무게 · Weight`, `시간 · Time`) instead of static Korean-only labels. Chart legends also switch to the refined Barrel / Mold / Injection / Hold / Cool vocabulary, and the service worker cache is bumped to `pha-cache-v9-chart-copy` while precaching the new `glossary.js` asset.
 
@@ -301,7 +303,7 @@ PHB:     1.26 g/cm³
 **사용 방법:**
 1. 제품 1개를 저울로 측정하여 무게 입력
 2. 러너를 저울로 측정하여 무게 입력
-3. "Grade에서 불러오기" 버튼으로 밀도 자동 입력
+3. "선택한 Grade의 밀도 불러오기" 버튼으로 밀도 자동 입력
 4. 총 샷 계량 및 용적 자동 계산
 5. "⬇️ 최신 로그에 무게 적용" 버튼으로 로그에 자동 입력
 
@@ -312,51 +314,59 @@ PHB:     1.26 g/cm³
 
 #### 💡 플래시 저감 공정 조건 추천 엔진
 
-**현재 공정 조건을 실시간 분석하여 플래시 저감 방안 자동 제시:**
+**최신 로그 1건을 기준으로 플래시 저감 방향을 자동 제시:**
+
+- 단일 로그 기준 결과이므로 **3-5샷 평균으로 교차 확인** 후 조건을 확정
+- 5개 핵심 파라미터를 모두 **red / yellow / green 3단 상태**로 표시
 
 **분석 파라미터 (5가지):**
 
 1. **사출압력 (Injection Pressure)**
-   - 기준값: 900 bar
-   - 초과 시: ⚠️ 경고 + 감소 추천 (-50 bar)
+   - 권장 상한: 900 bar
+   - yellow: 상한 부근 접근 / red: 상한의 약 20% 이상 초과
+   - 조치: 약 -50 bar 기준으로 감압 검토
    - 근거: 과도한 압력 → 파팅라인 벌어짐 → 플래시 발생
 
 2. **실린더 온도 (Cylinder Temperature)**
-   - 기준값: 185°C
-   - 초과 시: ⚠️ 주의 + 감소 추천 (-5°C)
+   - 권장 상한: 185 °C
+   - yellow: 상한 접근 / red: 상한 크게 초과
+   - 조치: 약 -5 °C 기준으로 감온 검토
    - 근거: 고온 → 점도 감소 → 미세 틈새 침투 증가
 
 3. **사출속도 (Injection Speed)**
-   - 기준값: 180 mm/s
-   - 초과 시: ⚠️ 주의 + 감소 추천 (-20 mm/s)
+   - 권장 상한: 180 mm/s
+   - yellow: 상한 접근 / red: 상한 크게 초과
+   - 조치: 약 -20 mm/s 기준으로 감속 검토
    - 근거: 고속 → 압력 스파이크 → 플래시 위험 증가
 
 4. **보압 (Holding Pressure)**
-   - 기준값: 700 bar
-   - 초과 시: ⚠️ 주의 + 감소 추천 (-50 bar)
+   - 권장 상한: 700 bar
+   - yellow: 상한 접근 / red: 상한 크게 초과
+   - 조치: 약 -50 bar 기준으로 감압 검토
    - 근거: 과도한 보압 → 지속적 압력 → 플래시 악화
 
 5. **냉각시간 (Cooling Time)**
-   - 기준값: 12초
-   - 미달 시: 💡 제안 + 증가 추천 (+2초)
+   - 권장 하한: 12 s
+   - yellow: 하한 접근 / red: 하한 미달
+   - 조치: 약 +2 s 기준으로 연장 검토
    - 근거: 불충분한 냉각 → 취출 시 변형 → 치수 불안정
 
 **추천 표시 방식:**
 
-각 문제 항목은 **3가지 심각도**로 구분:
-- 🔴 **warning** (빨간색): 즉시 조치 필요 (사출압력 과다)
-- 🟡 **caution** (노란색): 주의 및 개선 권장 (온도/속도/보압 과다)
-- 🟢 **suggestion** (녹색): 품질 향상 제안 (냉각시간 증가)
+각 파라미터는 **3가지 심각도**로 구분:
+- 🔴 **warning** (빨간색): 즉시 조치 필요
+- 🟡 **caution** (노란색): 상한/하한 접근, 개선 권장
+- 🟢 **normal** (녹색): 현재 창(window) 유지 가능
 
 **추천 형식:**
 ```
-🔴 사출압력 과다
-현재 사출압력이 950 bar로 높습니다.
-💡 사출압력을 900 bar로 감소시키세요. (약 -50 bar)
+🔴 사출압 높음
+현재 사출압 950 bar — 권장 상한 900 bar를 크게 초과.
+💡 즉시 900 bar 수준으로 낮추고 3-5샷 평균으로 재확인하세요.
 
-🟡 실린더 온도 과다
-현재 실린더 온도가 190°C로 높습니다.
-💡 실린더 온도를 185°C로 감소시키세요. (약 -5°C, 점도 증가로 플래시 감소)
+🟡 실린더 온도 상단 접근
+현재 실린더 온도 188 °C — 권장 상한 185 °C 부근.
+💡 약 183 °C까지 낮출 여유가 있는지 확인하세요.
 ```
 
 **자동 트리거:**
@@ -366,9 +376,9 @@ PHB:     1.26 g/cm³
 
 **특징:**
 - **실시간 분석**: 로그 수정 즉시 추천 업데이트
-- **근거 기반 추천**: 각 추천마다 기술적 근거 제시
-- **구체적 수치 제시**: "약간 낮추세요"가 아닌 "-50 bar" 등 구체적 수치
-- **우선순위 표시**: 심각도에 따른 색상 구분
+- **근거 기반 추천**: 각 카드에 왜 조정해야 하는지 1문장 근거 포함
+- **구체적 수치 제시**: "-50 bar", "-5 °C", "+2 s" 같은 기준값 제시
+- **전수 평가**: 5개 파라미터를 매번 모두 평가해 green 상태도 함께 표시
 
 #### 로그 데이터 관리
 

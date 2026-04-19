@@ -1002,6 +1002,7 @@ const FLASH_TAB_HTML = {
         <h3 style="color:#1e3c72;margin-bottom:20px">1. 클램프 톤수 계산기 (Clamp Tonnage)</h3>
         <div class="calc-input-group"><label>캐비티 평균 압력 P_avg (bar) — 충전 중 캐비티 내부 평균 압력</label><input type="number" id="flash-p-avg" placeholder="예: 500" value="500"></div>
         <div class="calc-input-group"><label>제품 투영 면적 A_proj (cm²) — 36 캐비티 합산</label><input type="number" id="flash-a-proj" placeholder="예: 2000" value="2000"></div>
+        <p style="font-size:13px;color:#6b7280;margin:8px 0 14px">※ 톤수 = 투영 면적 × 평균 사출압 × 안전 계수. 첫 추정치는 산식 기준 + 20 % 여유이며, 실제 보압까지 고려해 최종 확정하세요.</p>
         <button class="calc-button" onclick="calculateFlashClampTonnage()">계산하기</button>
         <button class="calc-button" onclick="clearFlashInputs('clamp')">초기화</button>
         <div class="calc-result" id="flash-clamp-result" style="display:none;"><h4>계산 결과</h4><div class="calc-result-value" id="flash-clamp-value"></div><p id="flash-clamp-recommendation"></p></div>
@@ -1201,13 +1202,14 @@ const FLASH_TAB_HTML = {
       </div>
       <div class="calc-recommendation">
         <h4>⚖️ 무게 측정 · 샷 계량 계산기</h4>
-        <p style="font-size:14px;margin-bottom:15px">제품·러너 무게를 입력하면 <strong>샷 계량</strong> + <strong>플래시 저감 조건 추천</strong>이 자동으로 나옵니다.</p>
+        <p style="font-size:14px;margin-bottom:15px">제품 · 러너 무게를 입력하면 ① <strong>샷 계량</strong> ② <strong>플래시 저감 조건 추천</strong>이 자동으로 계산됩니다.</p>
         <div class="weight-calc-grid">
           <div class="weight-input-box"><label>제품 1개 무게 (g)</label><input type="number" id="partWeight" step="0.01" placeholder="0.00" onchange="calculateShotWeight()"></div>
           <div class="weight-input-box"><label>러너 무게 (g)</label><input type="number" id="runnerWeight" step="0.01" placeholder="0.00" onchange="calculateShotWeight()"></div>
           <div class="weight-input-box"><label>캐비티 수</label><input type="number" id="cavityCount" value="36" step="1" onchange="calculateShotWeight()"></div>
-          <div class="weight-input-box"><label>재료 밀도 (g/cm³)</label><input type="number" id="materialDensity" value="1.25" step="0.01" placeholder="1.25" onchange="calculateShotWeight()"><button class="btn-filter" style="margin-top:8px;width:100%;padding:6px" onclick="loadDensityFromGrade()">Grade에서 자동 조회</button></div>
+          <div class="weight-input-box"><label>재료 밀도 (g/cm³)</label><input type="number" id="materialDensity" value="1.25" step="0.01" placeholder="1.25" onchange="calculateShotWeight()"><button class="btn-filter" style="margin-top:8px;width:100%;padding:6px" onclick="loadDensityFromGrade()" title="물성 DB 탭에 등록된 해당 그레이드의 밀도가 자동으로 입력됩니다.">선택한 Grade의 밀도 불러오기</button></div>
         </div>
+        <p style="font-size:13px;color:#6b7280;margin:10px 0 0">※ 총 샷 계량 = 제품 1개 무게 × 캐비티 수 + 러너 무게. 밀도를 입력하면 샷 용적까지 함께 계산됩니다.</p>
         <div id="shotWeightResult" style="display:none;margin-top:15px">
           <div class="density-display">총 샷 계량: <span id="totalShotWeight">0.00</span> g (<span id="shotVolume">0.00</span> cm³)</div>
           <button class="btn-log-action btn-add-log" style="width:100%;margin-top:10px" onclick="applyWeightToLog()">⬇️ 최신 로그에 이 값 적용</button>
@@ -1215,8 +1217,8 @@ const FLASH_TAB_HTML = {
       </div>
       <div id="flashRecommendations" style="display:none">
         <div class="calc-recommendation">
-          <h4>💡 플래시 저감 조건 추천 (자동 분석)</h4>
-          <p style="font-size:14px;margin-bottom:15px">최신 로그의 공정 조건을 자동 분석해 플래시를 줄일 방안을 제안합니다.</p>
+          <h4>💡 플래시 저감 조건 — 자동 분석</h4>
+          <p style="font-size:14px;margin-bottom:15px">최신 로그 1건의 공정 조건을 기준으로 플래시를 줄일 방향을 제안합니다. 추천치는 단일 로그 기준이므로 3-5샷 평균을 별도 확인하세요.</p>
           <div id="recommendationContent"></div>
         </div>
       </div>
@@ -1538,7 +1540,7 @@ const FLASH_TAB_HTML = {
     `,
     t2: `
       <h3 style="color:#1e3c72;margin-bottom:20px">Setup Calculators (4 — enter inputs, recommended values appear)</h3>
-      <div class="calculator"><h3 style="color:#1e3c72;margin-bottom:20px">1. Clamp Tonnage Calculator</h3><div class="calc-input-group"><label>Cavity average pressure P_avg (bar)</label><input type="number" id="flash-p-avg" placeholder="e.g. 500" value="500"></div><div class="calc-input-group"><label>Projected area A_proj (cm²) — sum across 36 cavities</label><input type="number" id="flash-a-proj" placeholder="e.g. 2000" value="2000"></div><button class="calc-button" onclick="calculateFlashClampTonnage()">Calculate</button><button class="calc-button" onclick="clearFlashInputs('clamp')">Reset</button><div class="calc-result" id="flash-clamp-result" style="display:none;"><h4>Result</h4><div class="calc-result-value" id="flash-clamp-value"></div><p id="flash-clamp-recommendation"></p></div></div>
+      <div class="calculator"><h3 style="color:#1e3c72;margin-bottom:20px">1. Clamp Tonnage Calculator</h3><div class="calc-input-group"><label>Cavity average pressure P_avg (bar)</label><input type="number" id="flash-p-avg" placeholder="e.g. 500" value="500"></div><div class="calc-input-group"><label>Projected area A_proj (cm²) — sum across 36 cavities</label><input type="number" id="flash-a-proj" placeholder="e.g. 2000" value="2000"></div><p style="font-size:13px;color:#6b7280;margin:8px 0 14px">※ Tonnage = projected area × average injection pressure × safety factor. This first estimate is formula-based with a +20 % margin — verify under actual hold pressure before committing.</p><button class="calc-button" onclick="calculateFlashClampTonnage()">Calculate</button><button class="calc-button" onclick="clearFlashInputs('clamp')">Reset</button><div class="calc-result" id="flash-clamp-result" style="display:none;"><h4>Result</h4><div class="calc-result-value" id="flash-clamp-value"></div><p id="flash-clamp-recommendation"></p></div></div>
       <div class="calculator"><h3 style="color:#1e3c72;margin-bottom:20px">2. V0 Pressure Limit Calculator (Runner Protection Cap)</h3><div class="calc-input-group"><label>Clamp limit (ton-force) — machine nameplate</label><input type="number" id="flash-f-clamp" placeholder="e.g. 1200" value="1200"></div><div class="calc-input-group"><label>Projected area A_proj (cm²)</label><input type="number" id="flash-a-proj-2" placeholder="e.g. 2000" value="2000"></div><div class="calc-input-group"><label>Safety factor (recommended 0.8 — 20% clamp margin)</label><input type="number" id="flash-safety-factor" placeholder="0.8" value="0.8" step="0.05"></div><button class="calc-button" onclick="calculateFlashPressureLimit()">Calculate</button><button class="calc-button" onclick="clearFlashInputs('pressure')">Reset</button><div class="calc-result" id="flash-pressure-result" style="display:none;"><h4>V0 pressure limit — recommended value</h4><div class="calc-result-value" id="flash-pressure-value"></div><p id="flash-pressure-recommendation"></p></div></div>
       <div class="calculator"><h3 style="color:#1e3c72;margin-bottom:20px">3. Runner Shear Rate Calculator</h3><div class="calc-input-group"><label>Volumetric flow rate Q (cm³/s)</label><input type="number" id="flash-flow-rate" placeholder="e.g. 50" value="50"></div><div class="calc-input-group"><label>Runner radius R (cm) — assumes cylindrical runner</label><input type="number" id="flash-runner-radius" placeholder="e.g. 0.4" value="0.4" step="0.1"></div><button class="calc-button" onclick="calculateFlashShearRate()">Calculate</button><button class="calc-button" onclick="clearFlashInputs('shear')">Reset</button><div class="calc-result" id="flash-shear-result" style="display:none;"><h4>Runner wall shear rate (γ̇ at wall)</h4><div class="calc-result-value" id="flash-shear-value"></div><p id="flash-shear-recommendation"></p></div></div>
       <div class="calculator"><h3 style="color:#1e3c72;margin-bottom:20px">4. Packing Pressure Calculator (P1 / P2 split)</h3><div class="calc-input-group"><label>Peak injection pressure P_inj_peak (bar) — observed peak on this shot</label><input type="number" id="flash-p-inj-peak" placeholder="e.g. 1500" value="1500"></div><button class="calc-button" onclick="calculateFlashPackingPressure()">Calculate</button><button class="calc-button" onclick="clearFlashInputs('packing')">Reset</button><div class="calc-result" id="flash-packing-result" style="display:none;"><h4>Recommended packing setup — P1 and P2 split</h4><div class="calc-result-value" id="flash-packing-value"></div><p id="flash-packing-recommendation"></p></div></div>
@@ -1616,8 +1618,8 @@ const FLASH_TAB_HTML = {
       ${FLASH_EVENT_LOGGER_PANEL.en}
       <div class="filter-container"><h4 style="color:#1e3c72;margin-bottom:10px">🔍 Search &amp; filter</h4><div class="filter-row"><input type="text" id="filterKeyword" class="filter-input" placeholder="Keyword search in notes..." onkeyup="filterProcessLog()"><input type="date" id="filterDateFrom" class="filter-input" style="max-width:180px" onchange="filterProcessLog()"><span style="white-space:nowrap">~</span><input type="date" id="filterDateTo" class="filter-input" style="max-width:180px" onchange="filterProcessLog()"><button class="btn-filter" onclick="clearFilter()">Clear filters</button></div></div>
       <div class="template-container"><h4 style="color:#1e3c72;margin-bottom:5px">📋 Template management (save frequent setups)</h4><p style="font-size:13px;color:#6b7280;margin-bottom:10px">Save a frequently-used configuration as a template to recall it fast next time.</p><div class="template-buttons"><button class="btn-template" onclick="saveTemplate()">💾 Save current as template</button><button class="btn-template load" onclick="loadTemplate()">📥 Load template</button><button class="btn-template delete" onclick="manageTemplates()">🗑️ Manage templates</button></div></div>
-      <div class="calc-recommendation"><h4>⚖️ Weight &amp; shot-size calculator</h4><p style="font-size:14px;margin-bottom:15px">Enter part and runner weights — shot size and flash-reduction recommendations fill in automatically.</p><div class="weight-calc-grid"><div class="weight-input-box"><label>Part weight (g)</label><input type="number" id="partWeight" step="0.01" placeholder="0.00" onchange="calculateShotWeight()"></div><div class="weight-input-box"><label>Runner weight (g)</label><input type="number" id="runnerWeight" step="0.01" placeholder="0.00" onchange="calculateShotWeight()"></div><div class="weight-input-box"><label>Cavity count</label><input type="number" id="cavityCount" value="36" step="1" onchange="calculateShotWeight()"></div><div class="weight-input-box"><label>Material density (g/cm³)</label><input type="number" id="materialDensity" value="1.25" step="0.01" placeholder="1.25" onchange="calculateShotWeight()"><button class="btn-filter" style="margin-top:8px;width:100%;padding:6px" onclick="loadDensityFromGrade()">Lookup by grade</button></div></div><div id="shotWeightResult" style="display:none;margin-top:15px"><div class="density-display">Total shot: <span id="totalShotWeight">0.00</span> g (<span id="shotVolume">0.00</span> cm³)</div><button class="btn-log-action btn-add-log" style="width:100%;margin-top:10px" onclick="applyWeightToLog()">⬇️ Apply to latest log</button></div></div>
-      <div id="flashRecommendations" style="display:none"><div class="calc-recommendation"><h4>💡 Flash-reduction recommendations (auto-analyzed)</h4><p style="font-size:14px;margin-bottom:15px">We analyze your latest log row and suggest changes to reduce flash.</p><div id="recommendationContent"></div></div></div>
+      <div class="calc-recommendation"><h4>⚖️ Weight &amp; shot-size calculator</h4><p style="font-size:14px;margin-bottom:15px">Enter part and runner weights. The tool auto-calculates (1) shot size and (2) flash-reduction recommendations.</p><div class="weight-calc-grid"><div class="weight-input-box"><label>Part weight (g)</label><input type="number" id="partWeight" step="0.01" placeholder="0.00" onchange="calculateShotWeight()"></div><div class="weight-input-box"><label>Runner weight (g)</label><input type="number" id="runnerWeight" step="0.01" placeholder="0.00" onchange="calculateShotWeight()"></div><div class="weight-input-box"><label>Cavity count</label><input type="number" id="cavityCount" value="36" step="1" onchange="calculateShotWeight()"></div><div class="weight-input-box"><label>Material density (g/cm³)</label><input type="number" id="materialDensity" value="1.25" step="0.01" placeholder="1.25" onchange="calculateShotWeight()"><button class="btn-filter" style="margin-top:8px;width:100%;padding:6px" onclick="loadDensityFromGrade()" title="Pulls density from the Materials DB for the selected grade.">Look up density by grade</button></div></div><p style="font-size:13px;color:#6b7280;margin:10px 0 0">※ Total shot = part weight × cavities + runner weight. Once density is entered, the tool also computes shot volume.</p><div id="shotWeightResult" style="display:none;margin-top:15px"><div class="density-display">Total shot: <span id="totalShotWeight">0.00</span> g (<span id="shotVolume">0.00</span> cm³)</div><button class="btn-log-action btn-add-log" style="width:100%;margin-top:10px" onclick="applyWeightToLog()">⬇️ Apply to latest log</button></div></div>
+      <div id="flashRecommendations" style="display:none"><div class="calc-recommendation"><h4>💡 Flash-reduction recommendations — auto-analysis</h4><p style="font-size:14px;margin-bottom:15px">Based on the latest single log row, suggests directions to reduce flash. Numbers come from one log — cross-check against a 3-5 shot average before committing.</p><div id="recommendationContent"></div></div></div>
       <div class="chart-container"><div class="chart-controls"><h4 style="color:#1e3c72;margin:0;flex:1">📊 Process-condition trend chart (last 20)</h4><button class="chart-toggle-btn active" onclick="showChart('temp')" id="chartBtnTemp">Temperature</button><button class="chart-toggle-btn" onclick="showChart('pressure')" id="chartBtnPressure">Pressure</button><button class="chart-toggle-btn" onclick="showChart('weight')" id="chartBtnWeight">Weight</button><button class="chart-toggle-btn" onclick="showChart('time')" id="chartBtnTime">Time</button></div><div style="position:relative;height:300px"><canvas id="processChart"></canvas></div><p style="font-size:12px;color:#6b7280;margin-top:10px;text-align:center">Shows the last 20 log rows. Updates automatically as you add entries.</p></div>
       <div class="log-container"><div class="log-header"><h4 style="color:#1e3c72;margin:0">📝 Process-condition log</h4><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn-log-action btn-add-log" onclick="addProcessLogEntry()">➕ Add row</button><button class="btn-log-action btn-export-log" onclick="exportProcessLog()">📥 Export CSV</button><button class="btn-log-action btn-clear-log" onclick="clearProcessLog()">🗑️ Clear all</button></div></div><div style="overflow-x:auto"><table class="log-table" id="processLogTable"><thead><tr><th style="min-width:140px">일시 · Time</th><th style="min-width:120px">배치 · Batch</th><th style="min-width:160px">조성 · Composition</th><th style="min-width:120px">실린더 온도 · Barrel (°C)</th><th style="min-width:120px">금형 온도 · Mold (°C)</th><th style="min-width:130px">사출속도 · Inj. speed (mm/s)</th><th style="min-width:120px">사출압력 · Inj. pressure (bar)</th><th style="min-width:120px">보압 · Packing (bar)</th><th style="min-width:130px">보압시간 · Packing time (s)</th><th style="min-width:130px">냉각시간 · Cooling (s)</th><th style="min-width:120px">제품 무게 · Part (g)</th><th style="min-width:120px">러너 무게 · Runner (g)</th><th style="min-width:130px">총 무게 · Total (g)</th><th style="min-width:200px">비고 · Notes</th><th style="min-width:100px">사진 · Photo</th><th style="min-width:80px">동작 · Actions</th></tr></thead><tbody id="processLogBody"><tr><td colspan="16" class="log-empty">No log entries yet. Click <strong>"➕ Add row"</strong> to start your first record.</td></tr></tbody></table></div></div>
       <div class="info-box" style="margin-top:30px"><h3>💡 Quick reference</h3><ul style="margin-left:20px;margin-top:10px"><li><strong>Add row</strong> — click "➕ Add row" to insert a blank record</li><li><strong>Value entry</strong> — type numbers or use +/- buttons</li><li><strong>Weight</strong> — enter part and runner weight; shot size and flash recommendations auto-compute</li><li><strong>Search / filter</strong> — narrow by date range and keyword</li><li><strong>Templates</strong> — save common setups for one-click recall</li><li><strong>Photos</strong> — attach product or defect photos to each log row</li><li><strong>Chart view</strong> — live trend charts for temperature, pressure, weight, and time</li><li><strong>Mobile-friendly</strong> — works on both desktop and phone</li><li><strong>Auto-save</strong> — every input is immediately persisted to the browser</li><li><strong>CSV export</strong> — download your records as a CSV file</li><li><strong>Notes</strong> — free-form text for observations, defect types, and anomalies</li></ul></div>
@@ -3236,79 +3238,195 @@ function loadDensityFromGrade() {
 }
 
 // Flash Reduction Recommendation Engine
+const FLASH_RECOMMENDATION_RULES = [
+  {
+    key: 'injectionPressure',
+    mode: 'high',
+    ceiling: 900,
+    yellowFactor: 1.0,
+    redFactor: 1.2,
+    delta: 50,
+    precision: 0,
+    unit: 'bar',
+    label: { ko: '사출압', en: 'Injection pressure' },
+    note: {
+      ko: '과압은 파팅라인을 벌려 플래시를 키웁니다.',
+      en: 'Excess pressure opens the parting line and drives flash.'
+    }
+  },
+  {
+    key: 'cylinderTemp',
+    mode: 'high',
+    ceiling: 185,
+    yellowFactor: 1.0,
+    redFactor: 1.08,
+    delta: 5,
+    precision: 0,
+    unit: '°C',
+    label: { ko: '실린더 온도', en: 'Barrel temperature' },
+    note: {
+      ko: '고온은 점도를 낮춰 미세 틈새 침투를 키웁니다.',
+      en: 'Higher temperature drops viscosity and lets flash seep into micro-gaps.'
+    }
+  },
+  {
+    key: 'injectionSpeed',
+    mode: 'high',
+    ceiling: 180,
+    yellowFactor: 1.0,
+    redFactor: 1.15,
+    delta: 20,
+    precision: 0,
+    unit: 'mm/s',
+    label: { ko: '사출 속도', en: 'Injection speed' },
+    note: {
+      ko: '고속은 피크 압력과 전단 발열을 함께 키웁니다.',
+      en: 'Higher speed raises both pressure spikes and shear heating.'
+    }
+  },
+  {
+    key: 'holdingPressure',
+    mode: 'high',
+    ceiling: 700,
+    yellowFactor: 1.0,
+    redFactor: 1.15,
+    delta: 50,
+    precision: 0,
+    unit: 'bar',
+    label: { ko: '보압', en: 'Hold pressure' },
+    note: {
+      ko: '보압 과다는 게이트 동결 전 플래시를 악화시킵니다.',
+      en: 'Excess hold pressure worsens flash before the gate seals.'
+    }
+  },
+  {
+    key: 'coolingTime',
+    mode: 'low',
+    floor: 12,
+    yellowFactor: 1.0,
+    redFactor: 0.8,
+    delta: 2,
+    precision: 1,
+    unit: 's',
+    label: { ko: '냉각 시간', en: 'Cooling time' },
+    note: {
+      ko: '냉각 부족은 취출 변형과 치수 불안을 만듭니다.',
+      en: 'Insufficient cooling creates ejection deformation and dimensional drift.'
+    }
+  }
+];
+
+function flashRecommendationState(rule, value) {
+  if (!Number.isFinite(value) || value <= 0) return null;
+  if (rule.mode === 'high') {
+    if (value > rule.ceiling * rule.redFactor) return 'red';
+    if (value > rule.ceiling * rule.yellowFactor) return 'yellow';
+    return 'green';
+  }
+  if (value < rule.floor * rule.redFactor) return 'red';
+  if (value < rule.floor * rule.yellowFactor) return 'yellow';
+  return 'green';
+}
+
+function flashRecommendationType(state) {
+  if (state === 'red') return 'warning';
+  if (state === 'yellow') return 'caution';
+  return 'normal';
+}
+
+function flashRecommendationCopy(rule, value) {
+  const state = flashRecommendationState(rule, value);
+  if (!state) return null;
+  const locale = LANG === 'ko' ? 'ko' : 'en';
+  const label = rule.label[locale];
+  const fixedValue = value.toFixed(rule.precision);
+  const target = rule.mode === 'high'
+    ? Math.max(value - rule.delta, 0).toFixed(rule.precision)
+    : (value + rule.delta).toFixed(rule.precision);
+  if (locale === 'ko') {
+    if (rule.mode === 'high') {
+      return {
+        type: flashRecommendationType(state),
+        title: state === 'red' ? `🔴 ${label} 높음` : state === 'yellow' ? `🟡 ${label} 상단 접근` : `🟢 ${label} 안정`,
+        message: state === 'red'
+          ? `현재 ${label} ${fixedValue} ${rule.unit} — 권장 상한 ${rule.ceiling} ${rule.unit}를 크게 초과했습니다.`
+          : state === 'yellow'
+            ? `현재 ${label} ${fixedValue} ${rule.unit} — 권장 상한 ${rule.ceiling} ${rule.unit} 부근입니다.`
+            : `현재 ${label} ${fixedValue} ${rule.unit} — 권장 상한 ${rule.ceiling} ${rule.unit} 이내입니다.`,
+        solution: state === 'red'
+          ? `즉시 ${target} ${rule.unit} 수준으로 낮추세요. ${rule.note.ko}`
+          : state === 'yellow'
+            ? `약 ${target} ${rule.unit}까지 낮출 여유가 있는지 확인하세요. ${rule.note.ko}`
+            : `현재 설정을 유지하되 3-5샷 평균만 계속 확인하세요. ${rule.note.ko}`
+      };
+    }
+    return {
+      type: flashRecommendationType(state),
+      title: state === 'red' ? `🔴 ${label} 부족` : state === 'yellow' ? `🟡 ${label} 하단 접근` : `🟢 ${label} 안정`,
+      message: state === 'red'
+        ? `현재 ${label} ${fixedValue} ${rule.unit} — 권장 하한 ${rule.floor} ${rule.unit}보다 충분하지 않습니다.`
+        : state === 'yellow'
+          ? `현재 ${label} ${fixedValue} ${rule.unit} — 권장 하한 ${rule.floor} ${rule.unit} 부근입니다.`
+          : `현재 ${label} ${fixedValue} ${rule.unit} — 권장 하한 ${rule.floor} ${rule.unit} 이상입니다.`,
+      solution: state === 'red'
+        ? `즉시 ${target} ${rule.unit} 수준까지 늘려 보세요. ${rule.note.ko}`
+        : state === 'yellow'
+          ? `약 ${target} ${rule.unit}까지 늘릴지 검토하세요. ${rule.note.ko}`
+          : `현재 시간을 유지하되 파트 변형만 계속 확인하세요. ${rule.note.ko}`
+    };
+  }
+  if (rule.mode === 'high') {
+    return {
+      type: flashRecommendationType(state),
+      title: state === 'red' ? `🔴 ${label} high` : state === 'yellow' ? `🟡 ${label} near ceiling` : `🟢 ${label} stable`,
+      message: state === 'red'
+        ? `Current ${label.toLowerCase()} ${fixedValue} ${rule.unit} is well above the ${rule.ceiling} ${rule.unit} ceiling.`
+        : state === 'yellow'
+          ? `Current ${label.toLowerCase()} ${fixedValue} ${rule.unit} is sitting near the ${rule.ceiling} ${rule.unit} ceiling.`
+          : `Current ${label.toLowerCase()} ${fixedValue} ${rule.unit} stays inside the ${rule.ceiling} ${rule.unit} ceiling.`,
+      solution: state === 'red'
+        ? `Drop toward ${target} ${rule.unit} right away. ${rule.note.en}`
+        : state === 'yellow'
+          ? `Check whether you can step down toward ${target} ${rule.unit}. ${rule.note.en}`
+          : `Hold the setting and keep watching a 3-5 shot average. ${rule.note.en}`
+    };
+  }
+  return {
+    type: flashRecommendationType(state),
+    title: state === 'red' ? `🔴 ${label} low` : state === 'yellow' ? `🟡 ${label} near floor` : `🟢 ${label} stable`,
+    message: state === 'red'
+      ? `Current ${label.toLowerCase()} ${fixedValue} ${rule.unit} is below the ${rule.floor} ${rule.unit} floor.`
+      : state === 'yellow'
+        ? `Current ${label.toLowerCase()} ${fixedValue} ${rule.unit} is close to the ${rule.floor} ${rule.unit} floor.`
+        : `Current ${label.toLowerCase()} ${fixedValue} ${rule.unit} stays above the ${rule.floor} ${rule.unit} floor.`,
+    solution: state === 'red'
+      ? `Increase toward ${target} ${rule.unit} right away. ${rule.note.en}`
+      : state === 'yellow'
+        ? `Consider extending toward ${target} ${rule.unit}. ${rule.note.en}`
+        : `Keep the current time and keep checking part stability. ${rule.note.en}`
+  };
+}
+
 function generateFlashRecommendations() {
   if (processLogData.length === 0) return;
 
   const latest = processLogData[0];
-  const recommendations = [];
+  const recommendations = FLASH_RECOMMENDATION_RULES
+    .map(rule => flashRecommendationCopy(rule, Number(latest[rule.key])))
+    .filter(Boolean);
 
-  // Analyze conditions and generate recommendations
-  if (latest.injectionPressure > 900) {
-    recommendations.push({
-      type: 'warning',
-      title: LANG === 'ko' ? '사출압력 과다' : 'Injection pressure too high',
-      message: LANG === 'ko' ? `현재 사출압력이 ${latest.injectionPressure} bar로 높습니다.` : `Current injection pressure is ${latest.injectionPressure} bar.`,
-      solution: LANG === 'ko' ? `사출압력을 ${(latest.injectionPressure - 50).toFixed(0)} bar로 감소시키세요. (약 -50 bar)` : `Reduce injection pressure to ${(latest.injectionPressure - 50).toFixed(0)} bar (about -50 bar).`
-    });
-  }
+  if (recommendations.length === 0) return;
 
-  if (latest.cylinderTemp > 185) {
-    recommendations.push({
-      type: 'caution',
-      title: LANG === 'ko' ? '실린더 온도 과다' : 'Barrel temperature too high',
-      message: LANG === 'ko' ? `현재 실린더 온도가 ${latest.cylinderTemp}°C로 높습니다.` : `Current barrel temperature is ${latest.cylinderTemp}°C.`,
-      solution: LANG === 'ko' ? `실린더 온도를 ${(latest.cylinderTemp - 5).toFixed(0)}°C로 감소시키세요. (약 -5°C, 점도 증가로 플래시 감소)` : `Lower barrel temperature to ${(latest.cylinderTemp - 5).toFixed(0)}°C (about -5°C).`
-    });
-  }
+  const html = recommendations.map(rec => `
+    <div class="recommendation-item ${rec.type}">
+      <h5 style="margin:0 0 8px 0;color:#1e3c72">${rec.title}</h5>
+      <p style="margin:0 0 8px 0;font-size:14px">${rec.message}</p>
+      <p style="margin:0;font-weight:bold;color:#059669">💡 ${rec.solution}</p>
+    </div>
+  `).join('');
 
-  if (latest.injectionSpeed > 180) {
-    recommendations.push({
-      type: 'caution',
-      title: LANG === 'ko' ? '사출속도 과다' : 'Injection speed too high',
-      message: LANG === 'ko' ? `현재 사출속도가 ${latest.injectionSpeed} mm/s로 높습니다.` : `Current injection speed is ${latest.injectionSpeed} mm/s.`,
-      solution: LANG === 'ko' ? `사출속도를 ${(latest.injectionSpeed - 20).toFixed(0)} mm/s로 감소시키세요. (약 -20 mm/s, 피크 압력 감소)` : `Reduce injection speed to ${(latest.injectionSpeed - 20).toFixed(0)} mm/s (about -20 mm/s).`
-    });
-  }
-
-  if (latest.holdingPressure > 700) {
-    recommendations.push({
-      type: 'caution',
-      title: LANG === 'ko' ? '보압 과다' : 'Packing pressure too high',
-      message: LANG === 'ko' ? `현재 보압이 ${latest.holdingPressure} bar로 높습니다.` : `Current packing pressure is ${latest.holdingPressure} bar.`,
-      solution: LANG === 'ko' ? `보압을 ${(latest.holdingPressure - 50).toFixed(0)} bar로 감소시키세요. (약 -50 bar)` : `Reduce packing pressure to ${(latest.holdingPressure - 50).toFixed(0)} bar (about -50 bar).`
-    });
-  }
-
-  if (latest.coolingTime < 12) {
-    recommendations.push({
-      type: 'normal',
-      title: LANG === 'ko' ? '냉각시간 부족' : 'Cooling time may be too short',
-      message: LANG === 'ko' ? `현재 냉각시간이 ${latest.coolingTime}초로 짧을 수 있습니다.` : `Current cooling time is ${latest.coolingTime}s and may be too short.`,
-      solution: LANG === 'ko' ? `냉각시간을 ${(latest.coolingTime + 2).toFixed(1)}초로 증가시켜 성형 안정성을 높이세요. (약 +2s)` : `Increase cooling time to ${(latest.coolingTime + 2).toFixed(1)}s (about +2s).`
-    });
-  }
-
-  // Display recommendations
-  if (recommendations.length > 0) {
-    const html = recommendations.map(rec => `
-      <div class="recommendation-item ${rec.type}">
-        <h5 style="margin:0 0 8px 0;color:#1e3c72">${rec.title}</h5>
-        <p style="margin:0 0 8px 0;font-size:14px">${rec.message}</p>
-        <p style="margin:0;font-weight:bold;color:#059669">💡 ${rec.solution}</p>
-      </div>
-    `).join('');
-
-    document.getElementById('recommendationContent').innerHTML = html;
-    document.getElementById('flashRecommendations').style.display = 'block';
-  } else {
-    document.getElementById('recommendationContent').innerHTML = `
-      <div class="recommendation-item normal">
-        <h5 style="margin:0 0 8px 0;color:#1e3c72">${LANG === 'ko' ? '✅ 공정 조건 양호' : '✅ Process conditions look stable'}</h5>
-        <p style="margin:0;font-size:14px">${LANG === 'ko' ? '현재 공정 조건은 플래시 발생 위험이 낮은 범위에 있습니다. 계속 모니터링하세요.' : 'Current process conditions sit in a lower-risk range for flash. Keep monitoring and logging.'}</p>
-      </div>
-    `;
-    document.getElementById('flashRecommendations').style.display = 'block';
-  }
+  document.getElementById('recommendationContent').innerHTML = html;
+  document.getElementById('flashRecommendations').style.display = 'block';
 }
 
 // Photo Attachment (using IndexedDB)
