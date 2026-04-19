@@ -45,6 +45,23 @@
     return true;
   }
 
+  function isBatchAuditEntryV1(value) {
+    if (!isRecord(value)) return false;
+    if (!isIsoDateLike(value.timestamp)) return false;
+    if (!isNonEmptyString(value.action)) return false;
+    if (value.actor !== undefined && !isNonEmptyString(value.actor)) return false;
+    if (value.note !== undefined && typeof value.note !== 'string') return false;
+    return true;
+  }
+
+  function isBatchNoteEntryV1(value) {
+    if (!isRecord(value)) return false;
+    if (!isIsoDateLike(value.timestamp)) return false;
+    if (!isNonEmptyString(value.note)) return false;
+    if (value.author !== undefined && !isNonEmptyString(value.author)) return false;
+    return true;
+  }
+
   function hasKnownAnomalyCode(code) {
     const api = global.TarsAnomalyCodes;
     if (api && typeof api.has === 'function') return api.has(code);
@@ -97,9 +114,18 @@
     if (!BATCH_STATUSES.has(value.status)) return 'status is invalid.';
     if (value.started_at !== undefined && !isIsoDateLike(value.started_at)) return 'started_at must be an ISO date string.';
     if (value.ended_at !== undefined && !isIsoDateLike(value.ended_at)) return 'ended_at must be an ISO date string.';
+    if ((value.status === 'finalized' || value.status === 'cancelled') && value.ended_at === undefined) {
+      return 'finalized or cancelled sessions require ended_at.';
+    }
     if (value.planned_composition !== undefined && !isTarsCompositionV1Ref(value.planned_composition)) return 'planned_composition must use tars-composition-v1.';
     if (value.recipe_id !== undefined && typeof value.recipe_id !== 'string' && typeof value.recipe_id !== 'number') return 'recipe_id must be a string or number.';
     if (value.events !== undefined && (!Array.isArray(value.events) || !value.events.every(isTarsBatchEventV1))) return 'events must be valid TarsBatchEventV1 entries.';
+    if (value.audit_trail !== undefined && (!Array.isArray(value.audit_trail) || !value.audit_trail.every(isBatchAuditEntryV1))) {
+      return 'audit_trail must be valid audit entries.';
+    }
+    if (value.notes !== undefined && (!Array.isArray(value.notes) || !value.notes.every(isBatchNoteEntryV1))) {
+      return 'notes must be valid retrospective notes.';
+    }
     return null;
   }
 
