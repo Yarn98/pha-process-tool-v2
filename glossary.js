@@ -6,11 +6,18 @@
     'karlFischer',
     'dewPoint',
     'kb',
+    'ce',
+    'kb90',
+    'kb45',
+    'kb30',
+    'le',
+    'zme',
     'residenceTime',
     'deadZone',
     'gel',
     'gateSeal',
     'vpTransfer',
+    'eof',
     'shortShot',
     'flash',
     'splay',
@@ -84,6 +91,78 @@
       },
       aliases: { ko: ['KB', '혼합 블록'], en: ['KB', 'kneading block'] }
     },
+    ce: {
+      label: { ko: 'CE (conveying element · 전도 엘리먼트)', en: 'CE (conveying element)' },
+      gloss: {
+        ko: '고형 펠릿과 용융을 축 방향으로 앞으로 보내는 기본 스크류 엘리먼트입니다.',
+        en: 'The base screw element that mainly conveys solids and melt forward in the axial direction.'
+      },
+      why: {
+        ko: '혼합은 약하지만 압력 형성과 체류 시간 관리의 기준 구간이 됩니다.',
+        en: 'Mixing is limited, but it sets the baseline for pressure build-up and residence-time control.'
+      },
+      aliases: { ko: ['CE', '전도 엘리먼트'], en: ['CE', 'conveying element', 'Conveying element'] }
+    },
+    kb90: {
+      label: { ko: 'KB90 (혼합 블록 90°)', en: 'KB90 (kneading block 90°)' },
+      gloss: {
+        ko: '가장 강한 분산 혼합을 주는 KB 배열. 전단 발열도 가장 크게 올라갑니다.',
+        en: 'The most aggressive KB arrangement for dispersive mixing, with the highest shear-heat penalty.'
+      },
+      why: {
+        ko: '분산 불량에는 유리하지만 과하면 갈변과 Mw 저하가 빨라집니다.',
+        en: 'Useful for poor dispersion, but too much of it accelerates browning and Mw loss.'
+      },
+      aliases: { ko: ['KB90', '혼합 블록 90°'], en: ['KB90', 'kneading block 90°'] }
+    },
+    kb45: {
+      label: { ko: 'KB45 (혼합 블록 45°)', en: 'KB45 (kneading block 45°)' },
+      gloss: {
+        ko: '분산과 전단의 균형을 맞춘 중간 강도의 혼합 블록입니다.',
+        en: 'A medium-intensity kneading block that balances dispersion against shear.'
+      },
+      why: {
+        ko: '가장 범용적으로 쓰이는 KB 세팅입니다.',
+        en: 'The most general-purpose KB setting in routine compounding.'
+      },
+      aliases: { ko: ['KB45', '혼합 블록 45°'], en: ['KB45', 'kneading block 45°'] }
+    },
+    kb30: {
+      label: { ko: 'KB30 (혼합 블록 30°)', en: 'KB30 (kneading block 30°)' },
+      gloss: {
+        ko: '전단을 낮게 유지하면서 약한 분산만 주는 완만한 KB 배열입니다.',
+        en: 'A gentle KB arrangement that keeps shear low and provides only mild dispersion.'
+      },
+      why: {
+        ko: '열민감한 조성에서 과혼련을 피할 때 유용합니다.',
+        en: 'Helpful when the formulation is heat-sensitive and over-mixing must be avoided.'
+      },
+      aliases: { ko: ['KB30', '혼합 블록 30°'], en: ['KB30', 'kneading block 30°'] }
+    },
+    le: {
+      label: { ko: 'LE (left-hand element · 왼손 엘리먼트)', en: 'LE (left-hand element)' },
+      gloss: {
+        ko: '역류를 만들어 충전 밀도와 혼합 압력을 높이는 반대 방향 스크류 엘리먼트입니다.',
+        en: 'A reverse-pitch screw element that creates backflow, raising fill density and mixing pressure.'
+      },
+      why: {
+        ko: '분산에는 도움 되지만 체류 시간과 발열도 함께 늘릴 수 있습니다.',
+        en: 'Can improve dispersion, but also increases residence time and heat generation.'
+      },
+      aliases: { ko: ['LE', '왼손 엘리먼트'], en: ['LE', 'left-hand element', 'Left-hand element'] }
+    },
+    zme: {
+      label: { ko: 'ZME (zone mixing element · 존 믹싱 엘리먼트)', en: 'ZME (zone mixing element)' },
+      gloss: {
+        ko: '존 단위 균일 혼합을 위해 쓰는 완만한 혼합 엘리먼트입니다.',
+        en: 'A gentle mixing element used to even out composition across a processing zone.'
+      },
+      why: {
+        ko: '조성 균일도는 올리되 KB보다 전단 부담은 낮출 수 있습니다.',
+        en: 'Improves composition uniformity with less shear penalty than a strong KB section.'
+      },
+      aliases: { ko: ['ZME', '존 믹싱 엘리먼트'], en: ['ZME', 'zone mixing element', 'Zone mixing element'] }
+    },
     residenceTime: {
       label: { ko: '체류 시간', en: 'Residence time' },
       gloss: {
@@ -143,6 +222,18 @@
         en: 'Defines the boundary between filling and packing.'
       },
       aliases: { ko: ['V/P transfer', 'V/P 전환'], en: ['V/P transfer'] }
+    },
+    eof: {
+      label: { ko: 'EoF (end-of-fill · 충진 완료 지점)', en: 'EoF (end-of-fill)' },
+      gloss: {
+        ko: '캐비티가 거의 다 차서 속도 제어에서 보압 제어로 넘어갈 기준 지점입니다.',
+        en: 'The near-full cavity point used as the reference for transitioning from fill to pack.'
+      },
+      why: {
+        ko: 'EoF가 흔들리면 short shot과 flash가 동시에 늘어납니다.',
+        en: 'If EoF drifts, both short-shot risk and flash risk increase.'
+      },
+      aliases: { ko: ['EoF', '충진 완료 지점'], en: ['EoF', 'end-of-fill', 'End-of-fill'] }
     },
     shortShot: {
       label: { ko: '미충전 / Short shot', en: 'Short shot' },

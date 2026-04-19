@@ -14,8 +14,8 @@
 const CG_SCREW_TYPES = {
   A: {
     label: 'Type A (40D)',
-    reason_ko: '표준 mixing으로 충분',
-    reason_en: 'Standard mixing is sufficient',
+    reason_ko: 'hard phase 중심 조성이라 표준 혼합만으로 충분',
+    reason_en: 'Hard-dominant recipe; standard mixing is enough',
     zones: [
       { name_ko: 'Feed',              name_en: 'Feed',              temp: 25  },
       { name_ko: 'Melting',           name_en: 'Melting',           temp: 160 },
@@ -27,8 +27,8 @@ const CG_SCREW_TYPES = {
   },
   B: {
     label: 'Type B (44D)',
-    reason_ko: 'Soft phase split feed 필요',
-    reason_en: 'Soft phase split feed required',
+    reason_ko: 'soft phase를 나눠 넣어 전단과 분산을 같이 잡아야 함',
+    reason_en: 'Soft phase should be split-fed to balance shear and dispersion',
     zones: [
       { name_ko: 'Main-feed',          name_en: 'Main-feed',          temp: 25  },
       { name_ko: 'Melting',            name_en: 'Melting',            temp: 160 },
@@ -42,8 +42,8 @@ const CG_SCREW_TYPES = {
   },
   C: {
     label: 'Type C (44-48D)',
-    reason_ko: 'Side feed + 이중 탈기 필요',
-    reason_en: 'Side feed + dual devolatilization required',
+    reason_ko: 'filler-rich 조성이라 side feed와 이중 탈가스가 필요',
+    reason_en: 'Filler-rich recipe needing side feed and dual devolatilization',
     zones: [
       { name_ko: 'Main-feed',                  name_en: 'Main-feed',                  temp: 25  },
       { name_ko: 'Melting',                    name_en: 'Melting',                    temp: 165 },
@@ -65,10 +65,10 @@ const CG_TROUBLESHOOTING = [
     title_ko: '분산 불량 (Poor dispersion)',
     title_en: 'Poor Dispersion',
     causes: [
-      { cond_ko: 'Soft phase 큰 도메인',    cond_en: 'Large soft phase domains',    cause_ko: 'mixing 부족 또는 feed order 부적절',         cause_en: 'Insufficient mixing or improper feed order',    action_ko: 'Side feed 위치 변경, KB element 추가',                        action_en: 'Relocate side feed, add KB elements' },
-      { cond_ko: 'Filler 뭉침',             cond_en: 'Filler agglomeration',         cause_ko: '투입 위치/속도 부적절',                         cause_en: 'Improper feed position/rate',                   action_ko: 'Side feeder 속도 조정, feed 위치 downstream 이동',            action_en: 'Adjust side feeder speed, move feed position downstream' },
-      { cond_ko: '2상 분리',                cond_en: 'Phase separation',             cause_ko: '상용성 부족',                                   cause_en: 'Insufficient compatibility',                    action_ko: 'Compatibilizer 검토 (반응형 또는 비반응형)',                   action_en: 'Consider compatibilizer (reactive or non-reactive)' },
-      { cond_ko: '젤/fisheye 발생',         cond_en: 'Gel/fisheye formation',        cause_ko: 'Crosslinking 또는 미용융',                       cause_en: 'Crosslinking or unmelted resin',                action_ko: '온도 프로파일 재검토, screen pack 점검',                       action_en: 'Review temperature profile, inspect screen pack' },
+      { cond_ko: 'soft phase 큰 도메인',    cond_en: 'Large soft-phase domains',     cause_ko: '혼합 부족 또는 feed order가 맞지 않음',          cause_en: 'Insufficient mixing or the wrong feed order',   action_ko: 'side feed 위치를 다시 잡고 KB (혼합 블록) 구성을 보강',       action_en: 'Reposition the side feed and strengthen the KB layout' },
+      { cond_ko: 'filler 뭉침',             cond_en: 'Filler agglomeration',         cause_ko: '투입 위치 또는 side feeder 속도가 맞지 않음',    cause_en: 'Feed position or side-feeder rate is off',      action_ko: 'side feeder 속도를 조정하고 feed 위치를 downstream으로 이동', action_en: 'Adjust side-feeder rate and move the feed position downstream' },
+      { cond_ko: '2상 분리',                cond_en: 'Phase separation',             cause_ko: '상용성이 부족해 계면이 벌어짐',                  cause_en: 'Compatibility is too weak, so the interface opens up', action_ko: 'compatibilizer 도입 여부를 검토',                          action_en: 'Review whether a compatibilizer is needed' },
+      { cond_ko: '겔 / fish-eye 발생',      cond_en: 'Gel / fish-eye formation',     cause_ko: '열분해 가교 또는 미용융 잔류물',                 cause_en: 'Thermal crosslinking or unmelted residue',      action_ko: '온도 프로파일을 다시 잡고 screen pack을 점검',                action_en: 'Retune the temperature profile and inspect the screen pack' },
     ]
   },
   {
@@ -77,10 +77,10 @@ const CG_TROUBLESHOOTING = [
     title_ko: '미용융 (Unmelted resin)',
     title_en: 'Unmelted Resin',
     causes: [
-      { cond_ko: 'White speck 발생',        cond_en: 'White specks',                 cause_ko: 'Melting zone 길이 부족',                         cause_en: 'Insufficient melting zone length',              action_ko: 'Barrel peak 5°C 상향, melting zone KB 구성 변경',             action_en: 'Raise barrel peak 5°C, change melting zone KB configuration' },
-      { cond_ko: '고Tm 수지 미용융',        cond_en: 'High Tm resin unmelted',       cause_ko: 'PLA/P3HB의 높은 Tm',                            cause_en: 'High Tm of PLA/P3HB',                           action_ko: '해당 zone barrel 온도 Tm+15°C 확보',                          action_en: 'Ensure barrel zone temp = Tm+15°C' },
+      { cond_ko: 'white speck 발생',        cond_en: 'White specks',                 cause_ko: 'melting zone 길이가 부족함',                    cause_en: 'The melting zone is too short',                 action_ko: 'barrel peak를 5 °C 올리고 melting zone의 KB 구성을 조정',    action_en: 'Raise the barrel peak by 5 °C and adjust the melting-zone KB layout' },
+      { cond_ko: '고 Tm 수지 미용융',      cond_en: 'High-Tm resin remains unmelted', cause_ko: 'PLA / P3HB의 Tm이 높음',                       cause_en: 'PLA / P3HB brings a higher Tm',                 action_ko: '해당 zone barrel 온도를 Tm + 15 °C 수준으로 확보',           action_en: 'Hold the relevant barrel zone at about Tm + 15 °C' },
       { cond_ko: 'Filler 코팅 미분산',      cond_en: 'Filler coating not dispersed', cause_ko: 'Surface treatment 미흡',                         cause_en: 'Insufficient surface treatment',                action_ko: '프리믹싱 또는 MB화 후 투입',                                  action_en: 'Pre-mix or use masterbatch before feeding' },
-      { cond_ko: '냉간 투입 후 미용융',     cond_en: 'Unmelted after cold feed',     cause_ko: 'Side feed 직후 열 부족',                         cause_en: 'Insufficient heat directly after side feed',    action_ko: 'Side feed 후 barrel zone 온도 상향',                          action_en: 'Increase barrel zone temperature after side feed' },
+      { cond_ko: '냉간 투입 후 미용융',     cond_en: 'Unmelted after cold feed',     cause_ko: 'side feed 직후 열이 부족함',                    cause_en: 'Insufficient heat immediately after the side feed', action_ko: 'side feed 다음 barrel zone 온도를 올림',                    action_en: 'Increase the barrel-zone temperature right after the side feed' },
     ]
   },
   {
@@ -89,11 +89,11 @@ const CG_TROUBLESHOOTING = [
     title_ko: 'MW 급락 (MW drop)',
     title_en: 'MW Drop',
     causes: [
-      { cond_ko: 'Die 압력 하강 + 색 변화', cond_en: 'Die pressure drop + color change', cause_ko: '열분해',                                     cause_en: 'Thermal degradation',                           action_ko: 'Barrel peak 180°C 미만 하향, 체류시간 단축',                  action_en: 'Lower barrel peak below 180°C, reduce residence time' },
+      { cond_ko: 'die 압력 하강 + 색 변화', cond_en: 'Die pressure drop + color change', cause_ko: '열분해로 Mw가 빠르게 감소',                  cause_en: 'Thermal degradation is dropping Mw fast',       action_ko: 'barrel peak를 180 °C 아래로 낮추고 체류 시간을 줄임',         action_en: 'Lower the barrel peak below 180 °C and cut residence time' },
       { cond_ko: 'Torque 급락',             cond_en: 'Torque drop',                  cause_ko: '과도한 전단',                                   cause_en: 'Excessive shear',                               action_ko: 'RPM 하향, throughput 상향으로 fill ratio 증가',               action_en: 'Reduce RPM, increase throughput to raise fill ratio' },
-      { cond_ko: '수분 기인 분해',          cond_en: 'Moisture-induced degradation', cause_ko: '건조 부족',                                     cause_en: 'Insufficient drying',                           action_ko: '수분 500ppm 이하 확인, 건조 조건 재확인',                     action_en: 'Confirm moisture ≤500ppm, re-check drying conditions' },
-      { cond_ko: 'Filler 화학반응',         cond_en: 'Filler chemical reaction',     cause_ko: 'OH-rich filler + PHA 반응',                     cause_en: 'OH-rich filler reacting with PHA',              action_ko: 'Mixing zone 10-15°C 하향, filler 투입 위치 downstream 이동',  action_en: 'Lower mixing zone 10-15°C, move filler feed position downstream' },
-      { cond_ko: '산화 분해',               cond_en: 'Oxidative degradation',        cause_ko: 'Vent/die에서 산소 접촉',                         cause_en: 'Oxygen contact at vent/die',                    action_ko: 'N₂ blanket 적용, vent 진공도 확인',                           action_en: 'Apply N₂ blanket, check vent vacuum level' },
+      { cond_ko: '수분 기인 분해',          cond_en: 'Moisture-driven degradation',  cause_ko: '건조가 부족함',                                 cause_en: 'Drying is insufficient',                        action_ko: '수분을 500 ppm 이하로 확인하고 건조 조건을 재점검',           action_en: 'Confirm moisture is at or below 500 ppm and re-check the drying setup' },
+      { cond_ko: 'filler 화학반응',         cond_en: 'Filler chemical reaction',     cause_ko: 'OH-rich filler가 PHA와 반응',                   cause_en: 'An OH-rich filler is reacting with the PHA',    action_ko: 'mixing zone을 10–15 °C 낮추고 filler 투입을 downstream으로 이동', action_en: 'Lower the mixing zone by 10–15 °C and move the filler addition downstream' },
+      { cond_ko: '산화 분해',               cond_en: 'Oxidative degradation',        cause_ko: 'vent / die에서 산소 접촉이 큼',                 cause_en: 'Oxygen exposure is high at the vent / die',     action_ko: 'N₂ blanket를 적용하고 vent 진공도를 확인',                    action_en: 'Apply an N₂ blanket and check vent vacuum level' },
     ]
   },
   {
@@ -102,8 +102,8 @@ const CG_TROUBLESHOOTING = [
     title_ko: '다공성 pellet (Porous pellet)',
     title_en: 'Porous Pellet',
     causes: [
-      { cond_ko: 'Pellet에 기포',           cond_en: 'Bubbles in pellets',           cause_ko: '탈기 부족',                                     cause_en: 'Insufficient devolatilization',                 action_ko: 'Vacuum vent 진공도 확인, vent port 청소',                     action_en: 'Check vacuum vent level, clean vent port' },
-      { cond_ko: 'Vent spit',               cond_en: 'Vent spit',                    cause_ko: 'Melt seal 불량',                                cause_en: 'Poor melt seal',                                action_ko: 'Vent 전 conveying element 길이 증가',                         action_en: 'Increase conveying element length before vent' },
+      { cond_ko: 'pellet 기포',             cond_en: 'Bubbles in pellets',           cause_ko: '탈가스가 부족함',                               cause_en: 'Devolatilization is insufficient',              action_ko: 'vacuum vent 진공도를 확인하고 vent port를 청소',              action_en: 'Check the vacuum-vent level and clean the vent port' },
+      { cond_ko: 'vent spit',               cond_en: 'Vent spit',                    cause_ko: 'melt seal이 약함',                              cause_en: 'The melt seal is too weak',                     action_ko: 'vent 앞 conveying element 길이를 늘림',                       action_en: 'Increase conveying-element length before the vent' },
       { cond_ko: 'Strand 기포',             cond_en: 'Strand bubbles',               cause_ko: '수분 + 탈기 불량 복합',                         cause_en: 'Combined moisture and poor devolatilization',   action_ko: '건조 강화 + 탈기 구간 추가',                                  action_en: 'Enhance drying and add devolatilization section' },
     ]
   },
@@ -131,22 +131,22 @@ const CG_DOE_STEPS = [
     step: 1,
     title_ko: 'Step 1: 1차 DOE',
     title_en: 'Step 1: 1st DOE',
-    items_ko: ['Screw 고정', 'feed order 변수화', 'temp gradient 설정', '체류 시간 기준 throughput 결정', '0-position 확인', 'torque 모니터링 시작', '초기 샘플 채취'],
-    items_en: ['Fix screw configuration', 'Vary feed order', 'Set temperature gradient', 'Determine throughput based on residence time', 'Confirm 0-position', 'Start torque monitoring', 'Collect initial samples'],
+    items_ko: ['screw 구성을 먼저 고정', 'feed order만 변수화', 'temp gradient 설정', '체류 시간 기준으로 throughput 결정', '0-position 확인', 'torque 모니터링 시작', '초기 샘플 채취'],
+    items_en: ['Fix the screw layout first', 'Vary only feed order', 'Set the temperature gradient', 'Determine throughput from residence-time target', 'Confirm 0-position', 'Start torque monitoring', 'Collect the first samples'],
   },
   {
     step: 2,
     title_ko: 'Step 2: 2차 미용융 대응',
     title_en: 'Step 2: 2nd – Unmelted Countermeasures',
-    items_ko: ['미용융 여부 확인', 'Melting zone KB 조정', 'Barrel peak 미세 조정', '재샘플링'],
-    items_en: ['Check for unmelted resin', 'Adjust melting zone KB', 'Fine-tune barrel peak', 'Re-sample'],
+    items_ko: ['미용융 여부 확인', 'melting zone의 KB (혼합 블록) 조정', 'barrel peak 미세 조정', '재샘플링'],
+    items_en: ['Check for unmelted resin', 'Adjust the melting-zone KB', 'Fine-tune the barrel peak', 'Re-sample'],
   },
   {
     step: 3,
     title_ko: 'Step 3: 3차 분산 개선',
     title_en: 'Step 3: 3rd – Dispersion Improvement',
-    items_ko: ['MW 안정 확인', '90° KB 추가 검토', '분산 개선 확인'],
-    items_en: ['Confirm MW stability', 'Review addition of 90° KB', 'Confirm dispersion improvement'],
+    items_ko: ['Mw 안정 확인', 'KB90 추가 여부 검토', '분산 개선 확인'],
+    items_en: ['Confirm Mw stability', 'Review whether KB90 is needed', 'Confirm dispersion improvement'],
   },
   {
     step: 4,
@@ -329,6 +329,11 @@ function initCompoundingGuide() {
     <h2 style="color:#1e3c72;margin-bottom:16px">
       🧪 ${ko ? 'PHA 컴파운딩 가이드' : 'PHA Compounding Guide'}
     </h2>
+    <p style="color:#6b7280;line-height:1.7;margin:0 0 16px">
+      ${ko
+        ? '이 가이드는 PHA · PHA 블렌드 컴파운딩에서 현장 엔지니어가 가장 자주 보는 4가지만 묶었습니다: 스크류 설계, 존 온도 프로파일, 탈가스, 퍼지 SOP.'
+        : 'This guide covers the four items field compounders hit most often with PHA and PHA blends: screw design, zone-temperature profile, devolatilization, and purge SOP.'}
+    </p>
 
     <div class="flash-tabs" id="cgSubTabs">
       <button class="flash-tab active" onclick="cgShowTab(0)">
@@ -351,9 +356,65 @@ function initCompoundingGuide() {
     <div class="flash-content"        id="cg-tab-3">${_cgBuildST4(ko)}</div>
   `;
 
+  _cgBindGlossary(container, ko);
   _cgInitST1Events();
   _cgRenderDoeChecklist();
   _cgRenderTrialLog();
+}
+
+function _cgBindGlossary(root, ko) {
+  const lang = ko ? 'ko' : 'en';
+  if (!root) return;
+  if (typeof window.glossFirstInRoot === 'function') window.glossFirstInRoot(root, lang);
+  if (typeof window.glossAttach === 'function') {
+    root.querySelectorAll('[data-cg-gloss]').forEach(node => {
+      window.glossAttach(node, node.dataset.cgGloss, lang);
+    });
+  }
+}
+
+function _cgBuildScrewGlossary(ko) {
+  const lang = ko ? 'ko' : 'en';
+  const rows = [
+    { key: 'ce', code: 'CE', desc_ko: '축 방향 이송만 담당', desc_en: 'Forward conveying only' },
+    { key: 'kb90', code: 'KB90', desc_ko: '최대 분산, 최대 전단 발열', desc_en: 'Max dispersion, max shear heat' },
+    { key: 'kb45', code: 'KB45', desc_ko: '중간 분산, 중간 전단', desc_en: 'Mid dispersion, mid shear' },
+    { key: 'kb30', code: 'KB30', desc_ko: '약한 분산, 낮은 전단', desc_en: 'Light dispersion, low shear' },
+    { key: 'le', code: 'LE', desc_ko: '역류 유도, 충전 밀도 상승', desc_en: 'Backflow for higher fill density' },
+    { key: 'zme', code: 'ZME', desc_ko: '균일 혼합용', desc_en: 'For uniform mixing' }
+  ];
+  const glossary = window.GLOSSARY_PHA || {};
+  return `
+    <div class="card" data-glossary-skip="true" style="margin:0 0 16px;border-left-color:#2C5D3F">
+      <div style="font-weight:800;color:#2C5D3F;margin-bottom:6px">${ko ? '스크류 코드 용어표' : 'Screw-code glossary'}</div>
+      <div style="color:#6b7280;line-height:1.65;margin-bottom:10px">
+        ${ko
+          ? '코드부터 읽고 시작하세요. 이후 본문에서 나오는 CE · KB · LE · ZME는 이 표의 의미를 그대로 따릅니다.'
+          : 'Start with the code chart. Later mentions of CE, KB, LE, and ZME follow the same definitions used here.'}
+      </div>
+      <div class="tablewrap">
+        <table>
+          <thead><tr>
+            <th>${ko ? '코드' : 'Code'}</th>
+            <th>${ko ? '풀네임' : 'Long form'}</th>
+            <th>${ko ? '현장 설명' : 'Field note'}</th>
+          </tr></thead>
+          <tbody>
+            ${rows.map(row => {
+              const entry = glossary[row.key];
+              const label = entry ? entry.label[lang] : row.code;
+              const desc = ko ? row.desc_ko : row.desc_en;
+              return `<tr>
+                <td><abbr data-cg-gloss="${row.key}">${row.code}</abbr></td>
+                <td>${label}</td>
+                <td>${desc}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
@@ -380,6 +441,12 @@ function _cgBuildST1(ko) {
   const lbl = (k, e) => ko ? k : e;
   return `
     <h3 style="color:#1e3c72;margin:16px 0 12px">${lbl('스크류 추천기', 'Screw Recommender')}</h3>
+    <p style="color:#6b7280;line-height:1.7;margin:0 0 12px">
+      ${ko
+        ? '조성의 H/S/F 비율을 넣으면 어떤 스크류 타입과 존 온도 프로파일로 시작해야 하는지 1차 기준선을 제안합니다. 먼저 추천 타입을 잡고, 그 다음에 KB와 side feed를 미세 조정하세요.'
+        : 'Enter the H/S/F balance to get the first-pass screw type and zone-temperature profile. Lock the screw family first, then fine-tune KB blocks and side-feed position.'}
+    </p>
+    ${_cgBuildScrewGlossary(ko)}
 
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:16px">
 
@@ -653,8 +720,8 @@ function _cgBuildST2(ko) {
   }).join('');
 
   const alertMsg = ko
-    ? '⚠️ <strong>핵심 원칙:</strong> Die 압력 저하 + strand 약화 + 색 변화 → MW 급락 의심 1순위. 혼련 증가/RPM 상향은 악화시킨다. 체류 시간 감소 + 180°C 미만 하향 + feed order 재검토가 정답.'
-    : '⚠️ <strong>Core Principle:</strong> Die pressure drop + strand weakening + color change → MW drop is the primary suspect. Increasing mixing/RPM makes it worse. Reduce residence time + lower below 180°C + review feed order.';
+    ? '⚠️ <strong>핵심 원칙:</strong> die 압력 저하 + strand 약화 + 갈변이 같이 나오면 먼저 Mw 급락을 의심하세요. 이때 RPM이나 혼련을 더 올리면 더 나빠지므로, 체류 시간을 줄이고 barrel peak를 180 °C 아래로 낮춘 뒤 feed order를 다시 잡는 쪽이 맞습니다.'
+    : '⚠️ <strong>Core principle:</strong> If die-pressure drop, strand weakening, and browning show up together, Mw loss is the first suspect. Do not answer it with more RPM or more mixing; shorten residence time, pull the barrel peak below 180 °C, and review feed order.';
 
   return `
     <h3 style="color:#1e3c72;margin:16px 0 12px">${ko ? '트러블슈팅 결정트리' : 'Troubleshooting Decision Tree'}</h3>

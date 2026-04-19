@@ -1,6 +1,6 @@
 # PHA Process Optimizer & Convertor
 
-![Version](https://img.shields.io/badge/version-1.6.5-blue.svg)
+![Version](https://img.shields.io/badge/version-1.6.6-blue.svg)
 ![Status](https://img.shields.io/badge/status-production-green.svg)
 ![Design](https://img.shields.io/badge/design-TARS%20Biopolymer%20Studio-2C5D3F.svg)
 ![License](https://img.shields.io/badge/license-ISC-lightgrey.svg)
@@ -20,6 +20,8 @@
 디자인 시스템 룰 7가지 (paper-over-chrome, italics-as-accent, mono-for-data, no shadows/gradients, 2px radius, bilingual-ready)는 원본 SKILL.md 참조.
 
 ### Recent fixes (v1.6.x)
+
+- **v1.6.6** — The Compounding Guide now starts with a screw-code glossary (`CE`, `KB90`, `KB45`, `KB30`, `LE`, `ZME`) and rewrites its intro, screw-selection copy, DOE wording, and troubleshooting actions in the same field-engineer voice used elsewhere in the app. The shared glossary layer also now knows those screw terms plus `EoF`, so the first in-tab occurrence gets the same tooltip treatment as the Flash / Troubleshooting surfaces. The service-worker cache is bumped to `pha-cache-v10-compounding-copy` so deployed builds pick up the new guide text without touching existing local data.
 
 - **v1.6.5** — Materials DB labels now use the same bilingual engineering terminology as the rest of the app (`Density`, `Melt Flow Rate`, `Glass transition temp`, `Heat deflection temp`, etc.). The edit modal now opens with `그레이드 편집 / Edit grade` chrome, carries a density-range hint, and no longer leaves stale button handlers behind when the modal is closed without saving.
 
