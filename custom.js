@@ -874,8 +874,6 @@ function endBatchSession() {
 }
 
 window.bindBatchSessionControls = bindBatchSessionControls;
-window.startBatchSession = startBatchSession;
-window.endBatchSession = endBatchSession;
 
 // Immediately initialize photo uploader, material cards, and troubleshooting data.
 // Because this script is loaded at the end of the body, DOM elements are available.

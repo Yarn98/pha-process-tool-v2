@@ -1880,7 +1880,7 @@ function renderFlashContent(){
   restoreFlashInput('runnerWeight', snapshot.weights.runner);
   restoreFlashInput('cavityCount', snapshot.weights.cavity || '36');
   restoreFlashInput('materialDensity', snapshot.weights.density || '1.25');
-  if (typeof renderBatchContextSummary === 'function') renderBatchContextSummary();
+  renderBatchContextBanner();
   if (typeof window.bindBatchSessionControls === 'function') window.bindBatchSessionControls();
   if (typeof loadProcessLog === 'function') loadProcessLog();
   if ((snapshot.filters.keyword || snapshot.filters.from || snapshot.filters.to) && typeof filterProcessLog === 'function') filterProcessLog();
@@ -2185,7 +2185,7 @@ function clearFlashInputs(type) {
     const p=$('process'); if(p){ p.value='injection'; }
     applyCA1180P();
     loadBatchContext();
-    renderBatchContextSummary();
+    renderBatchContextBanner();
     loadProcessLog();
     /* Phase 3c — consume ?composition=<b64> passed from the 4HB
        'Send to PHA Process' button. Runs AFTER loadBatchContext so a
@@ -2416,14 +2416,6 @@ function renderBatchContextBanner() {
 
 function loadBatchContext() {
   return setCurrentBatchSession(phaLoadBatchSession());
-}
-
-function saveBatchContext() {
-  return !!(currentBatchSession && phaSaveBatchSession(currentBatchSession));
-}
-
-function renderBatchContextSummary() {
-  renderBatchContextBanner();
 }
 
 function updateBatchContext(patch) {
