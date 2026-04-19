@@ -3,6 +3,7 @@
   const TARS_COMPOSITION_SCHEMA_V1 = 'tars-composition-v1';
   const BATCH_STATUSES = new Set(['planning', 'running', 'finalized', 'cancelled']);
   const BATCH_EVENT_KINDS = new Set(['temp_reading', 'addition', 'anomaly', 'scrap', 'note']);
+  const BATCH_EVENT_SEVERITIES = new Set(['low', 'medium', 'high']);
 
   function isRecord(value) {
     return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -10,6 +11,14 @@
 
   function isFiniteNumber(value) {
     return typeof value === 'number' && Number.isFinite(value);
+  }
+
+  function isPositiveNumber(value) {
+    return isFiniteNumber(value) && value > 0;
+  }
+
+  function isNonEmptyString(value) {
+    return typeof value === 'string' && value.trim().length > 0;
   }
 
   function isIsoDateLike(value) {
@@ -26,6 +35,22 @@
     return true;
   }
 
+  function isBatchCountOrMassV1(value) {
+    if (!isRecord(value)) return false;
+    const hasCount = value.count !== undefined;
+    const hasMass = value.mass_g !== undefined;
+    if (!hasCount && !hasMass) return false;
+    if (hasCount && !isPositiveNumber(value.count)) return false;
+    if (hasMass && !isPositiveNumber(value.mass_g)) return false;
+    return true;
+  }
+
+  function hasKnownAnomalyCode(code) {
+    const api = global.TarsAnomalyCodes;
+    if (api && typeof api.has === 'function') return api.has(code);
+    return isNonEmptyString(code);
+  }
+
   function isTarsCompositionV1Ref(value) {
     return isRecord(value) && value.$schema === TARS_COMPOSITION_SCHEMA_V1;
   }
@@ -36,7 +61,31 @@
     if (value.elapsed_min !== undefined && !isFiniteNumber(value.elapsed_min)) return false;
     if (!BATCH_EVENT_KINDS.has(value.kind)) return false;
     if (value.state_snapshot !== undefined && !isBatchStateSnapshotV1(value.state_snapshot)) return false;
-    return true;
+    switch (value.kind) {
+      case 'temp_reading':
+        return value.state_snapshot !== undefined;
+      case 'addition':
+        if (!isNonEmptyString(value.material) || !isPositiveNumber(value.qty_g)) return false;
+        if (value.reason_code !== undefined && !isNonEmptyString(value.reason_code)) return false;
+        if (value.note !== undefined && typeof value.note !== 'string') return false;
+        return value.state_snapshot !== undefined;
+      case 'anomaly':
+        if (!hasKnownAnomalyCode(value.code)) return false;
+        if (!BATCH_EVENT_SEVERITIES.has(value.severity)) return false;
+        if (value.action_taken !== undefined && typeof value.action_taken !== 'string') return false;
+        if (value.photo_ref !== undefined && !isNonEmptyString(value.photo_ref)) return false;
+        if (value.note !== undefined && typeof value.note !== 'string') return false;
+        return value.state_snapshot !== undefined;
+      case 'scrap':
+        if (!isBatchCountOrMassV1(value.count_or_mass)) return false;
+        if (value.reason_code !== undefined && !hasKnownAnomalyCode(value.reason_code)) return false;
+        if (value.note !== undefined && typeof value.note !== 'string') return false;
+        return value.state_snapshot !== undefined;
+      case 'note':
+        return isNonEmptyString(value.note);
+      default:
+        return false;
+    }
   }
 
   function getTarsBatchSessionV1Error(value) {
