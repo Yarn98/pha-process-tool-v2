@@ -302,56 +302,251 @@
   {
     "process": "injection",
     "symptom": "Splay/silver streaks or bubbles",
-    "likely_causes": ["Moisture in pellets leading to hydrolysis and gas evolution", "Decomposition from excessive melt temperature", "High injection speed causing shear heating", "Vacuum leaks sucking in air"],
-    "diagnostics": "Check dew point and moisture content using moisture analyzer; inspect melt for bubbling at nozzle; record actual nozzle temperature; look for yellow/brown degradation; evaluate injection screw rpm and back pressure settings.",
-    "quick_fixes": ["Re-dry resin to target moisture (<0.02 % or 200 ppm)", "Lower nozzle temperature by 5 °C", "Reduce injection speed by 10-20 mm/s", "Purge barrel to remove degraded material"],
-    "root_fixes": ["Install dryer with -40 °C dew point capability", "Limit melt temperature <190 °C to prevent PLA degradation", "Maintain screw back pressure low (3-5 bar)", "Periodically purge with PLA to clean barrel"],
+    "symptom_ko": "실버 스트릭 · 기포 (Splay)",
+    "plain_en": "Silvery streaks or bubbles on the surface usually mean moisture-driven hydrolysis. Overheated melt or excessive injection speed can push the same defect.",
+    "plain_ko": "표면에 은빛 줄무늬나 기포가 보이는 결함입니다. 대부분 수분 가수분해가 원인이며, 용융 온도 과다나 사출 속도 과다도 같은 결함을 밀어 올립니다.",
+    "likely_causes": [
+      "Moisture in pellets drives hydrolysis and gas evolution",
+      "Excess melt temperature causes degradation",
+      "High injection speed creates shear heating",
+      "Vacuum leaks pull in air"
+    ],
+    "likely_causes_ko": [
+      "펠릿 수분으로 가수분해와 가스 발생",
+      "용융 온도 과다로 분해 발생",
+      "사출 속도 과다로 전단 발열 증가",
+      "진공 누설로 공기 유입"
+    ],
+    "diagnostics": "Check dew point and pellet moisture with a moisture analyzer, watch for bubbling at the nozzle, record actual nozzle temperature, look for yellow or brown degradation, and review screw rpm plus back-pressure settings.",
+    "diagnostics_ko": "이슬점과 펠릿 수분을 수분 분석기로 확인하고, 노즐에서 기포가 보이는지 보고, 실제 노즐 온도를 기록하고, 황색 또는 갈색 변색을 확인하고, 스크류 rpm과 백 프레셔 설정을 검토합니다.",
+    "quick_fixes": [
+      "Re-dry the resin to the moisture target (< 0.02 % or 200 ppm)",
+      "Lower nozzle temperature by 5 °C",
+      "Reduce injection speed by 10-20 mm/s",
+      "Purge the barrel to remove degraded residue"
+    ],
+    "quick_fixes_ko": [
+      "목표 수분(< 0.02 % 또는 200 ppm)까지 재건조",
+      "노즐 온도 5 °C 하향",
+      "사출 속도 10-20 mm/s 감소",
+      "배럴 퍼지로 분해 잔류물 제거"
+    ],
+    "root_fixes": [
+      "Install a dryer capable of -40 °C dew point",
+      "Keep melt temperature below 190 °C to avoid PLA degradation",
+      "Hold screw back pressure low (3-5 bar)",
+      "Purge with PLA on a regular schedule to keep the barrel clean"
+    ],
+    "root_fixes_ko": [
+      "-40 °C 이슬점 가능한 건조기 설치",
+      "PLA 분해 방지를 위해 용융 온도 190 °C 이하 유지",
+      "스크류 백 프레셔를 낮게 유지 (3-5 bar)",
+      "정기적으로 PLA 퍼지해 배럴 청결 유지"
+    ],
     "control_knobs": ["Drying temperature/time", "Nozzle and barrel temperatures", "Injection speed", "Back pressure"],
-    "notes": "Splay is primarily moisture-related; controlling dryness and temperature prevents hydrolysis and ensures surface quality.",
+    "control_knobs_ko": ["건조 온도/시간", "노즐 · 배럴 온도", "사출 속도", "백 프레셔"],
+    "notes": "Splay is mostly a moisture problem. Fix dryness first, then trim temperature and speed.",
+    "notes_ko": "실버 스트릭은 대부분 수분 문제입니다. 먼저 건조를 바로잡고, 그다음 온도와 속도를 다듬으세요.",
     "related_images": []
   },
   {
     "process": "injection",
     "symptom": "Flash (excess material escaping parting line)",
-    "likely_causes": ["Excessive hold pressure", "Too high melt or mold temperature", "Damaged or worn mold parting surfaces", "Improper clamp force"],
-    "diagnostics": "Inspect parting line for wear; measure clamp force vs. required tonnage; check hold pressure and time; verify alignment and venting.",
-    "quick_fixes": ["Reduce hold pressure by 50-100 bar", "Lower melt temperature 5 °C", "Reduce mold temperature by 5 °C or increase clamp tonnage 10-20 %", "Check for debris between mold halves and clean"],
-    "root_fixes": ["Recondition mold parting surfaces", "Install hard stops to prevent over-clamp", "Design part and gate to avoid over-packing", "Ensure mold vents are clean and adequate"],
+    "symptom_ko": "플래시 (파팅라인 외부로 수지 유출)",
+    "plain_en": "Material escapes the parting line when hold pressure is too high, melt or mold temperature is too high, the parting surface is worn, or clamp force is not enough.",
+    "plain_ko": "파팅라인 바깥으로 수지가 새어 나오는 결함입니다. 보압 과다, 용융 또는 금형 온도 과다, 파팅면 마모, 클램프 부족 중 하나가 원인입니다.",
+    "likely_causes": [
+      "Hold pressure is excessive",
+      "Melt or mold temperature is too high",
+      "Mold parting surfaces are worn or damaged",
+      "Clamp force is not adequate"
+    ],
+    "likely_causes_ko": [
+      "보압 과다",
+      "용융 또는 금형 온도 과다",
+      "파팅면 마모 또는 손상",
+      "클램프 힘 부족"
+    ],
+    "diagnostics": "Inspect the parting line for wear, compare clamp force against required tonnage, check hold pressure and hold time, and verify mold alignment plus venting condition.",
+    "diagnostics_ko": "파팅라인 마모를 검사하고, 클램프 힘을 필요 톤수와 비교하고, 보압과 보압 시간을 확인하고, 금형 얼라인먼트와 벤트 상태를 점검합니다.",
+    "quick_fixes": [
+      "Reduce hold pressure by 50-100 bar",
+      "Lower melt temperature by 5 °C",
+      "Lower mold temperature by 5 °C or raise clamp tonnage 10-20 %",
+      "Remove debris between the mold halves"
+    ],
+    "quick_fixes_ko": [
+      "보압 50-100 bar 하향",
+      "용융 온도 5 °C 하향",
+      "금형 온도 5 °C 하향 또는 클램프 톤수 10-20 % 상승",
+      "금형 사이 이물 제거"
+    ],
+    "root_fixes": [
+      "Recondition the mold parting surfaces",
+      "Install hard stops so over-clamp cannot distort the mold",
+      "Review part and gate design to avoid over-packing",
+      "Keep mold vents clean and adequate"
+    ],
+    "root_fixes_ko": [
+      "파팅면 재가공",
+      "과도한 클램프로 금형이 변형되지 않도록 하드 스톱 설치",
+      "과충진을 줄이도록 파트와 게이트 설계 재검토",
+      "금형 벤트를 청결하고 충분하게 유지"
+    ],
     "control_knobs": ["Hold pressure", "Melt and mold temperatures", "Clamp force"],
-    "notes": "Flash indicates over-packing or mold damage; balancing pressures and machine maintenance is key.",
+    "control_knobs_ko": ["보압", "용융 · 금형 온도", "클램프 힘"],
+    "notes": "Flash is a sign of over-pack or mold damage. Rebalance pressure first, then inspect the tool.",
+    "notes_ko": "플래시는 과충진 또는 금형 손상의 신호입니다. 먼저 압력 균형을 잡고, 그다음 금형을 확인하세요.",
     "related_images": []
   },
   {
     "process": "injection",
     "symptom": "Sink marks or voids",
-    "likely_causes": ["Insufficient packing/holding pressure", "Short hold time", "Thick rib or boss sections", "Uneven cooling or low mold temperature"],
-    "diagnostics": "Identify location of sinks; check part weight repeatability; perform gate freeze time study; review hold pressure and time settings.",
-    "quick_fixes": ["Increase first-stage hold pressure by 30-70 bar and extend hold time by 0.5-1 s", "Increase cooling time 2-3 s", "Adjust V/P transfer earlier to allow more packing", "Use proper packing profile ramp"],
-    "root_fixes": ["Redesign part to avoid thick sections", "Modify gate location or size to improve flow and packing", "Balance mold temperature within ±1 °C", "Consider nucleating agents to speed crystallization"],
+    "symptom_ko": "수축 자국 · 공극 (Sink / Void)",
+    "plain_en": "A sink mark or internal void usually means packing pressure is low, hold time is short, the section is too thick, or cooling is uneven.",
+    "plain_ko": "수축 자국이나 내부 공극은 보압 부족, 짧은 보압 시간, 두꺼운 단면, 불균일 냉각 중 하나에서 주로 나옵니다.",
+    "likely_causes": [
+      "Packing or holding pressure is too low",
+      "Hold time is too short",
+      "Ribs or bosses are too thick",
+      "Cooling is uneven or mold temperature is too low"
+    ],
+    "likely_causes_ko": [
+      "보압 또는 유지 압력 부족",
+      "보압 시간 부족",
+      "리브 또는 보스 두께 과다",
+      "냉각 불균일 또는 낮은 금형 온도"
+    ],
+    "diagnostics": "Locate the sink or void, check part-weight repeatability, run a gate-seal study, and review hold pressure plus hold-time settings.",
+    "diagnostics_ko": "수축 자국이나 공극 위치를 확인하고, 파트 중량 반복성을 점검하고, 게이트 동결 스터디를 돌리고, 보압과 보압 시간 설정을 검토합니다.",
+    "quick_fixes": [
+      "Raise first-stage hold pressure by 30-70 bar and extend hold time by 0.5-1 s",
+      "Increase cooling time by 2-3 s",
+      "Move V/P transfer earlier so more packing remains available",
+      "Use a smoother packing-pressure ramp"
+    ],
+    "quick_fixes_ko": [
+      "1차 보압 30-70 bar 상승 + 보압 시간 0.5-1 s 연장",
+      "냉각 시간 2-3 s 증가",
+      "보압 여유를 늘리도록 V/P 전환을 더 앞당김",
+      "더 완만한 보압 램프 적용"
+    ],
+    "root_fixes": [
+      "Redesign the part to avoid thick sections",
+      "Modify gate location or gate size to improve packing access",
+      "Balance mold temperature within ±1 °C",
+      "Consider a nucleating agent to speed crystallization"
+    ],
+    "root_fixes_ko": [
+      "두꺼운 단면을 피하도록 파트 재설계",
+      "충진 접근성을 높이도록 게이트 위치 또는 크기 수정",
+      "금형 온도 ±1 °C 이내로 균형 유지",
+      "결정화 가속을 위한 결정핵제 검토"
+    ],
     "control_knobs": ["Hold pressure", "Hold time", "Cooling time", "Gate design"],
-    "notes": "Sinks occur when inner material shrinks; proper packing and cooling mitigate.",
+    "control_knobs_ko": ["보압", "보압 시간", "냉각 시간", "게이트 설계"],
+    "notes": "Sink marks come from internal shrinkage. Packing and uniform cooling are the primary levers.",
+    "notes_ko": "수축 자국은 내부 수축에서 옵니다. 보압과 균일 냉각이 가장 큰 제어 인자입니다.",
     "related_images": []
   },
   {
     "process": "injection",
     "symptom": "Warping or twisting",
-    "likely_causes": ["Uneven cooling across part", "Excessive orientation from high injection speed", "Inadequate support during ejection", "Incompatible shrink rates of PLA and aPHA phases"],
-    "diagnostics": "Measure mold temperature at multiple points; observe part as it cools; check for imbalanced packing between cavities; evaluate injection and hold speed profiles.",
-    "quick_fixes": ["Equalize mold temperatures within ±1 °C", "Use softer hold pressure ramp and extend second stage", "Adjust injection speed to reduce shear orientation", "Add support pins or lifters to part design"],
-    "root_fixes": ["Optimize cooling channel design in mold", "Balance runner system and gate location", "Experiment with nucleating agents or fiber reinforcement", "Implement annealing or post-mold conditioning"],
-    "control_knobs": ["Mold temperature", "Injection/hold speed profile", "Cooling time", "Gate and runner design"],
-    "notes": "Warp results from differential shrinkage; controlling temperature and packing uniformity is crucial.",
+    "symptom_ko": "휨 · 뒤틀림 (Warp / Twist)",
+    "plain_en": "Warping usually comes from uneven cooling, too much molecular orientation, weak support at ejection, or shrinkage mismatch between PLA and aPHA phases.",
+    "plain_ko": "휨과 뒤틀림은 부위별 냉각 차이, 과도한 배향, 이젝션 시 지지 부족, PLA와 aPHA 상의 수축률 차이에서 주로 발생합니다.",
+    "likely_causes": [
+      "Cooling is uneven across the part",
+      "High injection speed creates too much orientation",
+      "Support during ejection is insufficient",
+      "PLA and aPHA phases shrink at different rates"
+    ],
+    "likely_causes_ko": [
+      "파트 전역 냉각 불균일",
+      "높은 사출 속도로 배향 과다",
+      "이젝션 시 지지 부족",
+      "PLA와 aPHA 상의 수축률 차이"
+    ],
+    "diagnostics": "Measure mold temperature at multiple points, watch the part while it cools, check for cavity-to-cavity packing imbalance, and review injection plus hold speed profiles.",
+    "diagnostics_ko": "금형 여러 지점 온도를 측정하고, 냉각 중 파트 거동을 관찰하고, 캐비티 간 보압 불균형을 확인하고, 사출과 보압 속도 프로파일을 검토합니다.",
+    "quick_fixes": [
+      "Equalize mold temperatures within ±1 °C",
+      "Use a softer hold-pressure ramp and extend the second stage",
+      "Reduce injection-speed-driven orientation",
+      "Add support pins or lifters to the part design"
+    ],
+    "quick_fixes_ko": [
+      "금형 온도 ±1 °C 이내로 평형",
+      "더 부드러운 보압 램프 사용 + 2차 단계 연장",
+      "사출 속도를 조정해 배향 감소",
+      "파트 설계에 지지 핀 또는 리프터 추가"
+    ],
+    "root_fixes": [
+      "Optimize mold cooling-channel design",
+      "Balance runner layout and gate position",
+      "Evaluate nucleating agents or fiber reinforcement",
+      "Add annealing or post-mold conditioning where needed"
+    ],
+    "root_fixes_ko": [
+      "금형 냉각 채널 설계 최적화",
+      "러너 레이아웃과 게이트 위치 밸런싱",
+      "결정핵제 또는 섬유 보강 검토",
+      "필요 시 어닐링 또는 후공정 컨디셔닝 도입"
+    ],
+    "control_knobs": ["Mold temperature", "Injection / hold speed profile", "Cooling time", "Gate and runner design"],
+    "control_knobs_ko": ["금형 온도", "사출 / 보압 속도 프로파일", "냉각 시간", "게이트 · 러너 설계"],
+    "notes": "Warp comes from differential shrinkage. Temperature balance and uniform packing matter most.",
+    "notes_ko": "뒤틀림은 수축 차이에서 옵니다. 온도 평형과 균일 보압이 가장 중요합니다.",
     "related_images": []
   },
   {
     "process": "thermoforming",
     "symptom": "Poor form definition or tearing",
-    "likely_causes": ["Sheet temperature too low", "Insufficient plug assist temperature", "Fast mold closing speed", "Non-uniform sheet thickness"],
-    "diagnostics": "Monitor sheet surface temperature with IR thermometer; examine formed part for thin spots; review heating time and oven zone settings; check plug assist temperature vs. sheet temperature.",
-    "quick_fixes": ["Raise oven temperature 5 °C and extend heat time", "Heat plug assist to near sheet temperature", "Slow down mold closing speed to allow better flow", "Pre-stretch sheet with air pressure before forming"],
-    "root_fixes": ["Install closed-loop sheet temperature control", "Ensure uniform sheet gauge from extrusion", "Optimize mold and plug design for even material distribution", "Incorporate temperature-controlled plug assist"],
-    "control_knobs": ["Oven temperature", "Heat time", "Plug assist temperature", "Mold closing speed"],
-    "notes": "Thermoforming of PHA/PLA blends requires precise thermal management due to narrow processing window.",
+    "symptom_ko": "성형 윤곽 불량 · 찢어짐",
+    "plain_en": "Poor form definition or tearing usually means the sheet is too cold, plug-assist temperature is low, the mold closes too fast, or sheet thickness is not uniform.",
+    "plain_ko": "성형 윤곽이 흐리거나 찢어지는 결함입니다. 보통 시트 온도 부족, 낮은 플러그 어시스트 온도, 빠른 금형 폐쇄, 불균일한 시트 두께 중 하나가 원인입니다.",
+    "likely_causes": [
+      "Sheet temperature is too low",
+      "Plug-assist temperature is not high enough",
+      "Mold closing speed is too fast",
+      "Sheet thickness is non-uniform"
+    ],
+    "likely_causes_ko": [
+      "시트 온도 부족",
+      "플러그 어시스트 온도 부족",
+      "금형 폐쇄 속도 과다",
+      "시트 두께 불균일"
+    ],
+    "diagnostics": "Monitor sheet surface temperature with an IR thermometer, inspect the formed part for thin spots, review heat time and oven-zone settings, and compare plug-assist temperature against the sheet.",
+    "diagnostics_ko": "IR 온도계로 시트 표면 온도를 확인하고, 성형품의 박육 부위를 살피고, 가열 시간과 오븐 존 설정을 검토하고, 플러그 어시스트 온도를 시트 온도와 비교합니다.",
+    "quick_fixes": [
+      "Raise oven temperature by 5 °C and extend heat time",
+      "Heat the plug assist close to sheet temperature",
+      "Slow mold closing speed so the sheet can flow",
+      "Pre-stretch the sheet with air before forming"
+    ],
+    "quick_fixes_ko": [
+      "오븐 온도 5 °C 상승 + 가열 시간 연장",
+      "플러그 어시스트를 시트 온도에 가깝게 가열",
+      "시트가 흐를 시간을 주도록 금형 폐쇄 속도 감소",
+      "성형 전 공압으로 예비 신장"
+    ],
+    "root_fixes": [
+      "Install closed-loop sheet-temperature control",
+      "Keep extrusion sheet gauge uniform",
+      "Optimize mold and plug design for even material distribution",
+      "Adopt a temperature-controlled plug assist"
+    ],
+    "root_fixes_ko": [
+      "시트 온도 폐루프 제어 설치",
+      "압출 시 시트 두께 균일화",
+      "재료 분배가 고르게 되도록 금형과 플러그 설계 최적화",
+      "온도 제어 플러그 어시스트 도입"
+    ],
+    "control_knobs": ["Oven temperature", "Heat time", "Plug-assist temperature", "Mold closing speed"],
+    "control_knobs_ko": ["오븐 온도", "가열 시간", "플러그 어시스트 온도", "금형 폐쇄 속도"],
+    "notes": "PHA/PLA thermoforming has a narrow process window, so thermal management must stay precise.",
+    "notes_ko": "PHA/PLA 열성형은 공정 윈도우가 좁아 열관리를 정밀하게 유지해야 합니다.",
     "related_images": []
   }
 ]
