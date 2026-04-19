@@ -2148,7 +2148,6 @@ function clearFlashInputs(type) {
       if(screw.back_pressure_bar!=null){ ov[key]['backPressBar']=[Math.max(1,screw.back_pressure_bar-2), screw.back_pressure_bar+2]; }
       if(screw.rpm!=null){ ov[key]['screwRPM']=[Math.max(20,screw.rpm-20), screw.rpm+20]; }
       localStorage.setItem('reco_overrides', JSON.stringify(ov));
-      console.log('CA1180P profile applied');
       if(window.rebuildForm) rebuildForm();
     }catch(e){ console.warn('CA1180P load failed', e); }
   }
@@ -2330,7 +2329,6 @@ function applyPhaHandoffComposition(json){
       if(Number.isFinite(Number(p.hdt_c)))       ms.push(`HDT ${Number(p.hdt_c).toFixed(1)} °C`);
       if(ms.length) parts.push(ms.join(' · '));
     }
-    console.log('[PHA handoff]', parts.join('  ·  '));
   }catch(e){
     console.warn('[PHA handoff] apply failed:', e);
   }
@@ -2385,45 +2383,6 @@ function saveProcessLog() {
   localStorage.setItem('processLog', JSON.stringify(processLogData));
 }
 
-function renderProcessLog() {
-  const tbody = document.getElementById('processLogBody');
-  if (!tbody) return;
-
-  if (processLogData.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="16" class="log-empty">로그가 없습니다. "➕ 로그 추가" 버튼을 눌러 첫 기록을 시작하세요.</td></tr>';
-    return;
-  }
-
-  tbody.innerHTML = processLogData.map((entry, index) => `
-    <tr>
-      <td>
-        <div class="log-timestamp">${entry.timestamp}</div>
-      </td>
-      <td>
-        <div class="log-timestamp" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${entry.batch_id ? '#2C5D3F' : '#9ca3af'};">${entry.batch_id ? entry.batch_id.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '—'}</div>
-      </td>
-      <td>
-        <div class="log-timestamp" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${entry.composition_code ? '#2C5D3F' : '#9ca3af'};" title="${entry.composition_id || ''}">${entry.composition_code ? entry.composition_code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') : '—'}</div>
-      </td>
-      <td>${createNumberInput(index, 'cylinderTemp', entry.cylinderTemp, 1)}</td>
-      <td>${createNumberInput(index, 'moldTemp', entry.moldTemp, 1)}</td>
-      <td>${createNumberInput(index, 'injectionSpeed', entry.injectionSpeed, 1)}</td>
-      <td>${createNumberInput(index, 'injectionPressure', entry.injectionPressure, 5)}</td>
-      <td>${createNumberInput(index, 'holdingPressure', entry.holdingPressure, 5)}</td>
-      <td>${createNumberInput(index, 'holdingTime', entry.holdingTime, 0.1)}</td>
-      <td>${createNumberInput(index, 'coolingTime', entry.coolingTime, 0.5)}</td>
-      <td>
-        <textarea class="log-note-input"
-                  onchange="updateProcessLogNote(${index}, this.value)"
-                  placeholder="현상, 불량, 특이사항 기록...">${entry.note || ''}</textarea>
-      </td>
-      <td>
-        <button class="btn-delete-log" onclick="deleteProcessLogEntry(${index})" title="삭제">🗑️</button>
-      </td>
-    </tr>
-  `).join('');
-}
-
 function createNumberInput(entryIndex, field, value, step) {
   const val = value || 0;
   return `
@@ -2437,42 +2396,6 @@ function createNumberInput(entryIndex, field, value, step) {
       <button class="btn-increment" onclick="adjustProcessLogValue(${entryIndex}, '${field}', ${step})">+</button>
     </div>
   `;
-}
-
-function addProcessLogEntry() {
-  const now = new Date();
-  const timestamp = now.toLocaleString('ko-KR', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
-  });
-
-  /* Phase 2-3: inherit the active batch / composition context (set via the
-     banner above this tab). Fields are optional — null values render as
-     an em-dash, and old entries without these keys keep working. */
-  const ctx = (typeof currentBatchContext !== 'undefined' && currentBatchContext) ? currentBatchContext : {};
-  const newEntry = {
-    timestamp: timestamp,
-    batch_id: ctx.batch_id || '',
-    composition_id: ctx.composition_id || '',
-    composition_code: ctx.composition_code || '',
-    cylinderTemp: 0,
-    moldTemp: 0,
-    injectionSpeed: 0,
-    injectionPressure: 0,
-    holdingPressure: 0,
-    holdingTime: 0,
-    coolingTime: 0,
-    note: ''
-  };
-
-  processLogData.unshift(newEntry);
-  saveProcessLog();
-  renderProcessLog();
 }
 
 function updateProcessLogValue(index, field, value) {
