@@ -2,67 +2,301 @@
   {
     "process": "compounding",
     "symptom": "Torque spike or extruder overload",
-    "likely_causes": ["Resin too cold or viscous", "Excessive feed rate", "Wet pellets causing agglomeration", "Screw or barrel wear causing poor conveying"],
-    "diagnostics": "Monitor motor load and melt pressure curves; check hopper for bridging; inspect vacuum vent for blockages; verify pellet moisture with Karl Fischer or dew point gauge.",
-    "quick_fixes": ["Reduce feed rate 10–20 %", "Increase melt temperature by 5–10 °C", "Bypass side feeders to clear blockage", "Purge with compatible resin (e.g., neat PLA)"],
-    "root_fixes": ["Ensure pellets are dried to ≤200 ppm moisture【394123870402458†L106-L114】", "Check screw and barrel wear; refurbish if worn", "Optimize venting and use vacuum to remove volatiles", "Balance feed throat temperature to prevent bridging"],
+    "symptom_ko": "토크 급등 / 압출기 과부하",
+    "plain_en": "Screw hits the torque limit or the motor-load alarm trips, usually because the resin is too cold, too wet, or being fed too aggressively at once.",
+    "plain_ko": "스크류 토크가 급하게 튀거나 모터 과부하 경보가 울리는 상황입니다. 보통 수지가 너무 차갑거나, 수분이 많거나, 사료를 한꺼번에 너무 많이 넣었을 때 생깁니다.",
+    "likely_causes": [
+      "Resin too cold or viscous (melt did not fully form)",
+      "Feed rate exceeds the screw's conveying capacity",
+      "Wet pellets clump in the feed throat",
+      "Worn screw or barrel - flights no longer bite into the melt"
+    ],
+    "likely_causes_ko": [
+      "수지가 너무 차갑거나 점도가 높음 (= 충분히 녹지 않음)",
+      "사료율이 스크류의 이송 능력을 초과함",
+      "수분을 머금은 펠릿이 피드 스로트에서 덩어리로 뭉침",
+      "마모된 스크류 · 배럴로 플라이트가 용융을 제대로 밀지 못함"
+    ],
+    "diagnostics": "Watch motor-load and melt-pressure curves during the spike. Check the hopper for bridging, inspect the vacuum vent for blockage, and verify pellet moisture with a Karl Fischer meter or dew-point reading.",
+    "diagnostics_ko": "스파이크가 생기는 순간의 모터 부하와 용융 압력 곡선을 확인하세요. 호퍼 브리징을 보고, 진공 벤트 막힘을 점검하고, Karl Fischer 또는 이슬점 측정으로 펠릿 수분을 확인합니다.",
+    "quick_fixes": [
+      "Reduce feed rate 10-20 %",
+      "Raise melt temperature by 5-10 °C within the grade window",
+      "Bypass side feeders to clear any blockage downstream",
+      "Purge with a compatible resin (for example, neat PLA)"
+    ],
+    "quick_fixes_ko": [
+      "사료율 10-20 % 감소",
+      "그레이드 권장 범위 안에서 용융 온도 5-10 °C 상승",
+      "사이드 피더를 일시 우회해 하류 막힘 확인",
+      "호환 수지(예: 순수 PLA)로 퍼지"
+    ],
+    "root_fixes": [
+      "Dry pellets to <= 200 ppm moisture (Karl Fischer or loss-on-drying)",
+      "Measure screw and barrel wear gap and refurbish if clearance exceeds spec",
+      "Tune venting and vacuum so volatiles leave at the correct zone",
+      "Balance feed-throat temperature so it stays cool enough to prevent bridging and warm enough to avoid slip"
+    ],
+    "root_fixes_ko": [
+      "펠릿을 <= 200 ppm 수분까지 건조 (Karl Fischer 또는 감량법)",
+      "스크류 · 배럴 간극을 실측하고 규격 초과 시 재가공 또는 교체",
+      "해당 존에 맞게 벤팅과 진공을 조정해 휘발분 배출",
+      "피드 스로트 온도를 적정 범위로 맞춰 브리징과 슬립을 함께 방지"
+    ],
     "control_knobs": ["Feed rate", "Zone temperatures", "Screw speed", "Vacuum vent pressure"],
-    "notes": "aPHA/PHA blends are sensitive to moisture; water generates hydrolysis leading to low molecular weight and gels.",
+    "control_knobs_ko": ["사료율", "존 온도", "스크류 회전수", "진공 벤트 압력"],
+    "notes": "aPHA/PHA blends are highly moisture-sensitive. Water drives hydrolysis, drops Mw, and shows up as gels plus torque instability.",
+    "notes_ko": "aPHA/PHA 블렌드는 수분에 매우 민감합니다. 수분은 가수분해를 일으켜 분자량을 낮추고, 겔과 토크 불안을 함께 만듭니다.",
     "related_images": []
   },
   {
     "process": "compounding",
-    "symptom": "Gels or fish‑eyes in pellets or film",
-    "likely_causes": ["Incomplete mixing of scPHA and aPHA components", "Thermal degradation causing crosslinking", "Contamination from previous resin", "Accumulated stagnant material in dead zones"],
-    "diagnostics": "Examine extrudate under microscope to identify size/distribution of gels; review temperature profiles; check screw flights and mixing elements for dead spots; evaluate purge procedure.",
-    "quick_fixes": ["Increase screw rpm or kneading elements to improve dispersive mixing", "Lower melt temperature by 5–10 °C to reduce degradation", "Implement purge between grade changes using transition resin (e.g., PETG, HDPE)", "Screen out large contaminants with finer screen pack"],
-    "root_fixes": ["Design screw with better mixing section", "Adopt rigorous purge SOP and use solvent flush periodically", "Avoid long residence times; size extruder for throughput", "Audit raw material quality and cleanliness"],
-    "control_knobs": ["Screw rpm", "Zone temperatures", "Screen pack mesh size", "Residence time"],
-    "notes": "Gels compromise film quality; maintain stable temperature and avoid over‑shearing.",
+    "symptom": "Gels or fish-eyes in pellets or film",
+    "symptom_ko": "겔 · fish-eye (표면의 덩어리 점)",
+    "plain_en": "Small hard lumps usually mean unmelted resin, crosslinks from thermal degradation, or residue left behind from the previous grade.",
+    "plain_ko": "펠릿이나 필름 표면에 보이는 작은 단단한 점입니다. 보통 녹지 않은 수지, 열분해로 생긴 가교물, 이전 그레이드 잔류물 중 하나입니다.",
+    "likely_causes": [
+      "Incomplete mixing of scPHA and aPHA components",
+      "Thermal degradation causing crosslinking",
+      "Contamination from the previous resin",
+      "Accumulated stagnant material in dead zones"
+    ],
+    "likely_causes_ko": [
+      "scPHA · aPHA 혼합 부족",
+      "열분해로 가교 발생",
+      "이전 수지 잔류 오염",
+      "데드존(정체 영역)에 쌓인 잔류물"
+    ],
+    "diagnostics": "Examine the extrudate under a microscope to check gel size and distribution. Review the temperature profile, inspect screw flights and mixing elements for dead spots, and audit the purge procedure.",
+    "diagnostics_ko": "압출물을 현미경으로 관찰해 겔 크기와 분포를 확인하세요. 온도 프로파일을 검토하고, 스크류 플라이트와 혼합 엘리먼트의 데드스팟을 점검하고, 퍼지 절차를 다시 확인합니다.",
+    "quick_fixes": [
+      "Raise screw rpm or add kneading elements to improve dispersive mixing",
+      "Lower melt temperature by 5-10 °C to reduce degradation",
+      "Purge between grade changes with a transition resin such as PETG or HDPE",
+      "Use a finer screen pack to filter larger contaminants"
+    ],
+    "quick_fixes_ko": [
+      "스크류 rpm을 올리거나 KB(혼합 블록)를 추가해 분산 개선",
+      "용융 온도 5-10 °C 하향으로 열분해 완화",
+      "그레이드 변경 시 전이 수지(PETG · HDPE)로 퍼지",
+      "더 촘촘한 스크린 팩으로 큰 이물 여과"
+    ],
+    "root_fixes": [
+      "Redesign the screw with a stronger mixing section",
+      "Adopt a strict purge SOP plus periodic solvent flush",
+      "Size the extruder around the residence-time target",
+      "Audit incoming raw-material cleanliness"
+    ],
+    "root_fixes_ko": [
+      "혼합 섹션이 강화된 스크류로 재설계",
+      "엄격한 퍼지 SOP와 주기적 용제 플러시 도입",
+      "목표 체류 시간에 맞춰 압출기 용량 재설정",
+      "원료 청정도 감사"
+    ],
+    "control_knobs": ["Screw rpm", "Zone temperatures", "Screen-pack mesh", "Residence time"],
+    "control_knobs_ko": ["스크류 rpm", "존 온도", "스크린 팩 메시", "체류 시간"],
+    "notes": "Gels hit film and pellet appearance directly. Hold temperature steady and avoid over-shearing.",
+    "notes_ko": "겔은 필름과 펠릿 외관에 직접 영향합니다. 온도를 안정적으로 유지하고 과도한 전단을 피하세요.",
     "related_images": []
   },
   {
     "process": "compounding",
-    "symptom": "Die drool or build‑up at die lips",
-    "likely_causes": ["Excessive melt temperature", "Filler (talc, CaCO₃) migration to surface", "Low screw speed causing long residence", "Poor die design with dead zones"],
-    "diagnostics": "Inspect die face during run for accumulation; measure die pressure; review temperature settings vs. recommended profiles; examine filler dispersion in compound.",
-    "quick_fixes": ["Lower die and end‑zone temperature by 5–10 °C", "Increase screw speed slightly to reduce residence time", "Clean die lips and install breaker plate", "Use purge to remove degraded material"],
-    "root_fixes": ["Optimize formulation to balance filler level", "Modify die design to reduce stagnation", "Use anti‑oxidant or stabilizer package", "Implement periodic die face cleaning schedule"],
+    "symptom": "Die drool or build-up at die lips",
+    "symptom_ko": "다이 드룰 · 다이 립 수지 쌓임",
+    "plain_en": "Resin slowly accumulating at the die lip usually means the melt is too hot, filler is migrating to the surface, or residence time is too long.",
+    "plain_ko": "다이 립 부근에 수지가 서서히 쌓이는 현상입니다. 보통 용융이 너무 뜨겁거나, 필러가 표면으로 이동했거나, 체류 시간이 긴 경우입니다.",
+    "likely_causes": [
+      "Melt temperature too high",
+      "Filler (talc or CaCO3) migrates to the surface",
+      "Low screw speed creates long residence time",
+      "Die design contains dead zones"
+    ],
+    "likely_causes_ko": [
+      "용융 온도 과다",
+      "필러(talc · CaCO3) 표면 이동",
+      "스크류 저속으로 체류 시간 증가",
+      "다이 설계 안에 데드존 존재"
+    ],
+    "diagnostics": "Watch the die face during the run, read die pressure, compare zone setpoints with the recommended profile, and inspect filler dispersion in the pellet cross-section.",
+    "diagnostics_ko": "운전 중 다이 면에 쌓임이 생기는지 보고, 다이 압력을 읽고, 존 설정값을 권장 프로파일과 비교하고, 펠릿 단면에서 필러 분산을 확인합니다.",
+    "quick_fixes": [
+      "Lower die and end-zone temperature by 5-10 °C",
+      "Raise screw rpm slightly to cut residence time",
+      "Clean die lips and add a breaker plate",
+      "Purge to remove degraded residue"
+    ],
+    "quick_fixes_ko": [
+      "다이와 말단 존 온도 5-10 °C 하향",
+      "스크류 rpm을 소폭 올려 체류 시간 단축",
+      "다이 립 청소와 브레이커 플레이트 설치",
+      "퍼지로 분해 잔류물 제거"
+    ],
+    "root_fixes": [
+      "Rebalance filler loading in the formulation",
+      "Modify the die design to eliminate stagnation",
+      "Add an AO (anti-oxidant) package",
+      "Schedule routine die-face cleaning"
+    ],
+    "root_fixes_ko": [
+      "조성의 필러 함량 재조정",
+      "정체 영역이 없도록 다이 설계 수정",
+      "AO(산화방지제) 패키지 추가",
+      "다이 면 정기 청소 스케줄 수립"
+    ],
     "control_knobs": ["Die temperature", "Screw speed", "Feed rate", "Filler loading"],
-    "notes": "Die drool leads to inconsistent dimensions and downtime.",
+    "control_knobs_ko": ["다이 온도", "스크류 회전수", "사료율", "필러 함량"],
+    "notes": "Die drool drives dimensional instability and unscheduled downtime.",
+    "notes_ko": "다이 드룰은 치수 불안정과 비계획 정지로 이어집니다.",
     "related_images": []
   },
   {
     "process": "sheet_film",
     "symptom": "Sheet sticks to chill roll / tacky surface",
-    "likely_causes": ["Slow crystallization of PHA/PLA blend", "Roll temperature too high", "Insufficient air knife or nip pressure", "High residual moisture causing surface foaming"],
-    "diagnostics": "Measure roll surface temperature and compare with recommended 30–50 °C; check dew point of dryer and moisture content; observe contact angle and wrap on first chill roll; note whether haze or gloss variations accompany sticking.",
-    "quick_fixes": ["Lower first roll temperature by 5–10 °C and increase cooling water flow", "Reduce wrap angle or nip pressure to decrease contact area", "Use air knife to delay contact and promote even cooling", "Lower melt temperature 5 °C to reduce tackiness"],
-    "root_fixes": ["Add nucleating agent to accelerate crystallization", "Rebalance extrusion line speed vs. thickness", "Apply low‑adhesion roll coating or micro‑texture", "Improve drying to <400 ppm moisture"],
-    "control_knobs": ["Roll temperatures", "Wrap angle/nip pressure", "Air knife flow", "Melt temperature", "Line speed"],
-    "notes": "PHA’s inherently slow crystallization can cause tackiness; optimizing cooling profile is essential.",
+    "symptom_ko": "시트가 칠 롤에 달라붙음 / 표면 끈적임",
+    "plain_en": "PHA crystallizes slowly, so the surface stays tacky when the first chill roll is too warm or the cooling profile is uneven.",
+    "plain_ko": "PHA는 결정화가 느려서 첫 칠 롤이 너무 따뜻하거나 냉각이 불균일하면 표면이 끈적한 상태로 남습니다.",
+    "likely_causes": [
+      "Slow crystallization of the PHA/PLA blend",
+      "Roll temperature too high",
+      "Weak air knife or insufficient nip pressure",
+      "Residual moisture causes surface foaming"
+    ],
+    "likely_causes_ko": [
+      "PHA · PLA 블렌드의 결정화 속도 느림",
+      "롤 온도 과다",
+      "에어 나이프 약함 또는 닙 압력 부족",
+      "잔류 수분으로 표면 기포 발생"
+    ],
+    "diagnostics": "Read the first-roll surface temperature against the 30-50 °C target. Check dryer dew point plus pellet moisture, watch wrap angle and contact pattern, and note whether haze or gloss shifts with sticking.",
+    "diagnostics_ko": "첫 롤 표면 온도가 30-50 °C 목표에 맞는지 확인하세요. 건조기 이슬점과 펠릿 수분을 보고, 랩 각도와 접촉 상태를 관찰하고, 달라붙을 때 헤이즈나 광택이 같이 변하는지 기록합니다.",
+    "quick_fixes": [
+      "Lower first-roll temperature by 5-10 °C and raise cooling-water flow",
+      "Reduce wrap angle or nip pressure",
+      "Use an air knife to delay contact and even out cooling",
+      "Drop melt temperature by 5 °C"
+    ],
+    "quick_fixes_ko": [
+      "첫 롤 온도 5-10 °C 하향 + 냉각수 유량 증가",
+      "랩 각도 또는 닙 압력 감소",
+      "에어 나이프로 접촉을 늦추고 냉각을 균일화",
+      "용융 온도 5 °C 하향"
+    ],
+    "root_fixes": [
+      "Add a nucleating agent to accelerate crystallization",
+      "Rebalance line speed versus thickness",
+      "Apply a low-adhesion or micro-textured roll coating",
+      "Improve drying to below 400 ppm moisture"
+    ],
+    "root_fixes_ko": [
+      "결정핵제를 추가해 결정화 가속",
+      "라인 속도와 두께를 재균형",
+      "저접착 또는 마이크로 텍스처 롤 코팅 적용",
+      "건조를 강화해 수분을 400 ppm 이하로 유지"
+    ],
+    "control_knobs": ["Roll temperatures", "Wrap angle / nip pressure", "Air-knife flow", "Melt temperature", "Line speed"],
+    "control_knobs_ko": ["롤 온도", "랩 각도 / 닙 압력", "에어 나이프 유량", "용융 온도", "라인 속도"],
+    "notes": "For tacky sheet, the cooling profile is the main lever because PHA crystallization is slow.",
+    "notes_ko": "PHA는 결정화가 느리므로 점착 문제에서는 냉각 프로파일이 가장 큰 제어 인자입니다.",
     "related_images": []
   },
   {
     "process": "sheet_film",
     "symptom": "Gauge variation or web sagging",
-    "likely_causes": ["Non‑uniform die gap", "Inconsistent melt temperature", "Excessive line speed", "Uneven cooling across roll width"],
-    "diagnostics": "Measure sheet thickness across width; check die bolt torque; record temperature profile across die and rolls; monitor screw speed and pressure stability.",
-    "quick_fixes": ["Adjust die bolts to correct gap", "Fine‑tune zone temperatures to maintain uniform melt", "Reduce line speed or increase output to achieve stable draw", "Balance roll temperatures side‑to‑side"],
-    "root_fixes": ["Regularly calibrate die and bolt tension", "Install automatic thickness gauge and feedback control", "Upgrade to multi‑manifold die for uniform flow", "Improve roll polishing and alignment"],
+    "symptom_ko": "게이지(두께) 편차 · 시트 늘어짐",
+    "plain_en": "Sheet thickness drifting across width or length usually comes from a non-uniform die gap, melt-temperature variation, excessive line speed, or uneven cooling.",
+    "plain_ko": "시트 두께가 폭 방향 또는 길이 방향으로 일정하지 않은 상태입니다. 보통 다이 갭 불균일, 용융 온도 편차, 라인 속도 과다, 롤 냉각 편차 중 하나가 원인입니다.",
+    "likely_causes": [
+      "Non-uniform die gap",
+      "Inconsistent melt temperature",
+      "Excessive line speed",
+      "Uneven cooling across roll width"
+    ],
+    "likely_causes_ko": [
+      "다이 갭 불균일",
+      "용융 온도 편차",
+      "라인 속도 과다",
+      "롤 폭 방향 냉각 편차"
+    ],
+    "diagnostics": "Measure sheet thickness across the width, check die-bolt torque, record the die and roll temperature profile, and watch screw-speed plus pressure stability.",
+    "diagnostics_ko": "폭 방향 시트 두께를 측정하고, 다이 볼트 토크를 확인하고, 다이와 롤의 온도 프로파일을 기록하고, 스크류 속도와 압력 안정성을 봅니다.",
+    "quick_fixes": [
+      "Adjust die bolts to correct the gap",
+      "Fine-tune zone temperatures to hold a uniform melt",
+      "Reduce line speed or raise output to stabilize the draw",
+      "Balance roll temperatures side to side"
+    ],
+    "quick_fixes_ko": [
+      "다이 볼트 조정으로 갭 보정",
+      "존 온도 미세 조정으로 용융 균일화",
+      "라인 속도 감소 또는 출력 증가로 드로우 안정화",
+      "롤 좌우 온도 평형 맞추기"
+    ],
+    "root_fixes": [
+      "Calibrate the die and bolt tension on a regular schedule",
+      "Install automatic thickness-gauge feedback control",
+      "Upgrade to a multi-manifold die for more uniform flow",
+      "Improve roll polishing and alignment"
+    ],
+    "root_fixes_ko": [
+      "다이와 볼트 텐션을 정기 교정",
+      "자동 두께 게이지와 피드백 제어 설치",
+      "균일 유동을 위한 멀티 매니폴드 다이 업그레이드",
+      "롤 연마와 얼라인먼트 개선"
+    ],
     "control_knobs": ["Die bolts", "Zone temperatures", "Line speed", "Roll temperatures"],
-    "notes": "Uniform sheet gauge is critical for downstream thermoforming; maintain stable process and equipment.",
+    "control_knobs_ko": ["다이 볼트", "존 온도", "라인 속도", "롤 온도"],
+    "notes": "Uniform sheet gauge is the baseline for downstream thermoforming quality.",
+    "notes_ko": "균일한 시트 두께는 후속 열성형 품질의 출발점입니다.",
     "related_images": []
   },
   {
     "process": "injection",
     "symptom": "Short shot (incomplete fill)",
-    "likely_causes": ["Insufficient injection speed or pressure", "Cold melt or mold temperature", "Flow restrictions at gate", "High viscosity due to poor mixing"],
-    "diagnostics": "Perform short‑shot study by incrementally increasing shot size; observe flow pattern and gate freeze; check melt temperature vs. setpoint; examine screw and nozzle for obstructions.",
-    "quick_fixes": ["Increase injection speed by 10–20 mm/s", "Raise melt temperature 5 °C (within 175–190 °C window for CA1180P)", "Delay V/P transfer by 1–2 % of stroke to pack more material", "Increase first‑stage hold pressure by 30–50 bar"],
-    "root_fixes": ["Optimize runner and gate design", "Ensure proper venting to minimize trapped air", "Use mold flow analysis to adjust wall thickness", "Confirm material is properly dried and homogeneous"],
+    "symptom_ko": "미충전 (Short shot)",
+    "plain_en": "The cavity does not fill to the end. Usual causes are low injection speed or pressure, low melt or mold temperature, a tight gate, or high viscosity from poor mixing.",
+    "plain_ko": "캐비티가 끝까지 채워지지 않는 결함입니다. 사출 속도 또는 압력 부족, 용융 · 금형 온도 부족, 좁은 게이트, 혼합 부족으로 인한 고점도 중 하나가 주 원인입니다.",
+    "likely_causes": [
+      "Insufficient injection speed or pressure",
+      "Melt or mold temperature too low",
+      "Flow restriction at the gate",
+      "High viscosity due to poor mixing"
+    ],
+    "likely_causes_ko": [
+      "사출 속도 또는 압력 부족",
+      "용융 또는 금형 온도 부족",
+      "게이트부 유동 제한",
+      "혼합 부족으로 점도 상승"
+    ],
+    "diagnostics": "Run a short-shot study by stepping the shot size upward. Watch the flow pattern and gate freeze, compare actual melt temperature against the setpoint, and inspect the screw and nozzle for restriction.",
+    "diagnostics_ko": "샷 용량을 조금씩 올리는 쇼트샷 스터디를 진행하세요. 유동 패턴과 게이트 동결 시점을 보고, 실제 용융 온도를 설정값과 비교하고, 스크류와 노즐 막힘을 확인합니다.",
+    "quick_fixes": [
+      "Raise injection speed by 10-20 mm/s",
+      "Increase melt temperature by 5 °C inside the grade window",
+      "Delay V/P transfer by 1-2 % of stroke",
+      "Increase first-stage hold pressure by 30-50 bar"
+    ],
+    "quick_fixes_ko": [
+      "사출 속도 10-20 mm/s 상승",
+      "그레이드 권장 범위 안에서 용융 온도 5 °C 상승",
+      "V/P 전환 위치를 스트로크의 1-2 % 지연",
+      "1차 보압 30-50 bar 상승"
+    ],
+    "root_fixes": [
+      "Optimize runner and gate design",
+      "Ensure venting is adequate so trapped air can escape",
+      "Use mold-flow review to rebalance wall thickness",
+      "Confirm the material is dried and blended uniformly"
+    ],
+    "root_fixes_ko": [
+      "러너와 게이트 설계 최적화",
+      "공기 갇힘을 줄이도록 벤팅 확보",
+      "몰드 플로우 검토로 두께 재균형",
+      "원료 건조와 블렌드 균질성 재확인"
+    ],
     "control_knobs": ["Injection speed", "Melt temperature", "V/P transfer position", "Hold pressure"],
-    "notes": "Short shots are common when using low‑flow PHA blends; systematic study helps set optimum fill parameters.",
+    "control_knobs_ko": ["사출 속도", "용융 온도", "V/P 전환 위치", "보압"],
+    "notes": "Short shot is common in lower-flow PHA blends, so use a structured fill study instead of guessing.",
+    "notes_ko": "저유동 PHA 블렌드에서 미충전은 흔하므로, 감으로 맞추지 말고 구조화된 충진 스터디로 접근하세요.",
     "related_images": []
   },
   {
@@ -70,10 +304,10 @@
     "symptom": "Splay/silver streaks or bubbles",
     "likely_causes": ["Moisture in pellets leading to hydrolysis and gas evolution", "Decomposition from excessive melt temperature", "High injection speed causing shear heating", "Vacuum leaks sucking in air"],
     "diagnostics": "Check dew point and moisture content using moisture analyzer; inspect melt for bubbling at nozzle; record actual nozzle temperature; look for yellow/brown degradation; evaluate injection screw rpm and back pressure settings.",
-    "quick_fixes": ["Re‑dry resin to target moisture (<0.02 % or 200 ppm)【394123870402458†L106-L114】", "Lower nozzle temperature by 5 °C", "Reduce injection speed by 10–20 mm/s", "Purge barrel to remove degraded material"],
-    "root_fixes": ["Install dryer with −40 °C dew point capability", "Limit melt temperature <190 °C to prevent PLA degradation", "Maintain screw back pressure low (3–5 bar)", "Periodically purge with PLA to clean barrel"],
+    "quick_fixes": ["Re-dry resin to target moisture (<0.02 % or 200 ppm)", "Lower nozzle temperature by 5 °C", "Reduce injection speed by 10-20 mm/s", "Purge barrel to remove degraded material"],
+    "root_fixes": ["Install dryer with -40 °C dew point capability", "Limit melt temperature <190 °C to prevent PLA degradation", "Maintain screw back pressure low (3-5 bar)", "Periodically purge with PLA to clean barrel"],
     "control_knobs": ["Drying temperature/time", "Nozzle and barrel temperatures", "Injection speed", "Back pressure"],
-    "notes": "Splay is primarily moisture‑related; controlling dryness and temperature prevents hydrolysis and ensures surface quality.",
+    "notes": "Splay is primarily moisture-related; controlling dryness and temperature prevents hydrolysis and ensures surface quality.",
     "related_images": []
   },
   {
@@ -81,10 +315,10 @@
     "symptom": "Flash (excess material escaping parting line)",
     "likely_causes": ["Excessive hold pressure", "Too high melt or mold temperature", "Damaged or worn mold parting surfaces", "Improper clamp force"],
     "diagnostics": "Inspect parting line for wear; measure clamp force vs. required tonnage; check hold pressure and time; verify alignment and venting.",
-    "quick_fixes": ["Reduce hold pressure by 50–100 bar", "Lower melt temperature 5 °C", "Reduce mold temperature by 5 °C or increase clamp tonnage 10–20 %", "Check for debris between mold halves and clean"],
-    "root_fixes": ["Recondition mold parting surfaces", "Install hard stops to prevent over‑clamp", "Design part and gate to avoid over‑packing", "Ensure mold vents are clean and adequate"],
+    "quick_fixes": ["Reduce hold pressure by 50-100 bar", "Lower melt temperature 5 °C", "Reduce mold temperature by 5 °C or increase clamp tonnage 10-20 %", "Check for debris between mold halves and clean"],
+    "root_fixes": ["Recondition mold parting surfaces", "Install hard stops to prevent over-clamp", "Design part and gate to avoid over-packing", "Ensure mold vents are clean and adequate"],
     "control_knobs": ["Hold pressure", "Melt and mold temperatures", "Clamp force"],
-    "notes": "Flash indicates over‑packing or mold damage; balancing pressures and machine maintenance is key.",
+    "notes": "Flash indicates over-packing or mold damage; balancing pressures and machine maintenance is key.",
     "related_images": []
   },
   {
@@ -92,8 +326,8 @@
     "symptom": "Sink marks or voids",
     "likely_causes": ["Insufficient packing/holding pressure", "Short hold time", "Thick rib or boss sections", "Uneven cooling or low mold temperature"],
     "diagnostics": "Identify location of sinks; check part weight repeatability; perform gate freeze time study; review hold pressure and time settings.",
-    "quick_fixes": ["Increase first‑stage hold pressure by 30–70 bar and extend hold time by 0.5–1 s", "Increase cooling time 2–3 s", "Adjust V/P transfer earlier to allow more packing", "Use proper packing profile ramp"],
-    "root_fixes": ["Redesign part to avoid thick sections", "Modify gate location or size to improve flow and packing", "Balance mold temperature within ±1 °C", "Consider nucleating agents to speed crystallization"],
+    "quick_fixes": ["Increase first-stage hold pressure by 30-70 bar and extend hold time by 0.5-1 s", "Increase cooling time 2-3 s", "Adjust V/P transfer earlier to allow more packing", "Use proper packing profile ramp"],
+    "root_fixes": ["Redesign part to avoid thick sections", "Modify gate location or size to improve flow and packing", "Balance mold temperature within ±1 °C", "Consider nucleating agents to speed crystallization"],
     "control_knobs": ["Hold pressure", "Hold time", "Cooling time", "Gate design"],
     "notes": "Sinks occur when inner material shrinks; proper packing and cooling mitigate.",
     "related_images": []
@@ -103,8 +337,8 @@
     "symptom": "Warping or twisting",
     "likely_causes": ["Uneven cooling across part", "Excessive orientation from high injection speed", "Inadequate support during ejection", "Incompatible shrink rates of PLA and aPHA phases"],
     "diagnostics": "Measure mold temperature at multiple points; observe part as it cools; check for imbalanced packing between cavities; evaluate injection and hold speed profiles.",
-    "quick_fixes": ["Equalize mold temperatures within ±1 °C", "Use softer hold pressure ramp and extend second stage", "Adjust injection speed to reduce shear orientation", "Add support pins or lifters to part design"],
-    "root_fixes": ["Optimize cooling channel design in mold", "Balance runner system and gate location", "Experiment with nucleating agents or fiber reinforcement", "Implement annealing or post‑mold conditioning"],
+    "quick_fixes": ["Equalize mold temperatures within ±1 °C", "Use softer hold pressure ramp and extend second stage", "Adjust injection speed to reduce shear orientation", "Add support pins or lifters to part design"],
+    "root_fixes": ["Optimize cooling channel design in mold", "Balance runner system and gate location", "Experiment with nucleating agents or fiber reinforcement", "Implement annealing or post-mold conditioning"],
     "control_knobs": ["Mold temperature", "Injection/hold speed profile", "Cooling time", "Gate and runner design"],
     "notes": "Warp results from differential shrinkage; controlling temperature and packing uniformity is crucial.",
     "related_images": []
@@ -112,10 +346,10 @@
   {
     "process": "thermoforming",
     "symptom": "Poor form definition or tearing",
-    "likely_causes": ["Sheet temperature too low", "Insufficient plug assist temperature", "Fast mold closing speed", "Non‑uniform sheet thickness"],
+    "likely_causes": ["Sheet temperature too low", "Insufficient plug assist temperature", "Fast mold closing speed", "Non-uniform sheet thickness"],
     "diagnostics": "Monitor sheet surface temperature with IR thermometer; examine formed part for thin spots; review heating time and oven zone settings; check plug assist temperature vs. sheet temperature.",
-    "quick_fixes": ["Raise oven temperature 5 °C and extend heat time", "Heat plug assist to near sheet temperature", "Slow down mold closing speed to allow better flow", "Pre‑stretch sheet with air pressure before forming"],
-    "root_fixes": ["Install closed‑loop sheet temperature control", "Ensure uniform sheet gauge from extrusion", "Optimize mold and plug design for even material distribution", "Incorporate temperature‑controlled plug assist"],
+    "quick_fixes": ["Raise oven temperature 5 °C and extend heat time", "Heat plug assist to near sheet temperature", "Slow down mold closing speed to allow better flow", "Pre-stretch sheet with air pressure before forming"],
+    "root_fixes": ["Install closed-loop sheet temperature control", "Ensure uniform sheet gauge from extrusion", "Optimize mold and plug design for even material distribution", "Incorporate temperature-controlled plug assist"],
     "control_knobs": ["Oven temperature", "Heat time", "Plug assist temperature", "Mold closing speed"],
     "notes": "Thermoforming of PHA/PLA blends requires precise thermal management due to narrow processing window.",
     "related_images": []

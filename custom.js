@@ -378,14 +378,12 @@ const TS_DATA = [
 ];
 
 // ────────────────────────────────────────────────────────────────────
-// Korean translations for the troubleshooting KB.
+// Korean troubleshooting fallbacks.
 //
-// Design choice: instead of duplicating every field inside TS_DATA with
-// a _ko suffix (error-prone to keep in sync), we keep TS_DATA as the
-// English source of truth and map symptom → Korean translation here.
-// A new `plain` field adds a one-line, jargon-light explanation for
-// operators who aren't polymer engineers. renderTS() picks the Korean
-// variant when LANG === 'ko' and falls back to English when missing.
+// The primary source of truth is now data/troubleshooting_kb.json with
+// progressive *_ko and plain_* fields. TS_KO stays in place as a safe
+// fallback for local file opens or any fetch failure until the JSON
+// rollout is complete for every entry.
 //
 // Process label translations live in PROC_KO.
 // ────────────────────────────────────────────────────────────────────
@@ -675,11 +673,35 @@ const TS_KO = {
   },
 };
 
-// Fetch the Korean translation for a field, with English fallback.
+function normalizeTroubleshootingItem(item) {
+  if (!item || typeof item !== 'object') return null;
+  return {
+    ...item,
+    likely_causes: Array.isArray(item.likely_causes) ? item.likely_causes : [],
+    likely_causes_ko: Array.isArray(item.likely_causes_ko) ? item.likely_causes_ko : item.likely_causes_ko,
+    quick_fixes: Array.isArray(item.quick_fixes) ? item.quick_fixes : [],
+    quick_fixes_ko: Array.isArray(item.quick_fixes_ko) ? item.quick_fixes_ko : item.quick_fixes_ko,
+    root_fixes: Array.isArray(item.root_fixes) ? item.root_fixes : [],
+    root_fixes_ko: Array.isArray(item.root_fixes_ko) ? item.root_fixes_ko : item.root_fixes_ko,
+    control_knobs: Array.isArray(item.control_knobs) ? item.control_knobs : [],
+    control_knobs_ko: Array.isArray(item.control_knobs_ko) ? item.control_knobs_ko : item.control_knobs_ko,
+    related_images: Array.isArray(item.related_images) ? item.related_images : [],
+  };
+}
+
+// Fetch the requested field by language, with JSON-first lookup and TS_KO fallback.
 function tsFieldByLang(item, field, lang) {
-  if (lang !== 'ko') return item[field];
-  const t = TS_KO[item.symptom];
-  if (t && t[field] != null) return t[field];
+  if (!item) return null;
+  if (field === 'plain') {
+    if (lang === 'ko') return item.plain_ko ?? TS_KO[item.symptom]?.plain ?? null;
+    return item.plain_en ?? null;
+  }
+  if (lang === 'ko') {
+    const localized = item[`${field}_ko`];
+    if (localized != null) return localized;
+    const t = TS_KO[item.symptom];
+    if (t && t[field] != null) return t[field];
+  }
   return item[field];
 }
 
@@ -691,12 +713,20 @@ function tsProcLabel(proc, lang) {
 
 // Load troubleshooting knowledge base from embedded dataset
 async function loadTroubleshootingKB() {
+  const fallback = Array.isArray(TS_DATA)
+    ? TS_DATA.map(normalizeTroubleshootingItem).filter(Boolean)
+    : [];
   try {
-    window.tsData = TS_DATA;
-    if (typeof renderTS === 'function') renderTS();
+    const res = await fetch('data/troubleshooting_kb.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if (!Array.isArray(data)) throw new Error('Troubleshooting KB payload must be an array');
+    window.tsData = data.map(normalizeTroubleshootingItem).filter(Boolean);
   } catch (e) {
-    console.warn('Failed to load troubleshooting KB', e);
+    console.warn('Failed to load troubleshooting KB, falling back to embedded data.', e);
+    window.tsData = fallback;
   }
+  if (typeof renderTS === 'function') renderTS();
 }
 
 // Photo gallery utilities

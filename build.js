@@ -14,6 +14,7 @@ const FILES_TO_COPY = [
   'tokens.css',
   'overrides.css',
   'custom.js',
+  'glossary.js',
   'anomaly-codes.js',
   'tars-batch-schema.js',
   'compounding-guide.js',

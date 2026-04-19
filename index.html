@@ -398,6 +398,7 @@
 
     <!-- Troubleshooting -->
     <section id="ts" class="tabpage">
+      <div id="tsGlossaryMount"></div>
       <div id="tsContainer"></div>
     </section>
 
@@ -1828,19 +1829,18 @@ function i18nApply(){document.documentElement.lang=LANG; allSel('[data-i18n]').f
   $('tsHint').textContent=(LANG==='ko'?I18N.ko.last:I18N.en.last)+': '+new Date().toLocaleString(LANG==='ko'?'ko-KR':'en-US'); renderTS(); renderHistory(); refreshParamTable(); renderMat()}
 function renderTS(){
   const cont = $('tsContainer');
+  const glossaryMount = $('tsGlossaryMount');
   cont.innerHTML = '';
+  if (glossaryMount) {
+    glossaryMount.innerHTML = '';
+    if (typeof window.renderPhaGlossary === 'function') window.renderPhaGlossary(glossaryMount, LANG);
+  }
   // Section-header labels per language. Korean versions come from the same
   // voice as the translated KB so everything reads consistently.
   const TS_LABELS = LANG === 'ko'
     ? { plain: '현장 한줄 설명', causes: '주요 원인', diagnostics: '진단 방법', quick: '빠른 조치', root: '근본 해결', knobs: '조절 변수' }
     : { plain: 'In plain words', causes: 'Likely causes', diagnostics: 'Diagnostics', quick: 'Quick fixes', root: 'Root fixes', knobs: 'Control knobs' };
   const pick = (item, field) => (typeof tsFieldByLang === 'function') ? tsFieldByLang(item, field, LANG) : item[field];
-  const pickPlain = (item) => {
-    // plain-language summary only exists in the Korean translation table for now.
-    if (LANG !== 'ko' || typeof TS_KO === 'undefined') return null;
-    const t = TS_KO[item.symptom];
-    return t && t.plain ? t.plain : null;
-  };
   // Use dynamic troubleshooting data if available
   if (window.tsData && Array.isArray(window.tsData)) {
     const groups = {};
@@ -1862,33 +1862,34 @@ function renderTS(){
         const rootFixes = pick(item, 'root_fixes');
         const knobs = pick(item, 'control_knobs');
         const notes = pick(item, 'notes');
-        const plain = pickPlain(item);
-        html += `<h4 style="margin-top:12px">${symptom}</h4>`;
+        const plain = pick(item, 'plain');
+        html += `<h4 style="margin-top:12px">${phaEscapeHtml(symptom)}</h4>`;
         if (plain) {
-          html += `<p style="color:var(--muted);font-style:italic;margin:4px 0 8px;">${TS_LABELS.plain}: ${plain}</p>`;
+          html += `<p style="color:var(--muted);font-style:italic;margin:4px 0 8px;"><strong>${phaEscapeHtml(TS_LABELS.plain)}:</strong> ${phaEscapeHtml(plain)}</p>`;
         }
         if (Array.isArray(causes) && causes.length) {
-          html += `<strong>${TS_LABELS.causes}:</strong><ul>` + causes.map(x => `<li>${x}</li>`).join('') + `</ul>`;
+          html += `<strong>${phaEscapeHtml(TS_LABELS.causes)}:</strong><ul>` + causes.map(x => `<li>${phaEscapeHtml(x)}</li>`).join('') + `</ul>`;
         }
         if (diagnostics) {
-          html += `<strong>${TS_LABELS.diagnostics}:</strong><p>${diagnostics}</p>`;
+          html += `<strong>${phaEscapeHtml(TS_LABELS.diagnostics)}:</strong><p>${phaEscapeHtml(diagnostics)}</p>`;
         }
         if (Array.isArray(quickFixes) && quickFixes.length) {
-          html += `<strong>${TS_LABELS.quick}:</strong><ul>` + quickFixes.map(x => `<li>${x}</li>`).join('') + `</ul>`;
+          html += `<strong>${phaEscapeHtml(TS_LABELS.quick)}:</strong><ul>` + quickFixes.map(x => `<li>${phaEscapeHtml(x)}</li>`).join('') + `</ul>`;
         }
         if (Array.isArray(rootFixes) && rootFixes.length) {
-          html += `<strong>${TS_LABELS.root}:</strong><ul>` + rootFixes.map(x => `<li>${x}</li>`).join('') + `</ul>`;
+          html += `<strong>${phaEscapeHtml(TS_LABELS.root)}:</strong><ul>` + rootFixes.map(x => `<li>${phaEscapeHtml(x)}</li>`).join('') + `</ul>`;
         }
         if (Array.isArray(knobs) && knobs.length) {
-          html += `<strong>${TS_LABELS.knobs}:</strong><p>${knobs.join(', ')}</p>`;
+          html += `<strong>${phaEscapeHtml(TS_LABELS.knobs)}:</strong><p>${phaEscapeHtml(knobs.join(', '))}</p>`;
         }
         if (notes) {
-          html += `<p><em>${notes}</em></p>`;
+          html += `<p><em>${phaEscapeHtml(notes)}</em></p>`;
         }
       });
       card.innerHTML = html;
       cont.appendChild(card);
     });
+    if (typeof window.glossFirstInRoot === 'function') window.glossFirstInRoot(cont, LANG);
     return;
   }
   // fallback to legacy categories if no dynamic data
@@ -3623,6 +3624,7 @@ window.addEventListener('load', () => {
   <!-- Phase 4a shared batch-session contract -->
 <script src="anomaly-codes.js"></script>
 <script src="tars-batch-schema.js"></script>
+<script src="glossary.js"></script>
   <!-- Load external script containing material/troubleshooting/photo logic -->
   <script src="custom.js"></script>
   <!-- Compounding & Straw guide modules -->

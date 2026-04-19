@@ -1,6 +1,6 @@
 # PHA Process Optimizer & Convertor
 
-![Version](https://img.shields.io/badge/version-1.6.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.6.1-blue.svg)
 ![Status](https://img.shields.io/badge/status-production-green.svg)
 ![Design](https://img.shields.io/badge/design-TARS%20Biopolymer%20Studio-2C5D3F.svg)
 ![License](https://img.shields.io/badge/license-ISC-lightgrey.svg)
@@ -20,6 +20,8 @@
 디자인 시스템 룰 7가지 (paper-over-chrome, italics-as-accent, mono-for-data, no shadows/gradients, 2px radius, bilingual-ready)는 원본 SKILL.md 참조.
 
 ### Recent fixes (v1.6.x)
+
+- **v1.6.1** — Troubleshooting now starts with a shared `현장 용어 사전 · Field terminology` panel and reads its KB from `data/troubleshooting_kb.json` with progressive bilingual fields (`symptom_ko`, `plain_ko`, `plain_en`, `*_ko`). Entries 01-06 now ship with refined EN plus plain-Korean field copy directly in the JSON schema, while `TS_KO` remains only as a rollback-safe fallback for the remaining entries and for `file://` opens. The static build copier now includes `glossary.js` so deployed builds keep the glossary panel and tooltip helpers aligned with the root app.
 
 - **v1.6.0** — Flash Tab 6 now includes a mobile-first batch-event sheet under the existing session banner. Operators can log `snapshot`, `addition`, `anomaly`, `scrap`, and `note` events into `currentBatchSession.events[]`, with the latest 5 events rendered as a live session timeline. Anomaly / scrap codes are sourced from the shared `anomaly-codes.js` catalog, anomaly events can link a photo reference from the existing `pha_photos` gallery, and non-note events capture an injection-floor `process_snapshot` plus the generic `state_snapshot` required by the shared `tars-batch-v1` validator. The service-worker cache key is bumped to `pha-cache-v8-batch-events`, and the static build copier now includes `anomaly-codes.js` so dist builds stay aligned with the root deployment.
 
