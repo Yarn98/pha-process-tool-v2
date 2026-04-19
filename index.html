@@ -592,30 +592,58 @@ const I18N = {
       flash_t4:"✅ Checklist",flash_t5:"🔧 Troubleshooting",flash_t6:"📝 Process Log",flash_t7:"📖 User Manual"
   }
 };
-const FLASH_BATCH_CONTEXT_BANNER = `
-  <div id="batchContextBanner" class="calc-recommendation" style="border-left-color:#2C5D3F;background:linear-gradient(135deg,#EDE7D8,#F5F1E8);">
-    <h4 style="color:#2C5D3F;">🔗 현재 배치 & 조성 / Current batch &amp; composition</h4>
-    <p style="font-size:13px;color:#6b7280;margin-bottom:12px">
-      배치 ID를 입력하고 4HB 앱에서 내보낸 조성 JSON을 불러오면, 이 탭에서 추가되는 모든 로그 항목에 자동으로 연결됩니다.
-      <br/>Set the batch ID and optionally load a composition JSON exported from the 4HB Properties app. New log rows will automatically record these.
-    </p>
-    <div style="display:grid;grid-template-columns:minmax(180px,1fr) auto auto auto;gap:10px;align-items:end;">
-      <div>
-        <label for="batchIdInput" style="display:block;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#757065;margin-bottom:4px;font-family:'JetBrains Mono',monospace;">Batch ID · 배치</label>
-        <input type="text" id="batchIdInput" placeholder="e.g. 20260419-A · free form" style="width:100%;padding:8px 10px;border:1px solid #D8D0BE;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:13px;background:#FAF7EE;" onchange="updateBatchContext({ batch_id: this.value.trim() })">
-      </div>
-      <div>
-        <label style="display:block;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#757065;margin-bottom:4px;font-family:'JetBrains Mono',monospace;">Composition · 조성</label>
-        <input type="file" id="compositionFile" accept=".json,application/json" style="display:none" onchange="loadCompositionFromFile(this.files?.[0])">
-        <button type="button" onclick="document.getElementById('compositionFile').click()" style="padding:8px 14px;background:#1A1814;color:#F5F1E8;border:0;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;">Load JSON</button>
-      </div>
-      <button type="button" id="batchContextClear" onclick="clearBatchContext()" style="padding:8px 14px;background:transparent;color:#1A1814;border:1px solid #B8AF99;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;">Clear</button>
-      <div id="batchContextSummary" style="grid-column:1/-1;padding:10px 12px;background:#FAF7EE;border:1px solid #D8D0BE;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#3A352D;min-height:36px;display:flex;align-items:center;">
-        <span style="color:#757065;">No batch or composition loaded yet · 아직 설정된 배치/조성이 없습니다</span>
+const FLASH_BATCH_CONTEXT_BANNER = {
+  ko: `
+    <div id="batchContextBanner" class="calc-recommendation" style="border-left-color:#2C5D3F;background:linear-gradient(135deg,#EDE7D8,#F5F1E8);">
+      <h4 style="color:#2C5D3F;">🔗 현재 배치 세션</h4>
+      <p style="font-size:13px;color:#6b7280;margin-bottom:12px">
+        배치 ID와 4HB 조성 JSON을 먼저 연결한 뒤 <strong>배치 시작</strong>을 누르면, 이후 추가되는 공정 로그가 같은 세션에 묶입니다.
+      </p>
+      <div style="display:grid;grid-template-columns:minmax(180px,1fr) auto auto auto auto;gap:10px;align-items:end;">
+        <div>
+          <label for="batchIdInput" style="display:block;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#757065;margin-bottom:4px;font-family:'JetBrains Mono',monospace;">배치 ID</label>
+          <input type="text" id="batchIdInput" placeholder="예: 20260419-A" style="width:100%;padding:8px 10px;border:1px solid #D8D0BE;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:13px;background:#FAF7EE;" onchange="updateBatchContext({ batch_id: this.value.trim() })">
+        </div>
+        <div>
+          <label style="display:block;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#757065;margin-bottom:4px;font-family:'JetBrains Mono',monospace;">조성 JSON</label>
+          <input type="file" id="compositionFile" accept=".json,application/json" style="display:none" onchange="loadCompositionFromFile(this.files?.[0])">
+          <button type="button" onclick="document.getElementById('compositionFile').click()" style="padding:8px 14px;background:#1A1814;color:#F5F1E8;border:0;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;">조성 불러오기</button>
+        </div>
+        <button type="button" id="startBatchSessionBtn" style="padding:8px 14px;background:#2C5D3F;color:#F5F1E8;border:0;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;">배치 시작</button>
+        <button type="button" id="endBatchSessionBtn" hidden style="padding:8px 14px;background:#1A1814;color:#F5F1E8;border:0;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;">배치 종료</button>
+        <button type="button" id="batchContextClear" onclick="clearBatchContext()" style="padding:8px 14px;background:transparent;color:#1A1814;border:1px solid #B8AF99;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;">초기화</button>
+        <div id="batchContextSummary" style="grid-column:1/-1;padding:10px 12px;background:#FAF7EE;border:1px solid #D8D0BE;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#3A352D;min-height:36px;display:flex;align-items:center;">
+          <span style="color:#757065;">아직 시작된 배치 세션이 없습니다. 필요하면 조성을 먼저 불러온 뒤 배치를 시작하세요.</span>
+        </div>
       </div>
     </div>
-  </div>
-`;
+  `,
+  en: `
+    <div id="batchContextBanner" class="calc-recommendation" style="border-left-color:#2C5D3F;background:linear-gradient(135deg,#EDE7D8,#F5F1E8);">
+      <h4 style="color:#2C5D3F;">🔗 Current batch session</h4>
+      <p style="font-size:13px;color:#6b7280;margin-bottom:12px">
+        Stage the batch ID and 4HB composition JSON first, then click <strong>Start batch</strong> so new process-log rows stay attached to the same session.
+      </p>
+      <div style="display:grid;grid-template-columns:minmax(180px,1fr) auto auto auto auto;gap:10px;align-items:end;">
+        <div>
+          <label for="batchIdInput" style="display:block;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#757065;margin-bottom:4px;font-family:'JetBrains Mono',monospace;">Batch ID</label>
+          <input type="text" id="batchIdInput" placeholder="e.g. 20260419-A" style="width:100%;padding:8px 10px;border:1px solid #D8D0BE;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:13px;background:#FAF7EE;" onchange="updateBatchContext({ batch_id: this.value.trim() })">
+        </div>
+        <div>
+          <label style="display:block;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#757065;margin-bottom:4px;font-family:'JetBrains Mono',monospace;">Composition JSON</label>
+          <input type="file" id="compositionFile" accept=".json,application/json" style="display:none" onchange="loadCompositionFromFile(this.files?.[0])">
+          <button type="button" onclick="document.getElementById('compositionFile').click()" style="padding:8px 14px;background:#1A1814;color:#F5F1E8;border:0;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;">Load composition</button>
+        </div>
+        <button type="button" id="startBatchSessionBtn" style="padding:8px 14px;background:#2C5D3F;color:#F5F1E8;border:0;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;">Start batch</button>
+        <button type="button" id="endBatchSessionBtn" hidden style="padding:8px 14px;background:#1A1814;color:#F5F1E8;border:0;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;">End batch</button>
+        <button type="button" id="batchContextClear" onclick="clearBatchContext()" style="padding:8px 14px;background:transparent;color:#1A1814;border:1px solid #B8AF99;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;">Clear</button>
+        <div id="batchContextSummary" style="grid-column:1/-1;padding:10px 12px;background:#FAF7EE;border:1px solid #D8D0BE;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#3A352D;min-height:36px;display:flex;align-items:center;">
+          <span style="color:#757065;">No batch session has been started yet. Load a composition first if you want to stage it before the run.</span>
+        </div>
+      </div>
+    </div>
+  `
+};
 const FLASH_TAB_HTML = {
   ko: {
     t0: `
@@ -961,7 +989,7 @@ const FLASH_TAB_HTML = {
         <p><strong>공정 조건·관찰한 현상을 실시간으로 기록</strong> → 문제 해결 · 최적화에 활용.</p>
         <p>각 파라미터는 <strong>숫자 직접 입력</strong> 또는 <strong>+/- 버튼</strong>으로 조정. 입력값은 <strong>자동 저장</strong>.</p>
       </div>
-      ${FLASH_BATCH_CONTEXT_BANNER}
+      ${FLASH_BATCH_CONTEXT_BANNER.ko}
       <div class="filter-container">
         <h4 style="color:#1e3c72;margin-bottom:10px">🔍 검색 · 필터</h4>
         <div class="filter-row">
@@ -1394,7 +1422,7 @@ const FLASH_TAB_HTML = {
     t6: `
       <h3 style="color:#1e3c72;margin-bottom:20px">Field Process Log (batch-scoped, templated, photo-attached, charted)</h3>
       <div class="success-box"><h3>📋 On-the-floor condition logging</h3><p><strong>Log conditions and observations in real time</strong> to drive troubleshooting and optimization.</p><p>Type values directly or tap <strong>+/- buttons</strong>. Every change is <strong>auto-saved</strong>.</p></div>
-      ${FLASH_BATCH_CONTEXT_BANNER}
+      ${FLASH_BATCH_CONTEXT_BANNER.en}
       <div class="filter-container"><h4 style="color:#1e3c72;margin-bottom:10px">🔍 Search &amp; filter</h4><div class="filter-row"><input type="text" id="filterKeyword" class="filter-input" placeholder="Keyword search in notes..." onkeyup="filterProcessLog()"><input type="date" id="filterDateFrom" class="filter-input" style="max-width:180px" onchange="filterProcessLog()"><span style="white-space:nowrap">~</span><input type="date" id="filterDateTo" class="filter-input" style="max-width:180px" onchange="filterProcessLog()"><button class="btn-filter" onclick="clearFilter()">Clear filters</button></div></div>
       <div class="template-container"><h4 style="color:#1e3c72;margin-bottom:5px">📋 Template management (save frequent setups)</h4><p style="font-size:13px;color:#6b7280;margin-bottom:10px">Save a frequently-used configuration as a template to recall it fast next time.</p><div class="template-buttons"><button class="btn-template" onclick="saveTemplate()">💾 Save current as template</button><button class="btn-template load" onclick="loadTemplate()">📥 Load template</button><button class="btn-template delete" onclick="manageTemplates()">🗑️ Manage templates</button></div></div>
       <div class="calc-recommendation"><h4>⚖️ Weight &amp; shot-size calculator</h4><p style="font-size:14px;margin-bottom:15px">Enter part and runner weights — shot size and flash-reduction recommendations fill in automatically.</p><div class="weight-calc-grid"><div class="weight-input-box"><label>Part weight (g)</label><input type="number" id="partWeight" step="0.01" placeholder="0.00" onchange="calculateShotWeight()"></div><div class="weight-input-box"><label>Runner weight (g)</label><input type="number" id="runnerWeight" step="0.01" placeholder="0.00" onchange="calculateShotWeight()"></div><div class="weight-input-box"><label>Cavity count</label><input type="number" id="cavityCount" value="36" step="1" onchange="calculateShotWeight()"></div><div class="weight-input-box"><label>Material density (g/cm³)</label><input type="number" id="materialDensity" value="1.25" step="0.01" placeholder="1.25" onchange="calculateShotWeight()"><button class="btn-filter" style="margin-top:8px;width:100%;padding:6px" onclick="loadDensityFromGrade()">Lookup by grade</button></div></div><div id="shotWeightResult" style="display:none;margin-top:15px"><div class="density-display">Total shot: <span id="totalShotWeight">0.00</span> g (<span id="shotVolume">0.00</span> cm³)</div><button class="btn-log-action btn-add-log" style="width:100%;margin-top:10px" onclick="applyWeightToLog()">⬇️ Apply to latest log</button></div></div>
@@ -1853,6 +1881,7 @@ function renderFlashContent(){
   restoreFlashInput('cavityCount', snapshot.weights.cavity || '36');
   restoreFlashInput('materialDensity', snapshot.weights.density || '1.25');
   if (typeof renderBatchContextSummary === 'function') renderBatchContextSummary();
+  if (typeof window.bindBatchSessionControls === 'function') window.bindBatchSessionControls();
   if (typeof loadProcessLog === 'function') loadProcessLog();
   if ((snapshot.filters.keyword || snapshot.filters.from || snapshot.filters.to) && typeof filterProcessLog === 'function') filterProcessLog();
   else if (typeof renderProcessLog === 'function') renderProcessLog();
@@ -2177,84 +2206,261 @@ function clearFlashInputs(type) {
 let processLogData = [];
 
 /* ──────────────────────────────────────────────────────────────────
-   Phase 2-3: Batch / composition context.
-   Stored as one object under 'pha.batchContext.v1' so every new
-   processLog entry can record which batch ran it AND which designed
-   composition (from 4HB Properties Modeling Export) it was targeted
-   against. The banner UI above the process log writes this state.
+   Phase 4c: Batch / composition context now lives under a shared
+   tars-batch-v1 session contract. The legacy pha.batchContext.v1 key
+   remains read-only for rollback safety and is migrated forward on
+   demand. DATA SAFETY: we never clear the legacy key here.
    ────────────────────────────────────────────────────────────────── */
-const BATCH_CTX_KEY = 'pha.batchContext.v1';
-let currentBatchContext = { batch_id: '', composition_id: '', composition_code: '', composition: null };
+const PHA_BATCH_SESSION_KEY = 'pha.batchSession.v1';
+const PHA_BATCH_CTX_LEGACY_KEY = 'pha.batchContext.v1';
+let currentBatchSession = null;
 
-function loadBatchContext() {
+function phaBatchSchemaApi() {
+  return window.TarsBatchSchema || {};
+}
+
+function getPhaBatchSessionError(session) {
+  const fn = phaBatchSchemaApi().getTarsBatchSessionV1Error;
+  return typeof fn === 'function' ? fn(session) : 'TarsBatchSchema API unavailable.';
+}
+
+function isPhaBatchSessionV1(session) {
+  const fn = phaBatchSchemaApi().isTarsBatchSessionV1;
+  return typeof fn === 'function' ? fn(session) : false;
+}
+
+function phaCreateDraftBatchSession() {
+  return {
+    $schema: 'tars-batch-v1',
+    version: 1,
+    batch_id: '',
+    created_at: new Date().toISOString(),
+    status: 'planning',
+  };
+}
+
+function getCompositionCode(comp) {
+  return comp && typeof comp.code === 'string' ? comp.code : '';
+}
+
+function getCompositionId(comp) {
+  if (!comp) return '';
+  if (typeof comp.id === 'string') return comp.id;
+  if (typeof comp.code === 'string') return comp.code;
+  return '';
+}
+
+function phaEscapeHtml(value) {
+  return String(value == null ? '' : value).replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
+}
+
+function setCurrentBatchSession(session) {
+  currentBatchSession = session && typeof session === 'object' ? session : null;
+  window.currentBatchSession = currentBatchSession;
+  return currentBatchSession;
+}
+
+function ensureCurrentBatchSession() {
+  return currentBatchSession || setCurrentBatchSession(phaCreateDraftBatchSession());
+}
+
+function phaMigrateLegacyContextToSession() {
   try {
-    const saved = localStorage.getItem(BATCH_CTX_KEY);
-    if (!saved) return;
-    const parsed = JSON.parse(saved);
-    if (parsed && typeof parsed === 'object') {
-      currentBatchContext = {
-        batch_id: String(parsed.batch_id || ''),
-        composition_id: String(parsed.composition_id || ''),
-        composition_code: String(parsed.composition_code || ''),
-        composition: parsed.composition && typeof parsed.composition === 'object' ? parsed.composition : null,
-      };
+    const raw = localStorage.getItem(PHA_BATCH_CTX_LEGACY_KEY);
+    if (!raw) return null;
+    const legacy = JSON.parse(raw);
+    if (!legacy || typeof legacy !== 'object') return null;
+    const session = phaCreateDraftBatchSession();
+    const batchId = String(legacy.batch_id || '').trim();
+    if (batchId) {
+      session.batch_id = batchId;
+      session.status = 'running';
+    }
+    if (legacy.composition && typeof legacy.composition === 'object' && legacy.composition.$schema === 'tars-composition-v1') {
+      session.planned_composition = legacy.composition;
+    }
+    return session;
+  } catch (e) {
+    console.warn('[pha] legacy batch-context migration failed:', e);
+    return null;
+  }
+}
+
+function phaSaveBatchSession(session) {
+  const error = getPhaBatchSessionError(session);
+  if (error) return false;
+  try {
+    localStorage.setItem(PHA_BATCH_SESSION_KEY, JSON.stringify(session));
+    return true;
+  } catch (e) {
+    console.warn('[pha] Could not save session:', e);
+    return false;
+  }
+}
+
+function phaLoadBatchSession() {
+  try {
+    const raw = localStorage.getItem(PHA_BATCH_SESSION_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (isPhaBatchSessionV1(parsed)) return parsed;
+      console.warn('[pha] stored session failed validation:', getPhaBatchSessionError(parsed));
     }
   } catch (e) {
-    console.warn('[batch] Could not load context:', e);
+    console.warn('[pha] session read failed:', e);
   }
+  const migrated = phaMigrateLegacyContextToSession();
+  if (migrated) {
+    phaSaveBatchSession(migrated);
+    return migrated;
+  }
+  return null;
+}
+
+function phaStatusLabel(status) {
+  const labels = LANG === 'ko'
+    ? { planning: '계획', running: '진행 중', finalized: '종료', cancelled: '취소' }
+    : { planning: 'Planning', running: 'Running', finalized: 'Finalized', cancelled: 'Cancelled' };
+  return labels[status] || status || (LANG === 'ko' ? '미정' : 'Unknown');
+}
+
+function phaStatusTone(status) {
+  if (status === 'running') return { fg: '#2C5D3F', bg: '#E5F1E8', border: '#AFC9B8' };
+  if (status === 'finalized') return { fg: '#445063', bg: '#E7EBF1', border: '#BCC6D4' };
+  if (status === 'cancelled') return { fg: '#8A1F1F', bg: '#F7E6E3', border: '#D9A8A1' };
+  return { fg: '#5B5447', bg: '#EEE8DA', border: '#CFC5AE' };
+}
+
+function phaStartedAgoLabel(iso, status) {
+  if (!iso || status === 'planning') return '';
+  const startedMs = Date.parse(iso);
+  if (!Number.isFinite(startedMs)) return '';
+  const diffMin = Math.max(0, Math.floor((Date.now() - startedMs) / 60000));
+  if (LANG === 'ko') {
+    if (diffMin < 1) return '방금 시작';
+    if (diffMin < 60) return `시작 ${diffMin}분 전`;
+    const diffHr = Math.floor(diffMin / 60);
+    if (diffHr < 24) return `시작 ${diffHr}시간 전`;
+    return `시작 ${Math.floor(diffHr / 24)}일 전`;
+  }
+  if (diffMin < 1) return 'Started just now';
+  if (diffMin < 60) return `Started ${diffMin}m ago`;
+  const diffHr = Math.floor(diffMin / 60);
+  if (diffHr < 24) return `Started ${diffHr}h ago`;
+  return `Started ${Math.floor(diffHr / 24)}d ago`;
+}
+
+function renderBatchContextBanner() {
+  const banner = document.getElementById('batchContextSummary');
+  if (!banner) return;
+  const session = currentBatchSession;
+  const batchId = session && typeof session.batch_id === 'string' ? session.batch_id : '';
+  const comp = session && session.planned_composition && typeof session.planned_composition === 'object' ? session.planned_composition : null;
+  const compCode = getCompositionCode(comp);
+  const operator = session && typeof session.operator === 'string' ? session.operator.trim() : '';
+  const batchIdInput = document.getElementById('batchIdInput');
+  if (batchIdInput && batchIdInput.value !== batchId) batchIdInput.value = batchId;
+
+  const startBtn = document.getElementById('startBatchSessionBtn');
+  if (startBtn) {
+    startBtn.hidden = !!(session && session.status === 'running');
+    startBtn.disabled = !!(session && (session.status === 'finalized' || session.status === 'cancelled'));
+  }
+  const endBtn = document.getElementById('endBatchSessionBtn');
+  if (endBtn) {
+    endBtn.hidden = !(session && session.status === 'running');
+    endBtn.disabled = !(session && session.status === 'running');
+  }
+
+  const hasSummary = !!(session && (batchId || compCode || operator || session.started_at || session.ended_at));
+  if (!hasSummary) {
+    banner.innerHTML = LANG === 'ko'
+      ? '<span style="color:#757065;">아직 시작된 배치 세션이 없습니다. 필요하면 조성을 먼저 불러온 뒤 배치를 시작하세요.</span>'
+      : '<span style="color:#757065;">No batch session has been started yet. Load a composition first if you want to stage it before the run.</span>';
+    if (typeof window.bindBatchSessionControls === 'function') window.bindBatchSessionControls();
+    return;
+  }
+
+  const tone = phaStatusTone(session.status);
+  const extras = [];
+  if (comp && comp.predicted_properties) {
+    const predicted = comp.predicted_properties;
+    if (Number.isFinite(Number(predicted.tensile_mpa))) extras.push(`σ ${Number(predicted.tensile_mpa).toFixed(1)} MPa`);
+    if (Number.isFinite(Number(predicted.hdt_c))) extras.push(`HDT ${Number(predicted.hdt_c).toFixed(1)} °C`);
+  }
+
+  const parts = [
+    `<span style="display:inline-flex;align-items:center;padding:2px 8px;border-radius:999px;font-size:11px;letter-spacing:0.08em;text-transform:uppercase;background:${tone.bg};color:${tone.fg};border:1px solid ${tone.border};">${phaEscapeHtml(phaStatusLabel(session.status))}</span>`
+  ];
+  if (batchId) {
+    parts.push(`<span style="color:#2C5D3F;font-weight:500;">${LANG === 'ko' ? '배치' : 'Batch'}</span> <span style="color:#1A1814;">${phaEscapeHtml(batchId)}</span>`);
+  }
+  if (operator) {
+    parts.push(`<span style="color:#2C5D3F;font-weight:500;">${LANG === 'ko' ? '작업자' : 'Operator'}</span> <span style="color:#1A1814;">${phaEscapeHtml(operator)}</span>`);
+  }
+  const startedLabel = phaStartedAgoLabel(session.started_at, session.status);
+  if (startedLabel) {
+    parts.push(`<span style="color:#757065;">${phaEscapeHtml(startedLabel)}</span>`);
+  }
+  if (compCode) {
+    const compTail = extras.length ? ` <span style="color:#757065;">· ${extras.join(' · ')}</span>` : '';
+    parts.push(`<span style="color:#2C5D3F;font-weight:500;">${LANG === 'ko' ? '조성' : 'Composition'}</span> <span style="color:#1A1814;">${phaEscapeHtml(compCode)}</span>${compTail}`);
+  }
+  banner.innerHTML = parts.join(' &nbsp;·&nbsp; ');
+  if (typeof window.bindBatchSessionControls === 'function') window.bindBatchSessionControls();
+}
+
+function loadBatchContext() {
+  return setCurrentBatchSession(phaLoadBatchSession());
 }
 
 function saveBatchContext() {
-  try {
-    localStorage.setItem(BATCH_CTX_KEY, JSON.stringify(currentBatchContext));
-  } catch (e) {
-    console.warn('[batch] Could not save context:', e);
-  }
+  return !!(currentBatchSession && phaSaveBatchSession(currentBatchSession));
 }
 
 function renderBatchContextSummary() {
-  const banner = document.getElementById('batchContextSummary');
-  if (!banner) return;
-  const batchIdInput = document.getElementById('batchIdInput');
-  if (batchIdInput && batchIdInput.value !== currentBatchContext.batch_id) {
-    batchIdInput.value = currentBatchContext.batch_id;
-  }
-  const parts = [];
-  if (currentBatchContext.batch_id) {
-    parts.push(`<span style="color:#2C5D3F;font-weight:500;">Batch</span> <span style="color:#1A1814;">${currentBatchContext.batch_id.replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]))}</span>`);
-  }
-  if (currentBatchContext.composition_code) {
-    const c = currentBatchContext.composition;
-    const extras = [];
-    if (c && c.predicted_properties) {
-      const p = c.predicted_properties;
-      if (Number.isFinite(Number(p.tensile_mpa))) extras.push(`σ ${Number(p.tensile_mpa).toFixed(1)} MPa`);
-      if (Number.isFinite(Number(p.hdt_c))) extras.push(`HDT ${Number(p.hdt_c).toFixed(1)} °C`);
-    }
-    parts.push(`<span style="color:#2C5D3F;font-weight:500;">Composition</span> <span style="color:#1A1814;">${currentBatchContext.composition_code.replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]))}</span>${extras.length ? ' <span style="color:#757065;">· ' + extras.join(' · ') + '</span>' : ''}`);
-  }
-  if (parts.length === 0) {
-    banner.innerHTML = '<span style="color:#757065;">No batch or composition loaded yet · 아직 설정된 배치/조성이 없습니다</span>';
-  } else {
-    banner.innerHTML = parts.join(' &nbsp;·&nbsp; ');
-  }
+  renderBatchContextBanner();
 }
 
 function updateBatchContext(patch) {
-  currentBatchContext = { ...currentBatchContext, ...patch };
-  saveBatchContext();
-  renderBatchContextSummary();
+  const base = ensureCurrentBatchSession();
+  const next = { ...base };
+  if (patch && Object.prototype.hasOwnProperty.call(patch, 'batch_id')) {
+    const batchId = String(patch.batch_id || '').trim();
+    if ((base.status === 'running' || base.status === 'finalized') && !batchId) {
+      renderBatchContextBanner();
+      return;
+    }
+    next.batch_id = batchId;
+    if (!next.started_at && next.status !== 'finalized' && next.status !== 'cancelled') {
+      next.status = 'planning';
+    }
+  }
+  setCurrentBatchSession(next);
+  phaSaveBatchSession(next);
+  renderBatchContextBanner();
 }
 
 function clearBatchContext() {
-  currentBatchContext = { batch_id: '', composition_id: '', composition_code: '', composition: null };
-  saveBatchContext();
+  setCurrentBatchSession(null);
+  try {
+    localStorage.removeItem(PHA_BATCH_SESSION_KEY);
+  } catch (e) {
+    console.warn('[pha] Could not clear session:', e);
+  }
   const input = document.getElementById('batchIdInput');
   if (input) input.value = '';
   const file = document.getElementById('compositionFile');
   if (file) file.value = '';
-  renderBatchContextSummary();
+  renderBatchContextBanner();
 }
+
+window.getCurrentBatchSession = () => currentBatchSession;
+window.setCurrentBatchSession = setCurrentBatchSession;
+window.ensureCurrentBatchSession = ensureCurrentBatchSession;
+window.getPhaBatchSessionError = getPhaBatchSessionError;
+window.phaSaveBatchSession = phaSaveBatchSession;
+window.renderBatchContextBanner = renderBatchContextBanner;
 
 /* Phase 3c — URL-param composition handoff from 4HB.
    Mirrors the base64url encoder on the 4HB side: we pad back to a
@@ -2303,15 +2509,14 @@ function _phaCleanHandoffFromUrl(){
    processLog entries, only writes the batchContext key. */
 function applyPhaHandoffComposition(json){
   try{
-    const code = String(json.code || json.name || '').trim() || '(unnamed)';
-    const id = String(json.id || `${code}::${json.created_at || ''}`);
-    if(typeof updateBatchContext === 'function'){
-      updateBatchContext({
-        composition_id: id,
-        composition_code: code,
-        composition: json,
-      });
-    }
+    if (!json || json.$schema !== 'tars-composition-v1') return false;
+    const next = {
+      ...ensureCurrentBatchSession(),
+      planned_composition: json,
+    };
+    setCurrentBatchSession(next);
+    phaSaveBatchSession(next);
+    renderBatchContextBanner();
     /* Jump the user to the Process Log sub-tab so the newly-loaded
        banner is visible. We only navigate if they aren't already
        somewhere within the flash tab group. */
@@ -2320,17 +2525,10 @@ function applyPhaHandoffComposition(json){
       if(flashTab && typeof flashTab.click === 'function') flashTab.click();
       if(typeof showFlashTab === 'function') showFlashTab(6);
     }catch(_){}
-    /* Best-effort notify. Use native alert fallback if no toast. */
-    const parts = [`Imported from 4HB: ${code}`];
-    const p = json.predicted_properties;
-    if(p){
-      const ms = [];
-      if(Number.isFinite(Number(p.tensile_mpa))) ms.push(`σ ${Number(p.tensile_mpa).toFixed(1)} MPa`);
-      if(Number.isFinite(Number(p.hdt_c)))       ms.push(`HDT ${Number(p.hdt_c).toFixed(1)} °C`);
-      if(ms.length) parts.push(ms.join(' · '));
-    }
+    return true;
   }catch(e){
     console.warn('[PHA handoff] apply failed:', e);
+    return false;
   }
 }
 
@@ -2349,15 +2547,13 @@ function loadCompositionFromFile(file) {
           : 'Invalid composition JSON.\n\nExpected $schema = "tars-composition-v1" (generated by the 4HB Properties app Export ↓ button).');
         return;
       }
-      const code = String(json.code || json.name || '').trim() || '(unnamed)';
-      /* Consumers may not carry a persistent id; derive one from code +
-         timestamp so cross-app references are stable per-export. */
-      const id = String(json.id || `${code}::${json.created_at || ''}`);
-      updateBatchContext({
-        composition_id: id,
-        composition_code: code,
-        composition: json,
-      });
+      const next = {
+        ...ensureCurrentBatchSession(),
+        planned_composition: json,
+      };
+      setCurrentBatchSession(next);
+      phaSaveBatchSession(next);
+      renderBatchContextBanner();
     } catch (err) {
       console.error('[batch] composition load failed:', err);
       alert((LANG === 'ko' ? '조성 JSON 파싱 실패: ' : 'Composition JSON parse failed: ') + (err && err.message ? err.message : 'unknown'));
@@ -2516,13 +2712,14 @@ function addProcessLogEntry() {
     hour12: false
   });
 
-  /* Phase 2-3: inherit active batch + composition context from the banner. */
-  const ctx = (typeof currentBatchContext !== 'undefined' && currentBatchContext) ? currentBatchContext : {};
+  /* Phase 4c: inherit active batch-session context from the banner. */
+  const ctx = currentBatchSession || {};
+  const plannedComposition = ctx.planned_composition || null;
   const newEntry = {
     timestamp: timestamp,
     batch_id: ctx.batch_id || '',
-    composition_id: ctx.composition_id || '',
-    composition_code: ctx.composition_code || '',
+    composition_id: getCompositionId(plannedComposition),
+    composition_code: getCompositionCode(plannedComposition),
     cylinderTemp: 0,
     moldTemp: 0,
     injectionSpeed: 0,
@@ -2689,8 +2886,9 @@ function loadTemplate() {
   const index = parseInt(selection) - 1;
   if (index >= 0 && index < processTemplates.length) {
     const template = processTemplates[index];
-    /* Template-load path also inherits current batch context. */
-    const ctx = (typeof currentBatchContext !== 'undefined' && currentBatchContext) ? currentBatchContext : {};
+    /* Template-load path also inherits the active batch session. */
+    const ctx = currentBatchSession || {};
+    const plannedComposition = ctx.planned_composition || null;
     const newEntry = {
       timestamp: new Date().toLocaleString(flashLocale(), {
         year: 'numeric',
@@ -2702,8 +2900,8 @@ function loadTemplate() {
         hour12: false
       }),
       batch_id: ctx.batch_id || '',
-      composition_id: ctx.composition_id || '',
-      composition_code: ctx.composition_code || '',
+      composition_id: getCompositionId(plannedComposition),
+      composition_code: getCompositionCode(plannedComposition),
       cylinderTemp: template.cylinderTemp,
       moldTemp: template.moldTemp,
       injectionSpeed: template.injectionSpeed,

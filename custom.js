@@ -767,6 +767,116 @@ function renderPhotos() {
   });
 }
 
+function batchSessionText(key) {
+  const dict = (typeof LANG !== 'undefined' && LANG === 'ko')
+    ? {
+        operatorPrompt: '작업자 이니셜을 입력하세요:',
+        batchPrompt: '배치 ID를 입력하세요 (예: 20260419-A):',
+        batchRequired: '배치 ID가 있어야 배치를 시작할 수 있습니다.',
+        startError: '배치를 시작할 수 없습니다: ',
+        endConfirm: '이 배치 세션을 종료하시겠습니까? 종료 후에도 기록은 유지됩니다.',
+        endError: '배치를 종료할 수 없습니다: ',
+        started: '배치 시작: ',
+        ended: '배치 종료: ',
+      }
+    : {
+        operatorPrompt: 'Operator initials:',
+        batchPrompt: 'Batch ID (e.g. 20260419-A):',
+        batchRequired: 'A batch ID is required before the session can start.',
+        startError: 'Cannot start batch: ',
+        endConfirm: 'End this batch session? The records will remain available afterward.',
+        endError: 'Cannot end batch: ',
+        started: 'Batch started: ',
+        ended: 'Batch finalized: ',
+      };
+  return dict[key] || key;
+}
+
+function bindBatchSessionControls() {
+  const startBtn = document.getElementById('startBatchSessionBtn');
+  if (startBtn && startBtn.dataset.bound !== '1') {
+    startBtn.addEventListener('click', startBatchSession);
+    startBtn.dataset.bound = '1';
+  }
+  const endBtn = document.getElementById('endBatchSessionBtn');
+  if (endBtn && endBtn.dataset.bound !== '1') {
+    endBtn.addEventListener('click', endBatchSession);
+    endBtn.dataset.bound = '1';
+  }
+}
+
+function startBatchSession() {
+  const existing = typeof window.getCurrentBatchSession === 'function' ? window.getCurrentBatchSession() : null;
+  const base = (existing && typeof existing === 'object') ? existing : (typeof window.ensureCurrentBatchSession === 'function' ? window.ensureCurrentBatchSession() : null);
+  if (!base) return;
+
+  const operatorReply = prompt(batchSessionText('operatorPrompt'), base.operator || '');
+  if (operatorReply === null) return;
+
+  let batchId = String(base.batch_id || '').trim();
+  if (!batchId) {
+    const batchReply = prompt(batchSessionText('batchPrompt'), '');
+    if (batchReply === null) return;
+    batchId = String(batchReply || '').trim();
+  }
+  if (!batchId) {
+    alert(batchSessionText('batchRequired'));
+    return;
+  }
+
+  const updated = {
+    ...base,
+    batch_id: batchId,
+    operator: String(operatorReply || '').trim() || undefined,
+    started_at: new Date().toISOString(),
+    status: 'running',
+  };
+  const error = typeof window.getPhaBatchSessionError === 'function' ? window.getPhaBatchSessionError(updated) : null;
+  if (error) {
+    alert(batchSessionText('startError') + error);
+    return;
+  }
+
+  if (typeof window.setCurrentBatchSession === 'function') window.setCurrentBatchSession(updated);
+  const saved = typeof window.phaSaveBatchSession === 'function' ? window.phaSaveBatchSession(updated) : true;
+  if (!saved) {
+    alert(batchSessionText('startError') + (typeof window.getPhaBatchSessionError === 'function' ? window.getPhaBatchSessionError(updated) : 'save failed'));
+    return;
+  }
+  if (typeof window.renderBatchContextBanner === 'function') window.renderBatchContextBanner();
+  alert(batchSessionText('started') + updated.batch_id);
+}
+
+function endBatchSession() {
+  const session = typeof window.getCurrentBatchSession === 'function' ? window.getCurrentBatchSession() : null;
+  if (!session || session.status !== 'running') return;
+  if (!confirm(batchSessionText('endConfirm'))) return;
+
+  const updated = {
+    ...session,
+    ended_at: new Date().toISOString(),
+    status: 'finalized',
+  };
+  const error = typeof window.getPhaBatchSessionError === 'function' ? window.getPhaBatchSessionError(updated) : null;
+  if (error) {
+    alert(batchSessionText('endError') + error);
+    return;
+  }
+
+  if (typeof window.setCurrentBatchSession === 'function') window.setCurrentBatchSession(updated);
+  const saved = typeof window.phaSaveBatchSession === 'function' ? window.phaSaveBatchSession(updated) : true;
+  if (!saved) {
+    alert(batchSessionText('endError') + (typeof window.getPhaBatchSessionError === 'function' ? window.getPhaBatchSessionError(updated) : 'save failed'));
+    return;
+  }
+  if (typeof window.renderBatchContextBanner === 'function') window.renderBatchContextBanner();
+  alert(batchSessionText('ended') + updated.batch_id);
+}
+
+window.bindBatchSessionControls = bindBatchSessionControls;
+window.startBatchSession = startBatchSession;
+window.endBatchSession = endBatchSession;
+
 // Immediately initialize photo uploader, material cards, and troubleshooting data.
 // Because this script is loaded at the end of the body, DOM elements are available.
 (function initCustom() {
@@ -784,4 +894,6 @@ function renderPhotos() {
   loadMaterialCards();
   // Populate troubleshooting data and update display
   loadTroubleshootingKB();
+  // Batch-session controls are rendered from the Flash tab template.
+  bindBatchSessionControls();
 })();

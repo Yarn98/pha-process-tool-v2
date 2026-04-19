@@ -1,6 +1,6 @@
 # PHA Process Optimizer & Convertor
 
-![Version](https://img.shields.io/badge/version-1.4.0-blue.svg)
+![Version](https://img.shields.io/badge/version-1.5.0-blue.svg)
 ![Status](https://img.shields.io/badge/status-production-green.svg)
 ![Design](https://img.shields.io/badge/design-TARS%20Biopolymer%20Studio-2C5D3F.svg)
 ![License](https://img.shields.io/badge/license-ISC-lightgrey.svg)
@@ -19,7 +19,9 @@
 
 디자인 시스템 룰 7가지 (paper-over-chrome, italics-as-accent, mono-for-data, no shadows/gradients, 2px radius, bilingual-ready)는 원본 SKILL.md 참조.
 
-### Recent fixes (v1.4.x)
+### Recent fixes (v1.5.x)
+
+- **v1.5.0** — Flash Tab 6 now stores its active run context as a schema-validated `tars-batch-v1` session under `pha.batchSession.v1`. The banner shows session `status`, `operator`, and relative `started_at`, and new `Start batch` / `End batch` controls move the session between planning → running → finalized without changing existing process-log row fields. Legacy `pha.batchContext.v1` is still read once as a fallback migration source and is deliberately left in place for rollback safety. The 4HB `?composition=` URL handoff and manual JSON import now write through the session's `planned_composition`, and the service-worker cache key is bumped to `pha-cache-v7-batch-session` so deployed clients pick up the new inline migration code without wiping local data.
 
 - **v1.4.0** — The entire Flash Control body now ships as full KO/EN content instead of “tabs-only bilingual, body mostly Korean”. All eight sub-tabs are re-rendered from locale-specific templates at runtime, the temporary language notice banner is removed, calculator help text / process-log controls / recommendations / chart labels / alerts / export headers all localize with the active language, and the existing batch-context banner remains untouched so Phase 2-3 data flow is preserved. The service-worker cache key is bumped to `pha-cache-v6-flash-body` so deployed operators pick up the new copy without clearing local data.
 - **v1.3.0** — Composition handoff from 4HB Properties Modeling now works without file upload. The 4HB app's "→ PHA Process" button ships a base64url-encoded `tars-composition-v1` payload via `?composition=<b64>`. On page load we decode (`_phaB64urlToUtf8` mirrors the encoder: pad → swap `-_`/`+/` → atob → TextDecoder; 64 KB cap; try/catch everywhere), schema-validate, feed the payload into the existing `currentBatchContext` pipeline (so log rows added afterward inherit `composition_code` + `composition_id` identically to a file-upload import), jump the operator straight to the Process Log sub-tab so they see the new banner light up, and strip the param via `history.replaceState` so reload is idempotent and the link is safe to share. Invalid/oversized/malformed payloads are silent no-ops.
