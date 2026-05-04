@@ -141,6 +141,32 @@ select#language {
   box-shadow: none !important;
 }
 .hint, .range-hint, .muted { color: var(--muted) !important; }
+.tabpage p,
+.tabpage li,
+.tabpage .small,
+.tabpage .note,
+.tabpage .flow-description,
+.tabpage .parameter-note {
+  color: var(--ink-soft) !important;
+}
+.tabpage [style*="color:#757065"],
+.tabpage [style*="color: #757065"],
+.tabpage [style*="color:#6b7280"],
+.tabpage [style*="color: #6b7280"] {
+  color: var(--ink-soft) !important;
+}
+.tabpage [style*="color:#ef4444"],
+.tabpage [style*="color: #ef4444"] {
+  color: var(--err) !important;
+}
+.tabpage [style*="color:#3b82f6"],
+.tabpage [style*="color: #3b82f6"] {
+  color: var(--accent-cool) !important;
+}
+.tabpage [style*="color:#10b981"],
+.tabpage [style*="color: #10b981"] {
+  color: var(--accent) !important;
+}
 
 /* ── 7. Buttons: mono caps, hairline, radius 2. */
 .btn {

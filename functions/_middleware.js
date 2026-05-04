@@ -31,7 +31,7 @@ function renderLoginPage(returnTo = '/', error = '') {
       --paper-50:     #FAF7EE;
       --ink:          #1A1814;
       --ink-soft:     #3A352D;
-      --muted:        #757065;
+      --muted:        #6B6256;
       --rule:         #D8D0BE;
       --rule-strong:  #B8AF99;
       --accent:       #2C5D3F;

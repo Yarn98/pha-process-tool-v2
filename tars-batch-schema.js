@@ -109,7 +109,8 @@
     if (!isRecord(value)) return 'Batch session must be an object.';
     if (value.$schema !== TARS_BATCH_SCHEMA_V1) return 'Unsupported batch schema.';
     if (value.version !== 1) return 'Unsupported batch-session version.';
-    if (typeof value.batch_id !== 'string' || !value.batch_id.trim()) return 'batch_id is required.';
+    if (typeof value.batch_id !== 'string') return 'batch_id must be a string.';
+    if (value.status !== 'planning' && !value.batch_id.trim()) return 'batch_id is required once the session starts.';
     if (!isIsoDateLike(value.created_at)) return 'created_at must be an ISO date string.';
     if (!BATCH_STATUSES.has(value.status)) return 'status is invalid.';
     if (value.started_at !== undefined && !isIsoDateLike(value.started_at)) return 'started_at must be an ISO date string.';

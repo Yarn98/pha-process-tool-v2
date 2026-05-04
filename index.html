@@ -2464,13 +2464,19 @@ function phaCreateDraftBatchSession() {
 }
 
 function getCompositionCode(comp) {
-  return comp && typeof comp.code === 'string' ? comp.code : '';
+  if (!comp) return '';
+  if (typeof comp.code === 'string' && comp.code.trim()) return comp.code;
+  if (typeof comp.composition_code === 'string' && comp.composition_code.trim()) return comp.composition_code;
+  if (typeof comp.name === 'string' && comp.name.trim()) return comp.name;
+  return '';
 }
 
 function getCompositionId(comp) {
   if (!comp) return '';
-  if (typeof comp.id === 'string') return comp.id;
-  if (typeof comp.code === 'string') return comp.code;
+  if (typeof comp.id === 'string' && comp.id.trim()) return comp.id;
+  if (typeof comp.composition_id === 'string' && comp.composition_id.trim()) return comp.composition_id;
+  if (typeof comp.code === 'string' && comp.code.trim()) return comp.code;
+  if (typeof comp.composition_code === 'string' && comp.composition_code.trim()) return comp.composition_code;
   return '';
 }
 

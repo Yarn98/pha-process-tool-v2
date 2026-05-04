@@ -13,7 +13,7 @@
   --paper-3:      #E4DCC4;   /* pressed / raised alt */
   --ink:          #1A1814;   /* primary text, strokes */
   --ink-soft:     #3A352D;   /* body & secondary text */
-  --muted:        #757065;   /* captions, meta, caps */
+  --muted:        #6B6256;   /* captions, meta, caps; WCAG AA on paper surfaces */
   --rule:         #D8D0BE;   /* 0.5 px hairlines */
   --rule-strong:  #B8AF99;   /* emphasized rules, borders */
 
@@ -22,7 +22,7 @@
      terracotta carries beta / in-progress signals; highlight
      is reserved for selection and KPI flash only. */
   --accent:       #2C5D3F;   /* forest — primary action, italic emphasis */
-  --accent-warm:  #B8632E;   /* terracotta — beta / caution */
+  --accent-warm:  #9A4F24;   /* terracotta — beta / caution, AA on paper */
   --accent-cool:  #3A5E7A;   /* slate-blue — neutral info */
   --hi:           #F5D88C;   /* highlighter yellow — selection, flags */
 

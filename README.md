@@ -1,6 +1,6 @@
 # PHA Process Optimizer & Convertor
 
-![Version](https://img.shields.io/badge/version-1.6.7-blue.svg)
+![Version](https://img.shields.io/badge/version-1.6.8-blue.svg)
 ![Status](https://img.shields.io/badge/status-production-green.svg)
 ![Design](https://img.shields.io/badge/design-TARS%20Biopolymer%20Studio-2C5D3F.svg)
 ![License](https://img.shields.io/badge/license-ISC-lightgrey.svg)
@@ -20,6 +20,8 @@
 디자인 시스템 룰 7가지 (paper-over-chrome, italics-as-accent, mono-for-data, no shadows/gradients, 2px radius, bilingual-ready)는 원본 SKILL.md 참조.
 
 ### Recent fixes (v1.6.x)
+
+- **v1.6.8** — The TARS paper-theme muted color and guide text overrides now meet readable contrast on warm paper surfaces across all tabs. The 4HB composition handoff also accepts `composition_code` / `composition_id` aliases and can persist a planning-state composition before a batch ID is assigned, matching the UI workflow where operators load a formulation first and start the batch later. The service-worker cache is bumped to `pha-cache-v12-handoff-contrast` so deployed clients pick up the CSS and schema changes.
 
 - **v1.6.7** — The Straw Guide now opens with a field-ops five-knob summary, rewrites its process-conditions tab around morphology-tiered water-bath strategy (`PLA-continuous`, `transition`, `PHA-continuous`), and adds an explicit cutter-temperature SOP (`25 ± 5 °C`) so the line-side guidance reads like the rest of the TARS copy system. The PLA warning path now speaks in terms of warm pre-sizing collapse instead of bare “warm bath collapse”, and the service-worker cache is bumped to `pha-cache-v11-straw-copy` so deployed builds pick up the new guide text without disturbing any saved local data.
 
