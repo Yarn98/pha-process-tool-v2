@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>PHA Process Optimizer – Pro v2</title>
+<title>PHA Process Tool — TARS Biopolymer Studio</title>
 <style>
   :root{
     --primary:#2563eb;--primary-dark:#1e40af;--secondary:#10b981;--danger:#ef4444;--warning:#f59e0b;
@@ -323,12 +323,38 @@
     <div class="password-gate-note">현재 설정 비밀번호는 운영 요청값 기준으로 고정됩니다.</div>
   </div>
 </div>
+<!-- ══════════════ TARS SHARED MASTHEAD ══════════════ -->
+<header class="tars-masthead">
+  <div class="tars-masthead-inner">
+    <a class="tars-wordmark" href="https://tarspolymer.com/">
+      <span class="tars-wordmark-mark" aria-hidden="true"></span>
+      <span class="tars-wordmark-text">TARS Biopolymer Studio</span>
+      <span class="tars-wordmark-sub">EST. 2024</span>
+    </a>
+    <div class="tars-folio">Vol. <strong>MMXXVI</strong> · <strong>PHA PROCESS</strong> · <strong>SEONGNAM / SEOUL</strong></div>
+    <div class="tars-masthead-tools">
+      <nav class="tars-apps" aria-label="TARS applications">
+        <a href="https://tarspolymer.com/" data-n="01">Studio</a>
+        <a href="https://compounding.tarspolymer.com/" data-n="02">Compounding</a>
+        <a href="https://straw.tarspolymer.com/" data-n="03">Straw</a>
+        <a href="https://p34hb.tarspolymer.com/" data-n="04">4HB</a>
+      </nav>
+      <div class="tars-lang-toggle" role="group" aria-label="Language / 언어">
+        <button type="button" class="tars-lang-btn active" data-lang-choice="ko">KO</button>
+        <button type="button" class="tars-lang-btn" data-lang-choice="en">EN</button>
+      </div>
+    </div>
+  </div>
+</header>
+
 <div class="container">
-  <div class="header">
-    <h1>🔬 <span data-i18n="title">PHA Process Optimizer</span></h1>
+  <div class="header app-head">
+    <div class="app-head-label">
+      <span class="caps app-head-kicker"><span data-i18n-static="en">Instrument № 02 · Process Set-points &amp; Records</span></span>
+      <h1><span data-i18n="title">PHA Process Optimizer</span></h1>
+    </div>
     <div class="header-controls">
-      <select id="language"><option value="ko">한국어</option><option value="en">English</option></select>
-      <div class="view-toggle"><button id="btnDesktop" class="active" onclick="setView('desktop')">PC</button><button id="btnMobile" onclick="setView('mobile')">📱</button></div>
+      <div class="view-toggle"><button id="btnDesktop" class="active" onclick="setView('desktop')">PC</button><button id="btnMobile" onclick="setView('mobile')">Mobile</button></div>
     </div>
   </div>
 
@@ -554,7 +580,36 @@
   </div>
 </div>
 
-<button class="fab" title="Quick Save" onclick="saveEntry()">💾</button>
+<!-- ══════════════ TARS SHARED FOOTER ══════════════ -->
+<footer class="tars-footer">
+  <div class="tars-footer-inner">
+    <div class="tars-footer-brand">
+      <span class="tars-wordmark-mark" aria-hidden="true"></span>
+      <div>
+        <div class="tars-footer-name">TARS Biopolymer Studio</div>
+        <div class="caps">PHA Process Tool · Instrument № 02</div>
+      </div>
+    </div>
+    <nav class="tars-footer-apps" aria-label="TARS applications">
+      <span class="caps tars-footer-head">Applications</span>
+      <a href="https://p34hb.tarspolymer.com/">4HB Properties Modeling</a>
+      <a href="https://compounding.tarspolymer.com/">Compounding Notebook</a>
+      <a href="https://pha-process.tarspolymer.com/" aria-current="page">PHA Process Tool</a>
+      <a href="https://straw.tarspolymer.com/">Straw Optimizer</a>
+    </nav>
+    <div class="tars-footer-meta">
+      <span class="caps tars-footer-head">Studio</span>
+      <a href="https://tarspolymer.com/">tarspolymer.com</a>
+      <span class="caps">Seongnam / Seoul · EST. 2024</span>
+    </div>
+  </div>
+  <div class="tars-footer-rule">
+    <span>© TARS Biopolymer Studio</span>
+    <span>Vol. MMXXVI · <strong>pha-process.tarspolymer.com</strong></span>
+  </div>
+</footer>
+
+<button class="fab" title="Quick Save" onclick="saveEntry()">⤓</button>
 
 <!-- Simple modal for reco editor -->
 <div id="modal" style="position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;z-index:9999">
@@ -598,7 +653,7 @@
 <script>
 /* ========= i18n ========= */
 const I18N = {
-  ko:{title:"PHA 공정 최적화 도구",tab_proc:"공정 조건",tab_ts:"트러블슈팅",tab_hist:"이력 관리",tab_ana:"데이터 분석",tab_calc:"계산기",tab_props:"물성 DB",tab_photos:"사진",tab_flash:"플래시 제어",tab_comp:"컴파운딩 가이드",tab_straw:"스트로 가이드",
+  ko:{title:"PHA <em>공정</em> 최적화 도구",tab_proc:"공정 조건",tab_ts:"트러블슈팅",tab_hist:"이력 관리",tab_ana:"데이터 분석",tab_calc:"계산기",tab_props:"물성 DB",tab_photos:"사진",tab_flash:"플래시 제어",tab_comp:"컴파운딩 가이드",tab_straw:"스트로 가이드",
       series:"샘플 시리즈",process:"가공 유형",notes:"📝 특이사항 메모",save:"저장 및 분석",export:"데이터 내보내기",reset:"초기화",
       param:"파라미터",current:"현재값",range:"권장 범위",status:"상태",ok:"정상",warn:"주의",crit:"위험",when:"날짜/시간",h_grade:"샘플",h_proc:"공정",h_key:"주요 파라미터",h_result:"결과",h_note:"메모",
       ana_head:"데이터 분석",saved:"데이터가 저장되었습니다.",last:"마지막 업데이트",resetQ:"모든 입력을 초기화할까요?",
@@ -617,7 +672,7 @@ const I18N = {
       flash_t0:"📋 전체 개요",flash_t1:"⚙️ 기계 설정",flash_t2:"🧮 계산기",flash_t3:"📊 프로세스 플로우",
       flash_t4:"✅ 체크리스트",flash_t5:"🔧 문제 해결",flash_t6:"📝 공정 로그",flash_t7:"📖 사용 설명서"
   },
-  en:{title:"PHA Process Optimizer",tab_proc:"Process Conditions",tab_ts:"Troubleshooting",tab_hist:"History",tab_ana:"Data Analysis",tab_calc:"Calculators",tab_props:"Materials DB",tab_photos:"Photos",tab_flash:"Flash Control",tab_comp:"Compounding Guide",tab_straw:"Straw Guide",
+  en:{title:"PHA <em>Process</em> Tool",tab_proc:"Process Conditions",tab_ts:"Troubleshooting",tab_hist:"History",tab_ana:"Data Analysis",tab_calc:"Calculators",tab_props:"Materials DB",tab_photos:"Photos",tab_flash:"Flash Control",tab_comp:"Compounding Guide",tab_straw:"Straw Guide",
       series:"Sample Series",process:"Process Type",notes:"📝 Process Notes",save:"Save & Analyze",export:"Export Data",reset:"Reset",
       param:"Parameter",current:"Current",range:"Recommended",status:"Status",ok:"Normal",warn:"Warning",crit:"Critical",when:"Date/Time",h_grade:"Sample",h_proc:"Process",h_key:"Main Parameters",h_result:"Result",h_note:"Memo",
       ana_head:"Data Analysis",saved:"Saved successfully.",last:"Last Update",resetQ:"Reset all inputs?",
@@ -2135,15 +2190,29 @@ allSel('.tab').forEach(btn=> btn.addEventListener('click', e=>{
   else{allSel('.tab').forEach(b=>b.classList.remove('active'));e.currentTarget.classList.add('active');allSel('.tabpage').forEach(p=>p.classList.remove('active'));$(to).classList.add('active');}
 }));
 document.addEventListener('input', e=>{ if(e.target && e.target.id && e.target.id.startsWith('f_')) refreshParamTable(); });
-$('language').addEventListener('change',e=>{LANG=e.target.value; i18nApply();
+function setLanguage(lang){
+  if(lang!=='ko' && lang!=='en') return;
+  LANG=lang;
+  try{ localStorage.setItem('pha_lang_pref', lang); }catch(e){}
+  document.documentElement.dataset.lang=lang;
+  allSel('.tars-lang-btn').forEach(b=>b.classList.toggle('active', b.dataset.langChoice===lang));
+  i18nApply();
   if(typeof initCompoundingGuide==='function') initCompoundingGuide();
   if(typeof initStrawGuide==='function') initStrawGuide();
-});
+}
+allSel('.tars-lang-btn').forEach(btn=>btn.addEventListener('click',()=>setLanguage(btn.dataset.langChoice)));
 
 /* ========= Init ========= */
 (function init(){
   buildGradeOptions();
-  $('grade').value='S1000P'; $('process').value='extrusion'; rebuildForm(); i18nApply(); renderHistory(); analyze(); renderMat();
+  $('grade').value='S1000P'; $('process').value='extrusion'; rebuildForm();
+  /* Restore language preference */
+  let savedLang=null;
+  try{ savedLang=localStorage.getItem('pha_lang_pref'); }catch(e){}
+  if(savedLang==='ko'||savedLang==='en'){ LANG=savedLang; }
+  document.documentElement.dataset.lang=LANG;
+  allSel('.tars-lang-btn').forEach(b=>b.classList.toggle('active', b.dataset.langChoice===LANG));
+  i18nApply(); renderHistory(); analyze(); renderMat();
   /* Restore view preference */
   const savedView=localStorage.getItem('pha_view_pref');
   if(savedView) setView(savedView);

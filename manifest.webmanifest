@@ -1,10 +1,10 @@
 {
-  "name": "PHA Process Optimizer – Pro",
-  "short_name": "PHA Optimizer",
+  "name": "PHA Process Tool — TARS Biopolymer Studio",
+  "short_name": "PHA Process",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2563eb",
+  "background_color": "#F5F1E8",
+  "theme_color": "#2C5D3F",
   "icons": [
     {
       "src": "icons/icon-192.png",
