@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>PHA Process Tool — TARS Biopolymer Studio</title>
 <style>
   :root{
@@ -309,9 +308,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
 </head>
 <body class="app-locked">
+<a class="skip-link" href="#mainContent">본문 바로가기 / Skip to content</a>
 <div id="passwordGate" class="password-gate" role="dialog" aria-modal="true" aria-labelledby="passwordGateTitle">
   <div class="password-gate-card">
     <h2 id="passwordGateTitle">PHA Process Access</h2>
@@ -359,7 +359,7 @@
     </div>
   </div>
 
-  <div class="main">
+  <div class="main" id="mainContent">
     <div class="tabs">
       <button class="tab active" data-tab="proc" data-i18n="tab_proc">공정 조건</button>
       <button class="tab" data-tab="ts" data-i18n="tab_ts">트러블슈팅</button>
@@ -610,7 +610,7 @@
   </div>
 </footer>
 
-<button class="fab" title="Quick Save" onclick="saveEntry()">⤓</button>
+<button class="fab" title="저장 및 분석 / Quick Save" aria-label="저장 및 분석" onclick="saveEntry()">⤓</button>
 
 <!-- Simple modal for reco editor -->
 <div id="modal" style="position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;z-index:9999">
@@ -2244,7 +2244,7 @@ function renderAnaChart(hist,paramKey){
   const values=data.map(h=>parseFloat(h.params[paramKey]));
   const ctx=document.getElementById('anaChart');
   if(anaChartInstance){anaChartInstance.destroy();}
-  anaChartInstance=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:paramKey,data:values,borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.1)',tension:.3,fill:true,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{x:{display:true,title:{display:true,text:LANG==='ko'?'시간':'Time'}},y:{display:true,title:{display:true,text:paramKey}}}}});
+  anaChartInstance=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:paramKey,data:values,borderColor:'#2C5D3F',backgroundColor:'rgba(44,93,63,.08)',tension:.3,fill:true,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{x:{display:true,title:{display:true,text:LANG==='ko'?'시간':'Time'}},y:{display:true,title:{display:true,text:paramKey}}}}});
 }
 function resetForm(){if(!confirm(I18N[LANG].resetQ)) return; $('notes').value=''; rebuildForm();}
 
@@ -3687,7 +3687,7 @@ function applyProcessChartToggleCopy() {
 
 function initChart() {
   const ctx = document.getElementById('processChart');
-  if (!ctx) return;
+  if (!ctx || typeof Chart === 'undefined') return;
 
   processChart = new Chart(ctx, {
     type: 'line',
@@ -3756,15 +3756,15 @@ function updateCharts() {
         {
           label: processChartSeries('temp', 'barrel'),
           data: data.map(e => e.cylinderTemp),
-          borderColor: '#ef4444',
-          backgroundColor: 'rgba(239, 68, 68, 0.1)',
+          borderColor: '#8E2B2B',
+          backgroundColor: 'rgba(142, 43, 43, 0.08)',
           tension: 0.3
         },
         {
           label: processChartSeries('temp', 'mold'),
           data: data.map(e => e.moldTemp),
-          borderColor: '#3b82f6',
-          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          borderColor: '#3A5E7A',
+          backgroundColor: 'rgba(58, 94, 122, 0.08)',
           tension: 0.3
         }
       ];
@@ -3775,15 +3775,15 @@ function updateCharts() {
         {
           label: processChartSeries('pressure', 'injection'),
           data: data.map(e => e.injectionPressure),
-          borderColor: '#8b5cf6',
-          backgroundColor: 'rgba(139, 92, 246, 0.1)',
+          borderColor: '#6B4A7A',
+          backgroundColor: 'rgba(107, 74, 122, 0.08)',
           tension: 0.3
         },
         {
           label: processChartSeries('pressure', 'hold'),
           data: data.map(e => e.holdingPressure),
-          borderColor: '#10b981',
-          backgroundColor: 'rgba(16, 185, 129, 0.1)',
+          borderColor: '#2C5D3F',
+          backgroundColor: 'rgba(44, 93, 63, 0.08)',
           tension: 0.3
         }
       ];
@@ -3794,22 +3794,22 @@ function updateCharts() {
         {
           label: processChartSeries('weight', 'part'),
           data: data.map(e => e.partWeight || 0),
-          borderColor: '#f59e0b',
-          backgroundColor: 'rgba(245, 158, 11, 0.1)',
+          borderColor: '#B89B2E',
+          backgroundColor: 'rgba(184, 155, 46, 0.08)',
           tension: 0.3
         },
         {
           label: processChartSeries('weight', 'runner'),
           data: data.map(e => e.runnerWeight || 0),
-          borderColor: '#6366f1',
-          backgroundColor: 'rgba(99, 102, 241, 0.1)',
+          borderColor: '#4A6B7A',
+          backgroundColor: 'rgba(74, 107, 122, 0.08)',
           tension: 0.3
         },
         {
           label: processChartSeries('weight', 'total'),
           data: data.map(e => e.totalWeight || 0),
-          borderColor: '#ec4899',
-          backgroundColor: 'rgba(236, 72, 153, 0.1)',
+          borderColor: '#9A4F24',
+          backgroundColor: 'rgba(154, 79, 36, 0.08)',
           tension: 0.3
         }
       ];
@@ -3820,15 +3820,15 @@ function updateCharts() {
         {
           label: processChartSeries('time', 'hold'),
           data: data.map(e => e.holdingTime),
-          borderColor: '#14b8a6',
-          backgroundColor: 'rgba(20, 184, 166, 0.1)',
+          borderColor: '#4A7C5C',
+          backgroundColor: 'rgba(74, 124, 92, 0.08)',
           tension: 0.3
         },
         {
           label: processChartSeries('time', 'cool'),
           data: data.map(e => e.coolingTime),
-          borderColor: '#0ea5e9',
-          backgroundColor: 'rgba(14, 165, 233, 0.1)',
+          borderColor: '#6B6256',
+          backgroundColor: 'rgba(107, 98, 86, 0.08)',
           tension: 0.3
         }
       ];

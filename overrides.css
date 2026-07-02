@@ -608,6 +608,34 @@ html[data-lang="ko"] .password-gate-card h2 {
   outline-offset: 2px !important;
 }
 
+/* Skip link — visible only when focused. */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 10000;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  padding: 10px 16px;
+}
+.skip-link:focus {
+  left: 12px;
+  top: 12px;
+}
+
+/* Respect reduced-motion preferences. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html { scroll-behavior: auto; }
+}
+
 /* ─────────────────────────────────────────────────────────────
    27. TARS shared shell — masthead, folio, footer.
        Mirrors the polymer-hub chrome so every companion app
