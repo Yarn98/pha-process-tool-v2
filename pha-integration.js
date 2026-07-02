@@ -52,7 +52,7 @@
       warnings.push(t(`배럴 피크를 Tm(${info.Tm}°C)+5°C=${barrelPeak}°C로 조정.`, `Barrel peak adjusted to Tm(${info.Tm}°C)+5°C=${barrelPeak}°C.`));
     }
     if (barrelPeak && barrelPeak > 180) {
-      warnings.push(t(`⚠️ 배럴 피크 ${barrelPeak}°C → 180°C 벽 초과. 열분해 위험.`, `⚠️ Barrel peak ${barrelPeak}°C exceeds 180°C wall. Thermal degradation risk.`));
+      warnings.push(t(`배럴 피크 ${barrelPeak}°C → 180°C 벽 초과. 열분해 위험.`, `Barrel peak ${barrelPeak}°C exceeds 180°C wall. Thermal degradation risk.`));
     }
     if (info.type === 'S' || info.subtype === 'amorphous') {
       warnings.push(t('별도 건조 필수 — 다른 grade와 동시 건조 금지.', 'Separate drying required — do not co-dry with other grades.'));
@@ -205,13 +205,13 @@
     }
 
     const strawBtn = showStraw
-      ? '<button class="btn secondary" style="font-size:13px;padding:6px 12px" onclick="switchTab(\'straw\')">' +
-          '🥤 ' + t('스트로 가이드 참조','Straw Guide') + '</button>'
+      ? '<button class="btn secondary guide-links-btn" onclick="switchTab(\'straw\')">' +
+          t('스트로 가이드 참조','Straw Guide') + '</button>'
       : '';
 
     const plaNotice = isPlaBlend
-      ? '<div style="margin-top:8px;background:#fffbeb;border:1px solid #fde68a;border-radius:6px;padding:8px 10px;font-size:12px;color:#92400e">' +
-          '⚠️ <strong>' + t('PLA 블렌드 주의사항','PLA Blend Notice') + ':</strong> ' +
+      ? '<div class="guide-links-notice">' +
+          '<strong>' + t('PLA 블렌드 주의사항','PLA Blend Notice') + ':</strong> ' +
           t(escHtml(grade) + ' → PLA 블렌드. 컴파운딩 시 별도 건조 필수.',
             escHtml(grade) + ' → PLA blend. Separate drying mandatory.') +
         '</div>'
@@ -222,17 +222,17 @@
       const parts = [];
       if (tempInfo.barrelPeak) parts.push(t('배럴 피크 권장: ' + tempInfo.barrelPeak + '°C', 'Barrel peak suggested: ' + tempInfo.barrelPeak + '°C'));
       if (tempInfo.dryTemp && tempInfo.dryTime) parts.push(t('건조: ' + tempInfo.dryTemp + '°C × ' + tempInfo.dryTime + 'h', 'Dry: ' + tempInfo.dryTemp + '°C × ' + tempInfo.dryTime + 'h'));
-      if (parts.length) tempRow = '<div style="margin-top:6px;font-size:12px;color:#6b7280">🌡️ ' + parts.join(' | ') + '</div>';
-      tempInfo.warnings.forEach(function (w) { tempRow += '<div style="margin-top:4px;font-size:12px;color:#b45309">' + w + '</div>'; });
+      if (parts.length) tempRow = '<div class="guide-links-temp">' + parts.join(' · ') + '</div>';
+      tempInfo.warnings.forEach(function (w) { tempRow += '<div class="guide-links-warn">' + w + '</div>'; });
     }
 
     panel.innerHTML =
-      '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px 14px;margin-bottom:12px">' +
-        '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">' +
-          '<span style="font-size:13px;color:#6b7280">📎 ' + t('관련 가이드','Related Guides') + ':</span>' +
-          '<button class="btn secondary" style="font-size:13px;padding:6px 12px"' +
+      '<div class="guide-links-panel">' +
+        '<div class="guide-links-row">' +
+          '<span class="guide-links-label">' + t('관련 가이드','Related Guides') + '</span>' +
+          '<button class="btn secondary guide-links-btn"' +
                   ' onclick="(function(){ switchTab(\'compounding\'); if(typeof applyAutoClassification===\'function\') setTimeout(applyAutoClassification,120); })()">' +
-            '🧪 ' + t('컴파운딩 가이드','Compounding Guide') +
+            t('컴파운딩 가이드','Compounding Guide') +
           '</button>' +
           strawBtn +
         '</div>' +

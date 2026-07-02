@@ -7,18 +7,20 @@
 <title>PHA Process Tool — TARS Biopolymer Studio</title>
 <style>
   :root{
-    --primary:#2563eb;--primary-dark:#1e40af;--secondary:#10b981;--danger:#ef4444;--warning:#f59e0b;
-    --dark:#1f2937;--light:#f9fafb;--border:#e5e7eb;--radius:12px;--shadow:0 20px 25px -5px rgba(0,0,0,.1)
+    /* TARS editorial palette — kept in sync with tokens.css so the
+       first paint (before external CSS loads) is already on-brand. */
+    --primary:#2C5D3F;--primary-dark:#1A1814;--secondary:#2C5D3F;--danger:#8E2B2B;--warning:#9A4F24;
+    --dark:#1A1814;--light:#EDE7D8;--border:#D8D0BE;--radius:2px;--shadow:none
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,system-ui,sans-serif;
-       background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px;color:#111827;-webkit-text-size-adjust:100%}
+  body{font-family:Georgia,'Noto Sans KR',serif;
+       background:#F5F1E8;min-height:100vh;padding:0;color:#1A1814;-webkit-text-size-adjust:100%}
   body.app-locked{overflow:hidden}
   body.app-locked .container{filter:blur(12px);pointer-events:none;user-select:none}
-  .container{max-width:1400px;margin:0 auto;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+  .container{max-width:1400px;margin:0 auto;background:#F5F1E8;border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
   .password-gate{position:fixed;inset:0;z-index:12000;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(15,23,42,.72);backdrop-filter:blur(10px)}
   .password-gate.hidden{display:none}
-  .password-gate-card{width:min(440px,100%);background:rgba(255,255,255,.98);border:1px solid rgba(255,255,255,.7);border-radius:20px;box-shadow:0 20px 60px rgba(15,23,42,.28);padding:28px}
+  .password-gate-card{width:min(440px,100%);background:#F5F1E8;border:1px solid #B8AF99;border-radius:2px;box-shadow:none;padding:28px}
   .password-gate-card h2{font-size:26px;margin-bottom:10px;color:#111827}
   .password-gate-card p{color:#4b5563;line-height:1.6;margin-bottom:14px}
   .password-gate-field{display:flex;gap:10px;margin-top:12px}
@@ -26,10 +28,9 @@
   .password-gate-field input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px rgba(37,99,235,.14)}
   .password-gate-error{min-height:20px;margin-top:12px;color:#b91c1c;font-size:13px;font-weight:700}
   .password-gate-note{font-size:12px;color:#6b7280;margin-top:12px}
-  .header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;background:#111827;color:#fff;padding:18px}
-  .header h1{font-size:20px;font-weight:700}
+  .header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;background:#F5F1E8;color:#1A1814;padding:18px}
+  .header h1{font-size:20px;font-weight:400}
   .header-controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-  select#language{padding:8px 12px;border-radius:6px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff}
   .view-toggle{display:flex;gap:8px;background:rgba(255,255,255,.12);padding:4px;border-radius:8px}
   .view-toggle button{border:0;background:transparent;color:#fff;padding:8px 14px;border-radius:6px;cursor:pointer;font-weight:600}
   .view-toggle button.active{background:var(--primary);box-shadow:0 2px 8px rgba(37,99,235,.3)}
@@ -394,7 +395,7 @@
 
       <div class="row">
         <div class="group">
-          <button class="btn secondary" onclick="openRecoEditor()">🛠 권장 가이드 수정</button>
+          <button class="btn secondary" onclick="openRecoEditor()">권장 가이드 수정</button>
           <div class="hint">현재 선택한 <b>프로파일×공정</b>에 한해 min/max를 편집합니다. ‘초기화’로 원복 가능.</div>
         </div>
       </div>
@@ -402,7 +403,7 @@
       <div id="dynamicFields" class="grid"></div>
 
       <div class="group">
-        <label data-i18n="notes">📝 특이사항 메모</label>
+        <label data-i18n="notes">특이사항 메모</label>
         <textarea id="notes" placeholder=""></textarea>
         <div class="hint" id="tsHint"></div>
       </div>
@@ -449,23 +450,23 @@
 
     <!-- Analysis -->
     <section id="ana" class="tabpage">
-      <div style="margin:24px 0"><h3>📊 <span data-i18n="ana_head">데이터 분석</span></h3></div>
+      <div style="margin:24px 0"><h3><span data-i18n="ana_head">데이터 분석</span></h3></div>
       <div class="card" id="anaCard"><div id="anaText" class="hint">분석 데이터 로딩 중...</div></div>
       <div id="anaChartContainer" class="chart-container" style="display:none;margin-top:16px;text-align:left">
         <div class="chart-controls">
-          <h4 style="color:#1e3c72;margin:0;flex:1">📈 파라미터 트렌드</h4>
-          <select id="anaParamSelect" style="padding:6px 10px;border:2px solid #ced4da;border-radius:5px;font-size:13px;color:#212529;background:#fff"></select>
+          <h4 style="color:var(--ink);margin:0;flex:1">파라미터 트렌드</h4>
+          <select id="anaParamSelect" style="padding:6px 10px;border:1px solid var(--rule-strong);border-radius:2px;font-size:13px;color:var(--ink);background:var(--paper)"></select>
         </div>
         <div style="position:relative;height:300px">
           <canvas id="anaChart"></canvas>
         </div>
-        <p style="font-size:12px;color:#6b7280;margin-top:10px;text-align:center">저장된 이력 데이터에서 선택한 파라미터의 트렌드를 표시합니다.</p>
+        <p style="font-size:12px;color:var(--muted);margin-top:10px;text-align:center">저장된 이력 데이터에서 선택한 파라미터의 트렌드를 표시합니다.</p>
       </div>
     </section>
 
     <!-- Calculators -->
     <section id="calc" class="tabpage">
-      <h3 style="margin:8px 0">🧮 공정 KPI 계산기</h3>
+      <h3 style="margin:8px 0">공정 KPI 계산기</h3>
       <div class="card">
         <h4>① 체류시간 (Residence Time)</h4>
         <div class="row">
@@ -534,7 +535,7 @@
 
     <!-- Photos Tab -->
     <section id="photos" class="tabpage">
-      <h3 style="margin:8px 0">📷 <span data-i18n="photos_head">Photo Manager</span></h3>
+      <h3 style="margin:8px 0"><span data-i18n="photos_head">Photo Manager</span></h3>
       <div class="group">
         <button class="btn primary" onclick="triggerPhotoUpload()" data-i18n="photo_upload">사진 업로드</button>
         <input id="photoUpload" type="file" accept="image/*" multiple style="display:none">
@@ -544,18 +545,18 @@
 
     <!-- Flash Control Tab -->
     <section id="flash" class="tabpage">
-      <h2 data-i18n="flash_title" style="color:#1e3c72;margin-bottom:20px">🔧 PHA 36-캐비티 플래시 제어 현장 가이드</h2>
-      <p data-i18n="flash_desc" style="font-size:1.1em;color:#666;margin-bottom:20px">압력-동기형 4단 제어 + 러너 보호 통합 솔루션 (P3HB4: S1000P/A1000P | 36-캐비티 | 플래시 ≤0.02mm)</p>
+      <h2 data-i18n="flash_title" style="color:var(--ink);margin-bottom:20px">PHA 36-캐비티 플래시 제어 현장 가이드</h2>
+      <p data-i18n="flash_desc" style="font-size:1.1em;color:var(--muted);margin-bottom:20px">압력-동기형 4단 제어 + 러너 보호 통합 솔루션 (P3HB4: S1000P/A1000P | 36-캐비티 | 플래시 ≤0.02mm)</p>
 
       <div class="flash-tabs">
-        <button class="flash-tab active" data-i18n="flash_t0" onclick="showFlashTab(0)">📋 전체 개요</button>
-        <button class="flash-tab" data-i18n="flash_t1" onclick="showFlashTab(1)">⚙️ 기계 설정</button>
-        <button class="flash-tab" data-i18n="flash_t2" onclick="showFlashTab(2)">🧮 계산기</button>
-        <button class="flash-tab" data-i18n="flash_t3" onclick="showFlashTab(3)">📊 프로세스 플로우</button>
-        <button class="flash-tab" data-i18n="flash_t4" onclick="showFlashTab(4)">✅ 체크리스트</button>
-        <button class="flash-tab" data-i18n="flash_t5" onclick="showFlashTab(5)">🔧 문제 해결</button>
-        <button class="flash-tab" data-i18n="flash_t6" onclick="showFlashTab(6)">📝 공정 로그</button>
-        <button class="flash-tab" data-i18n="flash_t7" onclick="showFlashTab(7)">📖 사용 설명서</button>
+        <button class="flash-tab active" data-i18n="flash_t0" onclick="showFlashTab(0)">전체 개요</button>
+        <button class="flash-tab" data-i18n="flash_t1" onclick="showFlashTab(1)">기계 설정</button>
+        <button class="flash-tab" data-i18n="flash_t2" onclick="showFlashTab(2)">계산기</button>
+        <button class="flash-tab" data-i18n="flash_t3" onclick="showFlashTab(3)">프로세스 플로우</button>
+        <button class="flash-tab" data-i18n="flash_t4" onclick="showFlashTab(4)">체크리스트</button>
+        <button class="flash-tab" data-i18n="flash_t5" onclick="showFlashTab(5)">문제 해결</button>
+        <button class="flash-tab" data-i18n="flash_t6" onclick="showFlashTab(6)">공정 로그</button>
+        <button class="flash-tab" data-i18n="flash_t7" onclick="showFlashTab(7)">사용 설명서</button>
       </div>
 
       <div class="flash-content active" id="flash-tab-0"></div>
@@ -613,7 +614,7 @@
 
 <!-- Simple modal for reco editor -->
 <div id="modal" style="position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;z-index:9999">
-  <div style="background:#fff;max-width:720px;width:92%;border-radius:12px;box-shadow:var(--shadow);padding:16px">
+  <div style="background:var(--paper);max-width:720px;width:92%;border:1px solid var(--rule-strong);border-radius:2px;padding:16px">
     <div class="row" style="justify-content:space-between;align-items:center">
       <h3 id="modalTitle">권장 가이드 수정</h3>
       <button id="modalCloseBtn" class="btn secondary" onclick="closeModal()">닫기</button>
@@ -629,19 +630,19 @@
 
 <!-- Mobile Bottom Tab Bar -->
 <nav id="mobileTabBar" class="mobile-tab-bar">
-  <button class="mtb-item active" data-tab="proc">⚙️<span>공정조건</span></button>
-  <button class="mtb-item" data-tab="hist">📋<span>이력</span></button>
-  <button class="mtb-item" data-tab="calc">🧮<span>계산기</span></button>
-  <button class="mtb-item" data-tab="flash">🔧<span>플래시</span></button>
-  <button class="mtb-item" data-tab="more" id="moreBtn">⋯<span>더보기</span></button>
+  <button class="mtb-item active" data-tab="proc"><span class="mtb-n">01</span><span>공정조건</span></button>
+  <button class="mtb-item" data-tab="hist"><span class="mtb-n">02</span><span>이력</span></button>
+  <button class="mtb-item" data-tab="calc"><span class="mtb-n">03</span><span>계산기</span></button>
+  <button class="mtb-item" data-tab="flash"><span class="mtb-n">04</span><span>플래시</span></button>
+  <button class="mtb-item" data-tab="more" id="moreBtn"><span class="mtb-n">⋯</span><span>더보기</span></button>
 </nav>
 <div id="morePopover" class="more-popover hidden">
-  <button data-tab="ts" data-i18n="tab_ts_m">🔍 트러블슈팅</button>
-  <button data-tab="ana" data-i18n="tab_ana_m">📊 데이터 분석</button>
-  <button data-tab="props" data-i18n="tab_props_m">📦 물성 DB</button>
-  <button data-tab="photos" data-i18n="tab_photos_m">📷 사진</button>
-  <button data-tab="compounding" data-i18n="tab_comp_m">🧪 컴파운딩</button>
-  <button data-tab="straw" data-i18n="tab_straw_m">🥤 스트로</button>
+  <button data-tab="ts" data-i18n="tab_ts_m">트러블슈팅</button>
+  <button data-tab="ana" data-i18n="tab_ana_m">데이터 분석</button>
+  <button data-tab="props" data-i18n="tab_props_m">물성 DB</button>
+  <button data-tab="photos" data-i18n="tab_photos_m">사진</button>
+  <button data-tab="compounding" data-i18n="tab_comp_m">컴파운딩</button>
+  <button data-tab="straw" data-i18n="tab_straw_m">스트로</button>
 </div>
 
 <!-- Lightbox for photo gallery -->
@@ -654,11 +655,11 @@
 /* ========= i18n ========= */
 const I18N = {
   ko:{title:"PHA <em>공정</em> 최적화 도구",tab_proc:"공정 조건",tab_ts:"트러블슈팅",tab_hist:"이력 관리",tab_ana:"데이터 분석",tab_calc:"계산기",tab_props:"물성 DB",tab_photos:"사진",tab_flash:"플래시 제어",tab_comp:"컴파운딩 가이드",tab_straw:"스트로 가이드",
-      series:"샘플 시리즈",process:"가공 유형",notes:"📝 특이사항 메모",save:"저장 및 분석",export:"데이터 내보내기",reset:"초기화",
+      series:"샘플 시리즈",process:"가공 유형",notes:"특이사항 메모",save:"저장 및 분석",export:"데이터 내보내기",reset:"초기화",
       param:"파라미터",current:"현재값",range:"권장 범위",status:"상태",ok:"정상",warn:"주의",crit:"위험",when:"날짜/시간",h_grade:"샘플",h_proc:"공정",h_key:"주요 파라미터",h_result:"결과",h_note:"메모",
       ana_head:"데이터 분석",saved:"데이터가 저장되었습니다.",last:"마지막 업데이트",resetQ:"모든 입력을 초기화할까요?",
       photos_head:"사진 관리",photo_upload:"사진 업로드",
-      tab_ts_m:"🔍 트러블슈팅",tab_ana_m:"📊 데이터 분석",tab_props_m:"📦 물성 DB",tab_photos_m:"📷 사진",tab_comp_m:"🧪 컴파운딩",tab_straw_m:"🥤 스트로",
+      tab_ts_m:"트러블슈팅",tab_ana_m:"데이터 분석",tab_props_m:"물성 DB",tab_photos_m:"사진",tab_comp_m:"컴파운딩",tab_straw_m:"스트로",
       json_import_ok:"JSON 가져오기 완료",json_format_err:"JSON 형식 오류",json_parse_err:"JSON 파싱 실패",csv_import_ok:"CSV 가져오기 완료",
       reco_reset_cur:"현재 공정의 수정값을 초기화했습니다.",reco_reset_all:"모든 수정값 초기화 완료",mat_import_ok:"물성 DB 가져오기 완료",
       save_ok:"저장 완료",reset_ok:"초기화 완료",reset_all_ok:"전체 초기화 완료",input_all:"모든 값을 입력해주세요.",input_peak:"최대 사출압을 입력해주세요.",
@@ -666,18 +667,18 @@ const I18N = {
       tpl_saved:"템플릿이 저장되었습니다.",tpl_applied:"템플릿이 적용되었습니다.",tpl_deleted:"템플릿이 삭제되었습니다.",tpl_invalid:"올바른 번호를 입력하세요.",
       add_log_first:"먼저 로그를 추가해주세요.",weight_applied:"무게 데이터가 최신 로그에 적용되었습니다!",
       photo_too_big:"파일이 너무 큽니다 (최대 5MB)",photo_added:"사진이 추가되었습니다.",
-      flash_title:"🔧 PHA 36-캐비티 플래시 제어 현장 가이드",
+      flash_title:"PHA 36-캐비티 플래시 제어 현장 가이드",
       flash_desc:"압력-동기형 4단 제어 + 러너 보호 통합 솔루션 (P3HB4: S1000P/A1000P · 36-캐비티 · 플래시 ≤0.02mm)",
       flash_lang_notice:"아래 상세 내용은 현장 작업자용 한국어로 유지됩니다. 영문 전체 번역은 별도 세션에서 준비 중입니다.",
-      flash_t0:"📋 전체 개요",flash_t1:"⚙️ 기계 설정",flash_t2:"🧮 계산기",flash_t3:"📊 프로세스 플로우",
-      flash_t4:"✅ 체크리스트",flash_t5:"🔧 문제 해결",flash_t6:"📝 공정 로그",flash_t7:"📖 사용 설명서"
+      flash_t0:"전체 개요",flash_t1:"기계 설정",flash_t2:"계산기",flash_t3:"프로세스 플로우",
+      flash_t4:"체크리스트",flash_t5:"문제 해결",flash_t6:"공정 로그",flash_t7:"사용 설명서"
   },
   en:{title:"PHA <em>Process</em> Tool",tab_proc:"Process Conditions",tab_ts:"Troubleshooting",tab_hist:"History",tab_ana:"Data Analysis",tab_calc:"Calculators",tab_props:"Materials DB",tab_photos:"Photos",tab_flash:"Flash Control",tab_comp:"Compounding Guide",tab_straw:"Straw Guide",
-      series:"Sample Series",process:"Process Type",notes:"📝 Process Notes",save:"Save & Analyze",export:"Export Data",reset:"Reset",
+      series:"Sample Series",process:"Process Type",notes:"Process Notes",save:"Save & Analyze",export:"Export Data",reset:"Reset",
       param:"Parameter",current:"Current",range:"Recommended",status:"Status",ok:"Normal",warn:"Warning",crit:"Critical",when:"Date/Time",h_grade:"Sample",h_proc:"Process",h_key:"Main Parameters",h_result:"Result",h_note:"Memo",
       ana_head:"Data Analysis",saved:"Saved successfully.",last:"Last Update",resetQ:"Reset all inputs?",
       photos_head:"Photo Manager",photo_upload:"Upload Photos",
-      tab_ts_m:"🔍 Troubleshooting",tab_ana_m:"📊 Analysis",tab_props_m:"📦 Materials",tab_photos_m:"📷 Photos",tab_comp_m:"🧪 Compounding",tab_straw_m:"🥤 Straw",
+      tab_ts_m:"Troubleshooting",tab_ana_m:"Analysis",tab_props_m:"Materials",tab_photos_m:"Photos",tab_comp_m:"Compounding",tab_straw_m:"Straw",
       json_import_ok:"JSON import complete",json_format_err:"Invalid JSON format",json_parse_err:"JSON parse failed",csv_import_ok:"CSV import complete",
       reco_reset_cur:"Current process overrides have been reset.",reco_reset_all:"All overrides have been reset.",mat_import_ok:"Materials DB import complete",
       save_ok:"Saved",reset_ok:"Reset complete",reset_all_ok:"Full reset complete",input_all:"Please fill in all fields.",input_peak:"Please enter max injection pressure.",
@@ -685,27 +686,27 @@ const I18N = {
       tpl_saved:"Template saved.",tpl_applied:"Template applied.",tpl_deleted:"Template deleted.",tpl_invalid:"Please enter a valid number.",
       add_log_first:"Please add a log entry first.",weight_applied:"Weight data applied to latest log!",
       photo_too_big:"File too large (max 5MB)",photo_added:"Photo added.",
-      flash_title:"🔧 PHA 36-Cavity Flash Control Field Guide",
+      flash_title:"PHA 36-Cavity Flash Control Field Guide",
       flash_desc:"Pressure-synchronized 4-stage control + runner protection (P3HB4: S1000P/A1000P · 36-cavity · flash ≤0.02 mm)",
       flash_lang_notice:"Detailed content below is maintained in Korean for field operators. A full English translation is scheduled; contact the TARS team for a narrated walk-through until then.",
-      flash_t0:"📋 Overview",flash_t1:"⚙️ Machine Setup",flash_t2:"🧮 Calculator",flash_t3:"📊 Process Flow",
-      flash_t4:"✅ Checklist",flash_t5:"🔧 Troubleshooting",flash_t6:"📝 Process Log",flash_t7:"📖 User Manual"
+      flash_t0:"Overview",flash_t1:"Machine Setup",flash_t2:"Calculator",flash_t3:"Process Flow",
+      flash_t4:"Checklist",flash_t5:"Troubleshooting",flash_t6:"Process Log",flash_t7:"User Manual"
   }
 };
 const FLASH_BATCH_CONTEXT_BANNER = {
   ko: `
-    <div id="batchContextBanner" class="calc-recommendation" style="border-left-color:#2C5D3F;background:linear-gradient(135deg,#EDE7D8,#F5F1E8);">
-      <h4 style="color:#2C5D3F;">🔗 현재 배치 세션</h4>
-      <p style="font-size:13px;color:#6b7280;margin-bottom:12px">
+    <div id="batchContextBanner" class="calc-recommendation" style="border-left-color:var(--accent);background:var(--paper-2);">
+      <h4 style="color:#2C5D3F;">현재 배치 세션</h4>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">
         배치 ID와 4HB 조성 JSON을 먼저 연결한 뒤 <strong>배치 시작</strong>을 누르면, 이후 추가되는 공정 로그가 같은 세션에 묶입니다.
       </p>
       <div style="display:grid;grid-template-columns:minmax(180px,1fr) auto auto auto auto;gap:10px;align-items:end;">
         <div>
-          <label for="batchIdInput" style="display:block;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#757065;margin-bottom:4px;font-family:'JetBrains Mono',monospace;">배치 ID</label>
+          <label for="batchIdInput" style="display:block;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;font-family:'JetBrains Mono',monospace;">배치 ID</label>
           <input type="text" id="batchIdInput" placeholder="예: 20260419-A" style="width:100%;padding:8px 10px;border:1px solid #D8D0BE;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:13px;background:#FAF7EE;" onchange="updateBatchContext({ batch_id: this.value.trim() })">
         </div>
         <div>
-          <label style="display:block;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#757065;margin-bottom:4px;font-family:'JetBrains Mono',monospace;">조성 JSON</label>
+          <label style="display:block;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;font-family:'JetBrains Mono',monospace;">조성 JSON</label>
           <input type="file" id="compositionFile" accept=".json,application/json" style="display:none" onchange="loadCompositionFromFile(this.files?.[0])">
           <button type="button" onclick="document.getElementById('compositionFile').click()" style="padding:8px 14px;background:#1A1814;color:#F5F1E8;border:0;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;">조성 불러오기</button>
         </div>
@@ -713,24 +714,24 @@ const FLASH_BATCH_CONTEXT_BANNER = {
         <button type="button" id="endBatchSessionBtn" hidden style="padding:8px 14px;background:#1A1814;color:#F5F1E8;border:0;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;">배치 종료</button>
         <button type="button" id="batchContextClear" onclick="clearBatchContext()" style="padding:8px 14px;background:transparent;color:#1A1814;border:1px solid #B8AF99;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;">초기화</button>
         <div id="batchContextSummary" style="grid-column:1/-1;padding:10px 12px;background:#FAF7EE;border:1px solid #D8D0BE;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#3A352D;min-height:36px;display:flex;align-items:center;">
-          <span style="color:#757065;">아직 시작된 배치 세션이 없습니다. 필요하면 조성을 먼저 불러온 뒤 배치를 시작하세요.</span>
+          <span style="color:var(--muted);">아직 시작된 배치 세션이 없습니다. 필요하면 조성을 먼저 불러온 뒤 배치를 시작하세요.</span>
         </div>
       </div>
     </div>
   `,
   en: `
-    <div id="batchContextBanner" class="calc-recommendation" style="border-left-color:#2C5D3F;background:linear-gradient(135deg,#EDE7D8,#F5F1E8);">
-      <h4 style="color:#2C5D3F;">🔗 Current batch session</h4>
-      <p style="font-size:13px;color:#6b7280;margin-bottom:12px">
+    <div id="batchContextBanner" class="calc-recommendation" style="border-left-color:var(--accent);background:var(--paper-2);">
+      <h4 style="color:#2C5D3F;">Current batch session</h4>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">
         Stage the batch ID and 4HB composition JSON first, then click <strong>Start batch</strong> so new process-log rows stay attached to the same session.
       </p>
       <div style="display:grid;grid-template-columns:minmax(180px,1fr) auto auto auto auto;gap:10px;align-items:end;">
         <div>
-          <label for="batchIdInput" style="display:block;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#757065;margin-bottom:4px;font-family:'JetBrains Mono',monospace;">Batch ID</label>
+          <label for="batchIdInput" style="display:block;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;font-family:'JetBrains Mono',monospace;">Batch ID</label>
           <input type="text" id="batchIdInput" placeholder="e.g. 20260419-A" style="width:100%;padding:8px 10px;border:1px solid #D8D0BE;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:13px;background:#FAF7EE;" onchange="updateBatchContext({ batch_id: this.value.trim() })">
         </div>
         <div>
-          <label style="display:block;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#757065;margin-bottom:4px;font-family:'JetBrains Mono',monospace;">Composition JSON</label>
+          <label style="display:block;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;font-family:'JetBrains Mono',monospace;">Composition JSON</label>
           <input type="file" id="compositionFile" accept=".json,application/json" style="display:none" onchange="loadCompositionFromFile(this.files?.[0])">
           <button type="button" onclick="document.getElementById('compositionFile').click()" style="padding:8px 14px;background:#1A1814;color:#F5F1E8;border:0;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;">Load composition</button>
         </div>
@@ -738,7 +739,7 @@ const FLASH_BATCH_CONTEXT_BANNER = {
         <button type="button" id="endBatchSessionBtn" hidden style="padding:8px 14px;background:#1A1814;color:#F5F1E8;border:0;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;">End batch</button>
         <button type="button" id="batchContextClear" onclick="clearBatchContext()" style="padding:8px 14px;background:transparent;color:#1A1814;border:1px solid #B8AF99;border-radius:2px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;">Clear</button>
         <div id="batchContextSummary" style="grid-column:1/-1;padding:10px 12px;background:#FAF7EE;border:1px solid #D8D0BE;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#3A352D;min-height:36px;display:flex;align-items:center;">
-          <span style="color:#757065;">No batch session has been started yet. Load a composition first if you want to stage it before the run.</span>
+          <span style="color:var(--muted);">No batch session has been started yet. Load a composition first if you want to stage it before the run.</span>
         </div>
       </div>
     </div>
@@ -754,11 +755,11 @@ const FLASH_EVENT_LOGGER_PANEL = {
       <div class="batch-event-body">
         <div id="batchEventNotice" class="batch-event-notice">배치를 시작한 뒤 현장 이벤트를 저장하세요.</div>
         <div class="batch-event-kind-row" role="group" aria-label="Event kind">
-          <button type="button" class="batch-event-kind-btn" data-event-kind="temp_reading">📸 Snapshot</button>
-          <button type="button" class="batch-event-kind-btn" data-event-kind="addition">➕ Addition</button>
-          <button type="button" class="batch-event-kind-btn" data-event-kind="anomaly">⚠️ Anomaly</button>
-          <button type="button" class="batch-event-kind-btn" data-event-kind="scrap">🗑 Scrap</button>
-          <button type="button" class="batch-event-kind-btn" data-event-kind="note">📝 Note</button>
+          <button type="button" class="batch-event-kind-btn" data-event-kind="temp_reading">Snapshot</button>
+          <button type="button" class="batch-event-kind-btn" data-event-kind="addition">Addition</button>
+          <button type="button" class="batch-event-kind-btn" data-event-kind="anomaly">Anomaly</button>
+          <button type="button" class="batch-event-kind-btn" data-event-kind="scrap">Scrap</button>
+          <button type="button" class="batch-event-kind-btn" data-event-kind="note">Note</button>
         </div>
         <div class="batch-event-grid">
           <div class="batch-event-block">
@@ -778,8 +779,8 @@ const FLASH_EVENT_LOGGER_PANEL = {
                 </div>
                 <div class="batch-event-field"><label for="eventAnomalyAction">즉시 조치</label><textarea id="eventAnomalyAction" placeholder="현장에서 바로 취한 조치"></textarea></div>
                 <div class="batch-event-photo-row">
-                  <button type="button" class="batch-event-photo-btn" id="batchEventPhotoBtn">📷 사진 촬영/선택</button>
-                  <button type="button" class="batch-event-photo-btn" id="batchEventUseLatestPhotoBtn">🖼 최근 갤러리 사진 사용</button>
+                  <button type="button" class="batch-event-photo-btn" id="batchEventPhotoBtn">사진 촬영/선택</button>
+                  <button type="button" class="batch-event-photo-btn" id="batchEventUseLatestPhotoBtn">최근 갤러리 사진 사용</button>
                   <span id="batchEventPhotoStatus" class="batch-event-photo-status">연결된 사진 없음</span>
                   <input id="eventPhotoInput" type="file" accept="image/*" capture="environment" hidden>
                 </div>
@@ -828,11 +829,11 @@ const FLASH_EVENT_LOGGER_PANEL = {
       <div class="batch-event-body">
         <div id="batchEventNotice" class="batch-event-notice">Start the batch first, then save field events as they happen.</div>
         <div class="batch-event-kind-row" role="group" aria-label="Event kind">
-          <button type="button" class="batch-event-kind-btn" data-event-kind="temp_reading">📸 Snapshot</button>
-          <button type="button" class="batch-event-kind-btn" data-event-kind="addition">➕ Addition</button>
-          <button type="button" class="batch-event-kind-btn" data-event-kind="anomaly">⚠️ Anomaly</button>
-          <button type="button" class="batch-event-kind-btn" data-event-kind="scrap">🗑 Scrap</button>
-          <button type="button" class="batch-event-kind-btn" data-event-kind="note">📝 Note</button>
+          <button type="button" class="batch-event-kind-btn" data-event-kind="temp_reading">Snapshot</button>
+          <button type="button" class="batch-event-kind-btn" data-event-kind="addition">Addition</button>
+          <button type="button" class="batch-event-kind-btn" data-event-kind="anomaly">Anomaly</button>
+          <button type="button" class="batch-event-kind-btn" data-event-kind="scrap">Scrap</button>
+          <button type="button" class="batch-event-kind-btn" data-event-kind="note">Note</button>
         </div>
         <div class="batch-event-grid">
           <div class="batch-event-block">
@@ -852,8 +853,8 @@ const FLASH_EVENT_LOGGER_PANEL = {
                 </div>
                 <div class="batch-event-field"><label for="eventAnomalyAction">Immediate action</label><textarea id="eventAnomalyAction" placeholder="What was done on the floor right away"></textarea></div>
                 <div class="batch-event-photo-row">
-                  <button type="button" class="batch-event-photo-btn" id="batchEventPhotoBtn">📷 Capture / choose photo</button>
-                  <button type="button" class="batch-event-photo-btn" id="batchEventUseLatestPhotoBtn">🖼 Use latest gallery photo</button>
+                  <button type="button" class="batch-event-photo-btn" id="batchEventPhotoBtn">Capture / choose photo</button>
+                  <button type="button" class="batch-event-photo-btn" id="batchEventUseLatestPhotoBtn">Use latest gallery photo</button>
                   <span id="batchEventPhotoStatus" class="batch-event-photo-status">No photo linked yet.</span>
                   <input id="eventPhotoInput" type="file" accept="image/*" capture="environment" hidden>
                 </div>
@@ -897,13 +898,13 @@ const FLASH_EVENT_LOGGER_PANEL = {
 const FLASH_TAB_HTML = {
   ko: {
     t0: `
-      <h3 style="color:#1e3c72;margin-bottom:20px">제어 전략 · 핵심 개요</h3>
+      <h3 style="color:var(--ink);margin-bottom:20px">제어 전략 · 핵심 개요</h3>
       <div class="success-box">
-        <h3>🎯 제어 원칙 (전체 전략 한 줄 요약)</h3>
+        <h3>제어 원칙 (전체 전략 한 줄 요약)</h3>
         <p><strong>"러너가 90% 가까이 채워질 때까지는 <strong>압력 상한</strong>을 걸어 천천히 밀고, 캐비티 충전이 시작된 뒤부터는 <strong>캐비티 내부 압력</strong>을 보면서 빠르게 마무리한다."</strong></p>
         <p>플래시가 생기는 근본 원인은 딱 두 가지입니다 — <strong>금형 손상</strong>과 <strong>캐비티 내부 압력이 클램프 힘을 이길 때</strong>. 이 4단 전략은 두 원인을 <strong>설계 단계에서 차단</strong>합니다.</p>
       </div>
-      <h3 style="color:#1e3c72;margin:30px 0 15px 0">4단 제어 로직 (V0 → V1 → V2 → V3)</h3>
+      <h3 style="color:var(--ink);margin:30px 0 15px 0">4단 제어 로직 (V0 → V1 → V2 → V3)</h3>
       <div class="process-flow">
         <div class="flow-step">
           <div class="flow-number">V0</div>
@@ -934,7 +935,7 @@ const FLASH_TAB_HTML = {
           </div>
         </div>
       </div>
-      <h3 style="color:#1e3c72;margin:30px 0 15px 0">보조 제어 요소 (4단 전략 옆에서 받쳐주는 레버들)</h3>
+      <h3 style="color:var(--ink);margin:30px 0 15px 0">보조 제어 요소 (4단 전략 옆에서 받쳐주는 레버들)</h3>
       <table>
         <thead>
           <tr>
@@ -972,15 +973,15 @@ const FLASH_TAB_HTML = {
         </tbody>
       </table>
       <div class="warning-box">
-        <h3>⚠️ PHA 재료 취급 시 주의할 점</h3>
+        <h3>PHA 재료 취급 시 주의할 점</h3>
         <p><strong>β-elimination 열분해</strong>: PHB 계열은 <strong>약 190 °C를 넘어가면</strong> 분자 사슬이 빠르게 끊어져 분자량이 떨어집니다. 가능한 <strong>낮은 용융 온도</strong>로 가공하고 <strong>체류 시간</strong>을 최소로 유지하세요.</p>
         <p><strong>좁은 가공창 (processing window)</strong>: 융점 바로 위에서만 가공 가능합니다. 과열되면 <strong>가스 발생 + 점도 급락</strong>이 동시에 일어납니다.</p>
         <p><strong>느린 결정화</strong>: PE · PP보다 결정화가 훨씬 느립니다. <strong>게이트 동결 시간이 길어질 수 있음</strong>을 항상 염두에 두세요.</p>
       </div>
     `,
     t1: `
-      <h3 style="color:#1e3c72;margin-bottom:20px">기계 설정값 · 스크린별 가이드</h3>
-      <button class="print-button" onclick="window.print()">🖨️ 설정값 인쇄 (PDF 저장도 가능)</button>
+      <h3 style="color:var(--ink);margin-bottom:20px">기계 설정값 · 스크린별 가이드</h3>
+      <button class="print-button" onclick="window.print()">설정값 인쇄 (PDF 저장도 가능)</button>
       <div class="machine-screen">
         <div class="screen-header">
           <span>V0 STAGE: RUNNER PROTECTION</span>
@@ -1033,7 +1034,7 @@ const FLASH_TAB_HTML = {
           <div class="parameter"><div class="parameter-label">Packing Time P2 (보압 2단 시간)</div><div class="parameter-value">게이트 동결까지<span class="parameter-unit">s</span></div><div class="parameter-note">중량-시간 곡선으로 결정 (아래 시험법 참조)</div></div>
         </div>
         <div class="info-box">
-          <h3>📌 게이트 동결(Gate Seal) 시점 찾기 — 현장 시험 절차</h3>
+          <h3>게이트 동결(Gate Seal) 시점 찾기 — 현장 시험 절차</h3>
           <p><strong>1단계</strong>: 보압 시간을 <strong>0.5초부터</strong> 시작해 <strong>0.5초씩 올리면서</strong> 한 샷씩 찍습니다.</p>
           <p><strong>2단계</strong>: 매 샷마다 <strong>제품 무게를 정밀 저울로 측정</strong>합니다.</p>
           <p><strong>3단계</strong>: 보압 시간을 늘려도 <strong>무게가 더 이상 늘지 않는 지점</strong> = 그 순간 게이트가 이미 굳은 것입니다.</p>
@@ -1058,18 +1059,18 @@ const FLASH_TAB_HTML = {
       </div>
     `,
     t2: `
-      <h3 style="color:#1e3c72;margin-bottom:20px">설정값 계산기 (4개 · 입력하면 자동 권장값 산출)</h3>
+      <h3 style="color:var(--ink);margin-bottom:20px">설정값 계산기 (4개 · 입력하면 자동 권장값 산출)</h3>
       <div class="calculator">
-        <h3 style="color:#1e3c72;margin-bottom:20px">1. 클램프 톤수 계산기 (Clamp Tonnage)</h3>
+        <h3 style="color:var(--ink);margin-bottom:20px">1. 클램프 톤수 계산기 (Clamp Tonnage)</h3>
         <div class="calc-input-group"><label>캐비티 평균 압력 P_avg (bar) — 충전 중 캐비티 내부 평균 압력</label><input type="number" id="flash-p-avg" placeholder="예: 500" value="500"></div>
         <div class="calc-input-group"><label>제품 투영 면적 A_proj (cm²) — 36 캐비티 합산</label><input type="number" id="flash-a-proj" placeholder="예: 2000" value="2000"></div>
-        <p style="font-size:13px;color:#6b7280;margin:8px 0 14px">※ 톤수 = 투영 면적 × 평균 사출압 × 안전 계수. 첫 추정치는 산식 기준 + 20 % 여유이며, 실제 보압까지 고려해 최종 확정하세요.</p>
+        <p style="font-size:13px;color:var(--muted);margin:8px 0 14px">※ 톤수 = 투영 면적 × 평균 사출압 × 안전 계수. 첫 추정치는 산식 기준 + 20 % 여유이며, 실제 보압까지 고려해 최종 확정하세요.</p>
         <button class="calc-button" onclick="calculateFlashClampTonnage()">계산하기</button>
         <button class="calc-button" onclick="clearFlashInputs('clamp')">초기화</button>
         <div class="calc-result" id="flash-clamp-result" style="display:none;"><h4>계산 결과</h4><div class="calc-result-value" id="flash-clamp-value"></div><p id="flash-clamp-recommendation"></p></div>
       </div>
       <div class="calculator">
-        <h3 style="color:#1e3c72;margin-bottom:20px">2. V0 압력 리밋 계산기 (Runner Protection Cap)</h3>
+        <h3 style="color:var(--ink);margin-bottom:20px">2. V0 압력 리밋 계산기 (Runner Protection Cap)</h3>
         <div class="calc-input-group"><label>클램프 한계 (ton-force) — 기계 스펙에 적힌 최대 클램프 힘</label><input type="number" id="flash-f-clamp" placeholder="예: 1200" value="1200"></div>
         <div class="calc-input-group"><label>제품 투영 면적 A_proj (cm²)</label><input type="number" id="flash-a-proj-2" placeholder="예: 2000" value="2000"></div>
         <div class="calc-input-group"><label>안전 계수 (권장 0.8 · 클램프 여유 20% 확보)</label><input type="number" id="flash-safety-factor" placeholder="0.8" value="0.8" step="0.05"></div>
@@ -1078,7 +1079,7 @@ const FLASH_TAB_HTML = {
         <div class="calc-result" id="flash-pressure-result" style="display:none;"><h4>V0 압력 리밋 추천값</h4><div class="calc-result-value" id="flash-pressure-value"></div><p id="flash-pressure-recommendation"></p></div>
       </div>
       <div class="calculator">
-        <h3 style="color:#1e3c72;margin-bottom:20px">3. 러너 전단률 계산기 (Runner Shear Rate)</h3>
+        <h3 style="color:var(--ink);margin-bottom:20px">3. 러너 전단률 계산기 (Runner Shear Rate)</h3>
         <div class="calc-input-group"><label>체적 유량 Q (cm³/s) — 단위 시간당 러너를 통과하는 수지 부피</label><input type="number" id="flash-flow-rate" placeholder="예: 50" value="50"></div>
         <div class="calc-input-group"><label>러너 반경 R (cm) — 원통형 러너 기준</label><input type="number" id="flash-runner-radius" placeholder="예: 0.4" value="0.4" step="0.1"></div>
         <button class="calc-button" onclick="calculateFlashShearRate()">계산하기</button>
@@ -1086,7 +1087,7 @@ const FLASH_TAB_HTML = {
         <div class="calc-result" id="flash-shear-result" style="display:none;"><h4>러너 벽면 전단률 (γ̇ at wall)</h4><div class="calc-result-value" id="flash-shear-value"></div><p id="flash-shear-recommendation"></p></div>
       </div>
       <div class="calculator">
-        <h3 style="color:#1e3c72;margin-bottom:20px">4. 보압 설정값 계산기 (P1 · P2 Auto-Split)</h3>
+        <h3 style="color:var(--ink);margin-bottom:20px">4. 보압 설정값 계산기 (P1 · P2 Auto-Split)</h3>
         <div class="calc-input-group"><label>최대 사출압 P_inj_peak (bar) — 이번 샷에서 관측된 피크값</label><input type="number" id="flash-p-inj-peak" placeholder="예: 1500" value="1500"></div>
         <button class="calc-button" onclick="calculateFlashPackingPressure()">계산하기</button>
         <button class="calc-button" onclick="clearFlashInputs('packing')">초기화</button>
@@ -1094,9 +1095,9 @@ const FLASH_TAB_HTML = {
       </div>
     `,
     t3: `
-      <h3 style="color:#1e3c72;margin-bottom:20px">프로세스 플로우 다이어그램 (4단 제어 흐름도)</h3>
+      <h3 style="color:var(--ink);margin-bottom:20px">프로세스 플로우 다이어그램 (4단 제어 흐름도)</h3>
       <div class="diagram">
-        <h3 style="text-align:center;color:#1e3c72;margin-bottom:20px">4단 제어 흐름도 (V0 → V1 → V2 → V3)</h3>
+        <h3 style="text-align:center;color:var(--ink);margin-bottom:20px">4단 제어 흐름도 (V0 → V1 → V2 → V3)</h3>
         <svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
           <rect x="50" y="50" width="700" height="200" fill="#e3f2fd" stroke="#1e3c72" stroke-width="3" rx="10"/>
           <text x="400" y="90" text-anchor="middle" font-size="24" font-weight="bold" fill="#1e3c72">V0 · Runner Protection (러너 보호)</text>
@@ -1135,7 +1136,7 @@ const FLASH_TAB_HTML = {
         </svg>
       </div>
       <div class="info-box">
-        <h3>📊 이 흐름도 읽는 법</h3>
+        <h3>이 흐름도 읽는 법</h3>
         <p><strong>V0 구간</strong>: 압력이 상한 밑에서 완만하게 오릅니다. 이 단계 자체가 과압 방지 장치 역할을 합니다.</p>
         <p><strong>V1 구간</strong>: 고속 충전으로 압력이 가파르게 오르지만 <strong>상한 안쪽</strong>에 머뭅니다.</p>
         <p><strong>V2 구간</strong>: 선형 감속 덕분에 압력이 <strong>튀지 않고 부드럽게 피크</strong>에 도달합니다.</p>
@@ -1143,35 +1144,35 @@ const FLASH_TAB_HTML = {
       </div>
     `,
     t4: `
-      <h3 style="color:#1e3c72;margin-bottom:20px">현장 작업 체크리스트 (샷 전 확인 · 10개 항목)</h3>
-      <button class="print-button" onclick="window.print()">🖨️ 체크리스트 인쇄</button>
+      <h3 style="color:var(--ink);margin-bottom:20px">현장 작업 체크리스트 (샷 전 확인 · 10개 항목)</h3>
+      <button class="print-button" onclick="window.print()">체크리스트 인쇄</button>
       <div class="checklist">
-        <h3 style="color:#1e3c72;margin-bottom:15px">준비 단계 — 기계 띄우기 전</h3>
+        <h3 style="color:var(--ink);margin-bottom:15px">준비 단계 — 기계 띄우기 전</h3>
         <div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>재료 건조 확인</strong>: PHA 펠렛이 <strong>65–80 °C · 6–24 h</strong> 조건으로 건조 완료됐는지 확인.</div></div>
         <div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>러너 체적 계산</strong>: CAD·도면에서 러너 <strong>총 체적(V_runner)</strong>을 구하고, 그 <strong>90% 지점</strong>을 스크루 위치 mm로 환산.</div></div>
         <div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>투영 면적 측정</strong>: 36개 캐비티의 <strong>합산 투영 면적 A_proj (cm²)</strong>.</div></div>
         <div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>클램프 톤수 확인</strong>: 탭 2 계산기로 <strong>필요 톤수</strong>를 산출 → 기계 스펙과 매칭 여부 확인.</div></div>
       </div>
       <div class="checklist">
-        <h3 style="color:#1e3c72;margin-bottom:15px">V0 단계 입력 — 러너 보호</h3>
+        <h3 style="color:var(--ink);margin-bottom:15px">V0 단계 입력 — 러너 보호</h3>
         <div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>V0 속도</strong>: 30–50 mm/s 범위에서 <strong>중속으로</strong> 세팅.</div></div>
         <div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>압력 리밋</strong>: 탭 2 계산기가 낸 값 (0.8 × F_clamp/A_proj)을 기계에 입력.</div></div>
         <div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>V0 → V1 전환점</strong>: 러너 체적 <strong>90% 지점</strong>을 스크루 위치로 입력.</div></div>
       </div>
       <div class="checklist">
-        <h3 style="color:#1e3c72;margin-bottom:15px">V1 단계 입력 — 고속 캐비티 충전</h3>
+        <h3 style="color:var(--ink);margin-bottom:15px">V1 단계 입력 — 고속 캐비티 충전</h3>
         <div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>V1 속도</strong>: 얇은벽 충전 가능하도록 80–150 mm/s 범위 <strong>고속</strong>.</div></div>
         <div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>사출압 상한</strong>: V0에서 건 상한이 <strong>V1에서도 유효</strong>한지 기계 메뉴에서 확인.</div></div>
       </div>
       <div class="checklist">
-        <h3 style="color:#1e3c72;margin-bottom:15px">검증 단계 — 첫 샷 이후 확인</h3>
+        <h3 style="color:var(--ink);margin-bottom:15px">검증 단계 — 첫 샷 이후 확인</h3>
         <div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>플래시 측정</strong>: 파팅라인 · 스프루 주변 플래시 높이 측정. <strong>목표 ≤ 0.02 mm</strong>.</div></div>
         <div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>제품 무게 확인</strong>: 36개 캐비티 무게를 모두 재서 <strong>변동 ±1% 이내</strong>인지 확인.</div></div>
         <div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>치수 측정</strong>: 핵심 치수를 측정해 <strong>규격 범위 내</strong>인지 확인.</div></div>
       </div>
     `,
     t5: `
-      <h3 style="color:#1e3c72;margin-bottom:20px">문제 해결 가이드 (증상별 원인 · 조치)</h3>
+      <h3 style="color:var(--ink);margin-bottom:20px">문제 해결 가이드 (증상별 원인 · 조치)</h3>
       <div class="warning-box">
         <h3>🔴 증상: 스프루 · 러너 근처 플래시 발생</h3>
         <p><strong>가능한 원인과 조치 (위에서부터 확인)</strong></p>
@@ -1222,7 +1223,7 @@ const FLASH_TAB_HTML = {
         </ul>
       </div>
       <div class="info-box">
-        <h3>💡 정기 예방 정비 (주 1회 / 일 1–2회 / 교대 시)</h3>
+        <h3>정기 예방 정비 (주 1회 / 일 1–2회 / 교대 시)</h3>
         <ul style="margin-left:20px;margin-top:10px">
           <li>주 1회 · 스프루 부싱 · 파팅라인 마모 · 손상 점검</li>
           <li>주 1회 · 타이바 변형 측정 + 클램프 톤수 재확인</li>
@@ -1234,16 +1235,16 @@ const FLASH_TAB_HTML = {
       </div>
     `,
     t6: `
-      <h3 style="color:#1e3c72;margin-bottom:20px">공정 조건 현장 기록 로그 (배치 단위 · 템플릿 · 사진 · 차트)</h3>
+      <h3 style="color:var(--ink);margin-bottom:20px">공정 조건 현장 기록 로그 (배치 단위 · 템플릿 · 사진 · 차트)</h3>
       <div class="success-box">
-        <h3>📋 현장에서 즉시 조건 기록</h3>
+        <h3>현장에서 즉시 조건 기록</h3>
         <p><strong>공정 조건·관찰한 현상을 실시간으로 기록</strong> → 문제 해결 · 최적화에 활용.</p>
         <p>각 파라미터는 <strong>숫자 직접 입력</strong> 또는 <strong>+/- 버튼</strong>으로 조정. 입력값은 <strong>자동 저장</strong>.</p>
       </div>
       ${FLASH_BATCH_CONTEXT_BANNER.ko}
       ${FLASH_EVENT_LOGGER_PANEL.ko}
       <div class="filter-container">
-        <h4 style="color:#1e3c72;margin-bottom:10px">🔍 검색 · 필터</h4>
+        <h4 style="color:var(--ink);margin-bottom:10px">검색 · 필터</h4>
         <div class="filter-row">
           <input type="text" id="filterKeyword" class="filter-input" placeholder="비고란 키워드 검색..." onkeyup="filterProcessLog()">
           <input type="date" id="filterDateFrom" class="filter-input" style="max-width:180px" onchange="filterProcessLog()">
@@ -1253,16 +1254,16 @@ const FLASH_TAB_HTML = {
         </div>
       </div>
       <div class="template-container">
-        <h4 style="color:#1e3c72;margin-bottom:5px">📋 템플릿 관리 (자주 쓰는 조건 저장)</h4>
-        <p style="font-size:13px;color:#6b7280;margin-bottom:10px">자주 쓰는 조건을 템플릿으로 저장 → 다음번에 빠르게 불러오기.</p>
+        <h4 style="color:var(--ink);margin-bottom:5px">템플릿 관리 (자주 쓰는 조건 저장)</h4>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:10px">자주 쓰는 조건을 템플릿으로 저장 → 다음번에 빠르게 불러오기.</p>
         <div class="template-buttons">
-          <button class="btn-template" onclick="saveTemplate()">💾 지금 조건을 템플릿으로 저장</button>
-          <button class="btn-template load" onclick="loadTemplate()">📥 템플릿 불러오기</button>
-          <button class="btn-template delete" onclick="manageTemplates()">🗑️ 템플릿 목록 · 삭제</button>
+          <button class="btn-template" onclick="saveTemplate()">지금 조건을 템플릿으로 저장</button>
+          <button class="btn-template load" onclick="loadTemplate()">템플릿 불러오기</button>
+          <button class="btn-template delete" onclick="manageTemplates()">템플릿 목록 · 삭제</button>
         </div>
       </div>
       <div class="calc-recommendation">
-        <h4>⚖️ 무게 측정 · 샷 계량 계산기</h4>
+        <h4>무게 측정 · 샷 계량 계산기</h4>
         <p style="font-size:14px;margin-bottom:15px">제품 · 러너 무게를 입력하면 ① <strong>샷 계량</strong> ② <strong>플래시 저감 조건 추천</strong>이 자동으로 계산됩니다.</p>
         <div class="weight-calc-grid">
           <div class="weight-input-box"><label>제품 1개 무게 (g)</label><input type="number" id="partWeight" step="0.01" placeholder="0.00" onchange="calculateShotWeight()"></div>
@@ -1270,37 +1271,37 @@ const FLASH_TAB_HTML = {
           <div class="weight-input-box"><label>캐비티 수</label><input type="number" id="cavityCount" value="36" step="1" onchange="calculateShotWeight()"></div>
           <div class="weight-input-box"><label>재료 밀도 (g/cm³)</label><input type="number" id="materialDensity" value="1.25" step="0.01" placeholder="1.25" onchange="calculateShotWeight()"><button class="btn-filter" style="margin-top:8px;width:100%;padding:6px" onclick="loadDensityFromGrade()" title="물성 DB 탭에 등록된 해당 그레이드의 밀도가 자동으로 입력됩니다.">선택한 Grade의 밀도 불러오기</button></div>
         </div>
-        <p style="font-size:13px;color:#6b7280;margin:10px 0 0">※ 총 샷 계량 = 제품 1개 무게 × 캐비티 수 + 러너 무게. 밀도를 입력하면 샷 용적까지 함께 계산됩니다.</p>
+        <p style="font-size:13px;color:var(--muted);margin:10px 0 0">※ 총 샷 계량 = 제품 1개 무게 × 캐비티 수 + 러너 무게. 밀도를 입력하면 샷 용적까지 함께 계산됩니다.</p>
         <div id="shotWeightResult" style="display:none;margin-top:15px">
           <div class="density-display">총 샷 계량: <span id="totalShotWeight">0.00</span> g (<span id="shotVolume">0.00</span> cm³)</div>
-          <button class="btn-log-action btn-add-log" style="width:100%;margin-top:10px" onclick="applyWeightToLog()">⬇️ 최신 로그에 이 값 적용</button>
+          <button class="btn-log-action btn-add-log" style="width:100%;margin-top:10px" onclick="applyWeightToLog()">최신 로그에 이 값 적용</button>
         </div>
       </div>
       <div id="flashRecommendations" style="display:none">
         <div class="calc-recommendation">
-          <h4>💡 플래시 저감 조건 — 자동 분석</h4>
+          <h4>플래시 저감 조건 — 자동 분석</h4>
           <p style="font-size:14px;margin-bottom:15px">최신 로그 1건의 공정 조건을 기준으로 플래시를 줄일 방향을 제안합니다. 추천치는 단일 로그 기준이므로 3-5샷 평균을 별도 확인하세요.</p>
           <div id="recommendationContent"></div>
         </div>
       </div>
       <div class="chart-container">
         <div class="chart-controls">
-          <h4 style="color:#1e3c72;margin:0;flex:1">📊 공정 조건 트렌드 차트 (최근 20개)</h4>
+          <h4 style="color:var(--ink);margin:0;flex:1">공정 조건 트렌드 차트 (최근 20개)</h4>
           <button class="chart-toggle-btn active" onclick="showChart('temp')" id="chartBtnTemp">온도</button>
           <button class="chart-toggle-btn" onclick="showChart('pressure')" id="chartBtnPressure">압력</button>
           <button class="chart-toggle-btn" onclick="showChart('weight')" id="chartBtnWeight">무게</button>
           <button class="chart-toggle-btn" onclick="showChart('time')" id="chartBtnTime">시간</button>
         </div>
         <div style="position:relative;height:300px"><canvas id="processChart"></canvas></div>
-        <p style="font-size:12px;color:#6b7280;margin-top:10px;text-align:center">최근 20개 로그로 트렌드 표시. 로그가 추가되면 <strong>자동 갱신</strong>.</p>
+        <p style="font-size:12px;color:var(--muted);margin-top:10px;text-align:center">최근 20개 로그로 트렌드 표시. 로그가 추가되면 <strong>자동 갱신</strong>.</p>
       </div>
       <div class="log-container">
         <div class="log-header">
-          <h4 style="color:#1e3c72;margin:0">📝 공정 조건 로그 테이블</h4>
+          <h4 style="color:var(--ink);margin:0">공정 조건 로그 테이블</h4>
           <div style="display:flex;gap:10px;flex-wrap:wrap">
-            <button class="btn-log-action btn-add-log" onclick="addProcessLogEntry()">➕ 새 행 추가</button>
-            <button class="btn-log-action btn-export-log" onclick="exportProcessLog()">📥 CSV로 내보내기</button>
-            <button class="btn-log-action btn-clear-log" onclick="clearProcessLog()">🗑️ 전체 삭제</button>
+            <button class="btn-log-action btn-add-log" onclick="addProcessLogEntry()">새 행 추가</button>
+            <button class="btn-log-action btn-export-log" onclick="exportProcessLog()">CSV로 내보내기</button>
+            <button class="btn-log-action btn-clear-log" onclick="clearProcessLog()">전체 삭제</button>
           </div>
         </div>
         <div style="overflow-x:auto">
@@ -1325,14 +1326,14 @@ const FLASH_TAB_HTML = {
                 <th style="min-width:80px">동작 · Actions</th>
               </tr>
             </thead>
-            <tbody id="processLogBody"><tr><td colspan="16" class="log-empty">아직 로그가 없습니다. <strong>"➕ 새 행 추가"</strong> 버튼으로 첫 기록을 시작하세요.</td></tr></tbody>
+            <tbody id="processLogBody"><tr><td colspan="16" class="log-empty">아직 로그가 없습니다. <strong>"새 행 추가"</strong> 버튼으로 첫 기록을 시작하세요.</td></tr></tbody>
           </table>
         </div>
       </div>
       <div class="info-box" style="margin-top:30px">
-        <h3>💡 사용 안내 (빠른 참조)</h3>
+        <h3>사용 안내 (빠른 참조)</h3>
         <ul style="margin-left:20px;margin-top:10px">
-          <li><strong>로그 추가</strong> · "➕ 새 행 추가" 버튼 → 빈 행 1개 추가</li>
+          <li><strong>로그 추가</strong> · "새 행 추가" 버튼 → 빈 행 1개 추가</li>
           <li><strong>값 입력</strong> · 숫자 직접 타이핑 또는 +/- 버튼</li>
           <li><strong>무게 측정</strong> · 제품·러너 무게 입력 → 샷 계량 + 플래시 추천 자동 산출</li>
           <li><strong>검색 · 필터</strong> · 날짜 범위 + 키워드로 빠른 검색</li>
@@ -1346,7 +1347,7 @@ const FLASH_TAB_HTML = {
         </ul>
       </div>
       <div class="warning-box" style="margin-top:20px">
-        <h3>⚠️ 주의 · 데이터 보관 제약</h3>
+        <h3>주의 · 데이터 보관 제약</h3>
         <ul style="margin-left:20px;margin-top:10px">
           <li>데이터는 브라우저 로컬에만 저장 → <strong>브라우저 캐시 완전 삭제 시 데이터 손실</strong></li>
           <li>중요 데이터는 <strong>주 1회 CSV로 백업</strong> 권장</li>
@@ -1355,13 +1356,13 @@ const FLASH_TAB_HTML = {
       </div>
     `,
     t7: `
-      <h3 style="color:#1e3c72;margin-bottom:20px">📖 PHA Process Optimizer — 사용 설명서 (전체 기능 · FAQ · 호환성)</h3>
+      <h3 style="color:var(--ink);margin-bottom:20px">PHA Process Optimizer — 사용 설명서 (전체 기능 · FAQ · 호환성)</h3>
       <div class="success-box">
-        <h3>🎯 이 앱은 무엇인가</h3>
+        <h3>이 앱은 무엇인가</h3>
         <p><strong>PHA Process Optimizer & Convertor</strong> — PHA (Polyhydroxyalkanoate · 바이오플라스틱)의 <strong>사출 성형 공정</strong>을 담당하는 현장 엔지니어 · 품질 관리자 대상 종합 도구.</p>
         <p style="margin-top:10px"><strong>버전</strong> 1.x · <strong>유형</strong> 정적 웹앱 (서버 불필요) · <strong>저장</strong> 브라우저 localStorage · IndexedDB</p>
       </div>
-      <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">📋 주요 기능 한눈에 보기</h4>
+      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">주요 기능 한눈에 보기</h4>
       <table>
         <thead><tr><th style="min-width:150px">기능</th><th>설명</th><th style="min-width:120px">위치</th></tr></thead>
         <tbody>
@@ -1373,9 +1374,9 @@ const FLASH_TAB_HTML = {
           <tr><td><strong>무게 계산기</strong></td><td>제품·러너 무게 기반 샷 계량 · 용적 계산</td><td>플래시 탭 6</td></tr>
         </tbody>
       </table>
-      <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">🔍 플래시 저감 추천 엔진 — 판단 기준</h4>
+      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">플래시 저감 추천 엔진 — 판단 기준</h4>
       <div class="info-box">
-        <h3>💡 분석 로직 · 권장 조치</h3>
+        <h3>분석 로직 · 권장 조치</h3>
         <p>최신 로그를 실시간 분석해 <strong>5개 핵심 파라미터</strong>에 대한 플래시 저감 권장값을 자동 제시합니다.</p>
       </div>
       <table style="margin-top:15px">
@@ -1396,9 +1397,9 @@ const FLASH_TAB_HTML = {
           <li><strong>🟢 suggestion</strong> — 품질 향상 제안 (냉각 시간 증가)</li>
         </ul>
       </div>
-      <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">📊 차트 시각화</h4>
+      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">차트 시각화</h4>
       <div class="info-box">
-        <h3>📈 4가지 차트 유형 (Chart.js 4.4.0)</h3>
+        <h3>4가지 차트 유형 (Chart.js 4.4.0)</h3>
         <table style="margin-top:10px">
           <thead><tr><th>차트 유형</th><th>표시 항목</th><th>주 용도</th></tr></thead>
           <tbody>
@@ -1410,7 +1411,7 @@ const FLASH_TAB_HTML = {
         </table>
         <p style="margin-top:10px"><strong>특징</strong> · 최근 20개 표시 · 실시간 업데이트 · 줌/팬 · 반응형</p>
       </div>
-      <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">⚖️ 무게 측정 계산기 사용 절차</h4>
+      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">무게 측정 계산기 사용 절차</h4>
       <div class="success-box">
         <h3>6 단계 · 계산 절차</h3>
         <ol style="margin-left:20px;margin-top:10px">
@@ -1419,10 +1420,10 @@ const FLASH_TAB_HTML = {
           <li><strong>3</strong> 캐비티 수 확인 (기본 36 · 필요 시 수정)</li>
           <li><strong>4</strong> 재료 밀도 입력 — "Grade에서 자동 조회" 또는 수동</li>
           <li><strong>5</strong> 총 샷 계량 (g) · 용적 (cm³) 자동 산출</li>
-          <li><strong>6</strong> "⬇️ 최신 로그에 이 값 적용" 버튼으로 로그에 반영</li>
+          <li><strong>6</strong> "최신 로그에 이 값 적용" 버튼으로 로그에 반영</li>
         </ol>
       </div>
-      <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">📋 내장 PHA 밀도 데이터베이스</h4>
+      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">내장 PHA 밀도 데이터베이스</h4>
       <table>
         <thead><tr><th>Grade</th><th>밀도 · Density (g/cm³)</th><th>특징 · Notes</th></tr></thead>
         <tbody>
@@ -1435,7 +1436,7 @@ const FLASH_TAB_HTML = {
           <tr><td><strong>기본값 / Default</strong></td><td>1.25</td><td>Grade 미선택 시 사용</td></tr>
         </tbody>
       </table>
-      <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">🔍 검색 · 필터 기능</h4>
+      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">검색 · 필터 기능</h4>
       <div class="info-box">
         <h3>3가지 필터링 모드</h3>
         <table style="margin-top:10px">
@@ -1448,20 +1449,20 @@ const FLASH_TAB_HTML = {
         </table>
         <p style="margin-top:10px"><strong>특징</strong> · 클라이언트 처리 (빠름) · 실시간 · "필터 초기화"로 전체 복원</p>
       </div>
-      <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">📸 사진 첨부 기능 (IndexedDB 기반)</h4>
+      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">사진 첨부 기능 (IndexedDB 기반)</h4>
       <div class="info-box">
         <h3>IndexedDB에 사진 저장 (서버 업로드 없음)</h3>
         <p><strong>지원 형식</strong> JPEG · PNG · GIF · WebP · <strong>최대</strong> 5 MB/파일 · <strong>다중 업로드</strong> 가능</p>
         <p style="margin-top:10px"><strong>사용 절차</strong></p>
         <ol style="margin-left:20px;margin-top:5px">
-          <li><strong>1</strong> 로그 테이블 "사진" 열 → "📷 첨부" 버튼</li>
+          <li><strong>1</strong> 로그 테이블 "사진" 열 → "첨부" 버튼</li>
           <li><strong>2</strong> 파일 선택 다이얼로그 · Ctrl+클릭으로 다중 선택</li>
-          <li><strong>3</strong> 업로드 완료 후 "📷 사진 (N개)" 표시</li>
+          <li><strong>3</strong> 업로드 완료 후 "사진 (N개)" 표시</li>
           <li><strong>4</strong> 클릭하면 첨부 사진 뷰어 오픈</li>
         </ol>
       </div>
       <div class="warning-box" style="margin-top:15px">
-        <h3>⚠️ 사진 저장 · 유의사항</h3>
+        <h3>사진 저장 · 유의사항</h3>
         <ul style="margin-left:20px;margin-top:10px">
           <li>IndexedDB 용량은 브라우저별 제한 있음 (보통 50 MB+)</li>
           <li><strong>브라우저 캐시 삭제 시 사진도 함께 사라짐</strong></li>
@@ -1469,7 +1470,7 @@ const FLASH_TAB_HTML = {
           <li>5 MB 초과 파일은 사전 리사이즈 (TinyPNG · ImageOptim 등)</li>
         </ul>
       </div>
-      <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">📋 템플릿 시스템</h4>
+      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">템플릿 시스템</h4>
       <div class="success-box">
         <h3>자주 쓰는 조건을 저장 · 재사용</h3>
         <p><strong>저장 항목</strong> · 실린더 온도 · 금형 온도 · 사출속도 · 사출압 · 보압 · 보압시간 · 냉각시간 · 저장 일시</p>
@@ -1481,12 +1482,12 @@ const FLASH_TAB_HTML = {
         </ul>
         <p style="margin-top:10px"><strong>기능</strong></p>
         <ul style="margin-left:20px;margin-top:5px">
-          <li><strong>💾 저장</strong> · 최신 로그 조건을 템플릿으로 저장</li>
-          <li><strong>📥 불러오기</strong> · 저장된 템플릿 선택 → 신규 로그에 적용</li>
-          <li><strong>🗑️ 관리</strong> · 템플릿 목록 확인 · 삭제</li>
+          <li><strong>저장</strong> · 최신 로그 조건을 템플릿으로 저장</li>
+          <li><strong>불러오기</strong> · 저장된 템플릿 선택 → 신규 로그에 적용</li>
+          <li><strong>관리</strong> · 템플릿 목록 확인 · 삭제</li>
         </ul>
       </div>
-      <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">❓ 자주 묻는 질문 (FAQ)</h4>
+      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">자주 묻는 질문 (FAQ)</h4>
       <div class="warning-box">
         <h3>Q1 · 로그 데이터가 사라졌습니다</h3>
         <p><strong>원인</strong> · 브라우저 캐시·쿠키 삭제, 시크릿 모드, 설정의 "사이트 데이터 삭제" 실행</p>
@@ -1532,7 +1533,7 @@ const FLASH_TAB_HTML = {
           <li>서버 백엔드 추가 (향후 로드맵)</li>
         </ul>
       </div>
-      <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">🌐 브라우저 호환성</h4>
+      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">브라우저 호환성</h4>
       <table>
         <thead><tr><th>플랫폼 · Platform</th><th>지원 브라우저 · Supported browsers</th><th>최소 버전 · Minimum version</th></tr></thead>
         <tbody>
@@ -1541,7 +1542,7 @@ const FLASH_TAB_HTML = {
           <tr><td><strong>미지원 · Unsupported</strong></td><td>Internet Explorer 11</td><td>ES6 미지원으로 호환 불가</td></tr>
         </tbody>
       </table>
-      <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">📄 기술 스택</h4>
+      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">기술 스택</h4>
       <div class="info-box">
         <h3>핵심 기술</h3>
         <p><strong>프론트엔드</strong> · HTML5 · CSS3 (Flexbox · Grid) · JavaScript ES6+</p>
@@ -1551,7 +1552,7 @@ const FLASH_TAB_HTML = {
         <p><strong>특징</strong> · 완전 정적 (서버 불필요) · 반응형 디자인</p>
       </div>
       <div class="success-box" style="margin-top:30px">
-        <h3>📞 추가 지원 · 상세 문서</h3>
+        <h3>추가 지원 · 상세 문서</h3>
         <p>이 애플리케이션의 전체 기술 문서, API 레퍼런스, 트러블슈팅 가이드는 프로젝트 루트의 <strong>README.md</strong> 파일을 참조하세요.</p>
         <p style="margin-top:10px"><strong>버전</strong> 1.4.0 · <strong>최종 업데이트</strong> 2026-04-19 · <strong>빌드</strong> production</p>
       </div>
@@ -1559,20 +1560,20 @@ const FLASH_TAB_HTML = {
   },
   en: {
     t0: `
-      <h3 style="color:#1e3c72;margin-bottom:20px">Control Strategy — Overview</h3>
+      <h3 style="color:var(--ink);margin-bottom:20px">Control Strategy — Overview</h3>
       <div class="success-box">
-        <h3>🎯 Control principle</h3>
+        <h3>Control principle</h3>
         <p><strong>"Protect the runner with a pressure cap until it's nearly full, then drive the cavity fill from cavity-pressure feedback."</strong></p>
         <p>Flash has exactly two root causes: <strong>mold damage</strong>, or <strong>cavity pressure exceeding the clamping force</strong>. This 4-stage strategy blocks both at the level of control logic, before they can happen.</p>
       </div>
-      <h3 style="color:#1e3c72;margin:30px 0 15px 0">4-Stage Control Logic (V0 → V1 → V2 → V3)</h3>
+      <h3 style="color:var(--ink);margin:30px 0 15px 0">4-Stage Control Logic (V0 → V1 → V2 → V3)</h3>
       <div class="process-flow">
         <div class="flow-step"><div class="flow-number">V0</div><div class="flow-content"><div class="flow-title">V0 — Runner Protect (pressure-capped, medium speed)</div><div class="flow-description">Fill up to <span class="emphasis">~90% of the runner volume</span> at <span class="emphasis">medium speed (30–50 mm/s)</span> with a hard pressure cap. Keep the cap at <strong>≤80% of clamp force</strong> to prevent sprue-area flash and suppress shear heating at the root.</div></div></div>
         <div class="flow-step"><div class="flow-number">V1</div><div class="flow-content"><div class="flow-title">V1 — High-Speed Cavity Fill (92–96%)</div><div class="flow-description">Once the melt clears the gate, switch to <span class="emphasis">high speed (80–150 mm/s)</span> to fill thin sections cleanly. Keep a nozzle / injection-pressure cap in place, and use the pressure-rise of the last-to-fill cavity as the V/P transfer trigger.</div></div></div>
         <div class="flow-step"><div class="flow-number">V2</div><div class="flow-content"><div class="flow-title">V2 — End-of-Fill Brake (linear deceleration, kill overshoot)</div><div class="flow-description">In the final <span class="emphasis">4–8 mm</span> of fill, linearly decelerate velocity. This brake kills the end-of-fill pressure overshoot that would otherwise trigger flash.</div></div></div>
         <div class="flow-step"><div class="flow-number">V3</div><div class="flow-content"><div class="flow-title">V3 — Packing Ramp-in & Early Cutoff</div><div class="flow-description">First find gate-seal timing, then pack in two steps: <span class="emphasis">P1 (high, short) → P2 (lower, longer)</span>. Because the 36 cavities do not seal at the same time, set the cutoff against the <strong>last-to-seal cavity</strong>.</div></div></div>
       </div>
-      <h3 style="color:#1e3c72;margin:30px 0 15px 0">Supporting Controls (levers that back up the 4-stage strategy)</h3>
+      <h3 style="color:var(--ink);margin:30px 0 15px 0">Supporting Controls (levers that back up the 4-stage strategy)</h3>
       <table>
         <thead><tr><th>Control lever</th><th>How to adjust</th><th>Why it helps</th></tr></thead>
         <tbody>
@@ -1584,32 +1585,32 @@ const FLASH_TAB_HTML = {
         </tbody>
       </table>
       <div class="warning-box">
-        <h3>⚠️ PHA material handling — watch out for these</h3>
+        <h3>PHA material handling — watch out for these</h3>
         <p><strong>β-elimination pyrolysis</strong>: PHB-family resins pyrolyze rapidly above ~190 °C, dropping molecular weight. Run at the lowest workable melt temperature and keep residence time as short as possible.</p>
         <p><strong>Narrow processing window</strong>: PHA can only be processed just above the melt point. Overheating causes <strong>gas evolution + a rapid viscosity drop</strong> together.</p>
         <p><strong>Slow crystallization</strong>: PHA crystallizes much more slowly than commodity PE/PP, so plan for longer gate-seal times.</p>
       </div>
     `,
     t1: `
-      <h3 style="color:#1e3c72;margin-bottom:20px">Machine Setup Screens — stage-by-stage parameters</h3>
-      <button class="print-button" onclick="window.print()">🖨️ Print setup</button>
+      <h3 style="color:var(--ink);margin-bottom:20px">Machine Setup Screens — stage-by-stage parameters</h3>
+      <button class="print-button" onclick="window.print()">Print setup</button>
       <div class="machine-screen"><div class="screen-header"><span>V0 STAGE: RUNNER PROTECTION</span><span class="screen-time">Runner protection stage (up to 90% of runner volume)</span></div><div class="stage-indicator">▶ <strong>Goal:</strong> pressure-capped medium-speed fill up to 90% of runner volume — blocks sprue-area flash</div><div class="parameter-grid"><div class="parameter"><div class="parameter-label">Injection Velocity V0</div><div class="parameter-value">30-50<span class="parameter-unit">mm/s</span></div><div class="parameter-note">Medium speed — fills the runner without over-shearing</div></div><div class="parameter"><div class="parameter-label">Pressure Limit</div><div class="parameter-value">0.8 × F_clamp/A_proj<span class="parameter-unit">bar</span></div><div class="parameter-note">≤80% of clamp force / projected area</div></div><div class="parameter"><div class="parameter-label">Switchover Position (V0 → V1)</div><div class="parameter-value">0.9 × V_runner<span class="parameter-unit">mm</span></div><div class="parameter-note">At 90% of total runner volume</div></div><div class="parameter"><div class="parameter-label">Shear Rate Control</div><div class="parameter-value">γ̇ = 4Q/(πR³)<span class="parameter-unit">s⁻¹</span></div><div class="parameter-note">Monitor runner shear rate with this formula</div></div></div></div>
       <div class="machine-screen"><div class="screen-header"><span>V1 STAGE: HIGH-SPEED CAVITY FILL</span><span class="screen-time">High-speed cavity fill (92–96%)</span></div><div class="stage-indicator">▶ <strong>Goal:</strong> fill thin sections cleanly by pushing fast after the melt clears the gate</div><div class="parameter-grid"><div class="parameter"><div class="parameter-label">Injection Velocity V1</div><div class="parameter-value">80-150<span class="parameter-unit">mm/s</span></div><div class="parameter-note">High speed for thin-wall fill</div></div><div class="parameter"><div class="parameter-label">Injection Pressure Limit</div><div class="parameter-value">Maintain cap<span class="parameter-unit">bar</span></div><div class="parameter-note">Keep the V0 pressure cap in effect</div></div><div class="parameter"><div class="parameter-label">Fill Range</div><div class="parameter-value">92-96<span class="parameter-unit">%</span></div><div class="parameter-note">Fill percentage range V1 is responsible for</div></div><div class="parameter"><div class="parameter-label">Cavity Pressure Sensor</div><div class="parameter-value">dP/dt peak<span class="parameter-unit">detect</span></div><div class="parameter-note">Trigger on the last cavity to fill</div></div></div></div>
       <div class="machine-screen"><div class="screen-header"><span>V2 STAGE: END-OF-FILL DECELERATION</span><span class="screen-time">End-of-fill deceleration (final 4–8 mm)</span></div><div class="stage-indicator">▶ <strong>Goal:</strong> kill end-of-fill pressure overshoot via linear deceleration</div><div class="parameter-grid"><div class="parameter"><div class="parameter-label">Injection Velocity V2 (ramp-down target)</div><div class="parameter-value">20-40<span class="parameter-unit">mm/s</span></div><div class="parameter-note">Target speed at the end of the ramp</div></div><div class="parameter"><div class="parameter-label">Deceleration Start Point</div><div class="parameter-value">EoF -4~-8<span class="parameter-unit">mm</span></div><div class="parameter-note">Start the ramp 4–8 mm before fill completes</div></div><div class="parameter"><div class="parameter-label">Ramp Type</div><div class="parameter-value">Linear<span class="parameter-unit">Ramp-down</span></div><div class="parameter-note">Linear only — not step or exponential</div></div><div class="parameter"><div class="parameter-label">Pressure Monitoring</div><div class="parameter-value">Real-time<span class="parameter-unit">monitoring</span></div><div class="parameter-note">Real-time spike detection — tighten deceleration on anomaly</div></div></div></div>
-      <div class="machine-screen"><div class="screen-header"><span>V3 STAGE: PACKING PRESSURE CONTROL</span><span class="screen-time">Packing control (2-stage ramp, cut at gate seal)</span></div><div class="stage-indicator">▶ <strong>Goal:</strong> keep packing pressure only until the gate seals — any longer causes flash</div><div class="parameter-grid"><div class="parameter"><div class="parameter-label">Packing Pressure P1</div><div class="parameter-value">30-45% × P_inj_peak<span class="parameter-unit">bar</span></div><div class="parameter-note">Stage 1 — short, stronger pressure</div></div><div class="parameter"><div class="parameter-label">Packing Time P1</div><div class="parameter-value">0.1-0.3<span class="parameter-unit">s</span></div><div class="parameter-note">Stage 1 duration — short</div></div><div class="parameter"><div class="parameter-label">Packing Pressure P2</div><div class="parameter-value">15-30% × P_inj_peak<span class="parameter-unit">bar</span></div><div class="parameter-note">Stage 2 — lower, longer hold</div></div><div class="parameter"><div class="parameter-label">Packing Time P2</div><div class="parameter-value">Until gate seal<span class="parameter-unit">s</span></div><div class="parameter-note">Set from the weight-vs-time curve — see test method below</div></div></div><div class="info-box"><h3>📌 Gate-seal timing — on-floor test procedure</h3><p><strong>Step 1:</strong> Start with a 0.5 s packing time and raise it by 0.5 s each shot.</p><p><strong>Step 2:</strong> Weigh every shot on a precision scale.</p><p><strong>Step 3:</strong> The packing time at which part weight stops increasing is the gate-seal time.</p><p><strong>Step 4:</strong> Set the packing-end time against the last-to-seal cavity.</p></div></div>
+      <div class="machine-screen"><div class="screen-header"><span>V3 STAGE: PACKING PRESSURE CONTROL</span><span class="screen-time">Packing control (2-stage ramp, cut at gate seal)</span></div><div class="stage-indicator">▶ <strong>Goal:</strong> keep packing pressure only until the gate seals — any longer causes flash</div><div class="parameter-grid"><div class="parameter"><div class="parameter-label">Packing Pressure P1</div><div class="parameter-value">30-45% × P_inj_peak<span class="parameter-unit">bar</span></div><div class="parameter-note">Stage 1 — short, stronger pressure</div></div><div class="parameter"><div class="parameter-label">Packing Time P1</div><div class="parameter-value">0.1-0.3<span class="parameter-unit">s</span></div><div class="parameter-note">Stage 1 duration — short</div></div><div class="parameter"><div class="parameter-label">Packing Pressure P2</div><div class="parameter-value">15-30% × P_inj_peak<span class="parameter-unit">bar</span></div><div class="parameter-note">Stage 2 — lower, longer hold</div></div><div class="parameter"><div class="parameter-label">Packing Time P2</div><div class="parameter-value">Until gate seal<span class="parameter-unit">s</span></div><div class="parameter-note">Set from the weight-vs-time curve — see test method below</div></div></div><div class="info-box"><h3>Gate-seal timing — on-floor test procedure</h3><p><strong>Step 1:</strong> Start with a 0.5 s packing time and raise it by 0.5 s each shot.</p><p><strong>Step 2:</strong> Weigh every shot on a precision scale.</p><p><strong>Step 3:</strong> The packing time at which part weight stops increasing is the gate-seal time.</p><p><strong>Step 4:</strong> Set the packing-end time against the last-to-seal cavity.</p></div></div>
       <div class="machine-screen"><div class="screen-header"><span>TEMPERATURE CONTROL</span><span class="screen-time">Temperature Control (local sprue chilling + melt stability)</span></div><div class="stage-indicator">▶ <strong>Goal:</strong> keep the sprue locally cool while holding the melt stable elsewhere</div><div class="parameter-grid"><div class="parameter"><div class="parameter-label">Mold Temp (Cavity)</div><div class="parameter-value">T_base<span class="parameter-unit">°C</span></div><div class="parameter-note">Baseline mold temperature (material-specific)</div></div><div class="parameter"><div class="parameter-label">Mold Temp (Sprue/Parting)</div><div class="parameter-value">T_base -2~-5<span class="parameter-unit">°C</span></div><div class="parameter-note">Keep 2–5 °C below cavity</div></div><div class="parameter"><div class="parameter-label">Barrel Temp (Rear Zone)</div><div class="parameter-value">Lowest workable temp<span class="parameter-unit">°C</span></div><div class="parameter-note">Prevents PHA pyrolysis</div></div><div class="parameter"><div class="parameter-label">Material Drying</div><div class="parameter-value">65-80°C, 6-24h<span class="parameter-unit"></span></div><div class="parameter-note">Mandatory 65–80 °C for 6–24 h — moisture below 0.02%</div></div><div class="parameter"><div class="parameter-label">Residence Time</div><div class="parameter-value">Minimize<span class="parameter-unit">min</span></div><div class="parameter-note">Minimize time the melt spends in the barrel</div></div><div class="parameter"><div class="parameter-label">Screw RPM</div><div class="parameter-value">Low<span class="parameter-unit">rpm</span></div><div class="parameter-note">Keep low to limit shear heating</div></div><div class="parameter"><div class="parameter-label">Back Pressure</div><div class="parameter-value">Minimum<span class="parameter-unit">bar</span></div><div class="parameter-note">Minimum only (5–10 bar) to avoid excess shear</div></div></div></div>
     `,
     t2: `
-      <h3 style="color:#1e3c72;margin-bottom:20px">Setup Calculators (4 — enter inputs, recommended values appear)</h3>
-      <div class="calculator"><h3 style="color:#1e3c72;margin-bottom:20px">1. Clamp Tonnage Calculator</h3><div class="calc-input-group"><label>Cavity average pressure P_avg (bar)</label><input type="number" id="flash-p-avg" placeholder="e.g. 500" value="500"></div><div class="calc-input-group"><label>Projected area A_proj (cm²) — sum across 36 cavities</label><input type="number" id="flash-a-proj" placeholder="e.g. 2000" value="2000"></div><p style="font-size:13px;color:#6b7280;margin:8px 0 14px">※ Tonnage = projected area × average injection pressure × safety factor. This first estimate is formula-based with a +20 % margin — verify under actual hold pressure before committing.</p><button class="calc-button" onclick="calculateFlashClampTonnage()">Calculate</button><button class="calc-button" onclick="clearFlashInputs('clamp')">Reset</button><div class="calc-result" id="flash-clamp-result" style="display:none;"><h4>Result</h4><div class="calc-result-value" id="flash-clamp-value"></div><p id="flash-clamp-recommendation"></p></div></div>
-      <div class="calculator"><h3 style="color:#1e3c72;margin-bottom:20px">2. V0 Pressure Limit Calculator (Runner Protection Cap)</h3><div class="calc-input-group"><label>Clamp limit (ton-force) — machine nameplate</label><input type="number" id="flash-f-clamp" placeholder="e.g. 1200" value="1200"></div><div class="calc-input-group"><label>Projected area A_proj (cm²)</label><input type="number" id="flash-a-proj-2" placeholder="e.g. 2000" value="2000"></div><div class="calc-input-group"><label>Safety factor (recommended 0.8 — 20% clamp margin)</label><input type="number" id="flash-safety-factor" placeholder="0.8" value="0.8" step="0.05"></div><button class="calc-button" onclick="calculateFlashPressureLimit()">Calculate</button><button class="calc-button" onclick="clearFlashInputs('pressure')">Reset</button><div class="calc-result" id="flash-pressure-result" style="display:none;"><h4>V0 pressure limit — recommended value</h4><div class="calc-result-value" id="flash-pressure-value"></div><p id="flash-pressure-recommendation"></p></div></div>
-      <div class="calculator"><h3 style="color:#1e3c72;margin-bottom:20px">3. Runner Shear Rate Calculator</h3><div class="calc-input-group"><label>Volumetric flow rate Q (cm³/s)</label><input type="number" id="flash-flow-rate" placeholder="e.g. 50" value="50"></div><div class="calc-input-group"><label>Runner radius R (cm) — assumes cylindrical runner</label><input type="number" id="flash-runner-radius" placeholder="e.g. 0.4" value="0.4" step="0.1"></div><button class="calc-button" onclick="calculateFlashShearRate()">Calculate</button><button class="calc-button" onclick="clearFlashInputs('shear')">Reset</button><div class="calc-result" id="flash-shear-result" style="display:none;"><h4>Runner wall shear rate (γ̇ at wall)</h4><div class="calc-result-value" id="flash-shear-value"></div><p id="flash-shear-recommendation"></p></div></div>
-      <div class="calculator"><h3 style="color:#1e3c72;margin-bottom:20px">4. Packing Pressure Calculator (P1 / P2 split)</h3><div class="calc-input-group"><label>Peak injection pressure P_inj_peak (bar) — observed peak on this shot</label><input type="number" id="flash-p-inj-peak" placeholder="e.g. 1500" value="1500"></div><button class="calc-button" onclick="calculateFlashPackingPressure()">Calculate</button><button class="calc-button" onclick="clearFlashInputs('packing')">Reset</button><div class="calc-result" id="flash-packing-result" style="display:none;"><h4>Recommended packing setup — P1 and P2 split</h4><div class="calc-result-value" id="flash-packing-value"></div><p id="flash-packing-recommendation"></p></div></div>
+      <h3 style="color:var(--ink);margin-bottom:20px">Setup Calculators (4 — enter inputs, recommended values appear)</h3>
+      <div class="calculator"><h3 style="color:var(--ink);margin-bottom:20px">1. Clamp Tonnage Calculator</h3><div class="calc-input-group"><label>Cavity average pressure P_avg (bar)</label><input type="number" id="flash-p-avg" placeholder="e.g. 500" value="500"></div><div class="calc-input-group"><label>Projected area A_proj (cm²) — sum across 36 cavities</label><input type="number" id="flash-a-proj" placeholder="e.g. 2000" value="2000"></div><p style="font-size:13px;color:var(--muted);margin:8px 0 14px">※ Tonnage = projected area × average injection pressure × safety factor. This first estimate is formula-based with a +20 % margin — verify under actual hold pressure before committing.</p><button class="calc-button" onclick="calculateFlashClampTonnage()">Calculate</button><button class="calc-button" onclick="clearFlashInputs('clamp')">Reset</button><div class="calc-result" id="flash-clamp-result" style="display:none;"><h4>Result</h4><div class="calc-result-value" id="flash-clamp-value"></div><p id="flash-clamp-recommendation"></p></div></div>
+      <div class="calculator"><h3 style="color:var(--ink);margin-bottom:20px">2. V0 Pressure Limit Calculator (Runner Protection Cap)</h3><div class="calc-input-group"><label>Clamp limit (ton-force) — machine nameplate</label><input type="number" id="flash-f-clamp" placeholder="e.g. 1200" value="1200"></div><div class="calc-input-group"><label>Projected area A_proj (cm²)</label><input type="number" id="flash-a-proj-2" placeholder="e.g. 2000" value="2000"></div><div class="calc-input-group"><label>Safety factor (recommended 0.8 — 20% clamp margin)</label><input type="number" id="flash-safety-factor" placeholder="0.8" value="0.8" step="0.05"></div><button class="calc-button" onclick="calculateFlashPressureLimit()">Calculate</button><button class="calc-button" onclick="clearFlashInputs('pressure')">Reset</button><div class="calc-result" id="flash-pressure-result" style="display:none;"><h4>V0 pressure limit — recommended value</h4><div class="calc-result-value" id="flash-pressure-value"></div><p id="flash-pressure-recommendation"></p></div></div>
+      <div class="calculator"><h3 style="color:var(--ink);margin-bottom:20px">3. Runner Shear Rate Calculator</h3><div class="calc-input-group"><label>Volumetric flow rate Q (cm³/s)</label><input type="number" id="flash-flow-rate" placeholder="e.g. 50" value="50"></div><div class="calc-input-group"><label>Runner radius R (cm) — assumes cylindrical runner</label><input type="number" id="flash-runner-radius" placeholder="e.g. 0.4" value="0.4" step="0.1"></div><button class="calc-button" onclick="calculateFlashShearRate()">Calculate</button><button class="calc-button" onclick="clearFlashInputs('shear')">Reset</button><div class="calc-result" id="flash-shear-result" style="display:none;"><h4>Runner wall shear rate (γ̇ at wall)</h4><div class="calc-result-value" id="flash-shear-value"></div><p id="flash-shear-recommendation"></p></div></div>
+      <div class="calculator"><h3 style="color:var(--ink);margin-bottom:20px">4. Packing Pressure Calculator (P1 / P2 split)</h3><div class="calc-input-group"><label>Peak injection pressure P_inj_peak (bar) — observed peak on this shot</label><input type="number" id="flash-p-inj-peak" placeholder="e.g. 1500" value="1500"></div><button class="calc-button" onclick="calculateFlashPackingPressure()">Calculate</button><button class="calc-button" onclick="clearFlashInputs('packing')">Reset</button><div class="calc-result" id="flash-packing-result" style="display:none;"><h4>Recommended packing setup — P1 and P2 split</h4><div class="calc-result-value" id="flash-packing-value"></div><p id="flash-packing-recommendation"></p></div></div>
     `,
     t3: `
-      <h3 style="color:#1e3c72;margin-bottom:20px">Process Flow Diagram (4-stage control flowchart)</h3>
+      <h3 style="color:var(--ink);margin-bottom:20px">Process Flow Diagram (4-stage control flowchart)</h3>
       <div class="diagram">
-        <h3 style="text-align:center;color:#1e3c72;margin-bottom:20px">4-Stage Control Flow (V0 → V1 → V2 → V3)</h3>
+        <h3 style="text-align:center;color:var(--ink);margin-bottom:20px">4-Stage Control Flow (V0 → V1 → V2 → V3)</h3>
         <svg viewBox="0 0 800 1200" xmlns="http://www.w3.org/2000/svg">
           <rect x="50" y="50" width="700" height="200" fill="#e3f2fd" stroke="#1e3c72" stroke-width="3" rx="10"/>
           <text x="400" y="90" text-anchor="middle" font-size="24" font-weight="bold" fill="#1e3c72">V0 — Runner Protection</text>
@@ -1648,7 +1649,7 @@ const FLASH_TAB_HTML = {
         </svg>
       </div>
       <div class="info-box">
-        <h3>📊 How to read this flowchart</h3>
+        <h3>How to read this flowchart</h3>
         <p><strong>V0:</strong> Pressure rises gently below the cap. This stage itself acts as a structural over-pressure guard.</p>
         <p><strong>V1:</strong> Pressure climbs steeply under high-speed fill but stays within the cap.</p>
         <p><strong>V2:</strong> Linear deceleration flattens the peak — no spike, smooth approach.</p>
@@ -1656,69 +1657,69 @@ const FLASH_TAB_HTML = {
       </div>
     `,
     t4: `
-      <h3 style="color:#1e3c72;margin-bottom:20px">Field Setup Checklist (10 items — verify before first shot)</h3>
-      <button class="print-button" onclick="window.print()">🖨️ Print checklist</button>
-      <div class="checklist"><h3 style="color:#1e3c72;margin-bottom:15px">Pre-Setup — before the machine warms up</h3><div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>Material drying:</strong> confirm PHA pellets were dried at 65–80 °C for 6–24 h.</div></div><div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>Runner volume:</strong> compute total runner volume V_runner and convert the 90% point to a screw position (mm).</div></div><div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>Projected area:</strong> compute the summed projected area A_proj across all 36 cavities.</div></div><div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>Clamp tonnage:</strong> use the Tab 2 calculator and match the result against the machine spec.</div></div></div>
-      <div class="checklist"><h3 style="color:#1e3c72;margin-bottom:15px">V0 stage — Runner Protection</h3><div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>V0 velocity:</strong> set medium speed within 30–50 mm/s.</div></div><div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>Pressure cap:</strong> enter the calculator result (0.8 × F_clamp/A_proj).</div></div><div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>V0 → V1 transfer point:</strong> enter the screw position for 90% of runner volume.</div></div></div>
-      <div class="checklist"><h3 style="color:#1e3c72;margin-bottom:15px">V1 stage — High-Speed Cavity Fill</h3><div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>V1 velocity:</strong> set high speed within 80–150 mm/s to fill thin walls.</div></div><div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>Pressure cap:</strong> verify the V0 cap is still active in V1.</div></div></div>
-      <div class="checklist"><h3 style="color:#1e3c72;margin-bottom:15px">Verification — after the first shot</h3><div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>Flash measurement:</strong> measure flash height at the parting line and around the sprue. Target ≤ 0.02 mm.</div></div><div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>Part weight:</strong> weigh all 36 cavities and confirm spread is within ±1%.</div></div><div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>Dimensions:</strong> measure critical dimensions and verify they are within tolerance.</div></div></div>
+      <h3 style="color:var(--ink);margin-bottom:20px">Field Setup Checklist (10 items — verify before first shot)</h3>
+      <button class="print-button" onclick="window.print()">Print checklist</button>
+      <div class="checklist"><h3 style="color:var(--ink);margin-bottom:15px">Pre-Setup — before the machine warms up</h3><div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>Material drying:</strong> confirm PHA pellets were dried at 65–80 °C for 6–24 h.</div></div><div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>Runner volume:</strong> compute total runner volume V_runner and convert the 90% point to a screw position (mm).</div></div><div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>Projected area:</strong> compute the summed projected area A_proj across all 36 cavities.</div></div><div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>Clamp tonnage:</strong> use the Tab 2 calculator and match the result against the machine spec.</div></div></div>
+      <div class="checklist"><h3 style="color:var(--ink);margin-bottom:15px">V0 stage — Runner Protection</h3><div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>V0 velocity:</strong> set medium speed within 30–50 mm/s.</div></div><div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>Pressure cap:</strong> enter the calculator result (0.8 × F_clamp/A_proj).</div></div><div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>V0 → V1 transfer point:</strong> enter the screw position for 90% of runner volume.</div></div></div>
+      <div class="checklist"><h3 style="color:var(--ink);margin-bottom:15px">V1 stage — High-Speed Cavity Fill</h3><div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>V1 velocity:</strong> set high speed within 80–150 mm/s to fill thin walls.</div></div><div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>Pressure cap:</strong> verify the V0 cap is still active in V1.</div></div></div>
+      <div class="checklist"><h3 style="color:var(--ink);margin-bottom:15px">Verification — after the first shot</h3><div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>Flash measurement:</strong> measure flash height at the parting line and around the sprue. Target ≤ 0.02 mm.</div></div><div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>Part weight:</strong> weigh all 36 cavities and confirm spread is within ±1%.</div></div><div class="checklist-item"><input type="checkbox" class="checklist-checkbox"><div class="checklist-text"><strong>Dimensions:</strong> measure critical dimensions and verify they are within tolerance.</div></div></div>
     `,
     t5: `
-      <h3 style="color:#1e3c72;margin-bottom:20px">Troubleshooting — symptom → cause → action</h3>
+      <h3 style="color:var(--ink);margin-bottom:20px">Troubleshooting — symptom → cause → action</h3>
       <div class="warning-box"><h3>🔴 Symptom: flash near the sprue or runner</h3><p><strong>Likely causes and what to do (check top-down)</strong></p><ul style="margin-left:20px;margin-top:10px"><li><strong>V0 pressure cap too high</strong> → drop the cap to 70% and retest</li><li><strong>Insufficient clamp tonnage</strong> → re-check with Tab 2; move to a larger machine if needed</li><li><strong>Sprue bushing worn / damaged</strong> → replace the bushing and inspect the seat</li><li><strong>Parting-line temperature too high</strong> → tighten local cooling down to −5 °C</li><li><strong>Runner shear heating</strong> → lower V0 velocity or widen runner diameter</li></ul></div>
       <div class="warning-box"><h3>🟠 Symptom: incomplete cavity fill (short shot)</h3><ul style="margin-left:20px;margin-top:10px"><li><strong>V1 velocity too low</strong> → raise V1 gradually</li><li><strong>V0 stage too long</strong> → advance the V0 → V1 transfer to 85%</li><li><strong>Melt temperature too low</strong> → raise barrel temperature by 5–10 °C</li><li><strong>Mold temperature too low</strong> → raise cavity temperature (keep the sprue chilled)</li><li><strong>Gate too small</strong> → consider widening gate diameter by 0.1–0.2 mm</li></ul></div>
       <div class="warning-box"><h3>🟡 Symptom: pressure spike at end of fill (EoF)</h3><ul style="margin-left:20px;margin-top:10px"><li><strong>V2 deceleration missing or insufficient</strong> → extend the deceleration segment to 8 mm</li><li><strong>Ramp profile too steep</strong> → switch to linear ramp if needed</li><li><strong>V1 speed too high</strong> → reduce V1 by 10–20%</li><li><strong>Air trap</strong> → inspect vent locations and sizes</li></ul></div>
       <div class="warning-box"><h3>🟢 Symptom: excessive cavity-to-cavity weight spread (&gt;±1%)</h3><ul style="margin-left:20px;margin-top:10px"><li><strong>Unbalanced runner</strong> → redesign the runner or fine-trim gate diameters</li><li><strong>Gate-seal timing spread</strong> → trim gate diameters in ±0.02 mm steps to homogenize seal time</li><li><strong>Non-uniform mold temperature</strong> → measure actual zone temperatures and balance them</li><li><strong>Packing time not referenced to the last-to-seal cavity</strong> → re-run the gate-seal test</li></ul></div>
       <div class="warning-box"><h3>🔵 Symptom: PHA degradation signs (discoloration, gassing, viscosity drop)</h3><ul style="margin-left:20px;margin-top:10px"><li><strong>Barrel temperature too high</strong> → lower rear-zone temperature by 5–10 °C</li><li><strong>Residence time too long</strong> → increase shot size or shorten cycle time</li><li><strong>Screw rpm too high</strong> → reduce rpm by 30–50%</li><li><strong>Back pressure too high</strong> → drop to minimum (5–10 bar)</li><li><strong>Insufficient drying</strong> → extend drying time and re-verify temperature</li></ul></div>
-      <div class="info-box"><h3>💡 Preventive schedule (weekly, daily, per-shift)</h3><ul style="margin-left:20px;margin-top:10px"><li>Weekly · inspect sprue bushing and parting-line wear/damage</li><li>Weekly · measure tie-bar deflection and re-verify clamp tonnage</li><li>Twice daily · sample part weight and dimensions (start and end of shift)</li><li>Daily · review cavity-pressure data and trends</li><li>Per shift · verify actual (not setpoint) mold temperature</li><li>On lot change · re-verify material drying state</li></ul></div>
+      <div class="info-box"><h3>Preventive schedule (weekly, daily, per-shift)</h3><ul style="margin-left:20px;margin-top:10px"><li>Weekly · inspect sprue bushing and parting-line wear/damage</li><li>Weekly · measure tie-bar deflection and re-verify clamp tonnage</li><li>Twice daily · sample part weight and dimensions (start and end of shift)</li><li>Daily · review cavity-pressure data and trends</li><li>Per shift · verify actual (not setpoint) mold temperature</li><li>On lot change · re-verify material drying state</li></ul></div>
     `,
     t6: `
-      <h3 style="color:#1e3c72;margin-bottom:20px">Field Process Log (batch-scoped, templated, photo-attached, charted)</h3>
-      <div class="success-box"><h3>📋 On-the-floor condition logging</h3><p><strong>Log conditions and observations in real time</strong> to drive troubleshooting and optimization.</p><p>Type values directly or tap <strong>+/- buttons</strong>. Every change is <strong>auto-saved</strong>.</p></div>
+      <h3 style="color:var(--ink);margin-bottom:20px">Field Process Log (batch-scoped, templated, photo-attached, charted)</h3>
+      <div class="success-box"><h3>On-the-floor condition logging</h3><p><strong>Log conditions and observations in real time</strong> to drive troubleshooting and optimization.</p><p>Type values directly or tap <strong>+/- buttons</strong>. Every change is <strong>auto-saved</strong>.</p></div>
       ${FLASH_BATCH_CONTEXT_BANNER.en}
       ${FLASH_EVENT_LOGGER_PANEL.en}
-      <div class="filter-container"><h4 style="color:#1e3c72;margin-bottom:10px">🔍 Search &amp; filter</h4><div class="filter-row"><input type="text" id="filterKeyword" class="filter-input" placeholder="Keyword search in notes..." onkeyup="filterProcessLog()"><input type="date" id="filterDateFrom" class="filter-input" style="max-width:180px" onchange="filterProcessLog()"><span style="white-space:nowrap">~</span><input type="date" id="filterDateTo" class="filter-input" style="max-width:180px" onchange="filterProcessLog()"><button class="btn-filter" onclick="clearFilter()">Clear filters</button></div></div>
-      <div class="template-container"><h4 style="color:#1e3c72;margin-bottom:5px">📋 Template management (save frequent setups)</h4><p style="font-size:13px;color:#6b7280;margin-bottom:10px">Save a frequently-used configuration as a template to recall it fast next time.</p><div class="template-buttons"><button class="btn-template" onclick="saveTemplate()">💾 Save current as template</button><button class="btn-template load" onclick="loadTemplate()">📥 Load template</button><button class="btn-template delete" onclick="manageTemplates()">🗑️ Manage templates</button></div></div>
-      <div class="calc-recommendation"><h4>⚖️ Weight &amp; shot-size calculator</h4><p style="font-size:14px;margin-bottom:15px">Enter part and runner weights. The tool auto-calculates (1) shot size and (2) flash-reduction recommendations.</p><div class="weight-calc-grid"><div class="weight-input-box"><label>Part weight (g)</label><input type="number" id="partWeight" step="0.01" placeholder="0.00" onchange="calculateShotWeight()"></div><div class="weight-input-box"><label>Runner weight (g)</label><input type="number" id="runnerWeight" step="0.01" placeholder="0.00" onchange="calculateShotWeight()"></div><div class="weight-input-box"><label>Cavity count</label><input type="number" id="cavityCount" value="36" step="1" onchange="calculateShotWeight()"></div><div class="weight-input-box"><label>Material density (g/cm³)</label><input type="number" id="materialDensity" value="1.25" step="0.01" placeholder="1.25" onchange="calculateShotWeight()"><button class="btn-filter" style="margin-top:8px;width:100%;padding:6px" onclick="loadDensityFromGrade()" title="Pulls density from the Materials DB for the selected grade.">Look up density by grade</button></div></div><p style="font-size:13px;color:#6b7280;margin:10px 0 0">※ Total shot = part weight × cavities + runner weight. Once density is entered, the tool also computes shot volume.</p><div id="shotWeightResult" style="display:none;margin-top:15px"><div class="density-display">Total shot: <span id="totalShotWeight">0.00</span> g (<span id="shotVolume">0.00</span> cm³)</div><button class="btn-log-action btn-add-log" style="width:100%;margin-top:10px" onclick="applyWeightToLog()">⬇️ Apply to latest log</button></div></div>
-      <div id="flashRecommendations" style="display:none"><div class="calc-recommendation"><h4>💡 Flash-reduction recommendations — auto-analysis</h4><p style="font-size:14px;margin-bottom:15px">Based on the latest single log row, suggests directions to reduce flash. Numbers come from one log — cross-check against a 3-5 shot average before committing.</p><div id="recommendationContent"></div></div></div>
-      <div class="chart-container"><div class="chart-controls"><h4 style="color:#1e3c72;margin:0;flex:1">📊 Process-condition trend chart (last 20)</h4><button class="chart-toggle-btn active" onclick="showChart('temp')" id="chartBtnTemp">Temperature</button><button class="chart-toggle-btn" onclick="showChart('pressure')" id="chartBtnPressure">Pressure</button><button class="chart-toggle-btn" onclick="showChart('weight')" id="chartBtnWeight">Weight</button><button class="chart-toggle-btn" onclick="showChart('time')" id="chartBtnTime">Time</button></div><div style="position:relative;height:300px"><canvas id="processChart"></canvas></div><p style="font-size:12px;color:#6b7280;margin-top:10px;text-align:center">Shows the last 20 log rows. Updates automatically as you add entries.</p></div>
-      <div class="log-container"><div class="log-header"><h4 style="color:#1e3c72;margin:0">📝 Process-condition log</h4><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn-log-action btn-add-log" onclick="addProcessLogEntry()">➕ Add row</button><button class="btn-log-action btn-export-log" onclick="exportProcessLog()">📥 Export CSV</button><button class="btn-log-action btn-clear-log" onclick="clearProcessLog()">🗑️ Clear all</button></div></div><div style="overflow-x:auto"><table class="log-table" id="processLogTable"><thead><tr><th style="min-width:140px">일시 · Time</th><th style="min-width:120px">배치 · Batch</th><th style="min-width:160px">조성 · Composition</th><th style="min-width:120px">실린더 온도 · Barrel (°C)</th><th style="min-width:120px">금형 온도 · Mold (°C)</th><th style="min-width:130px">사출속도 · Inj. speed (mm/s)</th><th style="min-width:120px">사출압력 · Inj. pressure (bar)</th><th style="min-width:120px">보압 · Packing (bar)</th><th style="min-width:130px">보압시간 · Packing time (s)</th><th style="min-width:130px">냉각시간 · Cooling (s)</th><th style="min-width:120px">제품 무게 · Part (g)</th><th style="min-width:120px">러너 무게 · Runner (g)</th><th style="min-width:130px">총 무게 · Total (g)</th><th style="min-width:200px">비고 · Notes</th><th style="min-width:100px">사진 · Photo</th><th style="min-width:80px">동작 · Actions</th></tr></thead><tbody id="processLogBody"><tr><td colspan="16" class="log-empty">No log entries yet. Click <strong>"➕ Add row"</strong> to start your first record.</td></tr></tbody></table></div></div>
-      <div class="info-box" style="margin-top:30px"><h3>💡 Quick reference</h3><ul style="margin-left:20px;margin-top:10px"><li><strong>Add row</strong> — click "➕ Add row" to insert a blank record</li><li><strong>Value entry</strong> — type numbers or use +/- buttons</li><li><strong>Weight</strong> — enter part and runner weight; shot size and flash recommendations auto-compute</li><li><strong>Search / filter</strong> — narrow by date range and keyword</li><li><strong>Templates</strong> — save common setups for one-click recall</li><li><strong>Photos</strong> — attach product or defect photos to each log row</li><li><strong>Chart view</strong> — live trend charts for temperature, pressure, weight, and time</li><li><strong>Mobile-friendly</strong> — works on both desktop and phone</li><li><strong>Auto-save</strong> — every input is immediately persisted to the browser</li><li><strong>CSV export</strong> — download your records as a CSV file</li><li><strong>Notes</strong> — free-form text for observations, defect types, and anomalies</li></ul></div>
-      <div class="warning-box" style="margin-top:20px"><h3>⚠️ Caution — data persistence limits</h3><ul style="margin-left:20px;margin-top:10px"><li>Data lives in browser storage only — <strong>clearing browser site-data wipes it</strong></li><li>Back up critical records by <strong>exporting to CSV weekly</strong></li><li>Data is <strong>per-browser, per-device</strong> — not synced across them</li></ul></div>
+      <div class="filter-container"><h4 style="color:var(--ink);margin-bottom:10px">Search &amp; filter</h4><div class="filter-row"><input type="text" id="filterKeyword" class="filter-input" placeholder="Keyword search in notes..." onkeyup="filterProcessLog()"><input type="date" id="filterDateFrom" class="filter-input" style="max-width:180px" onchange="filterProcessLog()"><span style="white-space:nowrap">~</span><input type="date" id="filterDateTo" class="filter-input" style="max-width:180px" onchange="filterProcessLog()"><button class="btn-filter" onclick="clearFilter()">Clear filters</button></div></div>
+      <div class="template-container"><h4 style="color:var(--ink);margin-bottom:5px">Template management (save frequent setups)</h4><p style="font-size:13px;color:var(--muted);margin-bottom:10px">Save a frequently-used configuration as a template to recall it fast next time.</p><div class="template-buttons"><button class="btn-template" onclick="saveTemplate()">Save current as template</button><button class="btn-template load" onclick="loadTemplate()">Load template</button><button class="btn-template delete" onclick="manageTemplates()">Manage templates</button></div></div>
+      <div class="calc-recommendation"><h4>Weight &amp; shot-size calculator</h4><p style="font-size:14px;margin-bottom:15px">Enter part and runner weights. The tool auto-calculates (1) shot size and (2) flash-reduction recommendations.</p><div class="weight-calc-grid"><div class="weight-input-box"><label>Part weight (g)</label><input type="number" id="partWeight" step="0.01" placeholder="0.00" onchange="calculateShotWeight()"></div><div class="weight-input-box"><label>Runner weight (g)</label><input type="number" id="runnerWeight" step="0.01" placeholder="0.00" onchange="calculateShotWeight()"></div><div class="weight-input-box"><label>Cavity count</label><input type="number" id="cavityCount" value="36" step="1" onchange="calculateShotWeight()"></div><div class="weight-input-box"><label>Material density (g/cm³)</label><input type="number" id="materialDensity" value="1.25" step="0.01" placeholder="1.25" onchange="calculateShotWeight()"><button class="btn-filter" style="margin-top:8px;width:100%;padding:6px" onclick="loadDensityFromGrade()" title="Pulls density from the Materials DB for the selected grade.">Look up density by grade</button></div></div><p style="font-size:13px;color:var(--muted);margin:10px 0 0">※ Total shot = part weight × cavities + runner weight. Once density is entered, the tool also computes shot volume.</p><div id="shotWeightResult" style="display:none;margin-top:15px"><div class="density-display">Total shot: <span id="totalShotWeight">0.00</span> g (<span id="shotVolume">0.00</span> cm³)</div><button class="btn-log-action btn-add-log" style="width:100%;margin-top:10px" onclick="applyWeightToLog()">Apply to latest log</button></div></div>
+      <div id="flashRecommendations" style="display:none"><div class="calc-recommendation"><h4>Flash-reduction recommendations — auto-analysis</h4><p style="font-size:14px;margin-bottom:15px">Based on the latest single log row, suggests directions to reduce flash. Numbers come from one log — cross-check against a 3-5 shot average before committing.</p><div id="recommendationContent"></div></div></div>
+      <div class="chart-container"><div class="chart-controls"><h4 style="color:var(--ink);margin:0;flex:1">Process-condition trend chart (last 20)</h4><button class="chart-toggle-btn active" onclick="showChart('temp')" id="chartBtnTemp">Temperature</button><button class="chart-toggle-btn" onclick="showChart('pressure')" id="chartBtnPressure">Pressure</button><button class="chart-toggle-btn" onclick="showChart('weight')" id="chartBtnWeight">Weight</button><button class="chart-toggle-btn" onclick="showChart('time')" id="chartBtnTime">Time</button></div><div style="position:relative;height:300px"><canvas id="processChart"></canvas></div><p style="font-size:12px;color:var(--muted);margin-top:10px;text-align:center">Shows the last 20 log rows. Updates automatically as you add entries.</p></div>
+      <div class="log-container"><div class="log-header"><h4 style="color:var(--ink);margin:0">Process-condition log</h4><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn-log-action btn-add-log" onclick="addProcessLogEntry()">Add row</button><button class="btn-log-action btn-export-log" onclick="exportProcessLog()">Export CSV</button><button class="btn-log-action btn-clear-log" onclick="clearProcessLog()">Clear all</button></div></div><div style="overflow-x:auto"><table class="log-table" id="processLogTable"><thead><tr><th style="min-width:140px">일시 · Time</th><th style="min-width:120px">배치 · Batch</th><th style="min-width:160px">조성 · Composition</th><th style="min-width:120px">실린더 온도 · Barrel (°C)</th><th style="min-width:120px">금형 온도 · Mold (°C)</th><th style="min-width:130px">사출속도 · Inj. speed (mm/s)</th><th style="min-width:120px">사출압력 · Inj. pressure (bar)</th><th style="min-width:120px">보압 · Packing (bar)</th><th style="min-width:130px">보압시간 · Packing time (s)</th><th style="min-width:130px">냉각시간 · Cooling (s)</th><th style="min-width:120px">제품 무게 · Part (g)</th><th style="min-width:120px">러너 무게 · Runner (g)</th><th style="min-width:130px">총 무게 · Total (g)</th><th style="min-width:200px">비고 · Notes</th><th style="min-width:100px">사진 · Photo</th><th style="min-width:80px">동작 · Actions</th></tr></thead><tbody id="processLogBody"><tr><td colspan="16" class="log-empty">No log entries yet. Click <strong>"Add row"</strong> to start your first record.</td></tr></tbody></table></div></div>
+      <div class="info-box" style="margin-top:30px"><h3>Quick reference</h3><ul style="margin-left:20px;margin-top:10px"><li><strong>Add row</strong> — click "Add row" to insert a blank record</li><li><strong>Value entry</strong> — type numbers or use +/- buttons</li><li><strong>Weight</strong> — enter part and runner weight; shot size and flash recommendations auto-compute</li><li><strong>Search / filter</strong> — narrow by date range and keyword</li><li><strong>Templates</strong> — save common setups for one-click recall</li><li><strong>Photos</strong> — attach product or defect photos to each log row</li><li><strong>Chart view</strong> — live trend charts for temperature, pressure, weight, and time</li><li><strong>Mobile-friendly</strong> — works on both desktop and phone</li><li><strong>Auto-save</strong> — every input is immediately persisted to the browser</li><li><strong>CSV export</strong> — download your records as a CSV file</li><li><strong>Notes</strong> — free-form text for observations, defect types, and anomalies</li></ul></div>
+      <div class="warning-box" style="margin-top:20px"><h3>Caution — data persistence limits</h3><ul style="margin-left:20px;margin-top:10px"><li>Data lives in browser storage only — <strong>clearing browser site-data wipes it</strong></li><li>Back up critical records by <strong>exporting to CSV weekly</strong></li><li>Data is <strong>per-browser, per-device</strong> — not synced across them</li></ul></div>
     `,
     t7: `
-      <h3 style="color:#1e3c72;margin-bottom:20px">📖 PHA Process Optimizer — User Manual (full features, FAQ, compatibility)</h3>
-      <div class="success-box"><h3>🎯 What this app is</h3><p>The <strong>PHA Process Optimizer &amp; Convertor</strong> is an all-in-one toolkit for field engineers and QA staff who run PHA (Polyhydroxyalkanoate bioplastic) injection molding.</p><p style="margin-top:10px"><strong>Version</strong> 1.x · <strong>Type</strong> static web app (no server) · <strong>Storage</strong> browser localStorage + IndexedDB</p></div>
-      <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">📋 Feature overview</h4>
+      <h3 style="color:var(--ink);margin-bottom:20px">PHA Process Optimizer — User Manual (full features, FAQ, compatibility)</h3>
+      <div class="success-box"><h3>What this app is</h3><p>The <strong>PHA Process Optimizer &amp; Convertor</strong> is an all-in-one toolkit for field engineers and QA staff who run PHA (Polyhydroxyalkanoate bioplastic) injection molding.</p><p style="margin-top:10px"><strong>Version</strong> 1.x · <strong>Type</strong> static web app (no server) · <strong>Storage</strong> browser localStorage + IndexedDB</p></div>
+      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">Feature overview</h4>
       <table><thead><tr><th style="min-width:150px">Feature</th><th>Description</th><th style="min-width:120px">Location</th></tr></thead><tbody><tr><td><strong>Unit Converter</strong></td><td>Real-time conversion for pressure, temperature, length, and speed</td><td>Main tab 1</td></tr><tr><td><strong>Clamp Tonnage</strong></td><td>Auto-calculates required clamp tonnage for 36-cavity tools (1.2× safety factor)</td><td>Main tab 2</td></tr><tr><td><strong>Flash Control Guide</strong></td><td>Systematic methodology for injection speed, pressure, and temperature (8 sub-tabs)</td><td>Main tab 3</td></tr><tr><td><strong>Process Log</strong></td><td>Real-time logging with charts, search, templates, and photo attachments</td><td>Flash sub-tab 6</td></tr><tr><td><strong>Flash Recommendations</strong></td><td>Auto-analyzes the current setup and suggests optimizations</td><td>Flash sub-tab 6</td></tr><tr><td><strong>Weight Calculator</strong></td><td>Shot size and volume from part + runner weights</td><td>Flash sub-tab 6</td></tr></tbody></table>
-      <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">🔍 Flash recommendation engine — decision rules</h4>
-      <div class="info-box"><h3>💡 Analysis rules and actions</h3><p>We analyze the latest log row in real time and suggest flash-reduction actions on 5 core parameters.</p></div>
+      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">Flash recommendation engine — decision rules</h4>
+      <div class="info-box"><h3>Analysis rules and actions</h3><p>We analyze the latest log row in real time and suggest flash-reduction actions on 5 core parameters.</p></div>
       <table style="margin-top:15px"><thead><tr><th>Parameter</th><th>Trigger threshold</th><th>Recommended action</th><th>Technical basis</th></tr></thead><tbody><tr><td><strong>Injection pressure</strong></td><td>&gt; 900 bar</td><td>−50 bar</td><td>Excess pressure splits the parting line → flash</td></tr><tr><td><strong>Barrel temperature</strong></td><td>&gt; 185 °C</td><td>−5 °C</td><td>Higher temp lowers viscosity → flash seeps into tiny gaps</td></tr><tr><td><strong>Injection speed</strong></td><td>&gt; 180 mm/s</td><td>−20 mm/s</td><td>High speed causes pressure spikes → higher flash risk</td></tr><tr><td><strong>Packing pressure</strong></td><td>&gt; 700 bar</td><td>−50 bar</td><td>Excess packing holds pressure too long → flash worsens</td></tr><tr><td><strong>Cooling time</strong></td><td>&lt; 12 s</td><td>+2 s</td><td>Insufficient cooling causes ejection deformation and dimension drift</td></tr></tbody></table>
       <div class="warning-box" style="margin-top:15px"><h3>🔴 Recommendation severity (by color)</h3><ul style="margin-left:20px;margin-top:10px"><li><strong>🔴 warning</strong> — take action immediately (excess injection pressure)</li><li><strong>🟡 caution</strong> — improvement recommended (temperature, speed, or packing pressure too high)</li><li><strong>🟢 suggestion</strong> — quality-improvement tip (increase cooling time)</li></ul></div>
-      <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">📊 Chart visualization</h4>
-      <div class="info-box"><h3>📈 4 chart types (Chart.js 4.4.0)</h3><table style="margin-top:10px"><thead><tr><th>Chart type</th><th>What it shows</th><th>Typical use</th></tr></thead><tbody><tr><td><strong>Temperature</strong></td><td>Barrel + mold</td><td>Temperature trends, thermal management</td></tr><tr><td><strong>Pressure</strong></td><td>Injection + packing</td><td>Pressure profile, flash correlation</td></tr><tr><td><strong>Weight</strong></td><td>Part + runner + total</td><td>Shot variability, process stability</td></tr><tr><td><strong>Time</strong></td><td>Packing + cooling</td><td>Cycle-time optimization</td></tr></tbody></table><p style="margin-top:10px"><strong>Features:</strong> last 20 entries · live update · interactive zoom/pan · responsive</p></div>
-      <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">⚖️ Weight calculator — step by step</h4>
-      <div class="success-box"><h3>6-step procedure</h3><ol style="margin-left:20px;margin-top:10px"><li><strong>1</strong> Weigh one part (g) on a scale</li><li><strong>2</strong> Weigh the full runner system (g)</li><li><strong>3</strong> Confirm cavity count (default 36)</li><li><strong>4</strong> Enter material density via "Lookup by grade" or manually</li><li><strong>5</strong> Total shot weight (g) and volume (cm³) compute automatically</li><li><strong>6</strong> Click "⬇️ Apply to latest log" to fill the latest row</li></ol></div>
-      <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">📋 Built-in PHA density database</h4>
+      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">Chart visualization</h4>
+      <div class="info-box"><h3>4 chart types (Chart.js 4.4.0)</h3><table style="margin-top:10px"><thead><tr><th>Chart type</th><th>What it shows</th><th>Typical use</th></tr></thead><tbody><tr><td><strong>Temperature</strong></td><td>Barrel + mold</td><td>Temperature trends, thermal management</td></tr><tr><td><strong>Pressure</strong></td><td>Injection + packing</td><td>Pressure profile, flash correlation</td></tr><tr><td><strong>Weight</strong></td><td>Part + runner + total</td><td>Shot variability, process stability</td></tr><tr><td><strong>Time</strong></td><td>Packing + cooling</td><td>Cycle-time optimization</td></tr></tbody></table><p style="margin-top:10px"><strong>Features:</strong> last 20 entries · live update · interactive zoom/pan · responsive</p></div>
+      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">Weight calculator — step by step</h4>
+      <div class="success-box"><h3>6-step procedure</h3><ol style="margin-left:20px;margin-top:10px"><li><strong>1</strong> Weigh one part (g) on a scale</li><li><strong>2</strong> Weigh the full runner system (g)</li><li><strong>3</strong> Confirm cavity count (default 36)</li><li><strong>4</strong> Enter material density via "Lookup by grade" or manually</li><li><strong>5</strong> Total shot weight (g) and volume (cm³) compute automatically</li><li><strong>6</strong> Click "Apply to latest log" to fill the latest row</li></ol></div>
+      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">Built-in PHA density database</h4>
       <table><thead><tr><th>Grade</th><th>Density (g/cm³)</th><th>Notes</th></tr></thead><tbody><tr><td><strong>CA1180P</strong></td><td>1.25</td><td>General-purpose grade</td></tr><tr><td><strong>S1000P</strong></td><td>1.24</td><td>Standard grade</td></tr><tr><td><strong>A1000P</strong></td><td>1.23</td><td>Improved grade</td></tr><tr><td><strong>P3HB</strong></td><td>1.25</td><td>Neat PHB</td></tr><tr><td><strong>P3HB4HB</strong></td><td>1.22</td><td>Copolymer</td></tr><tr><td><strong>PHB</strong></td><td>1.26</td><td>High-density grade</td></tr><tr><td><strong>Default</strong></td><td>1.25</td><td>Used when no grade is selected</td></tr></tbody></table>
-      <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">🔍 Search &amp; filter capabilities</h4>
+      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">Search &amp; filter capabilities</h4>
       <div class="info-box"><h3>Three filtering modes</h3><table style="margin-top:10px"><thead><tr><th>Mode</th><th>Description</th><th>Example</th></tr></thead><tbody><tr><td><strong>Keyword</strong></td><td>Real-time text search in Notes</td><td>"flash", "defect", "ok"</td></tr><tr><td><strong>Date range</strong></td><td>From-to date range</td><td>2025-10-01 to 2025-10-31</td></tr><tr><td><strong>Combined</strong></td><td>Keyword + date range simultaneously</td><td>"flash" + October data</td></tr></tbody></table><p style="margin-top:10px"><strong>Features:</strong> client-side processing (fast) · real-time · "Clear filters" restores everything</p></div>
-      <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">📸 Photo attachments (backed by IndexedDB)</h4>
-      <div class="info-box"><h3>Photos stored in IndexedDB — no server upload</h3><p><strong>Formats:</strong> JPEG · PNG · GIF · WebP · <strong>Max:</strong> 5 MB per file · <strong>Multi-upload:</strong> supported</p><ol style="margin-left:20px;margin-top:5px"><li><strong>1</strong> In the Photo column, click the "📷 Attach" button</li><li><strong>2</strong> Select one or more images</li><li><strong>3</strong> After upload the cell shows the photo count</li><li><strong>4</strong> Click to open the attached-photo viewer</li></ol></div>
-      <div class="warning-box" style="margin-top:15px"><h3>⚠️ Photo storage — caveats</h3><ul style="margin-left:20px;margin-top:10px"><li>IndexedDB capacity varies by browser (usually 50 MB+)</li><li><strong>Clearing browser cache also wipes the photos</strong></li><li>Back up critical photos separately</li><li>For files over 5 MB, resize first (TinyPNG, ImageOptim, etc.)</li></ul></div>
-      <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">📋 Template system</h4>
-      <div class="success-box"><h3>Save and replay frequently-used setups</h3><p><strong>Captured fields:</strong> barrel temp · mold temp · injection speed · injection pressure · packing pressure · packing time · cooling time · timestamp</p><ul style="margin-left:20px;margin-top:5px"><li>Standard setup — e.g. "Standard_CA1180P"</li><li>Seasonal setup — e.g. "Summer_low_temp", "Winter_high_temp"</li><li>Per-product setup — e.g. "ProductA_optimum"</li></ul><p style="margin-top:10px"><strong>Functions</strong></p><ul style="margin-left:20px;margin-top:5px"><li><strong>💾 Save</strong> — persist the latest log's conditions as a template</li><li><strong>📥 Load</strong> — pick from saved templates and apply to a new log row</li><li><strong>🗑️ Manage</strong> — list and delete templates</li></ul></div>
-      <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">❓ FAQ</h4>
+      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">Photo attachments (backed by IndexedDB)</h4>
+      <div class="info-box"><h3>Photos stored in IndexedDB — no server upload</h3><p><strong>Formats:</strong> JPEG · PNG · GIF · WebP · <strong>Max:</strong> 5 MB per file · <strong>Multi-upload:</strong> supported</p><ol style="margin-left:20px;margin-top:5px"><li><strong>1</strong> In the Photo column, click the "Attach" button</li><li><strong>2</strong> Select one or more images</li><li><strong>3</strong> After upload the cell shows the photo count</li><li><strong>4</strong> Click to open the attached-photo viewer</li></ol></div>
+      <div class="warning-box" style="margin-top:15px"><h3>Photo storage — caveats</h3><ul style="margin-left:20px;margin-top:10px"><li>IndexedDB capacity varies by browser (usually 50 MB+)</li><li><strong>Clearing browser cache also wipes the photos</strong></li><li>Back up critical photos separately</li><li>For files over 5 MB, resize first (TinyPNG, ImageOptim, etc.)</li></ul></div>
+      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">Template system</h4>
+      <div class="success-box"><h3>Save and replay frequently-used setups</h3><p><strong>Captured fields:</strong> barrel temp · mold temp · injection speed · injection pressure · packing pressure · packing time · cooling time · timestamp</p><ul style="margin-left:20px;margin-top:5px"><li>Standard setup — e.g. "Standard_CA1180P"</li><li>Seasonal setup — e.g. "Summer_low_temp", "Winter_high_temp"</li><li>Per-product setup — e.g. "ProductA_optimum"</li></ul><p style="margin-top:10px"><strong>Functions</strong></p><ul style="margin-left:20px;margin-top:5px"><li><strong>Save</strong> — persist the latest log's conditions as a template</li><li><strong>Load</strong> — pick from saved templates and apply to a new log row</li><li><strong>Manage</strong> — list and delete templates</li></ul></div>
+      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">FAQ</h4>
       <div class="warning-box"><h3>Q1. My log data disappeared</h3><p><strong>Cause:</strong> cache/cookies were cleared, incognito mode, or "Clear site data" was triggered.</p><ul style="margin-left:20px;margin-top:5px"><li>Back up to CSV regularly</li><li>Store critical data externally</li><li>Avoid using incognito for long-lived workflows</li></ul><p><strong>Prevention:</strong> weekly CSV backups; keep localStorage enabled.</p></div>
       <div class="warning-box" style="margin-top:15px"><h3>Q2. The charts aren't showing</h3><p><strong>Cause:</strong> Chart.js CDN failed to load, network problem, or browser lacks Canvas support.</p><ul style="margin-left:20px;margin-top:5px"><li>Check network connectivity</li><li>Open DevTools (F12) → Network tab → verify the Chart.js CDN request</li><li>Force-reload with Ctrl+Shift+R</li></ul></div>
       <div class="warning-box" style="margin-top:15px"><h3>Q3. Korean characters are garbled in the CSV export</h3><p><strong>Cause:</strong> Excel's default ANSI encoding mismatched against the CSV's UTF-8.</p><p><strong>Solution:</strong> this app prepends a UTF-8 BOM automatically.</p><ol style="margin-left:20px;margin-top:5px"><li>Open the CSV in Notepad</li><li>Save As → choose UTF-8 encoding</li><li>In Excel, use Data → Import Text File</li></ol></div>
       <div class="warning-box" style="margin-top:15px"><h3>Q4. Can I use this offline?</h3><p><strong>Mostly yes</strong> — once the page has loaded, most features work offline.</p><p><strong>Limitation:</strong> Chart.js CDN will not load offline, so only charting is affected.</p><p><strong>Full offline:</strong> copy Chart.js locally and replace the CDN script with <code>&lt;script src="./chart.min.js"&gt;</code>.</p></div>
       <div class="warning-box" style="margin-top:15px"><h3>Q5. Can multiple people use it simultaneously?</h3><p><strong>No</strong> — localStorage is isolated per browser and per device.</p><ul style="margin-left:20px;margin-top:5px"><li>Each user exports CSV to a shared folder</li><li>Use alongside Google Sheets or similar cloud tools</li><li>Add a server backend later as roadmap work</li></ul></div>
-      <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">🌐 Browser compatibility</h4>
+      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">Browser compatibility</h4>
       <table><thead><tr><th>Platform</th><th>Supported browsers</th><th>Minimum version</th></tr></thead><tbody><tr><td><strong>Desktop</strong></td><td>Chrome, Edge, Firefox, Safari</td><td>Chrome 90+, Edge 90+, Firefox 88+, Safari 14+</td></tr><tr><td><strong>Mobile</strong></td><td>Chrome Android, Safari iOS, Samsung Internet</td><td>Chrome 90+, Safari iOS 14+, Samsung 14+</td></tr><tr><td><strong>Unsupported</strong></td><td>Internet Explorer 11</td><td>Not ES6-compatible</td></tr></tbody></table>
-      <h4 style="color:#1e3c72;margin-top:30px;margin-bottom:15px">📄 Technical stack</h4>
+      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">Technical stack</h4>
       <div class="info-box"><h3>Core tech</h3><p><strong>Frontend:</strong> HTML5, CSS3 (Flexbox, Grid), JavaScript ES6+</p><p><strong>Libraries:</strong> Chart.js 4.4.0 (CDN)</p><p><strong>Browser APIs:</strong> localStorage, IndexedDB, FileReader, Blob</p><p><strong>Deploy:</strong> Cloudflare Pages auto-deploy · <strong>Build:</strong> Node.js + build.js</p><p><strong>Traits:</strong> fully static (no server) · responsive</p></div>
-      <div class="success-box" style="margin-top:30px"><h3>📞 Further support &amp; full docs</h3><p>See the project-root <strong>README.md</strong> for the full technical notes, references, and troubleshooting guidance.</p><p style="margin-top:10px"><strong>Version</strong> 1.x · <strong>Last updated</strong> 2026-04-19 · <strong>Build</strong> production</p></div>
+      <div class="success-box" style="margin-top:30px"><h3>Further support &amp; full docs</h3><p>See the project-root <strong>README.md</strong> for the full technical notes, references, and troubleshooting guidance.</p><p style="margin-top:10px"><strong>Version</strong> 1.x · <strong>Last updated</strong> 2026-04-19 · <strong>Build</strong> production</p></div>
     `
   }
 };
@@ -2310,16 +2311,16 @@ function calculateFlashShearRate() {
   let recommendation = '';
   if (shearRate > 50000) {
     recommendation = LANG === 'ko'
-      ? '⚠️ <strong>경고:</strong> 전단률이 매우 높습니다 (&gt;50,000 s⁻¹). V0 속도를 낮추거나 러너 직경을 키우세요.'
-      : '⚠️ <strong>Warning:</strong> shear rate is very high (&gt;50,000 s⁻¹). Lower V0 speed or widen the runner diameter.';
+      ? '<strong>경고:</strong> 전단률이 매우 높습니다 (&gt;50,000 s⁻¹). V0 속도를 낮추거나 러너 직경을 키우세요.'
+      : '<strong>Warning:</strong> shear rate is very high (&gt;50,000 s⁻¹). Lower V0 speed or widen the runner diameter.';
   } else if (shearRate > 20000) {
     recommendation = LANG === 'ko'
-      ? '⚡ <strong>주의:</strong> 전단률이 높은 편입니다 (&gt;20,000 s⁻¹). 계속 모니터링하세요.'
-      : '⚡ <strong>Caution:</strong> shear rate is elevated (&gt;20,000 s⁻¹). Monitor this closely.';
+      ? '<strong>주의:</strong> 전단률이 높은 편입니다 (&gt;20,000 s⁻¹). 계속 모니터링하세요.'
+      : '<strong>Caution:</strong> shear rate is elevated (&gt;20,000 s⁻¹). Monitor this closely.';
   } else {
     recommendation = LANG === 'ko'
-      ? '✅ <strong>양호:</strong> 전단률이 적정 범위입니다.'
-      : '✅ <strong>Good:</strong> shear rate is within the acceptable range.';
+      ? '<strong>양호:</strong> 전단률이 적정 범위입니다.'
+      : '<strong>Good:</strong> shear rate is within the acceptable range.';
   }
   $('flash-shear-result').style.display = 'block';
   $('flash-shear-value').textContent = shearRate.toFixed(0) + ' s⁻¹';
@@ -2398,9 +2399,9 @@ function clearFlashInputs(type) {
       'color:#1A1814','box-shadow:none'
     ].join(';');
     banner.innerHTML =
-      '<p style="margin:0 0 4px;font-family:\'JetBrains Mono\',monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#757065;">System update · 새 버전</p>' +
+      '<p style="margin:0 0 4px;font-family:\'JetBrains Mono\',monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);">System update · 새 버전</p>' +
       '<p style="margin:0 0 4px;font-size:14px;line-height:1.5;">새 버전이 준비됐습니다. <em style="color:#2C5D3F;font-style:italic;font-weight:500;font-family:Fraunces,serif;">기록한 이력·체크리스트·사진은 그대로 보존</em>됩니다.</p>' +
-      '<p style="margin:0 0 12px;font-size:12px;color:#757065;">A new build is available. Your saved logs and checklists stay intact.</p>' +
+      '<p style="margin:0 0 12px;font-size:12px;color:var(--muted);">A new build is available. Your saved logs and checklists stay intact.</p>' +
       '<div style="display:flex;gap:8px;justify-content:flex-end;">' +
         '<button type="button" id="pha-sw-later" style="border:1px solid rgba(26,24,20,0.4);background:transparent;color:#1A1814;font-family:\'JetBrains Mono\',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;padding:8px 12px;border-radius:2px;cursor:pointer;">Later</button>' +
         '<button type="button" id="pha-sw-reload" style="border:1px solid #1A1814;background:#1A1814;color:#F5F1E8;font-family:\'JetBrains Mono\',monospace;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;padding:8px 12px;border-radius:2px;cursor:pointer;">Reload · 새로고침</button>' +
@@ -2684,8 +2685,8 @@ function renderBatchContextBanner() {
   const hasSummary = !!(session && (batchId || compCode || operator || session.started_at || session.ended_at));
   if (!hasSummary) {
     banner.innerHTML = LANG === 'ko'
-      ? '<span style="color:#757065;">아직 시작된 배치 세션이 없습니다. 필요하면 조성을 먼저 불러온 뒤 배치를 시작하세요.</span>'
-      : '<span style="color:#757065;">No batch session has been started yet. Load a composition first if you want to stage it before the run.</span>';
+      ? '<span style="color:var(--muted);">아직 시작된 배치 세션이 없습니다. 필요하면 조성을 먼저 불러온 뒤 배치를 시작하세요.</span>'
+      : '<span style="color:var(--muted);">No batch session has been started yet. Load a composition first if you want to stage it before the run.</span>';
     if (typeof window.bindBatchSessionControls === 'function') window.bindBatchSessionControls();
     if (typeof window.renderBatchEventPanel === 'function') window.renderBatchEventPanel();
     return;
@@ -2710,10 +2711,10 @@ function renderBatchContextBanner() {
   }
   const startedLabel = phaStartedAgoLabel(session.started_at, session.status);
   if (startedLabel) {
-    parts.push(`<span style="color:#757065;">${phaEscapeHtml(startedLabel)}</span>`);
+    parts.push(`<span style="color:var(--muted);">${phaEscapeHtml(startedLabel)}</span>`);
   }
   if (compCode) {
-    const compTail = extras.length ? ` <span style="color:#757065;">· ${extras.join(' · ')}</span>` : '';
+    const compTail = extras.length ? ` <span style="color:var(--muted);">· ${extras.join(' · ')}</span>` : '';
     parts.push(`<span style="color:#2C5D3F;font-weight:500;">${LANG === 'ko' ? '조성' : 'Composition'}</span> <span style="color:#1A1814;">${phaEscapeHtml(compCode)}</span>${compTail}`);
   }
   banner.innerHTML = parts.join(' &nbsp;·&nbsp; ');
@@ -3080,8 +3081,8 @@ function renderProcessLog() {
 
   if (displayData.length === 0) {
     tbody.innerHTML = LANG === 'ko'
-      ? '<tr><td colspan="16" class="log-empty">아직 로그가 없습니다. <strong>"➕ 새 행 추가"</strong> 버튼으로 첫 기록을 시작하세요.</td></tr>'
-      : '<tr><td colspan="16" class="log-empty">No log entries yet. Click <strong>"➕ Add row"</strong> to start your first record.</td></tr>';
+      ? '<tr><td colspan="16" class="log-empty">아직 로그가 없습니다. <strong>"새 행 추가"</strong> 버튼으로 첫 기록을 시작하세요.</td></tr>'
+      : '<tr><td colspan="16" class="log-empty">No log entries yet. Click <strong>"Add row"</strong> to start your first record.</td></tr>';
     return;
   }
 
@@ -3091,8 +3092,8 @@ function renderProcessLog() {
     return `
     <tr>
       <td><div class="log-timestamp">${entry.timestamp}</div></td>
-      <td><div class="log-timestamp" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${entry.batch_id ? '#2C5D3F' : '#9ca3af'};">${entry.batch_id ? esc(entry.batch_id) : '&mdash;'}</div></td>
-      <td><div class="log-timestamp" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${entry.composition_code ? '#2C5D3F' : '#9ca3af'};" title="${esc(entry.composition_id || '')}">${entry.composition_code ? esc(entry.composition_code) : '&mdash;'}</div></td>
+      <td><div class="log-timestamp" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${entry.batch_id ? '#2C5D3F' : 'var(--muted)'};">${entry.batch_id ? esc(entry.batch_id) : '&mdash;'}</div></td>
+      <td><div class="log-timestamp" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${entry.composition_code ? '#2C5D3F' : 'var(--muted)'};" title="${esc(entry.composition_id || '')}">${entry.composition_code ? esc(entry.composition_code) : '&mdash;'}</div></td>
       <td>${createNumberInput(realIndex, 'cylinderTemp', entry.cylinderTemp, 1)}</td>
       <td>${createNumberInput(realIndex, 'moldTemp', entry.moldTemp, 1)}</td>
       <td>${createNumberInput(realIndex, 'injectionSpeed', entry.injectionSpeed, 1)}</td>
@@ -3109,11 +3110,11 @@ function renderProcessLog() {
                   placeholder="${LANG === 'ko' ? '현상, 불량, 특이사항 기록...' : 'Record observations, defects, and anomalies...'}">${entry.note || ''}</textarea>
       </td>
       <td>
-        <button class="btn-template" style="font-size:11px;padding:4px 8px" onclick="attachPhoto(${realIndex})">${LANG === 'ko' ? '📷 추가' : '📷 Attach'}</button>
-        ${(entry.photos && entry.photos.length > 0) ? `<div style="font-size:11px;color:#6b7280;margin-top:4px">${LANG === 'ko' ? `${entry.photos.length}장` : `${entry.photos.length} photos`}</div>` : ''}
+        <button class="btn-template" style="font-size:11px;padding:4px 8px" onclick="attachPhoto(${realIndex})">${LANG === 'ko' ? '추가' : 'Attach'}</button>
+        ${(entry.photos && entry.photos.length > 0) ? `<div style="font-size:11px;color:var(--muted);margin-top:4px">${LANG === 'ko' ? `${entry.photos.length}장` : `${entry.photos.length} photos`}</div>` : ''}
       </td>
       <td>
-        <button class="btn-delete-log" onclick="deleteProcessLogEntry(${realIndex})" title="${LANG === 'ko' ? '삭제' : 'Delete'}">🗑️</button>
+        <button class="btn-delete-log" onclick="deleteProcessLogEntry(${realIndex})" title="${LANG === 'ko' ? '삭제' : 'Delete'}"></button>
       </td>
     </tr>
   `}).join('');
@@ -3528,9 +3529,9 @@ function generateFlashRecommendations() {
 
   const html = recommendations.map(rec => `
     <div class="recommendation-item ${rec.type}">
-      <h5 style="margin:0 0 8px 0;color:#1e3c72">${rec.title}</h5>
+      <h5 style="margin:0 0 8px 0;color:var(--ink)">${rec.title}</h5>
       <p style="margin:0 0 8px 0;font-size:14px">${rec.message}</p>
-      <p style="margin:0;font-weight:bold;color:#059669">💡 ${rec.solution}</p>
+      <p style="margin:0;font-weight:bold;color:var(--accent)">${rec.solution}</p>
     </div>
   `).join('');
 
