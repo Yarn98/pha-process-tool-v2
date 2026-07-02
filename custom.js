@@ -1124,7 +1124,7 @@ function batchEventSummary(event) {
   switch (event.kind) {
     case 'temp_reading':
       return {
-        title: LANG === 'ko' ? '📸 현재 조건 snapshot' : '📸 Current-state snapshot',
+        title: LANG === 'ko' ? '현재 조건 snapshot' : 'Current-state snapshot',
         meta: LANG === 'ko'
           ? `실린더 ${Number(event.process_snapshot?.cylinderTemp || 0).toFixed(1)} °C · 금형 ${Number(event.process_snapshot?.moldTemp || 0).toFixed(1)} °C`
           : `Barrel ${Number(event.process_snapshot?.cylinderTemp || 0).toFixed(1)} °C · Mold ${Number(event.process_snapshot?.moldTemp || 0).toFixed(1)} °C`,
@@ -1132,16 +1132,16 @@ function batchEventSummary(event) {
     case 'addition':
       return {
         title: LANG === 'ko'
-          ? `➕ ${batchEventEscapeHtml(event.material || 'material')} +${Number(event.qty_g || 0).toFixed(1)} g`
-          : `➕ ${batchEventEscapeHtml(event.material || 'material')} +${Number(event.qty_g || 0).toFixed(1)} g`,
+          ? `${batchEventEscapeHtml(event.material || 'material')} +${Number(event.qty_g || 0).toFixed(1)} g`
+          : `${batchEventEscapeHtml(event.material || 'material')} +${Number(event.qty_g || 0).toFixed(1)} g`,
         meta: batchEventEscapeHtml(event.reason_code || event.note || ''),
       };
     case 'anomaly': {
       const meta = window.TarsAnomalyCodes?.getAnomalyCodeMeta?.(event.code);
       const codeLabel = meta ? (LANG === 'ko' ? meta.label_ko : meta.label_en) : event.code;
       return {
-        title: `⚠️ ${batchEventEscapeHtml(codeLabel || 'anomaly')}`,
-        meta: `${batchEventEscapeHtml(event.severity || '')}${event.photo_ref ? ' · 📷' : ''}${event.action_taken ? ` · ${batchEventEscapeHtml(event.action_taken)}` : ''}`,
+        title: `${batchEventEscapeHtml(codeLabel || 'anomaly')}`,
+        meta: `${batchEventEscapeHtml(event.severity || '')}${event.photo_ref ? ' · ' : ''}${event.action_taken ? ` · ${batchEventEscapeHtml(event.action_taken)}` : ''}`,
       };
     }
     case 'scrap': {
@@ -1151,14 +1151,14 @@ function batchEventSummary(event) {
       const meta = window.TarsAnomalyCodes?.getAnomalyCodeMeta?.(event.reason_code);
       const reasonLabel = meta ? (LANG === 'ko' ? meta.label_ko : meta.label_en) : event.reason_code;
       return {
-        title: LANG === 'ko' ? `🗑 폐기 ${parts.join(' / ')}` : `🗑 Scrap ${parts.join(' / ')}`,
+        title: LANG === 'ko' ? `폐기 ${parts.join(' / ')}` : `Scrap ${parts.join(' / ')}`,
         meta: batchEventEscapeHtml(reasonLabel || event.note || ''),
       };
     }
     case 'note':
     default:
       return {
-        title: LANG === 'ko' ? '📝 현장 메모' : '📝 Floor note',
+        title: LANG === 'ko' ? '현장 메모' : 'Floor note',
         meta: batchEventEscapeHtml(event.note || ''),
       };
   }
