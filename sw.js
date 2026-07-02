@@ -3,18 +3,22 @@
    version string is how we force a full refresh of cached assets. Keep a short
    trailing token describing the change so the log is auditable. */
 const CACHE = 'pha-cache-v13-tars-shell';
+/* Keep the ?v= token in sync with the asset links in index.html.
+   netlify.toml serves css/js with a 1-year immutable cache, so the
+   query token is what actually invalidates browser HTTP caches. */
+const ASSET_V = '?v=13';
 const PRECACHE_URLS = [
   './',
   './index.html',
-  './tokens.css',
-  './overrides.css',
-  './custom.js',
-  './glossary.js',
-  './anomaly-codes.js',
-  './tars-batch-schema.js',
-  './compounding-guide.js',
-  './straw-guide.js',
-  './pha-integration.js',
+  './tokens.css' + ASSET_V,
+  './overrides.css' + ASSET_V,
+  './custom.js' + ASSET_V,
+  './glossary.js' + ASSET_V,
+  './anomaly-codes.js' + ASSET_V,
+  './tars-batch-schema.js' + ASSET_V,
+  './compounding-guide.js' + ASSET_V,
+  './straw-guide.js' + ASSET_V,
+  './pha-integration.js' + ASSET_V,
   './manifest.webmanifest',
   './data/grades/CA1180P_talc10_wax0p3.json'
 ];
