@@ -1,0 +1,6 @@
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; connect-src 'self' https://tars-api.sorisem98.workers.dev http://localhost:* http://127.0.0.1:* https://gateway.ai.cloudflare.com https://api.cerebras.ai https://api.openai.com https://api.x.ai https://*.trycloudflare.com https://*.ts.net; img-src 'self' data: blob:; manifest-src 'self'; worker-src 'self'

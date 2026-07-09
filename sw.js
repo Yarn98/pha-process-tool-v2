@@ -2,11 +2,11 @@
    The activate handler deletes any cache whose name !== CACHE, so bumping the
    version string is how we force a full refresh of cached assets. Keep a short
    trailing token describing the change so the log is auditable. */
-const CACHE = 'pha-cache-v13-tars-shell';
+const CACHE = 'pha-cache-v14-myai';
 /* Keep the ?v= token in sync with the asset links in index.html.
    netlify.toml serves css/js with a 1-year immutable cache, so the
    query token is what actually invalidates browser HTTP caches. */
-const ASSET_V = '?v=13';
+const ASSET_V = '?v=14';
 const PRECACHE_URLS = [
   './',
   './index.html',

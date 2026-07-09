@@ -301,8 +301,8 @@
     .log-header{flex-direction:column;align-items:stretch}
   }
 </style>
-<link rel="stylesheet" href="./tokens.css?v=13">
-<link rel="stylesheet" href="./overrides.css?v=13">
+<link rel="stylesheet" href="./tokens.css?v=14">
+<link rel="stylesheet" href="./overrides.css?v=14">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#2C5D3F">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -371,6 +371,7 @@
       <button class="tab" data-tab="flash" data-i18n="tab_flash">플래시 제어</button>
       <button class="tab" data-tab="compounding" data-i18n="tab_comp">컴파운딩 가이드</button>
       <button class="tab" data-tab="straw" data-i18n="tab_straw">스트로 가이드</button>
+      <button class="tab" data-tab="myai" data-i18n="tab_myai">My AI</button>
     </div>
 
     <!-- Process Conditions -->
@@ -578,6 +579,197 @@
     <section id="straw" class="tabpage">
       <div id="strawGuideContainer"></div>
     </section>
+
+    <!-- My AI -->
+    <section id="myai" class="tabpage">
+      <style>
+        #myai .myai-grid{display:grid;grid-template-columns:minmax(300px,420px) minmax(0,1fr);gap:14px;align-items:start}
+        @media (max-width: 900px){#myai .myai-grid{grid-template-columns:1fr}}
+        #myai .myai-panel{border:1px solid var(--rule-strong);background:var(--paper-2);border-radius:var(--rad-md);padding:14px 16px}
+        #myai .myai-field{display:flex;flex-direction:column;gap:5px;margin:10px 0}
+        #myai .myai-field>label,#myai .myai-label{font-size:13px;font-weight:700;color:var(--ink)}
+        #myai input[type="text"],#myai input[type="password"],#myai input[type="number"],#myai select,#myai textarea{width:100%;padding:8px 10px;border:1px solid var(--rule-strong);border-radius:var(--rad-sm);background:var(--paper);color:var(--ink);font:12.5px var(--mono,monospace)}
+        #myai textarea{resize:vertical}
+        #myai .myai-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+        #myai .myai-btn{appearance:none;cursor:pointer;padding:7px 12px;border:1px solid var(--rule-strong);border-radius:var(--rad-sm);background:var(--paper);color:var(--ink);font-size:12.5px}
+        #myai .myai-btn:hover{background:var(--paper-3)}
+        #myai .myai-btn.primary{background:var(--accent);border-color:var(--accent);color:#F5F1E8}
+        #myai .myai-btn:disabled{opacity:.55;cursor:default}
+        #myai .myai-status{display:inline-flex;align-items:center;min-height:22px;padding:2px 8px;border:1px solid var(--rule-strong);border-radius:999px;color:var(--muted);font:11px var(--mono,monospace)}
+        #myai .myai-status.ok{color:var(--ok);border-color:var(--ok)}
+        #myai .myai-status.fail{color:var(--err);border-color:var(--err)}
+        #myai .myai-chat{display:flex;flex-direction:column;min-height:500px;max-height:78vh}
+        #myai .myai-msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:4px 2px}
+        #myai .myai-msg{max-width:95%;padding:9px 12px;border-radius:var(--rad-lg);font-size:13.5px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+        #myai .myai-msg.user{align-self:flex-end;background:var(--accent);color:#F5F1E8}
+        #myai .myai-msg.assistant{align-self:flex-start;background:var(--paper);border:1px solid var(--rule)}
+        #myai .myai-msg.tool{align-self:flex-start;background:var(--paper-3);font:11.5px var(--mono,monospace);max-height:190px;overflow:auto}
+        #myai .myai-msg.sys{align-self:center;background:transparent;color:var(--muted);font-size:11.5px}
+        #myai .myai-msg.structured,#myai .myai-msg.markdown{max-width:98%}
+        #myai .myai-copy{float:right;margin:-2px 0 0 8px;cursor:pointer;font-size:10.5px;padding:2px 8px;border:1px solid var(--rule);border-radius:999px;background:var(--paper);color:var(--muted)}
+        #myai .myai-table-wrap{max-width:100%;overflow-x:auto;margin-top:7px}
+        #myai table.myai-table{width:100%;border-collapse:collapse;font-size:12.5px;line-height:1.35;white-space:normal}
+        #myai .myai-table th,#myai .myai-table td{border:1px solid var(--rule);padding:5px 7px;text-align:left;vertical-align:top}
+        #myai .myai-table th{background:var(--paper-2);font-weight:700}
+        #myai .myai-verdict{font-weight:700;color:var(--accent);border-left:3px solid var(--accent);padding-left:8px;margin-bottom:6px}
+        #myai .myai-pill{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 7px;border:1px solid var(--rule-strong);border-radius:999px;color:var(--muted)}
+        #myai .myai-pill.ok{color:var(--ok);border-color:var(--ok);background:rgba(44,93,63,.08)}
+        #myai .myai-pill.warn{color:var(--warm);border-color:var(--warm);background:rgba(184,99,46,.08)}
+        #myai .myai-quick{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 0}
+        #myai .myai-inputrow{display:flex;gap:8px;margin-top:8px;align-items:flex-end}
+        #myai .myai-inputrow textarea{flex:1;min-height:48px;max-height:150px}
+        #myai .myai-note{font-size:11.5px;color:var(--muted);line-height:1.5;margin-top:6px}
+        #myai .myai-check{display:flex;gap:8px;align-items:center;font-size:13px;margin:9px 0}
+        #myai .myai-check input{width:auto}
+        #myai .myai-checkgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:6px 10px}
+        #myai .myai-checkgrid .myai-check{margin:0}
+        #myai details{border-top:1px solid var(--rule);margin-top:12px;padding-top:8px}
+        #myai summary{cursor:pointer;font-weight:700;font-size:13px}
+        #myai .myai-json{font:11.5px var(--mono,monospace);background:var(--paper-2);border:1px solid var(--rule);border-radius:var(--rad-sm);padding:8px;margin-top:6px;overflow-x:auto;white-space:pre}
+        #myai .myai-md-h{font-weight:700;margin:8px 0 3px}
+        #myai .myai-md-sp{height:6px}
+        #myai .myai-msg.markdown ul{margin:4px 0 4px 18px;padding:0}
+        @media (max-width: 640px){#myai .myai-inputrow{flex-wrap:wrap}#myai .myai-inputrow textarea{min-width:100%}#myai .myai-msg{max-width:100%;font-size:13px}}
+      </style>
+
+      <h3 data-i18n="myai.title">My AI</h3>
+      <p class="hint" data-i18n="myai.intro">OpenAI-compatible LLM tool calling for this PHA process app. Settings and chat stay in this browser.</p>
+      <div class="myai-grid">
+        <div class="myai-panel" id="myaiSettingsPanel">
+          <div class="myai-field">
+            <label for="myaiBackend" data-i18n="myai.backend">Backend</label>
+            <select id="myaiBackend">
+              <option value="lmstudio">LM Studio</option>
+              <option value="cerebras">Cerebras</option>
+              <option value="openai">OpenAI GPT</option>
+              <option value="grok">xAI Grok</option>
+              <option value="custom">Custom OpenAI-compatible</option>
+              <option value="hybrid">Hybrid</option>
+            </select>
+          </div>
+
+          <div id="myaiLmGroup">
+            <div class="myai-field">
+              <label for="myaiLmUrl" data-i18n="myai.lmUrl">LM Studio URL</label>
+              <input id="myaiLmUrl" type="text" autocomplete="off" placeholder="http://localhost:1234/v1">
+            </div>
+            <div class="myai-field">
+              <label for="myaiLmModel" data-i18n="myai.model">Model</label>
+              <input id="myaiLmModel" type="text" autocomplete="off" placeholder="local-model">
+            </div>
+            <div class="myai-row">
+              <button type="button" class="myai-btn" id="myaiLmTest" data-i18n="myai.test">Test</button>
+              <span class="myai-status" id="myaiLmStatus" data-i18n="myai.unchecked">Unchecked</span>
+            </div>
+            <div class="myai-note" data-i18n="myai.lmNote">On mobile, localhost means the phone. Use a Cloudflare tunnel or Tailscale HTTPS address for LM Studio from deployed HTTPS pages.</div>
+          </div>
+
+          <div id="myaiApiGroup">
+            <div class="myai-field" id="myaiApiProviderField">
+              <label for="myaiApiProvider" data-i18n="myai.apiProvider">API provider to edit</label>
+              <select id="myaiApiProvider">
+                <option value="cerebras">Cerebras</option>
+                <option value="openai">OpenAI GPT</option>
+                <option value="grok">xAI Grok</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
+            <div class="myai-field">
+              <label for="myaiApiUrl" id="myaiApiUrlLabel">API base URL</label>
+              <input id="myaiApiUrl" type="text" autocomplete="off" placeholder="https://api.openai.com/v1">
+            </div>
+            <div class="myai-field">
+              <label for="myaiApiKey" data-i18n="myai.apiKey">API key</label>
+              <input id="myaiApiKey" type="password" autocomplete="off" placeholder="provider token">
+            </div>
+            <div class="myai-field">
+              <label for="myaiApiModel" data-i18n="myai.model">Model</label>
+              <input id="myaiApiModel" type="text" autocomplete="off" placeholder="provider-model">
+            </div>
+            <div class="myai-row">
+              <button type="button" class="myai-btn" id="myaiApiTest" data-i18n="myai.test">Test</button>
+              <span class="myai-status" id="myaiApiStatus" data-i18n="myai.unchecked">Unchecked</span>
+            </div>
+            <div class="myai-note" id="myaiApiNote"></div>
+          </div>
+
+          <div id="myaiHybridGroup" hidden>
+            <div class="myai-field">
+              <span class="myai-label" data-i18n="myai.hybridBackends">Hybrid backends</span>
+              <div class="myai-checkgrid">
+                <label class="myai-check"><input type="checkbox" data-myai-hybrid="lmstudio" id="myaiHybridLm">LM Studio</label>
+                <label class="myai-check"><input type="checkbox" data-myai-hybrid="cerebras" id="myaiHybridCb">Cerebras</label>
+                <label class="myai-check"><input type="checkbox" data-myai-hybrid="openai" id="myaiHybridOpenai">OpenAI GPT</label>
+                <label class="myai-check"><input type="checkbox" data-myai-hybrid="grok" id="myaiHybridGrok">xAI Grok</label>
+                <label class="myai-check"><input type="checkbox" data-myai-hybrid="custom" id="myaiHybridCustom">Custom</label>
+              </div>
+            </div>
+            <div class="myai-field">
+              <label for="myaiHybridChars" data-i18n="myai.hybridChars">Cloud/API over this length</label>
+              <input id="myaiHybridChars" type="number" min="50" max="4000" step="10">
+            </div>
+            <div class="myai-field">
+              <label for="myaiHybridKw" data-i18n="myai.hybridKeywords">Complex keywords</label>
+              <input id="myaiHybridKw" type="text" autocomplete="off">
+            </div>
+          </div>
+
+          <div class="myai-row" style="margin-top:10px">
+            <span class="myai-status" id="myaiActiveStatus">Connection: unset</span>
+          </div>
+          <label class="myai-check"><input type="checkbox" id="myaiAllowControl"><span data-i18n="myai.allowControl">Allow app control</span></label>
+          <div class="myai-field">
+            <label for="myaiPersonality" data-i18n="myai.personality">Assistant personality</label>
+            <textarea id="myaiPersonality" rows="2"></textarea>
+          </div>
+
+          <details>
+            <summary data-i18n="myai.advanced">Advanced</summary>
+            <div class="myai-field">
+              <label for="myaiSearchUrl" data-i18n="myai.searchUrl">web_search endpoint</label>
+              <input id="myaiSearchUrl" type="text" autocomplete="off" placeholder="https://example.com/search">
+            </div>
+            <div class="myai-field">
+              <span class="myai-label" data-i18n="myai.customTools">Custom tools</span>
+              <div class="myai-note" id="myaiCustomToolList">None</div>
+              <div class="myai-row">
+                <input id="myaiToolName" type="text" autocomplete="off" placeholder="tool_name" style="flex:1">
+                <input id="myaiToolUrl" type="text" autocomplete="off" placeholder="POST endpoint URL" style="flex:2">
+              </div>
+              <input id="myaiToolDesc" type="text" autocomplete="off" placeholder="Tool description">
+              <div class="myai-row"><button type="button" class="myai-btn" id="myaiAddTool" data-i18n="myai.addTool">Add tool</button></div>
+            </div>
+          </details>
+
+          <details>
+            <summary data-i18n="myai.sync">Device sync code</summary>
+            <div class="myai-note" data-i18n="myai.syncNote">Export includes API keys. Do not share it.</div>
+            <div class="myai-row" style="margin-top:8px">
+              <button type="button" class="myai-btn" id="myaiExportSettings" data-i18n="myai.export">Export</button>
+              <button type="button" class="myai-btn" id="myaiCopySettings" data-i18n="myai.copy">Copy</button>
+            </div>
+            <textarea id="myaiSyncCode" rows="4" style="margin-top:8px" placeholder="Paste sync code here"></textarea>
+            <div class="myai-row" style="margin-top:6px"><button type="button" class="myai-btn" id="myaiImportSettings" data-i18n="myai.import">Import</button></div>
+          </details>
+        </div>
+
+        <div class="myai-panel myai-chat">
+          <div class="myai-msgs" id="myaiMsgs" role="log" aria-live="polite"></div>
+          <div class="myai-quick">
+            <button type="button" class="myai-btn" data-myai-quick="현재 탭 입력값과 결과를 읽고 표로 요약해줘." data-i18n="myai.quickTab">Current tab</button>
+            <button type="button" class="myai-btn" data-myai-quick="홀드업 2.5 L, 밀도 1100 kg/m3, 처리량 15 kg/h일 때 체류시간 계산해줘." data-i18n="myai.quickResidence">Residence time</button>
+            <button type="button" class="myai-btn" data-myai-quick="S1000P 물성과 권장 가공온도를 알려줘." data-i18n="myai.quickMaterial">Material info</button>
+            <button type="button" class="myai-btn" id="myaiClearChat" data-i18n="myai.clearChat">Clear</button>
+          </div>
+          <div class="myai-inputrow">
+            <textarea id="myaiInput" rows="2" placeholder="Ask in natural language."></textarea>
+            <button type="button" class="myai-btn primary" id="myaiSend" data-i18n="myai.send">Send</button>
+            <button type="button" class="myai-btn" id="myaiStop" hidden data-i18n="myai.stop">Stop</button>
+          </div>
+          <div class="myai-note" id="myaiChatStatus" data-i18n="myai.idle">Idle</div>
+        </div>
+      </div>
+    </section>
   </div>
 </div>
 
@@ -643,6 +835,7 @@
   <button data-tab="photos" data-i18n="tab_photos_m">사진</button>
   <button data-tab="compounding" data-i18n="tab_comp_m">컴파운딩</button>
   <button data-tab="straw" data-i18n="tab_straw_m">스트로</button>
+  <button data-tab="myai" data-i18n="tab_myai_m">My AI</button>
 </div>
 
 <!-- Lightbox for photo gallery -->
@@ -654,12 +847,12 @@
 <script>
 /* ========= i18n ========= */
 const I18N = {
-  ko:{title:"PHA <em>공정</em> 최적화 도구",tab_proc:"공정 조건",tab_ts:"트러블슈팅",tab_hist:"이력 관리",tab_ana:"데이터 분석",tab_calc:"계산기",tab_props:"물성 DB",tab_photos:"사진",tab_flash:"플래시 제어",tab_comp:"컴파운딩 가이드",tab_straw:"스트로 가이드",
+  ko:{title:"PHA <em>공정</em> 최적화 도구",tab_proc:"공정 조건",tab_ts:"트러블슈팅",tab_hist:"이력 관리",tab_ana:"데이터 분석",tab_calc:"계산기",tab_props:"물성 DB",tab_photos:"사진",tab_flash:"플래시 제어",tab_comp:"컴파운딩 가이드",tab_straw:"스트로 가이드",tab_myai:"My AI",
       series:"샘플 시리즈",process:"가공 유형",notes:"특이사항 메모",save:"저장 및 분석",export:"데이터 내보내기",reset:"초기화",
       param:"파라미터",current:"현재값",range:"권장 범위",status:"상태",ok:"정상",warn:"주의",crit:"위험",when:"날짜/시간",h_grade:"샘플",h_proc:"공정",h_key:"주요 파라미터",h_result:"결과",h_note:"메모",
       ana_head:"데이터 분석",saved:"데이터가 저장되었습니다.",last:"마지막 업데이트",resetQ:"모든 입력을 초기화할까요?",
       photos_head:"사진 관리",photo_upload:"사진 업로드",
-      tab_ts_m:"트러블슈팅",tab_ana_m:"데이터 분석",tab_props_m:"물성 DB",tab_photos_m:"사진",tab_comp_m:"컴파운딩",tab_straw_m:"스트로",
+      tab_ts_m:"트러블슈팅",tab_ana_m:"데이터 분석",tab_props_m:"물성 DB",tab_photos_m:"사진",tab_comp_m:"컴파운딩",tab_straw_m:"스트로",tab_myai_m:"My AI",
       json_import_ok:"JSON 가져오기 완료",json_format_err:"JSON 형식 오류",json_parse_err:"JSON 파싱 실패",csv_import_ok:"CSV 가져오기 완료",
       reco_reset_cur:"현재 공정의 수정값을 초기화했습니다.",reco_reset_all:"모든 수정값 초기화 완료",mat_import_ok:"물성 DB 가져오기 완료",
       save_ok:"저장 완료",reset_ok:"초기화 완료",reset_all_ok:"전체 초기화 완료",input_all:"모든 값을 입력해주세요.",input_peak:"최대 사출압을 입력해주세요.",
@@ -671,14 +864,15 @@ const I18N = {
       flash_desc:"압력-동기형 4단 제어 + 러너 보호 통합 솔루션 (P3HB4: S1000P/A1000P · 36-캐비티 · 플래시 ≤0.02mm)",
       flash_lang_notice:"아래 상세 내용은 현장 작업자용 한국어로 유지됩니다. 영문 전체 번역은 별도 세션에서 준비 중입니다.",
       flash_t0:"전체 개요",flash_t1:"기계 설정",flash_t2:"계산기",flash_t3:"프로세스 플로우",
-      flash_t4:"체크리스트",flash_t5:"문제 해결",flash_t6:"공정 로그",flash_t7:"사용 설명서"
+      flash_t4:"체크리스트",flash_t5:"문제 해결",flash_t6:"공정 로그",flash_t7:"사용 설명서",
+      myai:{title:"My AI",intro:"LM Studio, Cerebras, OpenAI, Grok 또는 OpenAI-compatible API를 연결해 이 PHA 공정 앱의 계산기·데이터·가이드를 tool-calling으로 실행합니다. 설정과 대화는 이 브라우저에만 저장됩니다.",backend:"백엔드",lmUrl:"LM Studio 주소",model:"모델",test:"연결 테스트",unchecked:"미확인",lmNote:"PC에서는 localhost를 그대로 쓸 수 있습니다. 핸드폰/배포 HTTPS 페이지에서는 Cloudflare Tunnel 또는 Tailscale HTTPS 주소를 사용하세요.",apiProvider:"편집할 API 제공자",apiKey:"API 키",hybridBackends:"Hybrid 활성 백엔드",hybridChars:"이 글자 수 초과 시 클라우드/API",hybridKeywords:"복잡 요청 키워드",allowControl:"앱 기능 제어 허용",personality:"어시스턴트 성격",advanced:"고급 · 검색 보강 · 커스텀 tool",searchUrl:"web_search 엔드포인트",customTools:"커스텀 tool",addTool:"tool 추가",sync:"기기 동기화 코드",syncNote:"내보내기 코드에는 API 키가 포함됩니다. 타인에게 공유하지 마세요.",export:"내보내기",copy:"복사",import:"가져오기",quickTab:"현재 탭 설명",quickResidence:"체류시간 계산",quickMaterial:"소재 정보",clearChat:"대화 초기화",send:"보내기",stop:"중지",idle:"대기 중",ready:"설정됨",incomplete:"미완성",testing:"테스트 중...",connected:"연결됨",failed:"실패",requesting:"요청 중...",toolRunning:"tool 실행: ",busy:"응답 대기 중입니다.",error:"오류",emptyResponse:"(빈 응답)",copyMsg:"복사",copiedMsg:"복사됨",startPrompt:"백엔드를 설정하고 대화를 시작하세요. 예: S1000P 물성과 권장 온도 알려줘.",inputPlaceholder:"구어체로 입력하세요. 예: 홀드업 2.5 L, 밀도 1100, 처리량 15 kg/h 체류시간은?",chatCleared:"대화 기록을 지웠습니다.",importOk:"설정을 가져왔습니다.",syncExported:"설정 코드를 만들었습니다.",syncParseFailed:"동기화 코드 해석 실패: ",toolLimit:"tool 호출 한도({max}) 초과",fallback:"실패 → {next} 폴백",singleBackendHint:"연결 실패 — endpoint/API 키를 확인하거나 Hybrid로 바꾸면 다른 백엔드로 폴백할 수 있습니다."}
   },
-  en:{title:"PHA <em>Process</em> Tool",tab_proc:"Process Conditions",tab_ts:"Troubleshooting",tab_hist:"History",tab_ana:"Data Analysis",tab_calc:"Calculators",tab_props:"Materials DB",tab_photos:"Photos",tab_flash:"Flash Control",tab_comp:"Compounding Guide",tab_straw:"Straw Guide",
+  en:{title:"PHA <em>Process</em> Tool",tab_proc:"Process Conditions",tab_ts:"Troubleshooting",tab_hist:"History",tab_ana:"Data Analysis",tab_calc:"Calculators",tab_props:"Materials DB",tab_photos:"Photos",tab_flash:"Flash Control",tab_comp:"Compounding Guide",tab_straw:"Straw Guide",tab_myai:"My AI",
       series:"Sample Series",process:"Process Type",notes:"Process Notes",save:"Save & Analyze",export:"Export Data",reset:"Reset",
       param:"Parameter",current:"Current",range:"Recommended",status:"Status",ok:"Normal",warn:"Warning",crit:"Critical",when:"Date/Time",h_grade:"Sample",h_proc:"Process",h_key:"Main Parameters",h_result:"Result",h_note:"Memo",
       ana_head:"Data Analysis",saved:"Saved successfully.",last:"Last Update",resetQ:"Reset all inputs?",
       photos_head:"Photo Manager",photo_upload:"Upload Photos",
-      tab_ts_m:"Troubleshooting",tab_ana_m:"Analysis",tab_props_m:"Materials",tab_photos_m:"Photos",tab_comp_m:"Compounding",tab_straw_m:"Straw",
+      tab_ts_m:"Troubleshooting",tab_ana_m:"Analysis",tab_props_m:"Materials",tab_photos_m:"Photos",tab_comp_m:"Compounding",tab_straw_m:"Straw",tab_myai_m:"My AI",
       json_import_ok:"JSON import complete",json_format_err:"Invalid JSON format",json_parse_err:"JSON parse failed",csv_import_ok:"CSV import complete",
       reco_reset_cur:"Current process overrides have been reset.",reco_reset_all:"All overrides have been reset.",mat_import_ok:"Materials DB import complete",
       save_ok:"Saved",reset_ok:"Reset complete",reset_all_ok:"Full reset complete",input_all:"Please fill in all fields.",input_peak:"Please enter max injection pressure.",
@@ -690,7 +884,8 @@ const I18N = {
       flash_desc:"Pressure-synchronized 4-stage control + runner protection (P3HB4: S1000P/A1000P · 36-cavity · flash ≤0.02 mm)",
       flash_lang_notice:"Detailed content below is maintained in Korean for field operators. A full English translation is scheduled; contact the TARS team for a narrated walk-through until then.",
       flash_t0:"Overview",flash_t1:"Machine Setup",flash_t2:"Calculator",flash_t3:"Process Flow",
-      flash_t4:"Checklist",flash_t5:"Troubleshooting",flash_t6:"Process Log",flash_t7:"User Manual"
+      flash_t4:"Checklist",flash_t5:"Troubleshooting",flash_t6:"Process Log",flash_t7:"User Manual",
+      myai:{title:"My AI",intro:"Connect LM Studio, Cerebras, OpenAI, Grok, or any OpenAI-compatible API and let the model call this PHA process app's calculators, data, and guide tools. Settings and chat stay in this browser only.",backend:"Backend",lmUrl:"LM Studio URL",model:"Model",test:"Test connection",unchecked:"Unchecked",lmNote:"On desktop you can use localhost. From a phone or deployed HTTPS page, use a Cloudflare Tunnel or Tailscale HTTPS URL.",apiProvider:"API provider to edit",apiKey:"API key",hybridBackends:"Hybrid enabled backends",hybridChars:"Use cloud/API over this length",hybridKeywords:"Complex-request keywords",allowControl:"Allow app control",personality:"Assistant personality",advanced:"Advanced · search and custom tools",searchUrl:"web_search endpoint",customTools:"Custom tools",addTool:"Add tool",sync:"Device sync code",syncNote:"Exported codes include API keys. Do not share them.",export:"Export",copy:"Copy",import:"Import",quickTab:"Current tab",quickResidence:"Residence time",quickMaterial:"Material info",clearChat:"Clear chat",send:"Send",stop:"Stop",idle:"Idle",ready:"Ready",incomplete:"Incomplete",testing:"Testing...",connected:"Connected",failed:"Failed",requesting:"Requesting...",toolRunning:"Running tool: ",busy:"Waiting for response.",error:"Error",emptyResponse:"(empty response)",copyMsg:"Copy",copiedMsg:"Copied",startPrompt:"Configure a backend and start chatting. Example: explain S1000P material data and recommended temperatures.",inputPlaceholder:"Ask naturally. Example: residence time for hold-up 2.5 L, density 1100, throughput 15 kg/h?",chatCleared:"Chat history cleared.",importOk:"Settings imported.",syncExported:"Settings code created.",syncParseFailed:"Could not parse sync code: ",toolLimit:"Tool round limit ({max}) exceeded",fallback:"failed -> fallback to {next}",singleBackendHint:"Connection failed. Check endpoint/API key, or switch to Hybrid to allow fallback."}
   }
 };
 const FLASH_BATCH_CONTEXT_BANNER = {
@@ -2200,6 +2395,7 @@ function setLanguage(lang){
   i18nApply();
   if(typeof initCompoundingGuide==='function') initCompoundingGuide();
   if(typeof initStrawGuide==='function') initStrawGuide();
+  if(typeof renderMyAITranslations==='function') renderMyAITranslations();
 }
 allSel('.tars-lang-btn').forEach(btn=>btn.addEventListener('click',()=>setLanguage(btn.dataset.langChoice)));
 
@@ -3856,6 +4052,7 @@ function switchTab(tabId){
   const pop=$('morePopover'); if(pop) pop.classList.add('hidden');
   /* trigger chart init if switching to ana tab */
   if(tabId==='ana') analyze();
+  if(tabId==='myai' && typeof initMyAI==='function') initMyAI();
 }
 function initMobileTabBar(){
   document.querySelectorAll('.mtb-item').forEach(btn=>{
@@ -3916,21 +4113,1095 @@ window.addEventListener('load', () => {
   initPhotoStorage();
   initMobileTabBar();
 });
+
+/* ========= My AI tab: OpenAI-compatible tool-calling client ========= */
+(function(){
+  'use strict';
+
+  const MYAI_LS_KEY = 'pha.myai.v1';
+  const MYAI_DB_NAME = 'pha-myai';
+  const MYAI_DB_STORE = 'chat';
+  const MYAI_SYNC_PREFIX = 'PHAMYAI1.';
+  const MYAI_MAX_TOOL_ROUNDS = 6;
+  const MYAI_ROUTE_BACKENDS = ['lmstudio','cerebras','openai','grok','custom'];
+  const MYAI_API_BACKENDS = ['cerebras','openai','grok','custom'];
+  const MYAI_HYBRID_IDS = {
+    lmstudio:'myaiHybridLm',
+    cerebras:'myaiHybridCb',
+    openai:'myaiHybridOpenai',
+    grok:'myaiHybridGrok',
+    custom:'myaiHybridCustom'
+  };
+  const MYAI_DEFAULTS = {
+    backend:'lmstudio',
+    lmstudio:{ baseUrl:'http://localhost:1234/v1', model:'', apiKey:'lm-studio' },
+    providers:{
+      cerebras:{ baseUrl:'https://api.cerebras.ai/v1', apiKey:'', model:'gpt-oss-120b' },
+      openai:{ baseUrl:'https://api.openai.com/v1', apiKey:'', model:'gpt-4.1' },
+      grok:{ baseUrl:'https://api.x.ai/v1', apiKey:'', model:'grok-4.5' },
+      custom:{ baseUrl:'', apiKey:'', model:'' }
+    },
+    hybrid:{ simpleMaxChars:400, keywords:['이미지','image','최적화','optimize','sweep','보고서','설계','비교'], backends:['lmstudio','cerebras'], apiProvider:'cerebras' },
+    allowControl:false,
+    personality:'간결하고 공학적인 PHA 공정 조수. 수치는 tool 결과와 단위를 함께 제시한다.',
+    webSearchEndpoint:'',
+    customTools:[]
+  };
+  const MYAI_PROVIDER_META = {
+    cerebras:{ label:'Cerebras', urlLabel:'Cerebras API base URL', placeholder:'https://api.cerebras.ai/v1', modelPlaceholder:'gpt-oss-120b', noteKo:'Cerebras 또는 Cloudflare AI Gateway의 OpenAI-compatible endpoint를 입력합니다.', noteEn:'Use Cerebras directly or a Cloudflare AI Gateway OpenAI-compatible endpoint.' },
+    openai:{ label:'OpenAI GPT', urlLabel:'OpenAI API base URL', placeholder:'https://api.openai.com/v1', modelPlaceholder:'gpt-4.1', noteKo:'OpenAI API 키로 GPT 계열 모델을 호출합니다. ChatGPT 웹 세션은 사용하지 않습니다.', noteEn:'Uses the OpenAI API. It does not scrape ChatGPT web sessions.' },
+    grok:{ label:'xAI Grok', urlLabel:'xAI API base URL', placeholder:'https://api.x.ai/v1', modelPlaceholder:'grok-4.5', noteKo:'xAI의 OpenAI-compatible API로 Grok 모델을 호출합니다.', noteEn:'Uses xAI OpenAI-compatible API for Grok models.' },
+    custom:{ label:'Custom', urlLabel:'API base URL', placeholder:'https://provider.example.com/v1', modelPlaceholder:'provider-model', noteKo:'기타 OpenAI-compatible /chat/completions endpoint를 등록합니다.', noteEn:'Register any OpenAI-compatible /chat/completions endpoint.' }
+  };
+  const MYAI_RESULT_IDS_BY_TAB = {
+    proc:['paramTable','guideLinks','tsHint'],
+    ts:['tsContainer'],
+    hist:['histBody'],
+    ana:['anaText','anaCard'],
+    calc:['kpi_res_out','cool_out','bf_out'],
+    props:['mat_tbody'],
+    photos:['photoGrid'],
+    flash:['flash-clamp-result','flash-pressure-result','flash-shear-result','flash-packing-result'],
+    compounding:['compGuideContainer'],
+    straw:['strawGuideContainer']
+  };
+  const MYAI_TAB_KNOWLEDGE = {
+    proc:{ label:{ko:'공정 조건',en:'Process Conditions'}, purpose:'선택 grade/profile/process의 실제 입력값과 RECO 권장범위를 비교해 정상/주의/위험을 판정한다.', outputSchema:{envelope:'sectioned',sections:['공정조건','상태판정','가이드']}, reading:'paramTable의 현재값/권장범위/상태를 우선 읽는다.' },
+    ts:{ label:{ko:'트러블슈팅',en:'Troubleshooting'}, purpose:'증상별 원인, 진단, 빠른 조치, 근본 해결을 조회한다.', outputSchema:{envelope:'sectioned',sections:['증상','원인','조치']}, reading:'window.tsData 또는 렌더된 troubleshooting 카드에서 근거를 가져온다.' },
+    hist:{ label:{ko:'이력 관리',en:'History'}, purpose:'localStorage pha_hist 공정 기록을 요약하고 최근 경향을 확인한다.', outputSchema:{envelope:'sectioned',sections:['최근이력','패턴','조치']}, reading:'최근 200건 렌더와 원본 history를 함께 본다.' },
+    ana:{ label:{ko:'데이터 분석',en:'Data Analysis'}, purpose:'저장 이력의 최근 업데이트와 선택 파라미터 추세를 설명한다.', outputSchema:{envelope:'sectioned',sections:['데이터상태','트렌드','주의']}, reading:'anaText와 chart 대상 파라미터를 확인한다.' },
+    calc:{ label:{ko:'계산기',en:'Calculators'}, purpose:'체류시간, 냉각시간, 블로운필름 두께/DDR 계산을 수행한다.', outputSchema:{envelope:'sectioned',sections:['계산값','입력','해석']}, reading:'계산은 tool 결과를 기준으로 답한다.' },
+    props:{ label:{ko:'물성 DB',en:'Materials DB'}, purpose:'S1000P/A1000P/CA1180P/CB0104A 등 material DB의 물성을 조회한다.', outputSchema:{envelope:'property',properties:['density_g_cm3','MFR_g_10min_190_2_16','Tm_C','tensile_MPa','elongation_%','HDT_C']}, reading:'get_material_info 또는 get_material_db를 사용한다.' },
+    photos:{ label:{ko:'사진',en:'Photos'}, purpose:'현장 사진 목록/메타를 읽어 기록 맥락을 보강한다.', outputSchema:{envelope:'sectioned',sections:['사진','관찰','다음조치']}, reading:'photoGrid의 렌더 텍스트와 이미지 개수를 확인한다.' },
+    flash:{ label:{ko:'플래시 제어',en:'Flash Control'}, purpose:'36-cavity 플래시 제어용 형체력, 압력 리밋, 전단률, 보압 분리값을 계산한다.', outputSchema:{envelope:'sectioned',sections:['계산값','권장','조치']}, reading:'flash 계산 tool 결과와 렌더된 recommendation을 함께 사용한다.' },
+    compounding:{ label:{ko:'컴파운딩 가이드',en:'Compounding Guide'}, purpose:'grade별 H/S/F 분류, 배합 가이드, 경고를 설명한다.', outputSchema:{envelope:'sectioned',sections:['분류','가이드','주의']}, reading:'PHA_DATA_BRIDGE.classifyForCompounding을 우선 사용한다.' },
+    straw:{ label:{ko:'스트로 가이드',en:'Straw Guide'}, purpose:'스트로 압출/성형 guide 컨텍스트를 읽고 공정 조치를 제안한다.', outputSchema:{envelope:'sectioned',sections:['조건','가이드','주의']}, reading:'strawGuideContainer 렌더 내용을 사용한다.' }
+  };
+
+  let MYAI_S = myaiLoadSettings();
+  let myaiHistory = [];
+  let myaiBusy = false;
+  let myaiBound = false;
+  let myaiHistoryLoaded = false;
+  let myaiCurrentAbort = null;
+  let myaiLastWorkTab = 'proc';
+  let myaiRenderedApiProvider = 'cerebras';
+  try{ myaiLastWorkTab = sessionStorage.getItem('pha.myai.lastWorkTab') || myaiLastWorkTab; }catch(e){}
+  const myaiBootSyncHash = (location.hash || '').indexOf('myai-sync=') >= 0 ? location.hash : '';
+
+  function myai$(id){ return document.getElementById(id); }
+  function myaiEsc(value){ const d=document.createElement('div'); d.textContent=String(value == null ? '' : value); return d.innerHTML; }
+  function myaiT(key, fallback){
+    try{
+      const v = i18nLookup('myai.' + key);
+      return v == null ? fallback : v;
+    }catch(e){ return fallback; }
+  }
+  function myaiLang(){ return (typeof LANG === 'string' && LANG === 'en') ? 'en' : 'ko'; }
+  function myaiDeepMerge(base, over){
+    if(!over || typeof over !== 'object' || Array.isArray(over)) return base;
+    const out = Array.isArray(base) ? base.slice() : Object.assign({}, base);
+    Object.keys(over).forEach(key=>{
+      const b = out[key], v = over[key];
+      out[key] = (b && typeof b === 'object' && !Array.isArray(b) && v && typeof v === 'object' && !Array.isArray(v)) ? myaiDeepMerge(b, v) : v;
+    });
+    return out;
+  }
+  function myaiNormalizeSettings(raw){
+    const s = myaiDeepMerge(JSON.parse(JSON.stringify(MYAI_DEFAULTS)), raw || {});
+    if(MYAI_ROUTE_BACKENDS.concat(['hybrid']).indexOf(s.backend) < 0) s.backend = MYAI_DEFAULTS.backend;
+    s.hybrid.simpleMaxChars = Math.max(50, Number(s.hybrid.simpleMaxChars) || MYAI_DEFAULTS.hybrid.simpleMaxChars);
+    if(!Array.isArray(s.hybrid.keywords)) s.hybrid.keywords = MYAI_DEFAULTS.hybrid.keywords.slice();
+    if(!Array.isArray(s.hybrid.backends)) s.hybrid.backends = MYAI_DEFAULTS.hybrid.backends.slice();
+    s.hybrid.backends = s.hybrid.backends.filter((b,i,a)=>MYAI_ROUTE_BACKENDS.indexOf(b) >= 0 && a.indexOf(b) === i);
+    if(!s.hybrid.backends.length) s.hybrid.backends = MYAI_DEFAULTS.hybrid.backends.slice();
+    if(MYAI_API_BACKENDS.indexOf(s.hybrid.apiProvider) < 0) s.hybrid.apiProvider = 'cerebras';
+    MYAI_API_BACKENDS.forEach(p=>{
+      s.providers[p] = s.providers[p] || JSON.parse(JSON.stringify(MYAI_DEFAULTS.providers[p]));
+      ['baseUrl','apiKey','model'].forEach(k=>{ s.providers[p][k] = String(s.providers[p][k] || ''); });
+    });
+    ['baseUrl','apiKey','model'].forEach(k=>{ s.lmstudio[k] = String(s.lmstudio[k] || MYAI_DEFAULTS.lmstudio[k] || ''); });
+    s.allowControl = !!s.allowControl;
+    s.personality = String(s.personality || MYAI_DEFAULTS.personality);
+    s.webSearchEndpoint = String(s.webSearchEndpoint || '');
+    s.customTools = Array.isArray(s.customTools) ? s.customTools.filter(t=>t && /^[A-Za-z0-9_\-]{1,40}$/.test(String(t.name||'')) && /^https?:\/\//.test(String(t.url||''))).map(t=>({ name:String(t.name), description:String(t.description||''), url:String(t.url) })) : [];
+    return s;
+  }
+  function myaiLoadSettings(){
+    try{
+      const raw = localStorage.getItem(MYAI_LS_KEY);
+      if(raw) return myaiNormalizeSettings(JSON.parse(raw));
+    }catch(e){ console.warn('[myai] settings load failed', e); }
+    return myaiNormalizeSettings({});
+  }
+  function myaiSaveSettings(){
+    try{ localStorage.setItem(MYAI_LS_KEY, JSON.stringify(MYAI_S)); }catch(e){ console.warn('[myai] settings save failed', e); }
+    myaiUpdateActiveStatus();
+  }
+
+  function myaiIdbOpen(){
+    if(!window.indexedDB) return Promise.reject(new Error('IndexedDB unavailable'));
+    return new Promise((resolve,reject)=>{
+      const req = indexedDB.open(MYAI_DB_NAME, 1);
+      req.onupgradeneeded = ()=>{ if(!req.result.objectStoreNames.contains(MYAI_DB_STORE)) req.result.createObjectStore(MYAI_DB_STORE, { keyPath:'id', autoIncrement:true }); };
+      req.onsuccess = ()=>resolve(req.result);
+      req.onerror = ()=>reject(req.error);
+    });
+  }
+  function myaiIdbAppend(msg){
+    myaiIdbOpen().then(db=>db.transaction(MYAI_DB_STORE,'readwrite').objectStore(MYAI_DB_STORE).add(msg)).catch(()=>{});
+  }
+  function myaiIdbLoadAll(){
+    return myaiIdbOpen().then(db=>new Promise(resolve=>{
+      const out = [];
+      const cur = db.transaction(MYAI_DB_STORE,'readonly').objectStore(MYAI_DB_STORE).openCursor();
+      cur.onsuccess = ()=>{ const c=cur.result; if(c){ out.push(c.value); c.continue(); } else resolve(out); };
+      cur.onerror = ()=>resolve(out);
+    })).catch(()=>[]);
+  }
+  function myaiIdbClear(){
+    return myaiIdbOpen().then(db=>db.transaction(MYAI_DB_STORE,'readwrite').objectStore(MYAI_DB_STORE).clear()).catch(()=>{});
+  }
+
+  function myaiProviderMeta(provider){ return MYAI_PROVIDER_META[provider] || MYAI_PROVIDER_META.custom; }
+  function myaiProviderSettings(provider){ return provider === 'lmstudio' ? MYAI_S.lmstudio : MYAI_S.providers[provider]; }
+  function myaiHybridBackends(){
+    return (MYAI_S.hybrid.backends || []).filter((b,i,a)=>MYAI_ROUTE_BACKENDS.indexOf(b) >= 0 && a.indexOf(b) === i);
+  }
+  function myaiHybridReadyBackends(){ return myaiHybridBackends().filter(myaiBackendReady); }
+  function myaiActiveApiProvider(){
+    if(MYAI_API_BACKENDS.indexOf(MYAI_S.backend) >= 0) return MYAI_S.backend;
+    if(MYAI_S.backend === 'hybrid'){
+      const selected = myaiHybridBackends().filter(b=>MYAI_API_BACKENDS.indexOf(b) >= 0);
+      if(selected.indexOf(MYAI_S.hybrid.apiProvider) >= 0) return MYAI_S.hybrid.apiProvider;
+      return selected[0] || '';
+    }
+    return '';
+  }
+  function myaiProviderLabel(backend){
+    if(backend === 'hybrid') return 'Hybrid (' + (myaiHybridBackends().map(myaiProviderLabel).join(' + ') || 'none') + ')';
+    if(backend === 'lmstudio') return 'LM Studio';
+    return myaiProviderMeta(backend).label || backend;
+  }
+  function myaiNormBase(url){ return String(url || '').trim().replace(/\/+$/,''); }
+  function myaiBackendReady(backend){
+    if(backend === 'hybrid') return myaiHybridReadyBackends().length > 0;
+    const cfg = myaiProviderSettings(backend);
+    if(backend === 'lmstudio') return !!myaiNormBase(cfg.baseUrl);
+    if(backend === 'custom') return !!(myaiNormBase(cfg.baseUrl) && cfg.model);
+    return !!(myaiNormBase(cfg.baseUrl) && cfg.apiKey && cfg.model);
+  }
+  function myaiChatUrl(backend){
+    const cfg = myaiProviderSettings(backend);
+    const base = myaiNormBase(cfg && (cfg.baseUrl || cfg.gatewayUrl));
+    return /\/chat\/completions$/.test(base) ? base : base + '/chat/completions';
+  }
+  function myaiModelsUrl(backend){
+    return myaiNormBase((myaiProviderSettings(backend) || {}).baseUrl).replace(/\/chat\/completions$/,'') + '/models';
+  }
+  function myaiHeadersFor(backend){
+    const cfg = myaiProviderSettings(backend) || {};
+    const headers = { 'Content-Type':'application/json' };
+    if(cfg.apiKey) headers.Authorization = 'Bearer ' + cfg.apiKey;
+    return headers;
+  }
+  function myaiTimedFetch(url, options, timeoutMs, track){
+    const ctl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    const opts = Object.assign({}, options || {});
+    if(ctl){ opts.signal = ctl.signal; if(track) myaiCurrentAbort = ctl; }
+    const timer = ctl ? setTimeout(()=>{ try{ ctl.abort(); }catch(e){} }, timeoutMs) : null;
+    return fetch(url, opts).then(
+      r=>{ if(timer) clearTimeout(timer); return r; },
+      e=>{ if(timer) clearTimeout(timer); if(e && e.name === 'AbortError') throw new Error('timeout or aborted'); throw e; }
+    );
+  }
+  function myaiRouteBackend(text){
+    if(MYAI_S.backend !== 'hybrid') return MYAI_S.backend;
+    const ready = myaiHybridReadyBackends();
+    const candidates = ready.length ? ready : myaiHybridBackends();
+    if(!candidates.length) return 'lmstudio';
+    const body = String(text || '').toLowerCase();
+    const complex = body.length > Number(MYAI_S.hybrid.simpleMaxChars || 400) || (MYAI_S.hybrid.keywords || []).some(k=>k && body.indexOf(String(k).toLowerCase()) >= 0);
+    if(!complex && candidates.indexOf('lmstudio') >= 0) return 'lmstudio';
+    const cloud = candidates.filter(b=>b !== 'lmstudio');
+    return (complex && cloud.length) ? cloud[0] : candidates[0];
+  }
+  function myaiFallbackBackends(primary){
+    return MYAI_S.backend === 'hybrid' ? myaiHybridReadyBackends().filter(b=>b !== primary) : [];
+  }
+  function myaiChatOnce(backend, messages){
+    const cfg = myaiProviderSettings(backend) || {};
+    const body = { model: cfg.model || (backend === 'lmstudio' ? 'local-model' : 'provider-model'), messages, tools: myaiToolSchemas(), tool_choice:'auto', temperature:0.2, stream:false };
+    return myaiTimedFetch(myaiChatUrl(backend), { method:'POST', headers:myaiHeadersFor(backend), body:JSON.stringify(body) }, 120000, true)
+      .then(r=>r.ok ? r.json() : r.text().then(t=>{ throw new Error(backend + ' HTTP ' + r.status + ': ' + t.slice(0,200)); }))
+      .then(json=>{
+        const msg = json && json.choices && json.choices[0] && json.choices[0].message;
+        if(!msg) throw new Error(backend + ' response format error');
+        msg.__usage = json.usage || null;
+        return msg;
+      });
+  }
+  function myaiChatWithFallback(backend, messages, tried){
+    tried = Array.isArray(tried) ? tried : [];
+    if(tried.indexOf(backend) < 0) tried.push(backend);
+    return myaiChatOnce(backend, messages).then(msg=>({ backend, msg })).catch(err=>{
+      const next = myaiFallbackBackends(backend).filter(b=>tried.indexOf(b) < 0)[0];
+      if(!next){
+        if(MYAI_S.backend !== 'hybrid') myaiAddMsg('sys', myaiProviderLabel(backend) + ' ' + myaiT('singleBackendHint','connection failed'));
+        throw err;
+      }
+      myaiAddMsg('sys', myaiProviderLabel(backend) + ' ' + myaiT('fallback','failed -> fallback to {next}').replace('{next}', myaiProviderLabel(next)) + ' (' + String(err && err.message || err).slice(0,120) + ')');
+      return myaiChatWithFallback(next, messages, tried);
+    });
+  }
+  function myaiTestBackend(backend, statusEl){
+    myaiSyncSettingsFromInputs();
+    if(!statusEl) return;
+    statusEl.textContent = myaiT('testing','Testing...');
+    statusEl.className = 'myai-status';
+    if(!myaiBackendReady(backend)){
+      statusEl.textContent = myaiProviderLabel(backend) + ' ' + myaiT('incomplete','Incomplete');
+      statusEl.className = 'myai-status fail';
+      return;
+    }
+    myaiTimedFetch(myaiModelsUrl(backend), { headers:myaiHeadersFor(backend) }, 10000)
+      .then(r=>{ if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(json=>{
+        const rows = Array.isArray(json.data) ? json.data : (Array.isArray(json.models) ? json.models : []);
+        statusEl.textContent = myaiT('connected','Connected') + ' (' + rows.length + ' models)';
+        statusEl.className = 'myai-status ok';
+      })
+      .catch(err=>{
+        statusEl.textContent = myaiT('failed','Failed') + ': ' + String(err && err.message || err);
+        statusEl.className = 'myai-status fail';
+      });
+  }
+
+  function myaiRenderTranslations(){
+    if(myai$('myaiInput')) myai$('myaiInput').placeholder = myaiT('inputPlaceholder','Ask naturally.');
+    if(myai$('myaiChatStatus') && !myaiBusy) myai$('myaiChatStatus').textContent = myaiT('idle','Idle');
+    myaiRenderSettings();
+    myaiRenderCustomTools();
+  }
+  window.renderMyAITranslations = myaiRenderTranslations;
+
+  function myaiSyncProviderFields(provider){
+    if(!provider || MYAI_API_BACKENDS.indexOf(provider) < 0 || !MYAI_S.providers[provider]) return;
+    if(myai$('myaiApiUrl')) MYAI_S.providers[provider].baseUrl = myai$('myaiApiUrl').value.trim();
+    if(myai$('myaiApiKey')) MYAI_S.providers[provider].apiKey = myai$('myaiApiKey').value.trim();
+    if(myai$('myaiApiModel')) MYAI_S.providers[provider].model = myai$('myaiApiModel').value.trim();
+  }
+  function myaiSyncSettingsFromInputs(){
+    if(myai$('myaiBackend')) MYAI_S.backend = myai$('myaiBackend').value;
+    if(myai$('myaiLmUrl')) MYAI_S.lmstudio.baseUrl = myai$('myaiLmUrl').value.trim();
+    if(myai$('myaiLmModel')) MYAI_S.lmstudio.model = myai$('myaiLmModel').value.trim();
+    myaiSyncProviderFields(myaiRenderedApiProvider);
+    if(myai$('myaiApiProvider') && MYAI_API_BACKENDS.indexOf(myai$('myaiApiProvider').value) >= 0) MYAI_S.hybrid.apiProvider = myai$('myaiApiProvider').value;
+    const selected = [];
+    Object.keys(MYAI_HYBRID_IDS).forEach(b=>{ const el=myai$(MYAI_HYBRID_IDS[b]); if(el && el.checked) selected.push(b); });
+    if(selected.length) MYAI_S.hybrid.backends = selected;
+    if(myai$('myaiHybridChars')) MYAI_S.hybrid.simpleMaxChars = Math.max(50, Number(myai$('myaiHybridChars').value) || 400);
+    if(myai$('myaiHybridKw')) MYAI_S.hybrid.keywords = myai$('myaiHybridKw').value.split(',').map(s=>s.trim()).filter(Boolean);
+    if(myai$('myaiAllowControl')) MYAI_S.allowControl = !!myai$('myaiAllowControl').checked;
+    if(myai$('myaiPersonality')) MYAI_S.personality = myai$('myaiPersonality').value.trim() || MYAI_DEFAULTS.personality;
+    if(myai$('myaiSearchUrl')) MYAI_S.webSearchEndpoint = myai$('myaiSearchUrl').value.trim();
+    myaiSaveSettings();
+  }
+  function myaiRenderSettings(){
+    const backend = MYAI_S.backend;
+    if(myai$('myaiBackend')) myai$('myaiBackend').value = backend;
+    if(myai$('myaiLmUrl')) myai$('myaiLmUrl').value = MYAI_S.lmstudio.baseUrl;
+    if(myai$('myaiLmModel')) myai$('myaiLmModel').value = MYAI_S.lmstudio.model;
+    const selected = myaiHybridBackends();
+    Object.keys(MYAI_HYBRID_IDS).forEach(b=>{ const el=myai$(MYAI_HYBRID_IDS[b]); if(el) el.checked = selected.indexOf(b) >= 0; });
+    const apiProvider = myaiActiveApiProvider() || myaiRenderedApiProvider || 'cerebras';
+    myaiRenderedApiProvider = apiProvider;
+    const showLm = backend === 'lmstudio' || (backend === 'hybrid' && selected.indexOf('lmstudio') >= 0);
+    const showApi = MYAI_API_BACKENDS.indexOf(backend) >= 0 || (backend === 'hybrid' && selected.some(b=>MYAI_API_BACKENDS.indexOf(b) >= 0));
+    if(myai$('myaiLmGroup')) myai$('myaiLmGroup').hidden = !showLm;
+    if(myai$('myaiApiGroup')) myai$('myaiApiGroup').hidden = !showApi;
+    if(myai$('myaiHybridGroup')) myai$('myaiHybridGroup').hidden = backend !== 'hybrid';
+    if(myai$('myaiApiProviderField')) myai$('myaiApiProviderField').hidden = backend !== 'hybrid';
+    if(myai$('myaiApiProvider')) myai$('myaiApiProvider').value = apiProvider;
+    const meta = myaiProviderMeta(apiProvider);
+    const cfg = MYAI_S.providers[apiProvider] || MYAI_DEFAULTS.providers[apiProvider];
+    if(myai$('myaiApiUrlLabel')) myai$('myaiApiUrlLabel').textContent = meta.urlLabel;
+    if(myai$('myaiApiUrl')) { myai$('myaiApiUrl').value = cfg.baseUrl || ''; myai$('myaiApiUrl').placeholder = meta.placeholder; }
+    if(myai$('myaiApiKey')) myai$('myaiApiKey').value = cfg.apiKey || '';
+    if(myai$('myaiApiModel')) { myai$('myaiApiModel').value = cfg.model || ''; myai$('myaiApiModel').placeholder = meta.modelPlaceholder; }
+    if(myai$('myaiApiNote')) myai$('myaiApiNote').textContent = myaiLang() === 'ko' ? meta.noteKo : meta.noteEn;
+    if(myai$('myaiHybridChars')) myai$('myaiHybridChars').value = MYAI_S.hybrid.simpleMaxChars;
+    if(myai$('myaiHybridKw')) myai$('myaiHybridKw').value = (MYAI_S.hybrid.keywords || []).join(', ');
+    if(myai$('myaiAllowControl')) myai$('myaiAllowControl').checked = !!MYAI_S.allowControl;
+    if(myai$('myaiPersonality')) myai$('myaiPersonality').value = MYAI_S.personality;
+    if(myai$('myaiSearchUrl')) myai$('myaiSearchUrl').value = MYAI_S.webSearchEndpoint;
+    myaiUpdateActiveStatus();
+  }
+  function myaiUpdateActiveStatus(){
+    const el = myai$('myaiActiveStatus');
+    if(!el) return;
+    const ready = myaiBackendReady(MYAI_S.backend);
+    el.textContent = myaiProviderLabel(MYAI_S.backend) + ' · ' + (ready ? myaiT('ready','Ready') : myaiT('incomplete','Incomplete'));
+    el.className = 'myai-status' + (ready ? ' ok' : '');
+  }
+  function myaiRenderCustomTools(){
+    const el = myai$('myaiCustomToolList');
+    if(!el) return;
+    const list = MYAI_S.customTools || [];
+    if(!list.length){ el.textContent = myaiLang() === 'ko' ? '없음' : 'None'; return; }
+    el.innerHTML = '';
+    list.forEach(tool=>{
+      const row = document.createElement('div');
+      row.className = 'myai-row';
+      const span = document.createElement('span');
+      span.textContent = tool.name + ' -> ' + tool.url;
+      const del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'myai-btn';
+      del.textContent = myaiLang() === 'ko' ? '삭제' : 'Delete';
+      del.addEventListener('click', ()=>{
+        MYAI_S.customTools = MYAI_S.customTools.filter(x=>x.name !== tool.name);
+        myaiSaveSettings();
+        myaiRenderCustomTools();
+      });
+      row.appendChild(span); row.appendChild(del); el.appendChild(row);
+    });
+  }
+  function myaiAddCustomTool(tool){
+    if(!tool || !/^[A-Za-z0-9_\-]{1,40}$/.test(String(tool.name || ''))) return { error:'tool name must be 1-40 chars: letters/numbers/_/-' };
+    if(!/^https?:\/\//.test(String(tool.url || ''))) return { error:'tool URL must be http(s)' };
+    const reserved = myaiToolSchemas().map(t=>t.function && t.function.name).filter(Boolean);
+    if(reserved.indexOf(tool.name) >= 0) return { error:'reserved tool name' };
+    MYAI_S.customTools = (MYAI_S.customTools || []).filter(t=>t.name !== tool.name);
+    MYAI_S.customTools.push({ name:tool.name, description:String(tool.description || ''), url:tool.url });
+    myaiSaveSettings();
+    myaiRenderCustomTools();
+    return { ok:true, added:tool.name };
+  }
+
+  function myaiInlineMd(text){
+    let out = myaiEsc(text);
+    out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
+    out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    out = out.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    return out;
+  }
+  function myaiRenderMarkdownLite(text){
+    const lines = String(text || '').replace(/```[a-zA-Z0-9]*\n?/g,'').replace(/```/g,'').split(/\r?\n/);
+    let html = '', listOpen = false, table = [];
+    function flushList(){ if(listOpen){ html += '</ul>'; listOpen = false; } }
+    function flushTable(){
+      if(!table.length) return;
+      html += '<div class="myai-table-wrap"><table class="myai-table">';
+      table.forEach((cells, idx)=>{
+        const tag = idx === 0 ? 'th' : 'td';
+        html += '<tr>' + cells.map(c=>'<'+tag+'>'+myaiInlineMd(String(c).trim())+'</'+tag+'>').join('') + '</tr>';
+      });
+      html += '</table></div>';
+      table = [];
+    }
+    lines.forEach(raw=>{
+      const line = raw.replace(/\s+$/,'');
+      if(/^\s*\|.*\|\s*$/.test(line)){
+        if(/^\s*\|[\s:|-]+\|\s*$/.test(line)) return;
+        flushList(); table.push(line.replace(/^\s*\|/,'').replace(/\|\s*$/,'').split('|')); return;
+      }
+      flushTable();
+      const h = line.match(/^(#{1,3})\s+(.*)$/);
+      if(h){ flushList(); html += '<div class="myai-md-h">' + myaiInlineMd(h[2]) + '</div>'; return; }
+      const li = line.match(/^\s*[-*]\s+(.*)$/);
+      if(li){ if(!listOpen){ html += '<ul>'; listOpen = true; } html += '<li>' + myaiInlineMd(li[1]) + '</li>'; return; }
+      if(!line.trim()){ flushList(); html += '<div class="myai-md-sp"></div>'; return; }
+      flushList(); html += '<div>' + myaiInlineMd(line) + '</div>';
+    });
+    flushList(); flushTable();
+    return html;
+  }
+  function myaiFindLastJsonBlock(text){
+    let end = String(text || '').lastIndexOf('}');
+    while(end >= 0){
+      let depth = 0, inStr = false, escFlag = false;
+      for(let i=end; i>=0; i--){
+        const ch = text.charAt(i);
+        if(inStr){
+          if(escFlag) escFlag = false;
+          else if(ch === '\\') escFlag = true;
+          else if(ch === '"') inStr = false;
+          continue;
+        }
+        if(ch === '"'){ inStr = true; continue; }
+        if(ch === '}') depth++;
+        else if(ch === '{'){ depth--; if(depth === 0) return text.slice(i, end + 1); }
+      }
+      end = text.lastIndexOf('}', end - 1);
+    }
+    return null;
+  }
+  function myaiExtractStructured(text){
+    if(typeof text !== 'string') return null;
+    const candidates = [];
+    const block = myaiFindLastJsonBlock(text);
+    if(block) candidates.push(block);
+    const start = text.indexOf('{'), last = text.lastIndexOf('}');
+    if(start >= 0 && last > start){
+      const whole = text.slice(start, last + 1);
+      if(whole !== block) candidates.push(whole);
+    }
+    const keys = ['탭','판정','조성','물성','섹션','표','주의','설명','검색보강','sections','properties','results','inputs','schema_version'];
+    for(const c of candidates){
+      try{
+        const json = JSON.parse(c);
+        if(json && typeof json === 'object' && keys.some(k=>Object.prototype.hasOwnProperty.call(json,k))){
+          return { json, desc:text.slice(0, text.indexOf(c)).trim() };
+        }
+      }catch(e){}
+    }
+    return null;
+  }
+  function myaiTableHtml(rows, title, columns){
+    rows = Array.isArray(rows) ? rows : [];
+    if(!rows.length) return '';
+    const normalized = rows.map(row=>row && typeof row === 'object' && !Array.isArray(row) ? row : { value:row });
+    const cols = (Array.isArray(columns) && columns.length) ? columns : Array.from(new Set(normalized.flatMap(row=>Object.keys(row))));
+    let html = title ? '<div class="myai-md-h">' + myaiEsc(title) + '</div>' : '';
+    html += '<div class="myai-table-wrap"><table class="myai-table"><thead><tr>' + cols.map(c=>'<th>'+myaiEsc(c)+'</th>').join('') + '</tr></thead><tbody>';
+    normalized.forEach(row=>{
+      html += '<tr>' + cols.map(c=>'<td>'+myaiEsc(row[c] == null ? '' : row[c])+'</td>').join('') + '</tr>';
+    });
+    html += '</tbody></table></div>';
+    return html;
+  }
+  function myaiRenderStructured(parsed){
+    const json = parsed.json || {};
+    let html = '';
+    if(json['판정']) html += '<div class="myai-verdict">' + myaiEsc(json['판정']) + '</div>';
+    if(parsed.desc) html += '<div>' + myaiInlineMd(parsed.desc) + '</div>';
+    if(json['탭'] || json.tab) html += '<span class="myai-pill ok">' + myaiEsc(json['탭'] || json.tab) + '</span>';
+    if(Array.isArray(json['조성'])) html += myaiTableHtml(json['조성'], myaiLang()==='ko'?'조성':'Composition');
+    if(json['물성'] && typeof json['물성'] === 'object'){
+      const rows = Object.keys(json['물성']).map(k=>Object.assign({ property:k }, json['물성'][k] && typeof json['물성'][k] === 'object' ? json['물성'][k] : { value:json['물성'][k] }));
+      html += myaiTableHtml(rows, myaiLang()==='ko'?'물성':'Properties');
+    }
+    const sections = json['섹션'] || json.sections;
+    if(Array.isArray(sections)) sections.forEach(sec=>{ html += myaiTableHtml(sec.rows || sec.items || [], sec['제목'] || sec.title, sec.columns); });
+    const tables = json['표'] || json.tables;
+    if(Array.isArray(tables)) tables.forEach(tbl=>{ html += myaiTableHtml(tbl.rows || [], tbl['제목'] || tbl.title, tbl.columns); });
+    const warnings = json['주의'] || json.warnings;
+    if(Array.isArray(warnings) && warnings.length) html += '<div class="myai-md-h">' + (myaiLang()==='ko'?'주의':'Cautions') + '</div><ul>' + warnings.map(w=>'<li>'+myaiEsc(typeof w === 'string' ? w : (w['내용'] || w.content || JSON.stringify(w)))+'</li>').join('') + '</ul>';
+    if(json['검색보강']) html += '<div class="myai-md-h">' + (myaiLang()==='ko'?'검색보강':'Search reinforcement') + '</div><div>' + myaiInlineMd(json['검색보강']) + '</div>';
+    if(json['설명']) html += '<div class="myai-md-h">' + (myaiLang()==='ko'?'설명':'Explanation') + '</div><div>' + myaiInlineMd(json['설명']) + '</div>';
+    if(!html) html = '<pre class="myai-json">' + myaiEsc(JSON.stringify(json,null,2)) + '</pre>';
+    return html;
+  }
+  function myaiCopyButton(raw){
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'myai-copy';
+    btn.textContent = myaiT('copyMsg','Copy');
+    btn.addEventListener('click', ()=>{
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(String(raw || '')).then(()=>{
+          btn.textContent = myaiT('copiedMsg','Copied');
+          setTimeout(()=>{ btn.textContent = myaiT('copyMsg','Copy'); }, 1200);
+        }).catch(()=>{});
+      }
+    });
+    return btn;
+  }
+  function myaiAddMsg(role, content, meta){
+    const box = myai$('myaiMsgs');
+    if(!box) return;
+    const el = document.createElement('div');
+    el.className = 'myai-msg ' + role;
+    if(role === 'assistant' || role === 'tool'){
+      const parsed = myaiExtractStructured(content);
+      if(parsed){
+        el.classList.add('structured');
+        el.innerHTML = myaiRenderStructured(parsed);
+        el.appendChild(myaiCopyButton(content));
+      }else if(role === 'assistant'){
+        el.classList.add('markdown');
+        el.innerHTML = myaiRenderMarkdownLite(content);
+        el.appendChild(myaiCopyButton(content));
+      }else{
+        el.textContent = content;
+      }
+    }else{
+      el.textContent = content;
+    }
+    if(meta){
+      const m = document.createElement('div');
+      m.className = 'myai-note';
+      m.textContent = meta;
+      el.appendChild(m);
+    }
+    box.appendChild(el);
+    box.scrollTop = box.scrollHeight;
+  }
+  function myaiSetChatStatus(text){
+    const el = myai$('myaiChatStatus');
+    if(el) el.textContent = text;
+  }
+
+  function myaiToolSchemas(){
+    const base = [
+      { type:'function', function:{ name:'get_current_tab_context', description:'Read the PHA app tab the user was last working in: inputs, rendered results, warnings, and tab purpose.', parameters:{ type:'object', properties:{ max_inputs:{type:'number'}, max_results:{type:'number'}, max_result_chars:{type:'number'} } } } },
+      { type:'function', function:{ name:'get_tab_context', description:'Read a specific PHA app tab by key or alias. Supported tabs: proc, ts, hist, ana, calc, props, photos, flash, compounding, straw.', parameters:{ type:'object', properties:{ tab:{type:'string'}, switch_tab:{type:'boolean'}, max_inputs:{type:'number'}, max_results:{type:'number'}, max_result_chars:{type:'number'} }, required:['tab'] } } },
+      { type:'function', function:{ name:'set_tab_inputs', description:'Set visible inputs/selects/textareas on a tab by id or label, only when app control is enabled.', parameters:{ type:'object', properties:{ tab:{type:'string'}, values:{type:'object'} }, required:['tab','values'] } } },
+      { type:'function', function:{ name:'calc_residence', description:'Calculate residence time from hold-up volume/mass, melt density, and throughput.', parameters:{ type:'object', properties:{ density_kg_m3:{type:'number'}, holdup_l:{type:'number'}, holdup_cc:{type:'number'}, holdup_kg:{type:'number'}, rate_kg_h:{type:'number'}, rate_g_s:{type:'number'} } } } },
+      { type:'function', function:{ name:'calc_cooling', description:'Calculate injection part cooling time by 1D plate approximation.', parameters:{ type:'object', properties:{ thickness_mm:{type:'number'}, alpha_mm2_s:{type:'number'}, melt_temp_c:{type:'number'}, mold_temp_c:{type:'number'}, eject_temp_c:{type:'number'} } } } },
+      { type:'function', function:{ name:'calc_blown_film', description:'Calculate blown-film thickness and optional gap-based DDR.', parameters:{ type:'object', properties:{ output_kg_h:{type:'number'}, density_kg_m3:{type:'number'}, die_diameter_mm:{type:'number'}, bur:{type:'number'}, takeup_m_min:{type:'number'}, die_gap_mm:{type:'number'} } } } },
+      { type:'function', function:{ name:'calc_flash_clamp', description:'Calculate clamp tonnage and 20% margin recommendation.', parameters:{ type:'object', properties:{ avg_pressure_bar:{type:'number'}, projected_area_cm2:{type:'number'} } } } },
+      { type:'function', function:{ name:'calc_flash_pressure', description:'Calculate V0 pressure limit from clamp force, projected area, and safety factor.', parameters:{ type:'object', properties:{ clamp_tf:{type:'number'}, projected_area_cm2:{type:'number'}, safety_factor:{type:'number'} } } } },
+      { type:'function', function:{ name:'calc_flash_shear', description:'Calculate runner wall shear rate.', parameters:{ type:'object', properties:{ flow_cm3_s:{type:'number'}, runner_radius_cm:{type:'number'} } } } },
+      { type:'function', function:{ name:'calc_flash_packing', description:'Calculate P1/P2 packing pressure bands from peak injection pressure.', parameters:{ type:'object', properties:{ peak_pressure_bar:{type:'number'} } } } },
+      { type:'function', function:{ name:'calc_shot_weight', description:'Calculate total shot weight and volume for cavity count/part/runner/density.', parameters:{ type:'object', properties:{ part_weight_g:{type:'number'}, runner_weight_g:{type:'number'}, cavity_count:{type:'number'}, density_g_cm3:{type:'number'} } } } },
+      { type:'function', function:{ name:'get_material_info', description:'Read material information for a grade from PHA_DATA_BRIDGE and the editable material DB.', parameters:{ type:'object', properties:{ grade:{type:'string'} } } } },
+      { type:'function', function:{ name:'get_temp_suggestion', description:'Get drying/barrel/process temperature suggestion for a grade.', parameters:{ type:'object', properties:{ grade:{type:'string'} } } } },
+      { type:'function', function:{ name:'classify_compounding', description:'Classify a grade for compounding guidance via PHA_DATA_BRIDGE.', parameters:{ type:'object', properties:{ grade:{type:'string'} } } } },
+      { type:'function', function:{ name:'get_anomaly_code', description:'Read anomaly code metadata.', parameters:{ type:'object', properties:{ code:{type:'string'} }, required:['code'] } } },
+      { type:'function', function:{ name:'search_troubleshooting', description:'Search the troubleshooting KB loaded in this app.', parameters:{ type:'object', properties:{ query:{type:'string'} }, required:['query'] } } },
+      { type:'function', function:{ name:'get_material_db', description:'Return the editable material DB.', parameters:{ type:'object', properties:{} } } },
+      { type:'function', function:{ name:'get_history', description:'Return recent pha_hist process records from localStorage.', parameters:{ type:'object', properties:{ limit:{type:'number'} } } } },
+      { type:'function', function:{ name:'web_search', description:'Call the configured web_search endpoint with ?q= for search reinforcement.', parameters:{ type:'object', properties:{ query:{type:'string'} }, required:['query'] } } },
+      { type:'function', function:{ name:'update_tars_feature', description:'Control the app when app control is enabled. Actions: set_tab, set_language, set_personality, set_backend, add_custom_tool.', parameters:{ type:'object', properties:{ action:{type:'string'}, value:{type:'string'} }, required:['action','value'] } } }
+    ];
+    (MYAI_S.customTools || []).forEach(tool=>{
+      base.push({ type:'function', function:{ name:tool.name, description:(tool.description || '') + ' (custom POST tool: ' + tool.url + ')', parameters:{ type:'object', properties:{ input:{type:'string'} } } } });
+    });
+    return base;
+  }
+  function myaiNum(args, names, id){
+    args = args || {};
+    for(const name of names){ if(args[name] != null && args[name] !== ''){ const n=Number(args[name]); if(Number.isFinite(n)) return n; } }
+    const el = id ? myai$(id) : null;
+    if(el && el.value !== ''){ const n=Number(el.value); if(Number.isFinite(n)) return n; }
+    return NaN;
+  }
+  function myaiCalcResidence(args){
+    const rho = myaiNum(args, ['density_kg_m3','rho'], 'kpi_rho');
+    let holdL = myaiNum(args, ['holdup_l','holdVol_l','volume_l'], 'kpi_holdVol');
+    const holdCc = myaiNum(args, ['holdup_cc','holdup_cm3','volume_cc'], '');
+    if(!Number.isFinite(holdL) && Number.isFinite(holdCc)) holdL = holdCc / 1000;
+    let mass = myaiNum(args, ['holdup_kg','holdMass_kg','mass_kg'], 'kpi_holdMass');
+    if(!Number.isFinite(mass) && Number.isFinite(rho) && Number.isFinite(holdL)) mass = rho * (holdL / 1000);
+    let rate = myaiNum(args, ['rate_kg_h','throughput_kg_h'], 'kpi_rate');
+    const rateGs = myaiNum(args, ['rate_g_s','throughput_g_s'], '');
+    if(!Number.isFinite(rate) && Number.isFinite(rateGs)) rate = rateGs * 3.6;
+    if(!(mass > 0) || !(rate > 0)) return { error:'mass/volume+density and throughput are required' };
+    const residence_min = 60 * mass / rate;
+    return { schema_version:'pha-calc-residence-v1', inputs:{ density_kg_m3:rho, holdup_l:holdL, holdup_kg:mass, rate_kg_h:rate }, results:{ residence_min:Number(residence_min.toFixed(3)) }, '섹션':[{ '제목':'계산값', rows:[{ '항목':'Residence time','값':Number(residence_min.toFixed(3)),'단위':'min' }] }], '설명':'Residence time = 60 * hold-up mass / throughput.' };
+  }
+  function myaiCalcCooling(args){
+    const t = myaiNum(args, ['thickness_mm','t_mm'], 'cool_t');
+    const alpha = myaiNum(args, ['alpha_mm2_s','thermal_diffusivity_mm2_s'], 'cool_alpha');
+    const tm = myaiNum(args, ['melt_temp_c','Tm_c'], 'cool_Tm');
+    const mold = myaiNum(args, ['mold_temp_c','Tmold_c'], 'cool_Tmold');
+    const eject = myaiNum(args, ['eject_temp_c','Teject_c'], 'cool_Te');
+    if(!(t > 0) || !(alpha > 0) || !Number.isFinite(tm) || !Number.isFinite(mold) || !Number.isFinite(eject)) return { error:'thickness, alpha, melt/mold/eject temperatures are required' };
+    const ratio = Math.max((tm - mold) / (eject - mold), 1.0001);
+    const cooling_s = (t * t / (Math.PI * Math.PI * alpha)) * Math.log(ratio);
+    return { schema_version:'pha-calc-cooling-v1', inputs:{ thickness_mm:t, alpha_mm2_s:alpha, melt_temp_c:tm, mold_temp_c:mold, eject_temp_c:eject }, results:{ cooling_s:Number(cooling_s.toFixed(2)) }, '섹션':[{ '제목':'계산값', rows:[{ '항목':'Cooling time','값':Number(cooling_s.toFixed(2)),'단위':'s' }] }] };
+  }
+  function myaiCalcBlownFilm(args){
+    const q = myaiNum(args, ['output_kg_h','Q_kg_h'], 'bf_Q');
+    const rho = myaiNum(args, ['density_kg_m3','rho'], 'bf_rho');
+    const dmm = myaiNum(args, ['die_diameter_mm','D_die_mm'], 'bf_D');
+    const bur = myaiNum(args, ['bur','BUR'], 'bf_BUR');
+    const speed = myaiNum(args, ['takeup_m_min','v_m_min'], 'bf_v');
+    const gap = myaiNum(args, ['die_gap_mm','gap_mm'], 'bf_gap');
+    if(!(q > 0) || !(rho > 0) || !(dmm > 0) || !(bur > 0) || !(speed > 0)) return { error:'output, density, die diameter, BUR, and take-up speed are required' };
+    const qM3s = (q / rho) / 3600;
+    const d = dmm / 1000;
+    const v = speed / 60;
+    const thickness_um = qM3s / (Math.PI * d * bur * v) * 1e6;
+    const out = { schema_version:'pha-calc-blown-film-v1', inputs:{ output_kg_h:q, density_kg_m3:rho, die_diameter_mm:dmm, bur, takeup_m_min:speed, die_gap_mm:Number.isFinite(gap)?gap:null }, results:{ thickness_um:Number(thickness_um.toFixed(2)) }, '섹션':[{ '제목':'계산값', rows:[{ '항목':'Film thickness','값':Number(thickness_um.toFixed(2)),'단위':'um' }] }] };
+    if(gap > 0){
+      const exitArea = Math.PI * d * (gap / 1000);
+      const vExit = qM3s / exitArea;
+      const ddr = v / vExit;
+      const gapThickness = ((gap / 2 / 1000) / (bur * ddr)) * 1e6;
+      out.results.ddr = Number(ddr.toFixed(3));
+      out.results.gap_based_thickness_um = Number(gapThickness.toFixed(2));
+      out['섹션'][0].rows.push({ '항목':'DDR','값':out.results.ddr }, { '항목':'Gap-based thickness','값':out.results.gap_based_thickness_um,'단위':'um' });
+    }
+    return out;
+  }
+  function myaiCalcFlashClamp(args){
+    const p = myaiNum(args, ['avg_pressure_bar','p_avg_bar'], 'flash-p-avg');
+    const area = myaiNum(args, ['projected_area_cm2','a_proj_cm2'], 'flash-a-proj');
+    if(!(p > 0) || !(area > 0)) return { error:'avg_pressure_bar and projected_area_cm2 are required' };
+    const tonnage = p * area / 1000;
+    return { schema_version:'pha-flash-clamp-v1', results:{ clamp_tf:Number(tonnage.toFixed(2)), recommended_tf:Number((tonnage*1.2).toFixed(2)) }, '섹션':[{ '제목':'계산값', rows:[{ '항목':'Clamp tonnage','값':Number(tonnage.toFixed(2)),'단위':'tf' },{ '항목':'Recommended +20%','값':Number((tonnage*1.2).toFixed(2)),'단위':'tf' }] }] };
+  }
+  function myaiCalcFlashPressure(args){
+    const clamp = myaiNum(args, ['clamp_tf','f_clamp_tf'], 'flash-f-clamp');
+    const area = myaiNum(args, ['projected_area_cm2','a_proj_cm2'], 'flash-a-proj-2');
+    const safety = myaiNum(args, ['safety_factor'], 'flash-safety-factor');
+    if(!(clamp > 0) || !(area > 0) || !(safety > 0)) return { error:'clamp_tf, projected_area_cm2, and safety_factor are required' };
+    const limit = safety * clamp * 1000 / area;
+    return { schema_version:'pha-flash-pressure-v1', results:{ pressure_limit_bar:Number(limit.toFixed(2)) }, '섹션':[{ '제목':'계산값', rows:[{ '항목':'V0 pressure limit','값':Number(limit.toFixed(2)),'단위':'bar' }] }] };
+  }
+  function myaiCalcFlashShear(args){
+    const flow = myaiNum(args, ['flow_cm3_s','Q_cm3_s'], 'flash-flow-rate');
+    const radius = myaiNum(args, ['runner_radius_cm','R_cm'], 'flash-runner-radius');
+    if(!(flow > 0) || !(radius > 0)) return { error:'flow_cm3_s and runner_radius_cm are required' };
+    const shear = 4 * flow / (Math.PI * Math.pow(radius, 3));
+    const status = shear > 50000 ? 'high' : (shear > 20000 ? 'elevated' : 'ok');
+    return { schema_version:'pha-flash-shear-v1', results:{ shear_rate_s_1:Number(shear.toFixed(0)), status }, '섹션':[{ '제목':'계산값', rows:[{ '항목':'Wall shear rate','값':Number(shear.toFixed(0)),'단위':'s-1','판정':status }] }] };
+  }
+  function myaiCalcFlashPacking(args){
+    const peak = myaiNum(args, ['peak_pressure_bar','p_inj_peak_bar'], 'flash-p-inj-peak');
+    if(!(peak > 0)) return { error:'peak_pressure_bar is required' };
+    return { schema_version:'pha-flash-packing-v1', results:{ p1_min_bar:Number((peak*0.30).toFixed(0)), p1_max_bar:Number((peak*0.45).toFixed(0)), p2_min_bar:Number((peak*0.15).toFixed(0)), p2_max_bar:Number((peak*0.30).toFixed(0)) }, '섹션':[{ '제목':'권장', rows:[{ '항목':'P1','값':(peak*0.30).toFixed(0)+'-'+(peak*0.45).toFixed(0),'단위':'bar' },{ '항목':'P2','값':(peak*0.15).toFixed(0)+'-'+(peak*0.30).toFixed(0),'단위':'bar' }] }] };
+  }
+  function myaiCalcShotWeight(args){
+    const part = myaiNum(args, ['part_weight_g'], 'partWeight');
+    const runner = myaiNum(args, ['runner_weight_g'], 'runnerWeight');
+    const cavities = myaiNum(args, ['cavity_count'], 'cavityCount') || 36;
+    const density = myaiNum(args, ['density_g_cm3'], 'materialDensity') || 1.25;
+    const total = (Number(part) || 0) * cavities + (Number(runner) || 0);
+    return { schema_version:'pha-shot-weight-v1', results:{ total_shot_weight_g:Number(total.toFixed(2)), shot_volume_cm3:Number((total/density).toFixed(2)) }, '섹션':[{ '제목':'계산값', rows:[{ '항목':'Total shot weight','값':Number(total.toFixed(2)),'단위':'g' },{ '항목':'Shot volume','값':Number((total/density).toFixed(2)),'단위':'cm3' }] }] };
+  }
+  function myaiSelectedGrade(args){ return String((args && args.grade) || (window.PHA_DATA_BRIDGE && PHA_DATA_BRIDGE.getSelectedGrade && PHA_DATA_BRIDGE.getSelectedGrade()) || (myai$('grade') && myai$('grade').value) || 'S1000P'); }
+  function myaiGetMaterialInfo(args){
+    const grade = myaiSelectedGrade(args);
+    const editable = typeof getMatDB === 'function' ? (getMatDB()[grade] || null) : null;
+    const bridge = window.PHA_DATA_BRIDGE && PHA_DATA_BRIDGE.getMaterialInfo ? PHA_DATA_BRIDGE.getMaterialInfo(grade) : null;
+    return { schema_version:'pha-material-info-v1', grade, bridge, editable_db:editable, '물성':editable || bridge || {}, '설명':'editable_db는 물성 DB 탭 값, bridge는 PHA integration registry 값입니다.' };
+  }
+  function myaiSearchTroubleshooting(args){
+    const q = String(args && args.query || '').toLowerCase();
+    if(!q) return { error:'query required' };
+    const rows = Array.isArray(window.tsData) ? window.tsData : [];
+    const hits = rows.filter(item=>JSON.stringify(item).toLowerCase().indexOf(q) >= 0).slice(0,8);
+    return { schema_version:'pha-ts-search-v1', query:args.query, count:hits.length, results:hits };
+  }
+  function myaiReadHistory(args){
+    let rows = [];
+    try{ rows = JSON.parse(localStorage.getItem('pha_hist') || '[]'); }catch(e){}
+    const limit = Math.max(1, Math.min(200, Number(args && args.limit) || 20));
+    return { schema_version:'pha-history-v1', count:rows.length, rows:rows.slice(-limit) };
+  }
+  function myaiResolveTab(tab){
+    const raw = String(tab || '').trim().toLowerCase();
+    const aliases = { process:'proc','공정':'proc','공정조건':'proc', troubleshooting:'ts','트러블슈팅':'ts', history:'hist','이력':'hist', analysis:'ana','분석':'ana', calculator:'calc','계산기':'calc', materials:'props','물성':'props', photo:'photos','사진':'photos', flash:'flash','플래시':'flash', compounding:'compounding','컴파운딩':'compounding', straw:'straw','스트로':'straw', myai:'myai' };
+    return MYAI_TAB_KNOWLEDGE[raw] ? raw : (aliases[raw] || raw || 'proc');
+  }
+  function myaiActiveTab(){
+    const page = document.querySelector('.tabpage.active');
+    return page && page.id ? page.id : 'proc';
+  }
+  function myaiSetLastWorkTab(tab){
+    tab = myaiResolveTab(tab);
+    if(tab && tab !== 'myai' && MYAI_TAB_KNOWLEDGE[tab]){
+      myaiLastWorkTab = tab;
+      try{ sessionStorage.setItem('pha.myai.lastWorkTab', tab); }catch(e){}
+    }
+  }
+  function myaiDefaultContextTab(){
+    const active = myaiActiveTab();
+    if(active && active !== 'myai' && MYAI_TAB_KNOWLEDGE[active]) return active;
+    return MYAI_TAB_KNOWLEDGE[myaiLastWorkTab] ? myaiLastWorkTab : 'proc';
+  }
+  function myaiElementLabel(el, root){
+    if(!el) return '';
+    if(el.id){
+      const byFor = root.querySelector('label[for="' + CSS.escape(el.id) + '"]');
+      if(byFor) return byFor.textContent.trim();
+    }
+    const group = el.closest('.group,.calc-input-group,.myai-field');
+    const label = group && group.querySelector('label');
+    return (label ? label.textContent : el.id || el.name || '').trim();
+  }
+  function myaiCollectInputs(section, options){
+    const max = Math.max(1, Math.min(200, Number(options.max_inputs) || 60));
+    return Array.from(section.querySelectorAll('input[id],select[id],textarea[id]')).filter(el=>{
+      const type = String(el.type || '').toLowerCase();
+      return ['password','file','hidden','button','submit','reset'].indexOf(type) < 0;
+    }).slice(0,max).map(el=>({ id:el.id, label:myaiElementLabel(el, section), value:el.type === 'checkbox' ? !!el.checked : el.value }));
+  }
+  function myaiCleanText(text, limit){
+    return String(text || '').replace(/\s+/g,' ').trim().slice(0, limit || 800);
+  }
+  function myaiCollectResults(section, tab, options){
+    const max = Math.max(1, Math.min(60, Number(options.max_results) || 12));
+    const limit = Math.max(120, Math.min(4000, Number(options.max_result_chars) || 900));
+    const out = [];
+    (MYAI_RESULT_IDS_BY_TAB[tab] || []).forEach(id=>{
+      const el = document.getElementById(id);
+      if(el){
+        const txt = myaiCleanText(el.innerText || el.textContent || '', limit);
+        if(txt) out.push({ id, text:txt });
+      }
+    });
+    if(out.length < max){
+      Array.from(section.querySelectorAll('.card,.hint,.calc-result,.tablewrap')).forEach((el, idx)=>{
+        if(out.length >= max) return;
+        const id = el.id || ('result_' + idx);
+        if(out.some(r=>r.id === id)) return;
+        const txt = myaiCleanText(el.innerText || el.textContent || '', limit);
+        if(txt) out.push({ id, text:txt });
+      });
+    }
+    return out.slice(0,max);
+  }
+  function myaiCollectTables(section){
+    return Array.from(section.querySelectorAll('table')).slice(0,8).map((table, idx)=>{
+      const rows = Array.from(table.querySelectorAll('tr')).slice(0,20).map(tr=>Array.from(tr.children).map(td=>myaiCleanText(td.textContent, 160)));
+      return { id:table.id || ('table_' + idx), rows };
+    });
+  }
+  function myaiReadTabContext(tab, options){
+    options = options || {};
+    tab = myaiResolveTab(tab);
+    const section = document.getElementById(tab);
+    if(!section || tab === 'myai') return { error:'tab not found or unsupported', tab };
+    const knowledge = MYAI_TAB_KNOWLEDGE[tab] || {};
+    const label = knowledge.label ? (knowledge.label[myaiLang()] || knowledge.label.ko || tab) : tab;
+    const warnings = [];
+    if(myaiActiveTab() !== tab) warnings.push({ '항목':'hidden_tab_read', '내용':'My AI에서 DOM에 남아 있는 값을 읽었습니다. 최신 계산이 필요하면 control 허용 후 switch_tab=true로 다시 읽으세요.' });
+    const ctx = { schema_version:'pha-tab-context-v1', tab, '탭':label, source:'browser_dom', tab_purpose:knowledge.purpose || '', output_contract:knowledge.outputSchema || null, reading:knowledge.reading || '', '입력':myaiCollectInputs(section, options), '결과':myaiCollectResults(section, tab, options), tables:myaiCollectTables(section), '주의':warnings, '설명':label + ' tab context collected from the browser DOM.' };
+    if(!ctx['결과'].length && !ctx.tables.length) ctx['주의'].push({ '항목':'no_rendered_results', '내용':'렌더된 결과 블록을 찾지 못했습니다. 탭을 열거나 계산 후 다시 요청하세요.' });
+    return ctx;
+  }
+  function myaiAfterFrames(fn){
+    return new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve(fn()))));
+  }
+  function myaiToolGetTabContext(args){
+    args = args || {};
+    const tab = myaiResolveTab(args.tab || args.target_tab || myaiDefaultContextTab());
+    const shouldSwitch = args.switch_tab === true && tab !== myaiActiveTab();
+    if(shouldSwitch && MYAI_S.allowControl){
+      try{ switchTab(tab); myaiSetLastWorkTab(tab); }catch(e){ return Promise.resolve({ error:String(e && e.message || e), tab }); }
+      return myaiAfterFrames(()=>myaiReadTabContext(tab, args));
+    }
+    const ctx = myaiReadTabContext(tab, args);
+    if(shouldSwitch && !MYAI_S.allowControl) ctx['주의'].push({ '항목':'control_disabled', '내용':'앱 기능 제어 허용이 꺼져 있어 탭 전환 없이 읽었습니다.' });
+    myaiSetLastWorkTab(tab);
+    return Promise.resolve(ctx);
+  }
+  function myaiToolSetTabInputs(args){
+    args = args || {};
+    if(!MYAI_S.allowControl) return Promise.resolve({ error:'app control is disabled' });
+    const tab = myaiResolveTab(args.tab);
+    const values = args.values || {};
+    const section = document.getElementById(tab);
+    if(!section || !values || typeof values !== 'object' || Array.isArray(values)) return Promise.resolve({ error:'tab and values object are required' });
+    try{ switchTab(tab); }catch(e){}
+    const changed = [], skipped = [];
+    function findField(key){
+      const byId = section.querySelector('#' + CSS.escape(String(key)));
+      if(byId) return byId;
+      const norm = myaiCleanText(key, 120).toLowerCase();
+      return Array.from(section.querySelectorAll('input[id],select[id],textarea[id]')).find(el=>myaiElementLabel(el, section).toLowerCase() === norm) || null;
+    }
+    Object.keys(values).forEach(key=>{
+      const el = findField(key);
+      if(!el){ skipped.push({ id:key, reason:'field_not_found' }); return; }
+      const type = String(el.type || '').toLowerCase();
+      if(['password','file','hidden','button','submit','reset'].indexOf(type) >= 0){ skipped.push({ id:key, reason:'unsupported_type' }); return; }
+      const before = type === 'checkbox' ? !!el.checked : el.value;
+      if(type === 'checkbox') el.checked = !!values[key];
+      else el.value = String(values[key]);
+      try{ el.dispatchEvent(new Event('input', { bubbles:true })); el.dispatchEvent(new Event('change', { bubbles:true })); }catch(e){}
+      changed.push({ id:el.id, label:myaiElementLabel(el, section), before, after:type === 'checkbox' ? !!el.checked : el.value });
+    });
+    try{ if(tab === 'proc') refreshParamTable(); }catch(e){}
+    return myaiAfterFrames(()=>({ schema_version:'pha-set-tab-inputs-v1', ok:true, tab, changed, skipped, context:myaiReadTabContext(tab, { max_results:12, max_inputs:80 }) }));
+  }
+  function myaiToolWebSearch(args){
+    const query = args && args.query;
+    const ep = String(MYAI_S.webSearchEndpoint || '').trim();
+    if(!query) return Promise.resolve({ error:'query required' });
+    if(!ep) return Promise.resolve({ error:'web_search endpoint is not configured' });
+    const url = ep + (ep.indexOf('?') >= 0 ? '&' : '?') + 'q=' + encodeURIComponent(query);
+    return myaiTimedFetch(url, {}, 20000).then(r=>r.text()).then(text=>({ query, result:text.slice(0,4000) })).catch(e=>({ error:String(e && e.message || e) }));
+  }
+  function myaiToolUpdateFeature(args){
+    if(!MYAI_S.allowControl) return { error:'app control is disabled' };
+    const action = String(args && args.action || '');
+    const value = String(args && args.value || '');
+    if(action === 'set_tab'){ const tab=myaiResolveTab(value); if(tab === 'myai') return { error:'cannot switch work context to myai' }; switchTab(tab); return { ok:true, tab }; }
+    if(action === 'set_language'){ if(value !== 'ko' && value !== 'en') return { error:'language must be ko or en' }; setLanguage(value); return { ok:true, language:value }; }
+    if(action === 'set_personality'){ MYAI_S.personality = value; myaiSaveSettings(); myaiRenderSettings(); return { ok:true, personality:value }; }
+    if(action === 'set_backend'){ if(MYAI_ROUTE_BACKENDS.concat(['hybrid']).indexOf(value) < 0) return { error:'unsupported backend' }; MYAI_S.backend = value; myaiSaveSettings(); myaiRenderSettings(); return { ok:true, backend:value }; }
+    if(action === 'add_custom_tool'){ let tool; try{ tool = JSON.parse(value); }catch(e){ return { error:'value must be JSON with name/description/url' }; } return myaiAddCustomTool(tool); }
+    return { error:'unsupported action: ' + action };
+  }
+  function myaiExecCustomTool(tool, args){
+    return myaiTimedFetch(tool.url, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(args || {}) }, 30000)
+      .then(r=>r.text()).then(text=>({ result:text.slice(0,4000) })).catch(e=>({ error:String(e && e.message || e) }));
+  }
+  function myaiExecTool(name, args){
+    try{
+      if(name === 'get_current_tab_context') return myaiToolGetTabContext(Object.assign({}, args || {}, { tab:myaiDefaultContextTab() }));
+      if(name === 'get_tab_context') return myaiToolGetTabContext(args);
+      if(name === 'set_tab_inputs') return myaiToolSetTabInputs(args);
+      if(name === 'calc_residence') return Promise.resolve(myaiCalcResidence(args));
+      if(name === 'calc_cooling') return Promise.resolve(myaiCalcCooling(args));
+      if(name === 'calc_blown_film') return Promise.resolve(myaiCalcBlownFilm(args));
+      if(name === 'calc_flash_clamp') return Promise.resolve(myaiCalcFlashClamp(args));
+      if(name === 'calc_flash_pressure') return Promise.resolve(myaiCalcFlashPressure(args));
+      if(name === 'calc_flash_shear') return Promise.resolve(myaiCalcFlashShear(args));
+      if(name === 'calc_flash_packing') return Promise.resolve(myaiCalcFlashPacking(args));
+      if(name === 'calc_shot_weight') return Promise.resolve(myaiCalcShotWeight(args));
+      if(name === 'get_material_info') return Promise.resolve(myaiGetMaterialInfo(args));
+      if(name === 'get_temp_suggestion'){ const grade=myaiSelectedGrade(args); return Promise.resolve({ grade, suggestion:window.PHA_DATA_BRIDGE && PHA_DATA_BRIDGE.getTempSuggestion ? PHA_DATA_BRIDGE.getTempSuggestion(grade) : null }); }
+      if(name === 'classify_compounding'){ const grade=myaiSelectedGrade(args); return Promise.resolve({ grade, classification:window.PHA_DATA_BRIDGE && PHA_DATA_BRIDGE.classifyForCompounding ? PHA_DATA_BRIDGE.classifyForCompounding(grade) : null }); }
+      if(name === 'get_anomaly_code') return Promise.resolve({ code:args && args.code, meta:window.TarsAnomalyCodes && TarsAnomalyCodes.getAnomalyCodeMeta ? TarsAnomalyCodes.getAnomalyCodeMeta(args && args.code) : null });
+      if(name === 'search_troubleshooting') return Promise.resolve(myaiSearchTroubleshooting(args));
+      if(name === 'get_material_db') return Promise.resolve({ schema_version:'pha-material-db-v1', db:typeof getMatDB === 'function' ? getMatDB() : null });
+      if(name === 'get_history') return Promise.resolve(myaiReadHistory(args));
+      if(name === 'web_search') return myaiToolWebSearch(args);
+      if(name === 'update_tars_feature') return Promise.resolve(myaiToolUpdateFeature(args));
+      const custom = (MYAI_S.customTools || []).find(t=>t.name === name);
+      if(custom) return myaiExecCustomTool(custom, args);
+      return Promise.resolve({ error:'unknown tool: ' + name });
+    }catch(e){ return Promise.resolve({ error:String(e && e.message || e) }); }
+  }
+
+  function myaiKnowledgePrompt(){
+    const tab = myaiDefaultContextTab();
+    const k = MYAI_TAB_KNOWLEDGE[tab];
+    if(!k) return '';
+    return 'Active PHA app tab knowledge:\n' + JSON.stringify({ tab, label:k.label, purpose:k.purpose, outputSchema:k.outputSchema, reading:k.reading }, null, 2);
+  }
+  function myaiOutputContract(){
+    return [
+      'End each substantive answer with one valid JSON object, no code fence.',
+      'Use one of these envelopes:',
+      'property: {"탭":"...","판정":"one line","조성":[{"성분":"...","wt%":0}],"물성":{"HDT_C":{"value":0,"unit":"C","confidence":"screening"}},"표":[{"제목":"...","rows":[{"항목":"...","값":0}]}],"주의":[{"항목":"...","내용":"..."}],"검색보강":"","설명":"..."}',
+      'sectioned: {"탭":"...","판정":"one line","섹션":[{"제목":"계산값","rows":[{"항목":"...","값":0,"단위":"..."}]}],"주의":["..."],"설명":"..."}',
+      'Rows must be objects with named keys. Do not invent numeric values; use tools for calculations, material data, history, or visible tab context.'
+    ].join('\n');
+  }
+  function myaiSystemPrompt(){
+    const lang = myaiLang();
+    return [
+      'You are the PHA Optimizer embedded assistant: a copilot for PHA injection/extrusion process KPIs, flash control, troubleshooting, compounding guidance, straw guidance, and material data.',
+      'Personality: ' + (MYAI_S.personality || ''),
+      lang === 'ko' ? '사용자는 구어체 한국어로 묻는다. 한국어로 답한다.' : 'Answer in English unless the user asks otherwise.',
+      'Always use tool results for app data and calculations. If a tool fails, say it failed and avoid fabricated values.',
+      'Tool routing: current screen/result -> get_current_tab_context. Specific app tab -> get_tab_context. Residence/cooling/blown-film/flash/shot calculations -> dedicated calc tools. Material/temperature/compounding/anomaly/troubleshooting/history -> dedicated data tools. User-requested input changes or app settings -> set_tab_inputs/update_tars_feature only when app control is enabled.',
+      myaiKnowledgePrompt(),
+      myaiOutputContract()
+    ].filter(Boolean).join('\n\n');
+  }
+  function myaiLooksBrokenJson(text){
+    if(myaiExtractStructured(text)) return false;
+    const start = String(text || '').search(/[{]\s*["']/);
+    if(start < 0) return false;
+    let depth=0,inStr=false,escFlag=false;
+    for(let i=start;i<text.length;i++){
+      const ch=text.charAt(i);
+      if(inStr){ if(escFlag) escFlag=false; else if(ch==='\\') escFlag=true; else if(ch==='"') inStr=false; continue; }
+      if(ch==='"'){ inStr=true; continue; }
+      if(ch==='{') depth++;
+      else if(ch==='}') depth--;
+    }
+    return depth > 0;
+  }
+  function myaiRunLoop(backend, messages, round, tried){
+    if(round >= MYAI_MAX_TOOL_ROUNDS){
+      myaiAddMsg('sys', myaiT('toolLimit','Tool round limit ({max}) exceeded').replace('{max}', MYAI_MAX_TOOL_ROUNDS));
+      myaiSetChatStatus(myaiT('idle','Idle'));
+      return Promise.resolve();
+    }
+    return myaiChatWithFallback(backend, messages, tried).then(result=>{
+      backend = result.backend;
+      const msg = result.msg;
+      if(msg.tool_calls && msg.tool_calls.length){
+        messages.push({ role:'assistant', content:msg.content || '', tool_calls:msg.tool_calls });
+        let chain = Promise.resolve();
+        msg.tool_calls.forEach(tc=>{
+          chain = chain.then(()=>{
+            const name = tc.function && tc.function.name;
+            let args = {};
+            try{ args = typeof tc.function.arguments === 'string' ? JSON.parse(tc.function.arguments || '{}') : (tc.function.arguments || {}); }catch(e){}
+            myaiSetChatStatus(myaiT('toolRunning','Running tool: ') + name);
+            return myaiExecTool(name, args).then(res=>{
+              const toolJson = JSON.stringify(res);
+              myaiAddMsg('tool', name + ' -> ' + (toolJson.length > 1200 ? toolJson.slice(0,1200) + '...' : toolJson));
+              messages.push({ role:'tool', tool_call_id:tc.id || name, content:JSON.stringify(res) });
+            });
+          });
+        });
+        return chain.then(()=>myaiRunLoop(backend, messages, round + 1, tried));
+      }
+      const content = msg.content || myaiT('emptyResponse','(empty response)');
+      if(!tried._jsonRetried && round + 1 < MYAI_MAX_TOOL_ROUNDS && myaiLooksBrokenJson(content)){
+        tried._jsonRetried = true;
+        messages.push({ role:'assistant', content });
+        messages.push({ role:'user', content:'The previous answer had broken JSON. Return a short explanation plus exactly one valid JSON envelope. No code fence.' });
+        return myaiRunLoop(backend, messages, round + 1, tried);
+      }
+      const usage = msg.__usage ? (' · ' + (msg.__usage.total_tokens || '?') + ' tok') : '';
+      myaiAddMsg('assistant', content, myaiProviderLabel(backend) + usage);
+      myaiIdbAppend({ ts:Date.now(), role:'assistant', content, backend });
+      const toolTabs = messages.filter(m=>m && m.role === 'tool').map(m=>{ try{ const o=JSON.parse(m.content); return o && (o.tab || o['탭']); }catch(e){ return null; } }).filter(Boolean);
+      const histContent = toolTabs.length ? ('[last tool tabs: ' + toolTabs.slice(0,4).join(', ') + ']\n' + content) : content;
+      myaiHistory.push({ role:'assistant', content:histContent });
+      myaiSetChatStatus(myaiT('idle','Idle') + ' · ' + myaiProviderLabel(backend));
+      return undefined;
+    });
+  }
+  function myaiFinishTurn(){
+    myaiBusy = false;
+    myaiCurrentAbort = null;
+    if(myai$('myaiSend')) myai$('myaiSend').disabled = false;
+    if(myai$('myaiStop')) myai$('myaiStop').hidden = true;
+  }
+  function myaiSendUser(text){
+    text = String(text || '').trim();
+    if(!text) return;
+    if(myaiBusy){ myaiSetChatStatus(myaiT('busy','Waiting for response.')); return; }
+    myaiSyncSettingsFromInputs();
+    let backend = myaiRouteBackend(text);
+    if(!myaiBackendReady(backend)){
+      const alt = myaiFallbackBackends(backend)[0];
+      if(MYAI_S.backend === 'hybrid' && alt) backend = alt;
+      else { myaiAddMsg('sys', myaiProviderLabel(backend) + ' · ' + myaiT('incomplete','Incomplete')); return; }
+    }
+    myaiBusy = true;
+    if(myai$('myaiSend')) myai$('myaiSend').disabled = true;
+    if(myai$('myaiStop')) myai$('myaiStop').hidden = false;
+    myaiAddMsg('user', text);
+    myaiIdbAppend({ ts:Date.now(), role:'user', content:text });
+    myaiHistory.push({ role:'user', content:text });
+    myaiSetChatStatus((MYAI_S.backend === 'hybrid' ? 'Hybrid -> ' : '') + myaiProviderLabel(backend) + ' ' + myaiT('requesting','Requesting...'));
+    const messages = [{ role:'system', content:myaiSystemPrompt() }].concat(myaiHistory.slice(-24));
+    Promise.resolve()
+      .then(()=>myaiRunLoop(backend, messages, 0, []))
+      .then(myaiFinishTurn)
+      .catch(err=>{ myaiAddMsg('sys', myaiT('error','Error') + ': ' + String(err && err.message || err)); myaiSetChatStatus(myaiT('error','Error')); myaiFinishTurn(); });
+  }
+
+  function myaiB64uEncode(text){
+    const bytes = new TextEncoder().encode(text);
+    let bin = '';
+    bytes.forEach(b=>{ bin += String.fromCharCode(b); });
+    return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  }
+  function myaiB64uDecode(text){
+    text = text.replace(/-/g,'+').replace(/_/g,'/');
+    while(text.length % 4) text += '=';
+    const bin = atob(text);
+    const arr = new Uint8Array(bin.length);
+    for(let i=0;i<bin.length;i++) arr[i] = bin.charCodeAt(i);
+    return new TextDecoder().decode(arr);
+  }
+  function myaiExportSync(){
+    myaiSyncSettingsFromInputs();
+    const code = MYAI_SYNC_PREFIX + myaiB64uEncode(JSON.stringify({ v:1, settings:MYAI_S }));
+    if(myai$('myaiSyncCode')) myai$('myaiSyncCode').value = code;
+    myaiAddMsg('sys', myaiT('syncExported','Settings code created.'));
+    return code;
+  }
+  function myaiImportSync(code){
+    code = String(code || '').trim();
+    const hashIdx = code.indexOf('#myai-sync=');
+    if(hashIdx >= 0) code = code.slice(hashIdx + 12);
+    if(code.indexOf(MYAI_SYNC_PREFIX) === 0) code = code.slice(MYAI_SYNC_PREFIX.length);
+    if(!code) return { error:'empty code' };
+    try{
+      const obj = JSON.parse(myaiB64uDecode(code));
+      if(!obj || obj.v !== 1 || !obj.settings) return { error:'unsupported code' };
+      MYAI_S = myaiNormalizeSettings(obj.settings);
+      myaiSaveSettings();
+      myaiRenderSettings();
+      myaiRenderCustomTools();
+      return { ok:true };
+    }catch(e){ return { error:myaiT('syncParseFailed','Could not parse sync code: ') + String(e && e.message || e) }; }
+  }
+
+  function myaiBindUI(){
+    if(myaiBound) return;
+    myaiBound = true;
+    const on = (id, event, handler)=>{ const el=myai$(id); if(el) el.addEventListener(event, handler); };
+    on('myaiBackend','change', function(){ myaiSyncProviderFields(myaiRenderedApiProvider); MYAI_S.backend = this.value; myaiSaveSettings(); myaiRenderSettings(); });
+    on('myaiLmUrl','change', myaiSyncSettingsFromInputs);
+    on('myaiLmModel','change', myaiSyncSettingsFromInputs);
+    on('myaiApiProvider','change', function(){ myaiSyncProviderFields(myaiRenderedApiProvider); myaiRenderedApiProvider = this.value; MYAI_S.hybrid.apiProvider = this.value; myaiSaveSettings(); myaiRenderSettings(); });
+    ['myaiApiUrl','myaiApiKey','myaiApiModel','myaiHybridChars','myaiHybridKw','myaiAllowControl','myaiPersonality','myaiSearchUrl'].forEach(id=>on(id,'change', myaiSyncSettingsFromInputs));
+    document.querySelectorAll('#myai [data-myai-hybrid]').forEach(el=>el.addEventListener('change', myaiSyncSettingsFromInputs));
+    on('myaiLmTest','click', ()=>myaiTestBackend('lmstudio', myai$('myaiLmStatus')));
+    on('myaiApiTest','click', ()=>myaiTestBackend(myaiRenderedApiProvider, myai$('myaiApiStatus')));
+    on('myaiAddTool','click', ()=>{
+      const res = myaiAddCustomTool({ name:(myai$('myaiToolName')||{}).value || '', url:(myai$('myaiToolUrl')||{}).value || '', description:(myai$('myaiToolDesc')||{}).value || '' });
+      if(res.error) myaiAddMsg('sys', res.error);
+      else ['myaiToolName','myaiToolUrl','myaiToolDesc'].forEach(id=>{ if(myai$(id)) myai$(id).value=''; });
+    });
+    on('myaiExportSettings','click', myaiExportSync);
+    on('myaiCopySettings','click', ()=>{
+      const code = myaiExportSync();
+      if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(code).catch(()=>{});
+    });
+    on('myaiImportSettings','click', ()=>{
+      const res = myaiImportSync((myai$('myaiSyncCode') || {}).value || '');
+      myaiAddMsg('sys', res.ok ? myaiT('importOk','Settings imported.') : res.error);
+    });
+    on('myaiSend','click', ()=>{ const input=myai$('myaiInput'); const text=input ? input.value : ''; if(input && !myaiBusy) input.value=''; myaiSendUser(text); });
+    on('myaiStop','click', ()=>{ if(myaiCurrentAbort){ try{ myaiCurrentAbort.abort(); }catch(e){} } });
+    on('myaiInput','keydown', ev=>{
+      if(ev.isComposing || ev.keyCode === 229) return;
+      if(ev.key === 'Enter' && !ev.shiftKey){
+        ev.preventDefault();
+        const input = ev.currentTarget;
+        const text = input.value;
+        if(!myaiBusy) input.value = '';
+        myaiSendUser(text);
+      }
+    });
+    document.querySelectorAll('#myai [data-myai-quick]').forEach(btn=>btn.addEventListener('click', ()=>myaiSendUser(btn.getAttribute('data-myai-quick'))));
+    on('myaiClearChat','click', ()=>{
+      myaiHistory = [];
+      if(myai$('myaiMsgs')) myai$('myaiMsgs').innerHTML = '';
+      myaiIdbClear().then(()=>myaiAddMsg('sys', myaiT('chatCleared','Chat history cleared.')));
+    });
+    document.addEventListener('click', ev=>{
+      const btn = ev.target && ev.target.closest ? ev.target.closest('[data-tab]') : null;
+      if(btn) myaiSetLastWorkTab(btn.getAttribute('data-tab'));
+    }, true);
+  }
+  window.initMyAI = function(){
+    myaiBindUI();
+    myaiRenderTranslations();
+    if(myaiBootSyncHash){
+      const res = myaiImportSync(myaiBootSyncHash);
+      myaiAddMsg('sys', res.ok ? myaiT('importOk','Settings imported.') : res.error);
+      try{ history.replaceState(null, '', location.pathname + '#myai'); }catch(e){}
+    }
+    if(myaiHistoryLoaded) return;
+    myaiHistoryLoaded = true;
+    myaiIdbLoadAll().then(rows=>{
+      rows.slice(-60).forEach(row=>{
+        const role = row.role === 'assistant' ? 'assistant' : 'user';
+        myaiAddMsg(role, row.content, row.backend || null);
+        myaiHistory.push({ role, content:row.content });
+      });
+      if(!rows.length) myaiAddMsg('sys', myaiT('startPrompt','Configure a backend and start chatting.'));
+    });
+  };
+  if(myaiBootSyncHash){
+    window.addEventListener('load', ()=>{ try{ switchTab('myai'); }catch(e){ window.initMyAI(); } });
+  }
+})();
 </script>
 
 <!-- Additional scripts for dynamic material loading, troubleshooting, and photo gallery -->
 <!-- See custom.js for implementation -->
 
   <!-- Phase 4a shared batch-session contract -->
-<script src="anomaly-codes.js?v=13"></script>
-<script src="tars-batch-schema.js?v=13"></script>
-<script src="glossary.js?v=13"></script>
+<script src="anomaly-codes.js?v=14"></script>
+<script src="tars-batch-schema.js?v=14"></script>
+<script src="glossary.js?v=14"></script>
   <!-- Load external script containing material/troubleshooting/photo logic -->
-  <script src="custom.js?v=13"></script>
+  <script src="custom.js?v=14"></script>
   <!-- Compounding & Straw guide modules -->
-  <script src="compounding-guide.js?v=13"></script>
-  <script src="straw-guide.js?v=13"></script>
-  <script src="pha-integration.js?v=13"></script>
+  <script src="compounding-guide.js?v=14"></script>
+  <script src="straw-guide.js?v=14"></script>
+  <script src="pha-integration.js?v=14"></script>
   <script>
     // Initialize guide tabs and integration after all scripts loaded
     window.addEventListener('load', function(){
