@@ -4,7 +4,8 @@
   "description": "PHA Process Optimizer & Convertor - Static HTML/JavaScript Application",
   "scripts": {
     "build": "node build.js",
-    "start": "echo 'This is a static site. Open index.html in a browser.' && exit 0"
+    "start": "echo 'This is a static site. Open index.html in a browser.' && exit 0",
+    "test:myai": "node tests/myai-regression.mjs"
   },
   "keywords": [
     "pha",

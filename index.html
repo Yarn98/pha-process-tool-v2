@@ -5178,6 +5178,21 @@ window.addEventListener('load', () => {
       if(btn) myaiSetLastWorkTab(btn.getAttribute('data-tab'));
     }, true);
   }
+  function myaiExposeTestHooks(){
+    try{
+      const host = location && location.hostname;
+      if(host !== '127.0.0.1' && host !== 'localhost') return;
+      window.__phaMyAITestHooks = {
+        resultIdsByTab: JSON.parse(JSON.stringify(MYAI_RESULT_IDS_BY_TAB)),
+        renderMarkdownLite: myaiRenderMarkdownLite,
+        extractStructured: myaiExtractStructured,
+        calcResidence: myaiCalcResidence,
+        importSync: myaiImportSync,
+        getSettings: function(){ return JSON.parse(JSON.stringify(MYAI_S)); }
+      };
+    }catch(e){}
+  }
+  myaiExposeTestHooks();
   window.initMyAI = function(){
     myaiBindUI();
     myaiRenderTranslations();
