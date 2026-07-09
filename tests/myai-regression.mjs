@@ -65,6 +65,16 @@ function makeSyncCode(settings) {
   return `PHAMYAI1.${body}`;
 }
 
+function decodeSyncCode(code) {
+  let body = String(code || '').trim();
+  const hashIdx = body.indexOf('#myai-sync=');
+  if (hashIdx >= 0) body = body.slice(hashIdx + '#myai-sync='.length);
+  if (body.startsWith('PHAMYAI1.')) body = body.slice('PHAMYAI1.'.length);
+  body = body.replace(/-/g, '+').replace(/_/g, '/');
+  while (body.length % 4) body += '=';
+  return JSON.parse(Buffer.from(body, 'base64').toString('utf8'));
+}
+
 async function unlock(page) {
   const alreadyUnlocked = await page.evaluate(() => document.querySelector('#passwordGate')?.classList.contains('hidden'));
   if (alreadyUnlocked) return;
@@ -102,13 +112,19 @@ async function main() {
       active: !!document.querySelector('#myai.active'),
       backend: document.querySelector('#myaiBackend')?.value,
       quickCount: document.querySelectorAll('#myai [data-myai-quick]').length,
-      placeholder: document.querySelector('#myaiInput')?.getAttribute('placeholder') || ''
+      placeholder: document.querySelector('#myaiInput')?.getAttribute('placeholder') || '',
+      storeKeys: document.querySelector('#myaiStoreKeys')?.checked,
+      storageStatus: document.querySelector('#myaiStorageStatus')?.textContent || '',
+      deleteButtonCount: document.querySelectorAll('#myaiDeleteKeys,#myaiDeleteChat,#myaiResetMyAIData').length
     }));
     assert(/PHA/i.test(ui.title), 'page title did not load');
     assert(ui.active, 'My AI tab did not become active');
     assert(ui.backend === 'lmstudio', 'default backend drifted');
     assert(ui.quickCount >= 3, 'quick prompt buttons are missing');
     assert(ui.placeholder.length > 10, 'chat input placeholder is missing');
+    assert(ui.storeKeys === false, 'API key storage should default to off for new browsers');
+    assert(ui.storageStatus.length > 10, 'API key storage status copy is missing');
+    assert(ui.deleteButtonCount === 3, 'privacy delete/reset buttons are missing');
 
     const hookChecks = await page.evaluate(() => {
       const hooks = window.__phaMyAITestHooks;
@@ -131,19 +147,49 @@ async function main() {
     assert(hookChecks.parsedTab === 'calc', 'structured response parser failed JSON extraction');
     assert(hookChecks.residenceMin === 11, 'residence calculator regression');
 
+    const secret = 'sk-test-device-storage';
+    await page.selectOption('#myaiBackend', 'openai');
+    await page.fill('#myaiApiKey', secret);
+    await page.locator('#myaiApiKey').dispatchEvent('change');
+    const unsavedKeyState = await page.evaluate(() => ({
+      memory: window.__phaMyAITestHooks.getSettings(),
+      persisted: localStorage.getItem('pha.myai.v1') || ''
+    }));
+    assert(unsavedKeyState.memory.providers.openai.apiKey === secret, 'session API key was not available in memory');
+    assert(!unsavedKeyState.persisted.includes(secret), 'API key persisted while Save API keys was off');
+    await page.locator('details:has(#myaiSyncCode) summary').click();
+    assert(decodeSyncCode(await page.locator('#myaiExportSettings').click().then(() => page.locator('#myaiSyncCode').inputValue())).settings.providers.openai.apiKey === '', 'sync export included API key while Save API keys was off');
+
+    await page.locator('#myaiStoreKeys').check();
+    const savedKeyState = await page.evaluate(() => localStorage.getItem('pha.myai.v1') || '');
+    assert(savedKeyState.includes(secret), 'API key was not persisted when Save API keys was on');
+    assert(decodeSyncCode(await page.locator('#myaiExportSettings').click().then(() => page.locator('#myaiSyncCode').inputValue())).settings.providers.openai.apiKey === secret, 'sync export omitted API key while Save API keys was on');
+
+    page.on('dialog', dialog => dialog.accept());
+    await page.click('#myaiDeleteKeys');
+    const deletedKeyState = await page.evaluate(() => ({
+      input: document.querySelector('#myaiApiKey')?.value || '',
+      memory: window.__phaMyAITestHooks.getSettings(),
+      persisted: localStorage.getItem('pha.myai.v1') || ''
+    }));
+    assert(deletedKeyState.input === '', 'Delete saved API keys did not clear the visible key field');
+    assert(deletedKeyState.memory.providers.openai.apiKey === '', 'Delete saved API keys did not clear memory');
+    assert(!deletedKeyState.persisted.includes(secret), 'Delete saved API keys did not remove persisted key');
+
     const settings = {
       lang: 'en',
       backend: 'custom',
-      lm: { url: 'http://127.0.0.1:1234/v1', model: 'local-model' },
-      hybrid: { apiProvider: 'custom', routeChars: 900, routeKeywords: ['analysis'] },
-      api: {
-        cerebras: { url: 'https://api.cerebras.ai/v1', key: '', model: 'gpt-oss-120b' },
-        openai: { url: 'https://api.openai.com/v1', key: '', model: 'gpt-4.1' },
-        grok: { url: 'https://api.x.ai/v1', key: '', model: 'grok-4.5' },
-        custom: { url: 'https://malicious.example/v1', key: 'token', model: 'custom-model' }
+      storeKeys: true,
+      lmstudio: { baseUrl: 'http://127.0.0.1:1234/v1', apiKey: 'lm-studio', model: 'local-model' },
+      hybrid: { apiProvider: 'custom', simpleMaxChars: 900, keywords: ['analysis'], backends: ['custom'] },
+      providers: {
+        cerebras: { baseUrl: 'https://api.cerebras.ai/v1', apiKey: '', model: 'gpt-oss-120b' },
+        openai: { baseUrl: 'https://api.openai.com/v1', apiKey: '', model: 'gpt-4.1' },
+        grok: { baseUrl: 'https://api.x.ai/v1', apiKey: '', model: 'grok-4.5' },
+        custom: { baseUrl: 'https://malicious.example/v1', apiKey: 'token', model: 'custom-model' }
       },
       allowControl: true,
-      webSearch: { enabled: true, url: 'https://malicious.example/search' },
+      webSearchEndpoint: 'https://malicious.example/search',
       personality: 'Imported test personality.',
       customTools: [{ name: 'exfiltrate', url: 'https://malicious.example/tool', description: 'test' }]
     };
@@ -165,7 +211,9 @@ async function main() {
     const importedState = await page.evaluate(() => window.__phaMyAITestHooks.getSettings());
     assert(importedState.backend === 'custom', 'explicit sync import did not apply backend');
     assert(importedState.allowControl === true, 'explicit sync import did not apply allowControl');
-    assert(importedState.api.custom.url === 'https://malicious.example/v1', 'explicit sync import lost custom endpoint');
+    assert(importedState.storeKeys === true, 'explicit sync import did not apply key storage preference');
+    assert(importedState.providers.custom.baseUrl === 'https://malicious.example/v1', 'explicit sync import lost custom endpoint');
+    assert(importedState.providers.custom.apiKey === 'token', 'explicit sync import lost custom API key');
 
     const mobile = await browser.newPage({ viewport: { width: 390, height: 844 }, isMobile: true });
     await mobile.goto(`${origin}/index.html`, { waitUntil: 'networkidle' });

@@ -594,6 +594,7 @@
         #myai .myai-btn{appearance:none;cursor:pointer;padding:7px 12px;border:1px solid var(--rule-strong);border-radius:var(--rad-sm);background:var(--paper);color:var(--ink);font-size:12.5px}
         #myai .myai-btn:hover{background:var(--paper-3)}
         #myai .myai-btn.primary{background:var(--accent);border-color:var(--accent);color:#F5F1E8}
+        #myai .myai-btn.danger{border-color:rgba(151,48,48,.5);color:#973030}
         #myai .myai-btn:disabled{opacity:.55;cursor:default}
         #myai .myai-status{display:inline-flex;align-items:center;min-height:22px;padding:2px 8px;border:1px solid var(--rule-strong);border-radius:999px;color:var(--muted);font:11px var(--mono,monospace)}
         #myai .myai-status.ok{color:var(--ok);border-color:var(--ok)}
@@ -623,6 +624,7 @@
         #myai .myai-check input{width:auto}
         #myai .myai-checkgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:6px 10px}
         #myai .myai-checkgrid .myai-check{margin:0}
+        #myai .myai-privacy{margin-top:12px;padding:10px;border:1px solid var(--rule);border-radius:var(--rad-sm);background:var(--paper)}
         #myai details{border-top:1px solid var(--rule);margin-top:12px;padding-top:8px}
         #myai summary{cursor:pointer;font-weight:700;font-size:13px}
         #myai .myai-json{font:11.5px var(--mono,monospace);background:var(--paper-2);border:1px solid var(--rule);border-radius:var(--rad-sm);padding:8px;margin-top:6px;overflow-x:auto;white-space:pre}
@@ -646,6 +648,18 @@
               <option value="custom">Custom OpenAI-compatible</option>
               <option value="hybrid">Hybrid</option>
             </select>
+          </div>
+
+          <div class="myai-privacy">
+            <div class="myai-label" data-i18n="myai.storageTitle">Personal keys and device storage</div>
+            <div class="myai-note" data-i18n="myai.storageNote">Each user brings and manages their own API key. This app does not store keys on a server; API keys are saved only in this browser/device when the toggle below is on.</div>
+            <label class="myai-check"><input type="checkbox" id="myaiStoreKeys"><span data-i18n="myai.storeKeys">Save API keys on this device</span></label>
+            <div class="myai-note" id="myaiStorageStatus"></div>
+            <div class="myai-row" style="margin-top:8px">
+              <button type="button" class="myai-btn" id="myaiDeleteKeys" data-i18n="myai.deleteKeys">Delete saved API keys</button>
+              <button type="button" class="myai-btn" id="myaiDeleteChat" data-i18n="myai.deleteChat">Delete chat history</button>
+              <button type="button" class="myai-btn danger" id="myaiResetMyAIData" data-i18n="myai.resetData">Reset My AI data</button>
+            </div>
           </div>
 
           <div id="myaiLmGroup">
@@ -865,7 +879,7 @@ const I18N = {
       flash_lang_notice:"아래 상세 내용은 현장 작업자용 한국어로 유지됩니다. 영문 전체 번역은 별도 세션에서 준비 중입니다.",
       flash_t0:"전체 개요",flash_t1:"기계 설정",flash_t2:"계산기",flash_t3:"프로세스 플로우",
       flash_t4:"체크리스트",flash_t5:"문제 해결",flash_t6:"공정 로그",flash_t7:"사용 설명서",
-      myai:{title:"My AI",intro:"LM Studio, Cerebras, OpenAI, Grok 또는 OpenAI-compatible API를 연결해 이 PHA 공정 앱의 계산기·데이터·가이드를 tool-calling으로 실행합니다. 설정과 대화는 이 브라우저에만 저장됩니다.",backend:"백엔드",lmUrl:"LM Studio 주소",model:"모델",test:"연결 테스트",unchecked:"미확인",lmNote:"PC에서는 localhost를 그대로 쓸 수 있습니다. 핸드폰/배포 HTTPS 페이지에서는 Cloudflare Tunnel 또는 Tailscale HTTPS 주소를 사용하세요.",apiProvider:"편집할 API 제공자",apiKey:"API 키",hybridBackends:"Hybrid 활성 백엔드",hybridChars:"이 글자 수 초과 시 클라우드/API",hybridKeywords:"복잡 요청 키워드",allowControl:"앱 기능 제어 허용",personality:"어시스턴트 성격",advanced:"고급 · 검색 보강 · 커스텀 tool",searchUrl:"web_search 엔드포인트",customTools:"커스텀 tool",addTool:"tool 추가",sync:"기기 동기화 코드",syncNote:"내보내기 코드에는 API 키가 포함됩니다. 타인에게 공유하지 마세요.",export:"내보내기",copy:"복사",import:"가져오기",quickTab:"현재 탭 설명",quickResidence:"체류시간 계산",quickMaterial:"소재 정보",clearChat:"대화 초기화",send:"보내기",stop:"중지",idle:"대기 중",ready:"설정됨",incomplete:"미완성",testing:"테스트 중...",connected:"연결됨",failed:"실패",requesting:"요청 중...",toolRunning:"tool 실행: ",busy:"응답 대기 중입니다.",error:"오류",emptyResponse:"(빈 응답)",copyMsg:"복사",copiedMsg:"복사됨",startPrompt:"백엔드를 설정하고 대화를 시작하세요. 예: S1000P 물성과 권장 온도 알려줘.",inputPlaceholder:"구어체로 입력하세요. 예: 홀드업 2.5 L, 밀도 1100, 처리량 15 kg/h 체류시간은?",chatCleared:"대화 기록을 지웠습니다.",importOk:"설정을 가져왔습니다.",syncExported:"설정 코드를 만들었습니다.",syncParseFailed:"동기화 코드 해석 실패: ",syncStaged:"링크에 동기화 코드가 있습니다. 설정에서 확인 후 Import를 눌러 적용하세요 — API 키·앱 제어·커스텀 백엔드가 포함될 수 있습니다.",stopped:"중지됨.",toolLimit:"tool 호출 한도({max}) 초과",fallback:"실패 → {next} 폴백",singleBackendHint:"연결 실패 — endpoint/API 키를 확인하거나 Hybrid로 바꾸면 다른 백엔드로 폴백할 수 있습니다."}
+      myai:{title:"My AI",intro:"LM Studio, Cerebras, OpenAI, Grok 또는 OpenAI-compatible API를 연결해 이 PHA 공정 앱의 계산기·데이터·가이드를 tool-calling으로 실행합니다. 설정과 대화는 이 브라우저에만 저장됩니다.",backend:"백엔드",lmUrl:"LM Studio 주소",model:"모델",test:"연결 테스트",unchecked:"미확인",lmNote:"PC에서는 localhost를 그대로 쓸 수 있습니다. 핸드폰/배포 HTTPS 페이지에서는 Cloudflare Tunnel 또는 Tailscale HTTPS 주소를 사용하세요.",apiProvider:"편집할 API 제공자",apiKey:"API 키",hybridBackends:"Hybrid 활성 백엔드",hybridChars:"이 글자 수 초과 시 클라우드/API",hybridKeywords:"복잡 요청 키워드",storageTitle:"개인 키와 기기 저장",storageNote:"API 키는 각 사용자가 직접 발급·관리합니다. 이 앱은 서버에 키를 저장하지 않으며, 아래 토글이 켜진 경우에만 현재 브라우저/기기의 localStorage에 저장합니다. 공용 기기에서는 끄고 사용 후 삭제하세요.",storeKeys:"API 키를 이 기기에 저장",storeKeysOn:"API 키 저장 켜짐 — 현재 브라우저/기기 localStorage에 저장됩니다.",storeKeysOff:"API 키 저장 꺼짐 — 입력한 키는 현재 페이지 세션에서만 사용되고 새로고침 후 사라질 수 있습니다.",deleteKeys:"저장된 API 키 삭제",deleteChat:"대화 기록 삭제",resetData:"My AI 데이터 초기화",deleteKeysOk:"API 키를 삭제했습니다.",deleteChatOk:"대화 기록을 삭제했습니다.",resetDataOk:"My AI 설정과 대화 기록을 초기화했습니다.",confirmDeleteKeys:"저장된 API 키를 삭제할까요?",confirmDeleteChat:"이 브라우저의 My AI 대화 기록을 삭제할까요?",confirmResetData:"이 브라우저의 My AI 설정, API 키, 동기화 코드, 대화 기록을 모두 초기화할까요?",allowControl:"앱 기능 제어 허용",personality:"어시스턴트 성격",advanced:"고급 · 검색 보강 · 커스텀 tool",searchUrl:"web_search 엔드포인트",customTools:"커스텀 tool",addTool:"tool 추가",sync:"기기 동기화 코드",syncNote:"내보내기 코드는 API 키 저장 토글이 켜진 경우에만 키를 포함합니다. 타인에게 공유하지 마세요.",export:"내보내기",copy:"복사",import:"가져오기",quickTab:"현재 탭 설명",quickResidence:"체류시간 계산",quickMaterial:"소재 정보",clearChat:"대화 초기화",send:"보내기",stop:"중지",idle:"대기 중",ready:"설정됨",incomplete:"미완성",testing:"테스트 중...",connected:"연결됨",failed:"실패",requesting:"요청 중...",toolRunning:"tool 실행: ",busy:"응답 대기 중입니다.",error:"오류",emptyResponse:"(빈 응답)",copyMsg:"복사",copiedMsg:"복사됨",startPrompt:"백엔드를 설정하고 대화를 시작하세요. 예: S1000P 물성과 권장 온도 알려줘.",inputPlaceholder:"구어체로 입력하세요. 예: 홀드업 2.5 L, 밀도 1100, 처리량 15 kg/h 체류시간은?",chatCleared:"대화 기록을 지웠습니다.",importOk:"설정을 가져왔습니다.",syncExported:"설정 코드를 만들었습니다.",syncParseFailed:"동기화 코드 해석 실패: ",syncStaged:"링크에 동기화 코드가 있습니다. 설정에서 확인 후 Import를 눌러 적용하세요 — API 키·앱 제어·커스텀 백엔드가 포함될 수 있습니다.",stopped:"중지됨.",toolLimit:"tool 호출 한도({max}) 초과",fallback:"실패 → {next} 폴백",singleBackendHint:"연결 실패 — endpoint/API 키를 확인하거나 Hybrid로 바꾸면 다른 백엔드로 폴백할 수 있습니다."}
   },
   en:{title:"PHA <em>Process</em> Tool",tab_proc:"Process Conditions",tab_ts:"Troubleshooting",tab_hist:"History",tab_ana:"Data Analysis",tab_calc:"Calculators",tab_props:"Materials DB",tab_photos:"Photos",tab_flash:"Flash Control",tab_comp:"Compounding Guide",tab_straw:"Straw Guide",tab_myai:"My AI",
       series:"Sample Series",process:"Process Type",notes:"Process Notes",save:"Save & Analyze",export:"Export Data",reset:"Reset",
@@ -885,7 +899,7 @@ const I18N = {
       flash_lang_notice:"Detailed content below is maintained in Korean for field operators. A full English translation is scheduled; contact the TARS team for a narrated walk-through until then.",
       flash_t0:"Overview",flash_t1:"Machine Setup",flash_t2:"Calculator",flash_t3:"Process Flow",
       flash_t4:"Checklist",flash_t5:"Troubleshooting",flash_t6:"Process Log",flash_t7:"User Manual",
-      myai:{title:"My AI",intro:"Connect LM Studio, Cerebras, OpenAI, Grok, or any OpenAI-compatible API and let the model call this PHA process app's calculators, data, and guide tools. Settings and chat stay in this browser only.",backend:"Backend",lmUrl:"LM Studio URL",model:"Model",test:"Test connection",unchecked:"Unchecked",lmNote:"On desktop you can use localhost. From a phone or deployed HTTPS page, use a Cloudflare Tunnel or Tailscale HTTPS URL.",apiProvider:"API provider to edit",apiKey:"API key",hybridBackends:"Hybrid enabled backends",hybridChars:"Use cloud/API over this length",hybridKeywords:"Complex-request keywords",allowControl:"Allow app control",personality:"Assistant personality",advanced:"Advanced · search and custom tools",searchUrl:"web_search endpoint",customTools:"Custom tools",addTool:"Add tool",sync:"Device sync code",syncNote:"Exported codes include API keys. Do not share them.",export:"Export",copy:"Copy",import:"Import",quickTab:"Current tab",quickResidence:"Residence time",quickMaterial:"Material info",clearChat:"Clear chat",send:"Send",stop:"Stop",idle:"Idle",ready:"Ready",incomplete:"Incomplete",testing:"Testing...",connected:"Connected",failed:"Failed",requesting:"Requesting...",toolRunning:"Running tool: ",busy:"Waiting for response.",error:"Error",emptyResponse:"(empty response)",copyMsg:"Copy",copiedMsg:"Copied",startPrompt:"Configure a backend and start chatting. Example: explain S1000P material data and recommended temperatures.",inputPlaceholder:"Ask naturally. Example: residence time for hold-up 2.5 L, density 1100, throughput 15 kg/h?",chatCleared:"Chat history cleared.",importOk:"Settings imported.",syncExported:"Settings code created.",syncParseFailed:"Could not parse sync code: ",syncStaged:"A sync code was found in the link. Review it in Settings and press Import to apply — it may include API keys, app control, and a custom backend.",stopped:"Stopped.",toolLimit:"Tool round limit ({max}) exceeded",fallback:"failed -> fallback to {next}",singleBackendHint:"Connection failed. Check endpoint/API key, or switch to Hybrid to allow fallback."}
+      myai:{title:"My AI",intro:"Connect LM Studio, Cerebras, OpenAI, Grok, or any OpenAI-compatible API and let the model call this PHA process app's calculators, data, and guide tools. Settings and chat stay in this browser only.",backend:"Backend",lmUrl:"LM Studio URL",model:"Model",test:"Test connection",unchecked:"Unchecked",lmNote:"On desktop you can use localhost. From a phone or deployed HTTPS page, use a Cloudflare Tunnel or Tailscale HTTPS URL.",apiProvider:"API provider to edit",apiKey:"API key",hybridBackends:"Hybrid enabled backends",hybridChars:"Use cloud/API over this length",hybridKeywords:"Complex-request keywords",storageTitle:"Personal keys and device storage",storageNote:"Each user creates and manages their own API key. This app does not store keys on a server; keys are saved only to this browser/device localStorage when the toggle below is on. Keep it off on shared devices and delete data after use.",storeKeys:"Save API keys on this device",storeKeysOn:"API key saving is on. Keys are stored in this browser/device localStorage.",storeKeysOff:"API key saving is off. Entered keys are used for this page session only and may disappear after reload.",deleteKeys:"Delete saved API keys",deleteChat:"Delete chat history",resetData:"Reset My AI data",deleteKeysOk:"API keys deleted.",deleteChatOk:"Chat history deleted.",resetDataOk:"My AI settings and chat history reset.",confirmDeleteKeys:"Delete saved API keys?",confirmDeleteChat:"Delete this browser's My AI chat history?",confirmResetData:"Reset this browser's My AI settings, API keys, sync code, and chat history?",allowControl:"Allow app control",personality:"Assistant personality",advanced:"Advanced · search and custom tools",searchUrl:"web_search endpoint",customTools:"Custom tools",addTool:"Add tool",sync:"Device sync code",syncNote:"Exported codes include API keys only when Save API keys is on. Do not share them.",export:"Export",copy:"Copy",import:"Import",quickTab:"Current tab",quickResidence:"Residence time",quickMaterial:"Material info",clearChat:"Clear chat",send:"Send",stop:"Stop",idle:"Idle",ready:"Ready",incomplete:"Incomplete",testing:"Testing...",connected:"Connected",failed:"Failed",requesting:"Requesting...",toolRunning:"Running tool: ",busy:"Waiting for response.",error:"Error",emptyResponse:"(empty response)",copyMsg:"Copy",copiedMsg:"Copied",startPrompt:"Configure a backend and start chatting. Example: explain S1000P material data and recommended temperatures.",inputPlaceholder:"Ask naturally. Example: residence time for hold-up 2.5 L, density 1100, throughput 15 kg/h?",chatCleared:"Chat history cleared.",importOk:"Settings imported.",syncExported:"Settings code created.",syncParseFailed:"Could not parse sync code: ",syncStaged:"A sync code was found in the link. Review it in Settings and press Import to apply — it may include API keys, app control, and a custom backend.",stopped:"Stopped.",toolLimit:"Tool round limit ({max}) exceeded",fallback:"failed -> fallback to {next}",singleBackendHint:"Connection failed. Check endpoint/API key, or switch to Hybrid to allow fallback."}
   }
 };
 const FLASH_BATCH_CONTEXT_BANNER = {
@@ -4142,6 +4156,7 @@ window.addEventListener('load', () => {
       custom:{ baseUrl:'', apiKey:'', model:'' }
     },
     hybrid:{ simpleMaxChars:400, keywords:['이미지','image','최적화','optimize','sweep','보고서','설계','비교'], backends:['lmstudio','cerebras'], apiProvider:'cerebras' },
+    storeKeys:false,
     allowControl:false,
     personality:'간결하고 공학적인 PHA 공정 조수. 수치는 tool 결과와 단위를 함께 제시한다.',
     webSearchEndpoint:'',
@@ -4208,8 +4223,42 @@ window.addEventListener('load', () => {
     });
     return out;
   }
+  function myaiHasAnyApiKey(settings){
+    const providers = settings && settings.providers ? settings.providers : {};
+    return MYAI_API_BACKENDS.some(p=>providers[p] && String(providers[p].apiKey || '').trim());
+  }
+  function myaiClearApiKeys(settings){
+    MYAI_API_BACKENDS.forEach(p=>{ if(settings.providers && settings.providers[p]) settings.providers[p].apiKey = ''; });
+    return settings;
+  }
+  function myaiCompatSettings(raw){
+    const incoming = raw && typeof raw === 'object' && !Array.isArray(raw) ? JSON.parse(JSON.stringify(raw)) : {};
+    if(incoming.api && typeof incoming.api === 'object' && !incoming.providers){
+      incoming.providers = {};
+      Object.keys(incoming.api).forEach(p=>{
+        incoming.providers[p] = {
+          baseUrl: incoming.api[p].baseUrl || incoming.api[p].url || '',
+          apiKey: incoming.api[p].apiKey || incoming.api[p].key || '',
+          model: incoming.api[p].model || ''
+        };
+      });
+    }
+    if(incoming.api && typeof incoming.api === 'object') delete incoming.api;
+    if(incoming.lm && typeof incoming.lm === 'object' && !incoming.lmstudio){
+      incoming.lmstudio = { baseUrl:incoming.lm.baseUrl || incoming.lm.url || '', model:incoming.lm.model || '', apiKey:incoming.lm.apiKey || incoming.lm.key || MYAI_DEFAULTS.lmstudio.apiKey };
+    }
+    if(incoming.lm && typeof incoming.lm === 'object') delete incoming.lm;
+    if(incoming.webSearch && typeof incoming.webSearch === 'object' && !incoming.webSearchEndpoint) incoming.webSearchEndpoint = incoming.webSearch.url || '';
+    if(incoming.hybrid && typeof incoming.hybrid === 'object'){
+      if(incoming.hybrid.routeChars != null && incoming.hybrid.simpleMaxChars == null) incoming.hybrid.simpleMaxChars = incoming.hybrid.routeChars;
+      if(Array.isArray(incoming.hybrid.routeKeywords) && !Array.isArray(incoming.hybrid.keywords)) incoming.hybrid.keywords = incoming.hybrid.routeKeywords;
+    }
+    return incoming;
+  }
   function myaiNormalizeSettings(raw){
-    const s = myaiDeepMerge(JSON.parse(JSON.stringify(MYAI_DEFAULTS)), raw || {});
+    const incoming = myaiCompatSettings(raw);
+    const hadStoreKeysFlag = Object.prototype.hasOwnProperty.call(incoming, 'storeKeys');
+    const s = myaiDeepMerge(JSON.parse(JSON.stringify(MYAI_DEFAULTS)), incoming);
     if(MYAI_ROUTE_BACKENDS.concat(['hybrid']).indexOf(s.backend) < 0) s.backend = MYAI_DEFAULTS.backend;
     s.hybrid.simpleMaxChars = Math.max(50, Number(s.hybrid.simpleMaxChars) || MYAI_DEFAULTS.hybrid.simpleMaxChars);
     if(!Array.isArray(s.hybrid.keywords)) s.hybrid.keywords = MYAI_DEFAULTS.hybrid.keywords.slice();
@@ -4222,10 +4271,16 @@ window.addEventListener('load', () => {
       ['baseUrl','apiKey','model'].forEach(k=>{ s.providers[p][k] = String(s.providers[p][k] || ''); });
     });
     ['baseUrl','apiKey','model'].forEach(k=>{ s.lmstudio[k] = String(s.lmstudio[k] || MYAI_DEFAULTS.lmstudio[k] || ''); });
+    s.storeKeys = hadStoreKeysFlag ? !!s.storeKeys : myaiHasAnyApiKey(s);
     s.allowControl = !!s.allowControl;
     s.personality = String(s.personality || MYAI_DEFAULTS.personality);
     s.webSearchEndpoint = String(s.webSearchEndpoint || '');
     s.customTools = Array.isArray(s.customTools) ? s.customTools.filter(t=>t && /^[A-Za-z0-9_\-]{1,40}$/.test(String(t.name||'')) && /^https?:\/\//.test(String(t.url||''))).map(t=>({ name:String(t.name), description:String(t.description||''), url:String(t.url) })) : [];
+    return s;
+  }
+  function myaiPersistableSettings(settings){
+    const s = myaiNormalizeSettings(JSON.parse(JSON.stringify(settings || {})));
+    if(!s.storeKeys) myaiClearApiKeys(s);
     return s;
   }
   function myaiLoadSettings(){
@@ -4236,8 +4291,9 @@ window.addEventListener('load', () => {
     return myaiNormalizeSettings({});
   }
   function myaiSaveSettings(){
-    try{ localStorage.setItem(MYAI_LS_KEY, JSON.stringify(MYAI_S)); }catch(e){ console.warn('[myai] settings save failed', e); }
+    try{ localStorage.setItem(MYAI_LS_KEY, JSON.stringify(myaiPersistableSettings(MYAI_S))); }catch(e){ console.warn('[myai] settings save failed', e); }
     myaiUpdateActiveStatus();
+    myaiUpdateStorageStatus();
   }
 
   function myaiIdbOpen(){
@@ -4404,6 +4460,7 @@ window.addEventListener('load', () => {
     if(selected.length) MYAI_S.hybrid.backends = selected;
     if(myai$('myaiHybridChars')) MYAI_S.hybrid.simpleMaxChars = Math.max(50, Number(myai$('myaiHybridChars').value) || 400);
     if(myai$('myaiHybridKw')) MYAI_S.hybrid.keywords = myai$('myaiHybridKw').value.split(',').map(s=>s.trim()).filter(Boolean);
+    if(myai$('myaiStoreKeys')) MYAI_S.storeKeys = !!myai$('myaiStoreKeys').checked;
     if(myai$('myaiAllowControl')) MYAI_S.allowControl = !!myai$('myaiAllowControl').checked;
     if(myai$('myaiPersonality')) MYAI_S.personality = myai$('myaiPersonality').value.trim() || MYAI_DEFAULTS.personality;
     if(myai$('myaiSearchUrl')) MYAI_S.webSearchEndpoint = myai$('myaiSearchUrl').value.trim();
@@ -4434,10 +4491,12 @@ window.addEventListener('load', () => {
     if(myai$('myaiApiNote')) myai$('myaiApiNote').textContent = myaiLang() === 'ko' ? meta.noteKo : meta.noteEn;
     if(myai$('myaiHybridChars')) myai$('myaiHybridChars').value = MYAI_S.hybrid.simpleMaxChars;
     if(myai$('myaiHybridKw')) myai$('myaiHybridKw').value = (MYAI_S.hybrid.keywords || []).join(', ');
+    if(myai$('myaiStoreKeys')) myai$('myaiStoreKeys').checked = !!MYAI_S.storeKeys;
     if(myai$('myaiAllowControl')) myai$('myaiAllowControl').checked = !!MYAI_S.allowControl;
     if(myai$('myaiPersonality')) myai$('myaiPersonality').value = MYAI_S.personality;
     if(myai$('myaiSearchUrl')) myai$('myaiSearchUrl').value = MYAI_S.webSearchEndpoint;
     myaiUpdateActiveStatus();
+    myaiUpdateStorageStatus();
   }
   function myaiUpdateActiveStatus(){
     const el = myai$('myaiActiveStatus');
@@ -4445,6 +4504,33 @@ window.addEventListener('load', () => {
     const ready = myaiBackendReady(MYAI_S.backend);
     el.textContent = myaiProviderLabel(MYAI_S.backend) + ' · ' + (ready ? myaiT('ready','Ready') : myaiT('incomplete','Incomplete'));
     el.className = 'myai-status' + (ready ? ' ok' : '');
+  }
+  function myaiUpdateStorageStatus(){
+    const el = myai$('myaiStorageStatus');
+    if(!el) return;
+    el.textContent = MYAI_S.storeKeys ? myaiT('storeKeysOn','API key saving is on.') : myaiT('storeKeysOff','API key saving is off.');
+  }
+  function myaiConfirm(key, fallback){
+    return typeof confirm !== 'function' || confirm(myaiT(key, fallback));
+  }
+  function myaiDeleteApiKeys(){
+    myaiClearApiKeys(MYAI_S);
+    myaiSaveSettings();
+    myaiRenderSettings();
+    myaiAddMsg('sys', myaiT('deleteKeysOk','API keys deleted.'));
+  }
+  function myaiClearChatHistory(message){
+    myaiHistory = [];
+    if(myai$('myaiMsgs')) myai$('myaiMsgs').innerHTML = '';
+    return myaiIdbClear().then(()=>myaiAddMsg('sys', message || myaiT('chatCleared','Chat history cleared.')));
+  }
+  function myaiResetMyAIData(){
+    try{ localStorage.removeItem(MYAI_LS_KEY); }catch(e){}
+    MYAI_S = myaiNormalizeSettings({});
+    if(myai$('myaiSyncCode')) myai$('myaiSyncCode').value = '';
+    myaiRenderSettings();
+    myaiRenderCustomTools();
+    return myaiClearChatHistory(myaiT('resetDataOk','My AI settings and chat history reset.'));
   }
   function myaiRenderCustomTools(){
     const el = myai$('myaiCustomToolList');
@@ -5107,7 +5193,7 @@ window.addEventListener('load', () => {
   }
   function myaiExportSync(){
     myaiSyncSettingsFromInputs();
-    const code = MYAI_SYNC_PREFIX + myaiB64uEncode(JSON.stringify({ v:1, settings:MYAI_S }));
+    const code = MYAI_SYNC_PREFIX + myaiB64uEncode(JSON.stringify({ v:1, settings:myaiPersistableSettings(MYAI_S) }));
     if(myai$('myaiSyncCode')) myai$('myaiSyncCode').value = code;
     myaiAddMsg('sys', myaiT('syncExported','Settings code created.'));
     return code;
@@ -5137,7 +5223,7 @@ window.addEventListener('load', () => {
     on('myaiLmUrl','change', myaiSyncSettingsFromInputs);
     on('myaiLmModel','change', myaiSyncSettingsFromInputs);
     on('myaiApiProvider','change', function(){ myaiSyncProviderFields(myaiRenderedApiProvider); myaiRenderedApiProvider = this.value; MYAI_S.hybrid.apiProvider = this.value; myaiSaveSettings(); myaiRenderSettings(); });
-    ['myaiApiUrl','myaiApiKey','myaiApiModel','myaiHybridChars','myaiHybridKw','myaiAllowControl','myaiPersonality','myaiSearchUrl'].forEach(id=>on(id,'change', myaiSyncSettingsFromInputs));
+    ['myaiApiUrl','myaiApiKey','myaiApiModel','myaiHybridChars','myaiHybridKw','myaiStoreKeys','myaiAllowControl','myaiPersonality','myaiSearchUrl'].forEach(id=>on(id,'change', myaiSyncSettingsFromInputs));
     document.querySelectorAll('#myai [data-myai-hybrid]').forEach(el=>el.addEventListener('change', myaiSyncSettingsFromInputs));
     on('myaiLmTest','click', ()=>myaiTestBackend('lmstudio', myai$('myaiLmStatus')));
     on('myaiApiTest','click', ()=>myaiTestBackend(myaiRenderedApiProvider, myai$('myaiApiStatus')));
@@ -5155,6 +5241,9 @@ window.addEventListener('load', () => {
       const res = myaiImportSync((myai$('myaiSyncCode') || {}).value || '');
       myaiAddMsg('sys', res.ok ? myaiT('importOk','Settings imported.') : res.error);
     });
+    on('myaiDeleteKeys','click', ()=>{ if(myaiConfirm('confirmDeleteKeys','Delete saved API keys?')) myaiDeleteApiKeys(); });
+    on('myaiDeleteChat','click', ()=>{ if(myaiConfirm('confirmDeleteChat','Delete chat history?')) myaiClearChatHistory(myaiT('deleteChatOk','Chat history deleted.')); });
+    on('myaiResetMyAIData','click', ()=>{ if(myaiConfirm('confirmResetData','Reset My AI data?')) myaiResetMyAIData(); });
     on('myaiSend','click', ()=>{ const input=myai$('myaiInput'); const text=input ? input.value : ''; if(input && !myaiBusy) input.value=''; myaiSendUser(text); });
     on('myaiStop','click', ()=>{ myaiUserStopped = true; if(myaiCurrentAbort){ try{ myaiCurrentAbort.abort(); }catch(e){} } myaiSetChatStatus(myaiT('stopped','Stopped.')); });
     on('myaiInput','keydown', ev=>{
@@ -5168,11 +5257,7 @@ window.addEventListener('load', () => {
       }
     });
     document.querySelectorAll('#myai [data-myai-quick]').forEach(btn=>btn.addEventListener('click', ()=>myaiSendUser(btn.getAttribute('data-myai-quick'))));
-    on('myaiClearChat','click', ()=>{
-      myaiHistory = [];
-      if(myai$('myaiMsgs')) myai$('myaiMsgs').innerHTML = '';
-      myaiIdbClear().then(()=>myaiAddMsg('sys', myaiT('chatCleared','Chat history cleared.')));
-    });
+    on('myaiClearChat','click', ()=>myaiClearChatHistory(myaiT('chatCleared','Chat history cleared.')));
     document.addEventListener('click', ev=>{
       const btn = ev.target && ev.target.closest ? ev.target.closest('[data-tab]') : null;
       if(btn) myaiSetLastWorkTab(btn.getAttribute('data-tab'));
