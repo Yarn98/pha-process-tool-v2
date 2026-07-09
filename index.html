@@ -604,7 +604,13 @@
         #myai .myai-msg{max-width:95%;padding:9px 12px;border-radius:var(--rad-lg);font-size:13.5px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
         #myai .myai-msg.user{align-self:flex-end;background:var(--accent);color:#F5F1E8}
         #myai .myai-msg.assistant{align-self:flex-start;background:var(--paper);border:1px solid var(--rule)}
-        #myai .myai-msg.tool{align-self:flex-start;background:var(--paper-3);font:11.5px var(--mono,monospace);max-height:190px;overflow:auto}
+        #myai .myai-msg.tool{align-self:flex-start;background:var(--paper-3);font:11.5px var(--mono,monospace);padding:6px 10px}
+        #myai .myai-msg.tool>details>summary{cursor:pointer;color:var(--muted);font:11px var(--mono,monospace)}
+        #myai .myai-msg.tool>details>.myai-json{max-height:260px;overflow:auto}
+        #myai .myai-msgs,#myai .myai-json,#myai .myai-table-wrap{scrollbar-width:thin;scrollbar-color:var(--rule-strong) transparent}
+        #myai .myai-msgs::-webkit-scrollbar,#myai .myai-json::-webkit-scrollbar,#myai .myai-table-wrap::-webkit-scrollbar{width:8px;height:8px}
+        #myai .myai-msgs::-webkit-scrollbar-thumb,#myai .myai-json::-webkit-scrollbar-thumb,#myai .myai-table-wrap::-webkit-scrollbar-thumb{background:var(--rule-strong);border-radius:8px}
+        #myai .myai-msgs::-webkit-scrollbar-track,#myai .myai-json::-webkit-scrollbar-track{background:transparent}
         #myai .myai-msg.sys{align-self:center;background:transparent;color:var(--muted);font-size:11.5px}
         #myai .myai-msg.structured,#myai .myai-msg.markdown{max-width:98%}
         #myai .myai-copy{float:right;margin:-2px 0 0 8px;cursor:pointer;font-size:10.5px;padding:2px 8px;border:1px solid var(--rule);border-radius:999px;background:var(--paper);color:var(--muted)}
@@ -616,6 +622,8 @@
         #myai .myai-pill{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 7px;border:1px solid var(--rule-strong);border-radius:999px;color:var(--muted)}
         #myai .myai-pill.ok{color:var(--ok);border-color:var(--ok);background:rgba(44,93,63,.08)}
         #myai .myai-pill.warn{color:var(--warm);border-color:var(--warm);background:rgba(184,99,46,.08)}
+        #myai .myai-json-details{margin-top:8px}
+        #myai .myai-json-details>summary{cursor:pointer;color:var(--muted);font-size:11px}
         #myai .myai-quick{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 0}
         #myai .myai-inputrow{display:flex;gap:8px;margin-top:8px;align-items:flex-end}
         #myai .myai-inputrow textarea{flex:1;min-height:48px;max-height:150px}
@@ -624,13 +632,18 @@
         #myai .myai-check input{width:auto}
         #myai .myai-checkgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:6px 10px}
         #myai .myai-checkgrid .myai-check{margin:0}
-        #myai .myai-privacy{margin-top:12px;padding:10px;border:1px solid var(--rule);border-radius:var(--rad-sm);background:var(--paper)}
         #myai details{border-top:1px solid var(--rule);margin-top:12px;padding-top:8px}
         #myai summary{cursor:pointer;font-weight:700;font-size:13px}
-        #myai .myai-json{font:11.5px var(--mono,monospace);background:var(--paper-2);border:1px solid var(--rule);border-radius:var(--rad-sm);padding:8px;margin-top:6px;overflow-x:auto;white-space:pre}
+        #myai .myai-json{font:11.5px var(--mono,monospace);background:var(--paper-2);border:1px solid var(--rule);border-radius:var(--rad-sm);padding:8px;margin-top:6px;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
         #myai .myai-md-h{font-weight:700;margin:8px 0 3px}
         #myai .myai-md-sp{height:6px}
         #myai .myai-msg.markdown ul{margin:4px 0 4px 18px;padding:0}
+        #myai .myai-group{border:1px solid var(--rule);border-radius:var(--rad-sm);padding:8px 10px;margin:8px 0;background:var(--paper)}
+        #myai .myai-group[hidden]{display:none}
+        #myai .myai-group>.myai-field:first-child{margin-top:2px}
+        #myai .myai-subtitle{margin:0 0 8px;font-size:13px;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+        #myai .myai-modelrow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
+        #myai .myai-modelrow select{flex:1;min-width:150px}
         @media (max-width: 640px){#myai .myai-inputrow{flex-wrap:wrap}#myai .myai-inputrow textarea{min-width:100%}#myai .myai-msg{max-width:100%;font-size:13px}}
       </style>
 
@@ -650,26 +663,18 @@
             </select>
           </div>
 
-          <div class="myai-privacy">
-            <div class="myai-label" data-i18n="myai.storageTitle">Personal keys and device storage</div>
-            <div class="myai-note" data-i18n="myai.storageNote">Each user brings and manages their own API key. This app does not store keys on a server; API keys are saved only in this browser/device when the toggle below is on.</div>
-            <label class="myai-check"><input type="checkbox" id="myaiStoreKeys"><span data-i18n="myai.storeKeys">Save API keys on this device</span></label>
-            <div class="myai-note" id="myaiStorageStatus"></div>
-            <div class="myai-row" style="margin-top:8px">
-              <button type="button" class="myai-btn" id="myaiDeleteKeys" data-i18n="myai.deleteKeys">Delete saved API keys</button>
-              <button type="button" class="myai-btn" id="myaiDeleteChat" data-i18n="myai.deleteChat">Delete chat history</button>
-              <button type="button" class="myai-btn danger" id="myaiResetMyAIData" data-i18n="myai.resetData">Reset My AI data</button>
-            </div>
-          </div>
-
-          <div id="myaiLmGroup">
+          <div class="myai-group" id="myaiLmGroup">
             <div class="myai-field">
               <label for="myaiLmUrl" data-i18n="myai.lmUrl">LM Studio URL</label>
               <input id="myaiLmUrl" type="text" autocomplete="off" placeholder="http://localhost:1234/v1">
             </div>
             <div class="myai-field">
-              <label for="myaiLmModel" data-i18n="myai.model">Model</label>
+              <label for="myaiLmModel" data-i18n="myai.modelHint">Model (blank = server's first model)</label>
               <input id="myaiLmModel" type="text" autocomplete="off" placeholder="local-model">
+              <div class="myai-modelrow">
+                <button type="button" class="myai-btn" id="myaiLmModels" data-i18n="myai.loadModels">Load models</button>
+                <select id="myaiLmModelSelect" aria-label="LM Studio model"><option value="" data-i18n="myai.modelList">Model list</option></select>
+              </div>
             </div>
             <div class="myai-row">
               <button type="button" class="myai-btn" id="myaiLmTest" data-i18n="myai.test">Test</button>
@@ -678,11 +683,35 @@
             <div class="myai-note" data-i18n="myai.lmNote">On mobile, localhost means the phone. Use a Cloudflare tunnel or Tailscale HTTPS address for LM Studio from deployed HTTPS pages.</div>
           </div>
 
-          <div id="myaiApiGroup">
+          <div class="myai-group" id="myaiCbGroup">
+            <div class="myai-field">
+              <label for="myaiCbUrl" data-i18n="myai.cbUrl">Cerebras API base URL</label>
+              <input id="myaiCbUrl" type="text" autocomplete="off" placeholder="https://api.cerebras.ai/v1">
+            </div>
+            <div class="myai-field">
+              <label for="myaiCbKey" data-i18n="myai.apiKey">API key</label>
+              <input id="myaiCbKey" type="password" autocomplete="off" placeholder="csk-… / gateway token">
+            </div>
+            <div class="myai-field">
+              <label for="myaiCbModel" data-i18n="myai.model">Model</label>
+              <input id="myaiCbModel" type="text" autocomplete="off" placeholder="gpt-oss-120b">
+              <div class="myai-modelrow">
+                <button type="button" class="myai-btn" id="myaiCbModels" data-i18n="myai.loadModels">Load models</button>
+                <select id="myaiCbModelSelect" aria-label="Cerebras model"><option value="" data-i18n="myai.modelList">Model list</option></select>
+              </div>
+            </div>
+            <div class="myai-row">
+              <button type="button" class="myai-btn" id="myaiCbTest" data-i18n="myai.test">Test</button>
+              <span class="myai-status" id="myaiCbStatus" data-i18n="myai.unchecked">Unchecked</span>
+            </div>
+            <div class="myai-note" data-i18n="myai.cbNote">Use Cerebras directly or a Cloudflare AI Gateway OpenAI-compatible endpoint. The key is stored only in this browser.</div>
+          </div>
+
+          <div class="myai-group" id="myaiApiGroup">
+            <div class="myai-subtitle" data-i18n="myai.subTitle">Subscription / API AI</div>
             <div class="myai-field" id="myaiApiProviderField">
               <label for="myaiApiProvider" data-i18n="myai.apiProvider">API provider to edit</label>
               <select id="myaiApiProvider">
-                <option value="cerebras">Cerebras</option>
                 <option value="openai">OpenAI GPT</option>
                 <option value="grok">xAI Grok</option>
                 <option value="custom">Custom</option>
@@ -699,6 +728,10 @@
             <div class="myai-field">
               <label for="myaiApiModel" data-i18n="myai.model">Model</label>
               <input id="myaiApiModel" type="text" autocomplete="off" placeholder="provider-model">
+              <div class="myai-modelrow">
+                <button type="button" class="myai-btn" id="myaiApiModels" data-i18n="myai.loadModels">Load models</button>
+                <select id="myaiApiModelSelect" aria-label="API model"><option value="" data-i18n="myai.modelList">Model list</option></select>
+              </div>
             </div>
             <div class="myai-row">
               <button type="button" class="myai-btn" id="myaiApiTest" data-i18n="myai.test">Test</button>
@@ -707,7 +740,7 @@
             <div class="myai-note" id="myaiApiNote"></div>
           </div>
 
-          <div id="myaiHybridGroup" hidden>
+          <div class="myai-group" id="myaiHybridGroup" hidden>
             <div class="myai-field">
               <span class="myai-label" data-i18n="myai.hybridBackends">Hybrid backends</span>
               <div class="myai-checkgrid">
@@ -726,11 +759,25 @@
               <label for="myaiHybridKw" data-i18n="myai.hybridKeywords">Complex keywords</label>
               <input id="myaiHybridKw" type="text" autocomplete="off">
             </div>
+            <div class="myai-note" data-i18n="myai.hybridNote">Short tool calls prefer the selected LM Studio; long or complex requests route to a ready cloud/API backend, falling back automatically on failure.</div>
           </div>
 
           <div class="myai-row" style="margin-top:10px">
             <span class="myai-status" id="myaiActiveStatus">Connection: unset</span>
           </div>
+
+          <div class="myai-group" id="myaiPrivacyGroup">
+            <div class="myai-subtitle" data-i18n="myai.storageTitle">Personal keys and device storage</div>
+            <div class="myai-note" data-i18n="myai.storageNote">Each user brings and manages their own API key. This app does not store keys on a server; API keys are saved only in this browser/device when the toggle below is on.</div>
+            <label class="myai-check"><input type="checkbox" id="myaiStoreKeys"><span data-i18n="myai.storeKeys">Save API keys on this device</span></label>
+            <div class="myai-note" id="myaiStorageStatus"></div>
+            <div class="myai-row" style="margin-top:8px">
+              <button type="button" class="myai-btn" id="myaiDeleteKeys" data-i18n="myai.deleteKeys">Delete saved API keys</button>
+              <button type="button" class="myai-btn" id="myaiDeleteChat" data-i18n="myai.deleteChat">Delete chat history</button>
+              <button type="button" class="myai-btn danger" id="myaiResetMyAIData" data-i18n="myai.resetData">Reset My AI data</button>
+            </div>
+          </div>
+
           <label class="myai-check"><input type="checkbox" id="myaiAllowControl"><span data-i18n="myai.allowControl">Allow app control</span></label>
           <div class="myai-field">
             <label for="myaiPersonality" data-i18n="myai.personality">Assistant personality</label>
@@ -879,7 +926,7 @@ const I18N = {
       flash_lang_notice:"아래 상세 내용은 현장 작업자용 한국어로 유지됩니다. 영문 전체 번역은 별도 세션에서 준비 중입니다.",
       flash_t0:"전체 개요",flash_t1:"기계 설정",flash_t2:"계산기",flash_t3:"프로세스 플로우",
       flash_t4:"체크리스트",flash_t5:"문제 해결",flash_t6:"공정 로그",flash_t7:"사용 설명서",
-      myai:{title:"My AI",intro:"LM Studio, Cerebras, OpenAI, Grok 또는 OpenAI-compatible API를 연결해 이 PHA 공정 앱의 계산기·데이터·가이드를 tool-calling으로 실행합니다. 설정과 대화는 이 브라우저에만 저장됩니다.",backend:"백엔드",lmUrl:"LM Studio 주소",model:"모델",test:"연결 테스트",unchecked:"미확인",lmNote:"PC에서는 localhost를 그대로 쓸 수 있습니다. 핸드폰/배포 HTTPS 페이지에서는 Cloudflare Tunnel 또는 Tailscale HTTPS 주소를 사용하세요.",apiProvider:"편집할 API 제공자",apiKey:"API 키",hybridBackends:"Hybrid 활성 백엔드",hybridChars:"이 글자 수 초과 시 클라우드/API",hybridKeywords:"복잡 요청 키워드",storageTitle:"개인 키와 기기 저장",storageNote:"API 키는 각 사용자가 직접 발급·관리합니다. 이 앱은 서버에 키를 저장하지 않으며, 아래 토글이 켜진 경우에만 현재 브라우저/기기의 localStorage에 저장합니다. 공용 기기에서는 끄고 사용 후 삭제하세요.",storeKeys:"API 키를 이 기기에 저장",storeKeysOn:"API 키 저장 켜짐 — 현재 브라우저/기기 localStorage에 저장됩니다.",storeKeysOff:"API 키 저장 꺼짐 — 입력한 키는 현재 페이지 세션에서만 사용되고 새로고침 후 사라질 수 있습니다.",deleteKeys:"저장된 API 키 삭제",deleteChat:"대화 기록 삭제",resetData:"My AI 데이터 초기화",deleteKeysOk:"API 키를 삭제했습니다.",deleteChatOk:"대화 기록을 삭제했습니다.",resetDataOk:"My AI 설정과 대화 기록을 초기화했습니다.",confirmDeleteKeys:"저장된 API 키를 삭제할까요?",confirmDeleteChat:"이 브라우저의 My AI 대화 기록을 삭제할까요?",confirmResetData:"이 브라우저의 My AI 설정, API 키, 동기화 코드, 대화 기록을 모두 초기화할까요?",allowControl:"앱 기능 제어 허용",personality:"어시스턴트 성격",advanced:"고급 · 검색 보강 · 커스텀 tool",searchUrl:"web_search 엔드포인트",customTools:"커스텀 tool",addTool:"tool 추가",sync:"기기 동기화 코드",syncNote:"내보내기 코드는 API 키 저장 토글이 켜진 경우에만 키를 포함합니다. 타인에게 공유하지 마세요.",export:"내보내기",copy:"복사",import:"가져오기",quickTab:"현재 탭 설명",quickResidence:"체류시간 계산",quickMaterial:"소재 정보",clearChat:"대화 초기화",send:"보내기",stop:"중지",idle:"대기 중",ready:"설정됨",incomplete:"미완성",testing:"테스트 중...",connected:"연결됨",failed:"실패",requesting:"요청 중...",toolRunning:"tool 실행: ",busy:"응답 대기 중입니다.",error:"오류",emptyResponse:"(빈 응답)",copyMsg:"복사",copiedMsg:"복사됨",startPrompt:"백엔드를 설정하고 대화를 시작하세요. 예: S1000P 물성과 권장 온도 알려줘.",inputPlaceholder:"구어체로 입력하세요. 예: 홀드업 2.5 L, 밀도 1100, 처리량 15 kg/h 체류시간은?",chatCleared:"대화 기록을 지웠습니다.",importOk:"설정을 가져왔습니다.",syncExported:"설정 코드를 만들었습니다.",syncParseFailed:"동기화 코드 해석 실패: ",syncStaged:"링크에 동기화 코드가 있습니다. 설정에서 확인 후 Import를 눌러 적용하세요 — API 키·앱 제어·커스텀 백엔드가 포함될 수 있습니다.",stopped:"중지됨.",toolLimit:"tool 호출 한도({max}) 초과",fallback:"실패 → {next} 폴백",singleBackendHint:"연결 실패 — endpoint/API 키를 확인하거나 Hybrid로 바꾸면 다른 백엔드로 폴백할 수 있습니다."}
+      myai:{title:"My AI",intro:"LM Studio, Cerebras, OpenAI, Grok 또는 OpenAI-compatible API를 연결해 이 PHA 공정 앱의 계산기·데이터·가이드를 tool-calling으로 실행합니다. 설정과 대화는 이 브라우저에만 저장됩니다.",backend:"백엔드",lmUrl:"LM Studio 주소",model:"모델",test:"연결 테스트",unchecked:"미확인",lmNote:"PC에서는 localhost를 그대로 쓸 수 있습니다. 핸드폰/배포 HTTPS 페이지에서는 Cloudflare Tunnel 또는 Tailscale HTTPS 주소를 사용하세요.",apiProvider:"편집할 API 제공자",apiKey:"API 키",hybridBackends:"Hybrid 활성 백엔드",hybridChars:"이 글자 수 초과 시 클라우드/API",hybridKeywords:"복잡 요청 키워드",storageTitle:"개인 키와 기기 저장",storageNote:"API 키는 각 사용자가 직접 발급·관리합니다. 이 앱은 서버에 키를 저장하지 않으며, 아래 토글이 켜진 경우에만 현재 브라우저/기기의 localStorage에 저장합니다. 공용 기기에서는 끄고 사용 후 삭제하세요.",storeKeys:"API 키를 이 기기에 저장",storeKeysOn:"API 키 저장 켜짐 — 현재 브라우저/기기 localStorage에 저장됩니다.",storeKeysOff:"API 키 저장 꺼짐 — 입력한 키는 현재 페이지 세션에서만 사용되고 새로고침 후 사라질 수 있습니다.",deleteKeys:"저장된 API 키 삭제",deleteChat:"대화 기록 삭제",resetData:"My AI 데이터 초기화",deleteKeysOk:"API 키를 삭제했습니다.",deleteChatOk:"대화 기록을 삭제했습니다.",resetDataOk:"My AI 설정과 대화 기록을 초기화했습니다.",confirmDeleteKeys:"저장된 API 키를 삭제할까요?",confirmDeleteChat:"이 브라우저의 My AI 대화 기록을 삭제할까요?",confirmResetData:"이 브라우저의 My AI 설정, API 키, 동기화 코드, 대화 기록을 모두 초기화할까요?",allowControl:"앱 기능 제어 허용",personality:"어시스턴트 성격",advanced:"고급 · 검색 보강 · 커스텀 tool",searchUrl:"web_search 엔드포인트",customTools:"커스텀 tool",addTool:"tool 추가",sync:"기기 동기화 코드",syncNote:"내보내기 코드는 API 키 저장 토글이 켜진 경우에만 키를 포함합니다. 타인에게 공유하지 마세요.",export:"내보내기",copy:"복사",import:"가져오기",quickTab:"현재 탭 설명",quickResidence:"체류시간 계산",quickMaterial:"소재 정보",clearChat:"대화 초기화",send:"보내기",stop:"중지",idle:"대기 중",ready:"설정됨",incomplete:"미완성",testing:"테스트 중...",connected:"연결됨",failed:"실패",requesting:"요청 중...",toolRunning:"tool 실행: ",busy:"응답 대기 중입니다.",error:"오류",emptyResponse:"(빈 응답)",copyMsg:"복사",copiedMsg:"복사됨",startPrompt:"백엔드를 설정하고 대화를 시작하세요. 예: S1000P 물성과 권장 온도 알려줘.",inputPlaceholder:"구어체로 입력하세요. 예: 홀드업 2.5 L, 밀도 1100, 처리량 15 kg/h 체류시간은?",chatCleared:"대화 기록을 지웠습니다.",importOk:"설정을 가져왔습니다.",syncExported:"설정 코드를 만들었습니다.",syncParseFailed:"동기화 코드 해석 실패: ",syncStaged:"링크에 동기화 코드가 있습니다. 설정에서 확인 후 Import를 눌러 적용하세요 — API 키·앱 제어·커스텀 백엔드가 포함될 수 있습니다.",stopped:"중지됨.",toolLimit:"tool 호출 한도({max}) 초과",fallback:"실패 → {next} 폴백",singleBackendHint:"연결 실패 — endpoint/API 키를 확인하거나 Hybrid로 바꾸면 다른 백엔드로 폴백할 수 있습니다.",modelHint:"모델 (비우면 서버 첫 모델 자동)",cbUrl:"Cerebras API base URL",cbNote:"Cerebras 또는 Cloudflare AI Gateway의 OpenAI-호환 endpoint를 입력합니다. 키는 이 브라우저에만 저장됩니다.",subTitle:"구독형/API AI",hybridNote:"간단한 tool 호출·짧은 질문은 선택된 LM Studio를 우선 사용하고, 길거나 복잡한 요청은 준비된 클라우드/API 백엔드로 자동 분배합니다. 실패 시 다음 백엔드로 폴백합니다.",loadModels:"모델 불러오기",modelList:"모델 목록",loadingModels:"모델 불러오는 중…",models:"개 모델",modelsFallback:"추천 목록을 불러왔습니다",currentModel:"현재 입력값"}
   },
   en:{title:"PHA <em>Process</em> Tool",tab_proc:"Process Conditions",tab_ts:"Troubleshooting",tab_hist:"History",tab_ana:"Data Analysis",tab_calc:"Calculators",tab_props:"Materials DB",tab_photos:"Photos",tab_flash:"Flash Control",tab_comp:"Compounding Guide",tab_straw:"Straw Guide",tab_myai:"My AI",
       series:"Sample Series",process:"Process Type",notes:"Process Notes",save:"Save & Analyze",export:"Export Data",reset:"Reset",
@@ -899,7 +946,7 @@ const I18N = {
       flash_lang_notice:"Detailed content below is maintained in Korean for field operators. A full English translation is scheduled; contact the TARS team for a narrated walk-through until then.",
       flash_t0:"Overview",flash_t1:"Machine Setup",flash_t2:"Calculator",flash_t3:"Process Flow",
       flash_t4:"Checklist",flash_t5:"Troubleshooting",flash_t6:"Process Log",flash_t7:"User Manual",
-      myai:{title:"My AI",intro:"Connect LM Studio, Cerebras, OpenAI, Grok, or any OpenAI-compatible API and let the model call this PHA process app's calculators, data, and guide tools. Settings and chat stay in this browser only.",backend:"Backend",lmUrl:"LM Studio URL",model:"Model",test:"Test connection",unchecked:"Unchecked",lmNote:"On desktop you can use localhost. From a phone or deployed HTTPS page, use a Cloudflare Tunnel or Tailscale HTTPS URL.",apiProvider:"API provider to edit",apiKey:"API key",hybridBackends:"Hybrid enabled backends",hybridChars:"Use cloud/API over this length",hybridKeywords:"Complex-request keywords",storageTitle:"Personal keys and device storage",storageNote:"Each user creates and manages their own API key. This app does not store keys on a server; keys are saved only to this browser/device localStorage when the toggle below is on. Keep it off on shared devices and delete data after use.",storeKeys:"Save API keys on this device",storeKeysOn:"API key saving is on. Keys are stored in this browser/device localStorage.",storeKeysOff:"API key saving is off. Entered keys are used for this page session only and may disappear after reload.",deleteKeys:"Delete saved API keys",deleteChat:"Delete chat history",resetData:"Reset My AI data",deleteKeysOk:"API keys deleted.",deleteChatOk:"Chat history deleted.",resetDataOk:"My AI settings and chat history reset.",confirmDeleteKeys:"Delete saved API keys?",confirmDeleteChat:"Delete this browser's My AI chat history?",confirmResetData:"Reset this browser's My AI settings, API keys, sync code, and chat history?",allowControl:"Allow app control",personality:"Assistant personality",advanced:"Advanced · search and custom tools",searchUrl:"web_search endpoint",customTools:"Custom tools",addTool:"Add tool",sync:"Device sync code",syncNote:"Exported codes include API keys only when Save API keys is on. Do not share them.",export:"Export",copy:"Copy",import:"Import",quickTab:"Current tab",quickResidence:"Residence time",quickMaterial:"Material info",clearChat:"Clear chat",send:"Send",stop:"Stop",idle:"Idle",ready:"Ready",incomplete:"Incomplete",testing:"Testing...",connected:"Connected",failed:"Failed",requesting:"Requesting...",toolRunning:"Running tool: ",busy:"Waiting for response.",error:"Error",emptyResponse:"(empty response)",copyMsg:"Copy",copiedMsg:"Copied",startPrompt:"Configure a backend and start chatting. Example: explain S1000P material data and recommended temperatures.",inputPlaceholder:"Ask naturally. Example: residence time for hold-up 2.5 L, density 1100, throughput 15 kg/h?",chatCleared:"Chat history cleared.",importOk:"Settings imported.",syncExported:"Settings code created.",syncParseFailed:"Could not parse sync code: ",syncStaged:"A sync code was found in the link. Review it in Settings and press Import to apply — it may include API keys, app control, and a custom backend.",stopped:"Stopped.",toolLimit:"Tool round limit ({max}) exceeded",fallback:"failed -> fallback to {next}",singleBackendHint:"Connection failed. Check endpoint/API key, or switch to Hybrid to allow fallback."}
+      myai:{title:"My AI",intro:"Connect LM Studio, Cerebras, OpenAI, Grok, or any OpenAI-compatible API and let the model call this PHA process app's calculators, data, and guide tools. Settings and chat stay in this browser only.",backend:"Backend",lmUrl:"LM Studio URL",model:"Model",test:"Test connection",unchecked:"Unchecked",lmNote:"On desktop you can use localhost. From a phone or deployed HTTPS page, use a Cloudflare Tunnel or Tailscale HTTPS URL.",apiProvider:"API provider to edit",apiKey:"API key",hybridBackends:"Hybrid enabled backends",hybridChars:"Use cloud/API over this length",hybridKeywords:"Complex-request keywords",storageTitle:"Personal keys and device storage",storageNote:"Each user creates and manages their own API key. This app does not store keys on a server; keys are saved only to this browser/device localStorage when the toggle below is on. Keep it off on shared devices and delete data after use.",storeKeys:"Save API keys on this device",storeKeysOn:"API key saving is on. Keys are stored in this browser/device localStorage.",storeKeysOff:"API key saving is off. Entered keys are used for this page session only and may disappear after reload.",deleteKeys:"Delete saved API keys",deleteChat:"Delete chat history",resetData:"Reset My AI data",deleteKeysOk:"API keys deleted.",deleteChatOk:"Chat history deleted.",resetDataOk:"My AI settings and chat history reset.",confirmDeleteKeys:"Delete saved API keys?",confirmDeleteChat:"Delete this browser's My AI chat history?",confirmResetData:"Reset this browser's My AI settings, API keys, sync code, and chat history?",allowControl:"Allow app control",personality:"Assistant personality",advanced:"Advanced · search and custom tools",searchUrl:"web_search endpoint",customTools:"Custom tools",addTool:"Add tool",sync:"Device sync code",syncNote:"Exported codes include API keys only when Save API keys is on. Do not share them.",export:"Export",copy:"Copy",import:"Import",quickTab:"Current tab",quickResidence:"Residence time",quickMaterial:"Material info",clearChat:"Clear chat",send:"Send",stop:"Stop",idle:"Idle",ready:"Ready",incomplete:"Incomplete",testing:"Testing...",connected:"Connected",failed:"Failed",requesting:"Requesting...",toolRunning:"Running tool: ",busy:"Waiting for response.",error:"Error",emptyResponse:"(empty response)",copyMsg:"Copy",copiedMsg:"Copied",startPrompt:"Configure a backend and start chatting. Example: explain S1000P material data and recommended temperatures.",inputPlaceholder:"Ask naturally. Example: residence time for hold-up 2.5 L, density 1100, throughput 15 kg/h?",chatCleared:"Chat history cleared.",importOk:"Settings imported.",syncExported:"Settings code created.",syncParseFailed:"Could not parse sync code: ",syncStaged:"A sync code was found in the link. Review it in Settings and press Import to apply — it may include API keys, app control, and a custom backend.",stopped:"Stopped.",toolLimit:"Tool round limit ({max}) exceeded",fallback:"failed -> fallback to {next}",singleBackendHint:"Connection failed. Check endpoint/API key, or switch to Hybrid to allow fallback.",modelHint:"Model (blank = server's first model)",cbUrl:"Cerebras API base URL",cbNote:"Use Cerebras directly or a Cloudflare AI Gateway OpenAI-compatible endpoint. The key is stored only in this browser.",subTitle:"Subscription / API AI",hybridNote:"Short tool calls and questions prefer the selected LM Studio; long or complex requests route to a ready cloud/API backend, falling back automatically on failure.",loadModels:"Load models",modelList:"Model list",loadingModels:"Loading models…",models:"models",modelsFallback:"Loaded suggested list",currentModel:"current"}
   }
 };
 const FLASH_BATCH_CONTEXT_BANNER = {
@@ -4139,6 +4186,14 @@ window.addEventListener('load', () => {
   const MYAI_MAX_TOOL_ROUNDS = 6;
   const MYAI_ROUTE_BACKENDS = ['lmstudio','cerebras','openai','grok','custom'];
   const MYAI_API_BACKENDS = ['cerebras','openai','grok','custom'];
+  const MYAI_SUB_BACKENDS = ['openai','grok','custom'];
+  const MYAI_FALLBACK_MODELS = {
+    lmstudio:[],
+    cerebras:['gpt-oss-120b','llama-3.3-70b','llama3.1-8b'],
+    openai:['gpt-4.1','gpt-4.1-mini','gpt-4o','o4-mini'],
+    grok:['grok-4.5','grok-4','grok-3','grok-3-mini'],
+    custom:[]
+  };
   const MYAI_HYBRID_IDS = {
     lmstudio:'myaiHybridLm',
     cerebras:'myaiHybridCb',
@@ -4201,7 +4256,8 @@ window.addEventListener('load', () => {
   let myaiCurrentAbort = null;
   let myaiUserStopped = false;
   let myaiLastWorkTab = 'proc';
-  let myaiRenderedApiProvider = 'cerebras';
+  let myaiRenderedApiProvider = 'openai';
+  const myaiModelCache = {};
   try{ myaiLastWorkTab = sessionStorage.getItem('pha.myai.lastWorkTab') || myaiLastWorkTab; }catch(e){}
   let myaiBootSyncHash = (location.hash || '').indexOf('myai-sync=') >= 0 ? location.hash : '';
 
@@ -4326,14 +4382,16 @@ window.addEventListener('load', () => {
     return (MYAI_S.hybrid.backends || []).filter((b,i,a)=>MYAI_ROUTE_BACKENDS.indexOf(b) >= 0 && a.indexOf(b) === i);
   }
   function myaiHybridReadyBackends(){ return myaiHybridBackends().filter(myaiBackendReady); }
-  function myaiActiveApiProvider(){
-    if(MYAI_API_BACKENDS.indexOf(MYAI_S.backend) >= 0) return MYAI_S.backend;
+  // Which subscription/API provider (openai/grok/custom) the shared Sub group edits.
+  // Cerebras has its own dedicated group and is not part of this rotation.
+  function myaiActiveSubProvider(){
+    if(MYAI_SUB_BACKENDS.indexOf(MYAI_S.backend) >= 0) return MYAI_S.backend;
     if(MYAI_S.backend === 'hybrid'){
-      const selected = myaiHybridBackends().filter(b=>MYAI_API_BACKENDS.indexOf(b) >= 0);
-      if(selected.indexOf(MYAI_S.hybrid.apiProvider) >= 0) return MYAI_S.hybrid.apiProvider;
-      return selected[0] || '';
+      const selected = myaiHybridBackends().filter(b=>MYAI_SUB_BACKENDS.indexOf(b) >= 0);
+      if(selected.indexOf(myaiRenderedApiProvider) >= 0) return myaiRenderedApiProvider;
+      if(selected.length) return selected[0];
     }
-    return '';
+    return MYAI_SUB_BACKENDS.indexOf(myaiRenderedApiProvider) >= 0 ? myaiRenderedApiProvider : 'openai';
   }
   function myaiProviderLabel(backend){
     if(backend === 'hybrid') return 'Hybrid (' + (myaiHybridBackends().map(myaiProviderLabel).join(' + ') || 'none') + ')';
@@ -4355,6 +4413,61 @@ window.addEventListener('load', () => {
   }
   function myaiModelsUrl(backend){
     return myaiNormBase((myaiProviderSettings(backend) || {}).baseUrl).replace(/\/chat\/completions$/,'') + '/models';
+  }
+  function myaiModelListUrls(backend){
+    const base = myaiNormBase((myaiProviderSettings(backend) || {}).baseUrl).replace(/\/chat\/completions$/,'');
+    if(!base) return [];
+    return backend === 'grok' ? [base + '/language-models', base + '/models'] : [base + '/models'];
+  }
+  function myaiExtractModelIds(json){
+    const rows = Array.isArray(json && json.data) ? json.data : (Array.isArray(json && json.models) ? json.models : []);
+    return rows.map(r=>typeof r === 'string' ? r : (r && (r.id || r.name))).filter(Boolean);
+  }
+  function myaiFillModelSelect(selectEl, backend, current){
+    if(!selectEl) return;
+    const models = (myaiModelCache[backend] || []).slice();
+    const cur = String(current || '');
+    selectEl.innerHTML = '';
+    const ph = document.createElement('option');
+    ph.value = ''; ph.textContent = myaiT('modelList','Model list');
+    selectEl.appendChild(ph);
+    if(cur && models.indexOf(cur) < 0){
+      const o = document.createElement('option'); o.value = cur; o.textContent = cur + ' (' + myaiT('currentModel','current') + ')'; selectEl.appendChild(o);
+    }
+    models.forEach(id=>{ const o=document.createElement('option'); o.value=id; o.textContent=id; selectEl.appendChild(o); });
+    selectEl.value = cur && Array.prototype.some.call(selectEl.options, o=>o.value===cur) ? cur : '';
+  }
+  function myaiLoadModels(backend, selectEl, statusEl){
+    myaiSyncSettingsFromInputs();
+    const urls = myaiModelListUrls(backend);
+    const fallback = MYAI_FALLBACK_MODELS[backend] || [];
+    if(!urls.length){
+      if(statusEl){ statusEl.textContent = myaiProviderLabel(backend) + ' ' + myaiT('incomplete','Incomplete'); statusEl.className = 'myai-status fail'; }
+      return;
+    }
+    if(statusEl){ statusEl.textContent = myaiT('loadingModels','Loading models...'); statusEl.className = 'myai-status'; }
+    const tryOne = (i)=>{
+      if(i >= urls.length) return Promise.reject(new Error('/models unsupported'));
+      return myaiTimedFetch(urls[i], { headers:myaiHeadersFor(backend) }, 15000).then(r=>{
+        if((r.status === 404 || r.status === 405) && i < urls.length - 1) return tryOne(i + 1);
+        if(!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      });
+    };
+    tryOne(0).then(json=>{
+      const models = myaiExtractModelIds(json);
+      myaiModelCache[backend] = models.length ? models : fallback.slice();
+      myaiRenderSettings();
+      if(statusEl){ statusEl.textContent = myaiT('connected','Connected') + ' (' + myaiModelCache[backend].length + ' ' + myaiT('models','models') + ')'; statusEl.className = 'myai-status ok'; }
+    }).catch(err=>{
+      if(fallback.length){
+        myaiModelCache[backend] = fallback.slice();
+        myaiRenderSettings();
+        if(statusEl){ statusEl.textContent = myaiT('modelsFallback','Loaded suggested list'); statusEl.className = 'myai-status'; }
+      }else if(statusEl){
+        statusEl.textContent = myaiT('failed','Failed') + ': ' + String(err && err.message || err); statusEl.className = 'myai-status fail';
+      }
+    });
   }
   function myaiHeadersFor(backend){
     const cfg = myaiProviderSettings(backend) || {};
@@ -4444,7 +4557,7 @@ window.addEventListener('load', () => {
   window.renderMyAITranslations = myaiRenderTranslations;
 
   function myaiSyncProviderFields(provider){
-    if(!provider || MYAI_API_BACKENDS.indexOf(provider) < 0 || !MYAI_S.providers[provider]) return;
+    if(!provider || MYAI_SUB_BACKENDS.indexOf(provider) < 0 || !MYAI_S.providers[provider]) return;
     if(myai$('myaiApiUrl')) MYAI_S.providers[provider].baseUrl = myai$('myaiApiUrl').value.trim();
     if(myai$('myaiApiKey')) MYAI_S.providers[provider].apiKey = myai$('myaiApiKey').value.trim();
     if(myai$('myaiApiModel')) MYAI_S.providers[provider].model = myai$('myaiApiModel').value.trim();
@@ -4453,8 +4566,14 @@ window.addEventListener('load', () => {
     if(myai$('myaiBackend')) MYAI_S.backend = myai$('myaiBackend').value;
     if(myai$('myaiLmUrl')) MYAI_S.lmstudio.baseUrl = myai$('myaiLmUrl').value.trim();
     if(myai$('myaiLmModel')) MYAI_S.lmstudio.model = myai$('myaiLmModel').value.trim();
+    const cb = MYAI_S.providers.cerebras;
+    if(cb){
+      if(myai$('myaiCbUrl')) cb.baseUrl = myai$('myaiCbUrl').value.trim();
+      if(myai$('myaiCbKey')) cb.apiKey = myai$('myaiCbKey').value.trim();
+      if(myai$('myaiCbModel')) cb.model = myai$('myaiCbModel').value.trim();
+    }
     myaiSyncProviderFields(myaiRenderedApiProvider);
-    if(myai$('myaiApiProvider') && MYAI_API_BACKENDS.indexOf(myai$('myaiApiProvider').value) >= 0) MYAI_S.hybrid.apiProvider = myai$('myaiApiProvider').value;
+    if(myai$('myaiApiProvider') && MYAI_SUB_BACKENDS.indexOf(myai$('myaiApiProvider').value) >= 0) MYAI_S.hybrid.apiProvider = myai$('myaiApiProvider').value;
     const selected = [];
     Object.keys(MYAI_HYBRID_IDS).forEach(b=>{ const el=myai$(MYAI_HYBRID_IDS[b]); if(el && el.checked) selected.push(b); });
     if(selected.length) MYAI_S.hybrid.backends = selected;
@@ -4473,11 +4592,17 @@ window.addEventListener('load', () => {
     if(myai$('myaiLmModel')) myai$('myaiLmModel').value = MYAI_S.lmstudio.model;
     const selected = myaiHybridBackends();
     Object.keys(MYAI_HYBRID_IDS).forEach(b=>{ const el=myai$(MYAI_HYBRID_IDS[b]); if(el) el.checked = selected.indexOf(b) >= 0; });
-    const apiProvider = myaiActiveApiProvider() || myaiRenderedApiProvider || 'cerebras';
+    const cbCfg = MYAI_S.providers.cerebras || MYAI_DEFAULTS.providers.cerebras;
+    if(myai$('myaiCbUrl')){ myai$('myaiCbUrl').value = cbCfg.baseUrl || ''; myai$('myaiCbUrl').placeholder = MYAI_DEFAULTS.providers.cerebras.baseUrl; }
+    if(myai$('myaiCbKey')) myai$('myaiCbKey').value = cbCfg.apiKey || '';
+    if(myai$('myaiCbModel')) { myai$('myaiCbModel').value = cbCfg.model || ''; myai$('myaiCbModel').placeholder = MYAI_DEFAULTS.providers.cerebras.model; }
+    const apiProvider = myaiActiveSubProvider();
     myaiRenderedApiProvider = apiProvider;
     const showLm = backend === 'lmstudio' || (backend === 'hybrid' && selected.indexOf('lmstudio') >= 0);
-    const showApi = MYAI_API_BACKENDS.indexOf(backend) >= 0 || (backend === 'hybrid' && selected.some(b=>MYAI_API_BACKENDS.indexOf(b) >= 0));
+    const showCb = backend === 'cerebras' || (backend === 'hybrid' && selected.indexOf('cerebras') >= 0);
+    const showApi = MYAI_SUB_BACKENDS.indexOf(backend) >= 0 || (backend === 'hybrid' && selected.some(b=>MYAI_SUB_BACKENDS.indexOf(b) >= 0));
     if(myai$('myaiLmGroup')) myai$('myaiLmGroup').hidden = !showLm;
+    if(myai$('myaiCbGroup')) myai$('myaiCbGroup').hidden = !showCb;
     if(myai$('myaiApiGroup')) myai$('myaiApiGroup').hidden = !showApi;
     if(myai$('myaiHybridGroup')) myai$('myaiHybridGroup').hidden = backend !== 'hybrid';
     if(myai$('myaiApiProviderField')) myai$('myaiApiProviderField').hidden = backend !== 'hybrid';
@@ -4489,6 +4614,9 @@ window.addEventListener('load', () => {
     if(myai$('myaiApiKey')) myai$('myaiApiKey').value = cfg.apiKey || '';
     if(myai$('myaiApiModel')) { myai$('myaiApiModel').value = cfg.model || ''; myai$('myaiApiModel').placeholder = meta.modelPlaceholder; }
     if(myai$('myaiApiNote')) myai$('myaiApiNote').textContent = myaiLang() === 'ko' ? meta.noteKo : meta.noteEn;
+    myaiFillModelSelect(myai$('myaiLmModelSelect'), 'lmstudio', MYAI_S.lmstudio.model);
+    myaiFillModelSelect(myai$('myaiCbModelSelect'), 'cerebras', cbCfg.model);
+    myaiFillModelSelect(myai$('myaiApiModelSelect'), apiProvider, cfg.model);
     if(myai$('myaiHybridChars')) myai$('myaiHybridChars').value = MYAI_S.hybrid.simpleMaxChars;
     if(myai$('myaiHybridKw')) myai$('myaiHybridKw').value = (MYAI_S.hybrid.keywords || []).join(', ');
     if(myai$('myaiStoreKeys')) myai$('myaiStoreKeys').checked = !!MYAI_S.storeKeys;
@@ -4646,6 +4774,7 @@ window.addEventListener('load', () => {
     }
     return null;
   }
+  function myaiConfTone(v){ const c = String(v).toLowerCase(); if(/guarded|정량|quantitative/.test(c)) return 'ok'; if(/review|trend|경향|only|weak|주의/.test(c)) return 'warn'; return ''; }
   function myaiTableHtml(rows, title, columns){
     rows = Array.isArray(rows) ? rows : [];
     if(!rows.length) return '';
@@ -4654,7 +4783,7 @@ window.addEventListener('load', () => {
     let html = title ? '<div class="myai-md-h">' + myaiEsc(title) + '</div>' : '';
     html += '<div class="myai-table-wrap"><table class="myai-table"><thead><tr>' + cols.map(c=>'<th>'+myaiEsc(c)+'</th>').join('') + '</tr></thead><tbody>';
     normalized.forEach(row=>{
-      html += '<tr>' + cols.map(c=>'<td>'+myaiEsc(row[c] == null ? '' : row[c])+'</td>').join('') + '</tr>';
+      html += '<tr>' + cols.map(c=>{ const v = row[c] == null ? '' : row[c]; return (/confidence|신뢰도/i.test(c) && v !== '') ? ('<td><span class="myai-pill '+myaiConfTone(v)+'">'+myaiEsc(v)+'</span></td>') : ('<td>'+myaiEsc(v)+'</td>'); }).join('') + '</tr>';
     });
     html += '</tbody></table></div>';
     return html;
@@ -4678,7 +4807,7 @@ window.addEventListener('load', () => {
     if(Array.isArray(warnings) && warnings.length) html += '<div class="myai-md-h">' + (myaiLang()==='ko'?'주의':'Cautions') + '</div><ul>' + warnings.map(w=>'<li>'+myaiEsc(typeof w === 'string' ? w : (w['내용'] || w.content || JSON.stringify(w)))+'</li>').join('') + '</ul>';
     if(json['검색보강']) html += '<div class="myai-md-h">' + (myaiLang()==='ko'?'검색보강':'Search reinforcement') + '</div><div>' + myaiInlineMd(json['검색보강']) + '</div>';
     if(json['설명']) html += '<div class="myai-md-h">' + (myaiLang()==='ko'?'설명':'Explanation') + '</div><div>' + myaiInlineMd(json['설명']) + '</div>';
-    if(!html) html = '<pre class="myai-json">' + myaiEsc(JSON.stringify(json,null,2)) + '</pre>';
+    html += '<details class="myai-json-details"><summary>' + (myaiLang()==='ko'?'JSON 보기':'View JSON') + '</summary><div class="myai-json">' + myaiEsc(JSON.stringify(json,null,2)) + '</div></details>';
     return html;
   }
   function myaiCopyButton(raw){
@@ -4712,7 +4841,16 @@ window.addEventListener('load', () => {
         el.innerHTML = myaiRenderMarkdownLite(content);
         el.appendChild(myaiCopyButton(content));
       }else{
-        el.textContent = content;
+        const arrowIdx = content.indexOf(' -> ');
+        const alt = arrowIdx < 0 ? content.indexOf(' → ') : arrowIdx;
+        const det = document.createElement('details');
+        const sum = document.createElement('summary');
+        sum.textContent = '🔧 ' + (alt > 0 ? content.slice(0, alt) : 'tool');
+        const body = document.createElement('div');
+        body.className = 'myai-json';
+        body.textContent = alt > 0 ? content.slice(alt + (content.indexOf(' -> ') === alt ? 4 : 3)) : content;
+        det.appendChild(sum); det.appendChild(body);
+        el.appendChild(det);
       }
     }else{
       el.textContent = content;
@@ -5223,10 +5361,17 @@ window.addEventListener('load', () => {
     on('myaiLmUrl','change', myaiSyncSettingsFromInputs);
     on('myaiLmModel','change', myaiSyncSettingsFromInputs);
     on('myaiApiProvider','change', function(){ myaiSyncProviderFields(myaiRenderedApiProvider); myaiRenderedApiProvider = this.value; MYAI_S.hybrid.apiProvider = this.value; myaiSaveSettings(); myaiRenderSettings(); });
-    ['myaiApiUrl','myaiApiKey','myaiApiModel','myaiHybridChars','myaiHybridKw','myaiStoreKeys','myaiAllowControl','myaiPersonality','myaiSearchUrl'].forEach(id=>on(id,'change', myaiSyncSettingsFromInputs));
+    ['myaiCbUrl','myaiCbKey','myaiCbModel','myaiApiUrl','myaiApiKey','myaiApiModel','myaiHybridChars','myaiHybridKw','myaiStoreKeys','myaiAllowControl','myaiPersonality','myaiSearchUrl'].forEach(id=>on(id,'change', myaiSyncSettingsFromInputs));
     document.querySelectorAll('#myai [data-myai-hybrid]').forEach(el=>el.addEventListener('change', myaiSyncSettingsFromInputs));
     on('myaiLmTest','click', ()=>myaiTestBackend('lmstudio', myai$('myaiLmStatus')));
-    on('myaiApiTest','click', ()=>myaiTestBackend(myaiRenderedApiProvider, myai$('myaiApiStatus')));
+    on('myaiCbTest','click', ()=>myaiTestBackend('cerebras', myai$('myaiCbStatus')));
+    on('myaiApiTest','click', ()=>myaiTestBackend(myaiActiveSubProvider(), myai$('myaiApiStatus')));
+    on('myaiLmModels','click', ()=>myaiLoadModels('lmstudio', myai$('myaiLmModelSelect'), myai$('myaiLmStatus')));
+    on('myaiCbModels','click', ()=>myaiLoadModels('cerebras', myai$('myaiCbModelSelect'), myai$('myaiCbStatus')));
+    on('myaiApiModels','click', ()=>myaiLoadModels(myaiActiveSubProvider(), myai$('myaiApiModelSelect'), myai$('myaiApiStatus')));
+    on('myaiLmModelSelect','change', function(){ if(!this.value) return; MYAI_S.lmstudio.model = this.value; if(myai$('myaiLmModel')) myai$('myaiLmModel').value = this.value; myaiSaveSettings(); myaiRenderSettings(); });
+    on('myaiCbModelSelect','change', function(){ if(!this.value || !MYAI_S.providers.cerebras) return; MYAI_S.providers.cerebras.model = this.value; if(myai$('myaiCbModel')) myai$('myaiCbModel').value = this.value; myaiSaveSettings(); myaiRenderSettings(); });
+    on('myaiApiModelSelect','change', function(){ const p = myaiActiveSubProvider(); if(!this.value || !MYAI_S.providers[p]) return; MYAI_S.providers[p].model = this.value; if(myai$('myaiApiModel')) myai$('myaiApiModel').value = this.value; myaiSaveSettings(); myaiRenderSettings(); });
     on('myaiAddTool','click', ()=>{
       const res = myaiAddCustomTool({ name:(myai$('myaiToolName')||{}).value || '', url:(myai$('myaiToolUrl')||{}).value || '', description:(myai$('myaiToolDesc')||{}).value || '' });
       if(res.error) myaiAddMsg('sys', res.error);
