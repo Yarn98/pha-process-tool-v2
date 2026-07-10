@@ -601,7 +601,7 @@
         #myai .myai-status.fail{color:var(--err);border-color:var(--err)}
         #myai .myai-chat{display:flex;flex-direction:column;min-height:500px;max-height:78vh}
         #myai .myai-msgs{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:4px 2px}
-        #myai .myai-msg{max-width:95%;padding:9px 12px;border-radius:var(--rad-lg);font-size:13.5px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+        #myai .myai-msg{min-width:0;max-width:95%;padding:9px 12px;border-radius:var(--rad-lg);font-size:13.5px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
         #myai .myai-msg.user{align-self:flex-end;background:var(--accent);color:#F5F1E8}
         #myai .myai-msg.assistant{align-self:flex-start;background:var(--paper);border:1px solid var(--rule)}
         #myai .myai-msg.tool{align-self:flex-start;background:var(--paper-3);font:11.5px var(--mono,monospace);padding:6px 10px}
@@ -634,7 +634,8 @@
         #myai .myai-checkgrid .myai-check{margin:0}
         #myai details{border-top:1px solid var(--rule);margin-top:12px;padding-top:8px}
         #myai summary{cursor:pointer;font-weight:700;font-size:13px}
-        #myai .myai-json{font:11.5px var(--mono,monospace);background:var(--paper-2);border:1px solid var(--rule);border-radius:var(--rad-sm);padding:8px;margin-top:6px;overflow-x:auto;white-space:pre-wrap;word-break:break-word}
+        #myai .myai-json{font:11.5px var(--mono,monospace);background:var(--paper-2);border:1px solid var(--rule);border-radius:var(--rad-sm);padding:8px;margin-top:6px;overflow-x:auto;white-space:pre-wrap;overflow-wrap:anywhere;word-break:break-word}
+        #myai .myai-table th,#myai .myai-table td{overflow-wrap:anywhere}
         #myai .myai-md-h{font-weight:700;margin:8px 0 3px}
         #myai .myai-md-sp{height:6px}
         #myai .myai-msg.markdown ul{margin:4px 0 4px 18px;padding:0}
