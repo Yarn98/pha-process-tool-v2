@@ -130,7 +130,7 @@ function initCompoundingGuide() {
     <h2 style="color:#1e3c72;margin-bottom:16px">
       🧪 ${ko ? 'PHA 컴파운딩 가이드' : 'PHA Compounding Guide'}
     </h2>
-    <figure class="guide-equipment"><img src="assets/equipment/compounding.png?v=18" width="1280" height="640" alt="${ko?'두 스크류와 상류 공급·사이드 피드·벤트·다이·펠릿 절단을 보여주는 개념도':'Conceptual twin screws, upstream/side feeding, vent, die and pellet cutter'}"><figcaption>${ko?'공급 → 용융·혼합 → 탈가스 → 다이 → 펠릿. 포트 위치와 수지 흐름을 이해하기 위한 개념도이며 실제 스크류 도면·온도 해석이 아닙니다.':'Feed → melt/mix → vent → die → pellets. Conceptual port locations and polymer path; not an OEM screw drawing or thermal simulation.'}</figcaption></figure>
+    <figure class="guide-equipment"><div class="equipment-motion" data-equipment-model="compounding"></div><figcaption>${ko?'공급 → 용융·혼합 → 탈가스 → 다이 → 펠릿. 회전·이동은 설명용이며 스크류 간극·유동·온도 해석이나 생산 설정값이 아닙니다.':'Feed → melt/mix → vent → die → pellets. Motion is illustrative, not screw-clearance, flow or thermal analysis or production settings.'}</figcaption></figure>
     <p style="color:#6b7280;line-height:1.7;margin:0 0 16px">
       ${ko
         ? '이 가이드는 PHA · PHA 블렌드 컴파운딩에서 현장 엔지니어가 가장 자주 보는 4가지만 묶었습니다: 스크류 설계, 존 온도 프로파일, 탈가스, 퍼지 SOP.'
@@ -166,6 +166,7 @@ function initCompoundingGuide() {
   if(previousTab>=0)cgShowTab(previousTab);
   _cgRenderDoeChecklist();
   _cgRenderTrialLog();
+  window.PHAEquipmentMotion?.syncSurface();
 }
 
 function _cgBindGlossary(root, ko) {

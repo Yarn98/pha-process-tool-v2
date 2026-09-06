@@ -1,0 +1,149 @@
+{
+  "id": "blowmolding",
+  "duration": 12,
+  "poster": "assets/equipment/blowmolding-motion-poster.png",
+  "model": "assets/equipment/blowmolding-motion.glb",
+  "center": [
+    -0.7,
+    2.35,
+    0
+  ],
+  "span": [
+    11.6,
+    6.1
+  ],
+  "controls": [
+    {
+      "key": "parison",
+      "label": [
+        "패리슨 토출 진행",
+        "Parison extrusion progress"
+      ],
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
+      "range": [
+        0,
+        3
+      ]
+    },
+    {
+      "key": "mold",
+      "label": [
+        "금형 개방량",
+        "Mold opening"
+      ],
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
+      "range": [
+        4,
+        3
+      ]
+    },
+    {
+      "key": "pin",
+      "label": [
+        "블로우 핀 삽입량",
+        "Blow pin insertion"
+      ],
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
+      "range": [
+        4,
+        4.6
+      ]
+    },
+    {
+      "key": "inflate",
+      "label": [
+        "팽창 진행",
+        "Inflation progress"
+      ],
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
+      "range": [
+        4.6,
+        6
+      ]
+    }
+  ],
+  "views": [
+    {
+      "key": "all",
+      "label": [
+        "전체 라인",
+        "Whole line"
+      ],
+      "center": [
+        -0.7,
+        2.35,
+        0
+      ],
+      "zoom": 1
+    },
+    {
+      "key": "screw",
+      "label": [
+        "스크류·공급",
+        "Screw & feed"
+      ],
+      "center": [
+        -3.1,
+        1.65,
+        0
+      ],
+      "zoom": 2.1
+    },
+    {
+      "key": "finish",
+      "label": [
+        "금형·블로우 핀",
+        "Mold & blow pin"
+      ],
+      "center": [
+        0.7,
+        2.3,
+        0
+      ],
+      "zoom": 1.9
+    }
+  ],
+  "stages": [
+    [
+      "패리슨 토출",
+      "Extrude parison"
+    ],
+    [
+      "금형 닫힘·팽창",
+      "Close & inflate"
+    ],
+    [
+      "냉각",
+      "Cool"
+    ],
+    [
+      "핀 복귀·제품 배출",
+      "Retract & discharge"
+    ]
+  ],
+  "initial": {
+    "parison": 0,
+    "mold": 100,
+    "pin": 0,
+    "inflate": 0
+  },
+  "blender": "5.2.0 LTS",
+  "groups": [
+    "air",
+    "flow",
+    "inflate",
+    "mold",
+    "parison",
+    "pin",
+    "release",
+    "screw"
+  ]
+}

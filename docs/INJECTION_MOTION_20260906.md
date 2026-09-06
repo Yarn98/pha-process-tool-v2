@@ -59,6 +59,8 @@ blender --background --factory-startup --python tests/blender-injection-rig.py
 
 ## 검증
 
+사출 완료 후 나머지 7개 라인에 같은 재생·관찰·직접 조작 방식을 확장했습니다. 사출 컨트롤러와 새 공용 컨트롤러는 활성 화면에만 캔버스를 붙이고, 직접 조작 중 떠 있는 저장 버튼을 숨기는 동작을 공유합니다. 현재 전체 자산 버전은 v20입니다. [전체 설비 확장 기록](ALL_EQUIPMENT_MOTION_20260906.md).
+
 `npm run test:motion`은 실제 Blender GLB의 트랙과 스크류·금형·수지 노드의 변화를 브라우저에서 검사합니다.
 
 - Blender 원본 검사 통과: 드라이버, 이젝터의 금형 개방 조건, 실린더 로드 연결 위치, 볼트 치수와 스크류 중심축.

@@ -1,0 +1,18 @@
+{
+  "status": "pass",
+  "root": "D:\\My_PJT\\Application\\pha_optimizer_convertor\\dist",
+  "checks": [
+    "extrusion: real motion, independent manual mechanisms and keyboard precision",
+    "sheet: real motion, independent manual mechanisms and keyboard precision",
+    "castfilm: real motion, independent manual mechanisms and keyboard precision",
+    "blownfilm: real motion, independent manual mechanisms and keyboard precision",
+    "compounding: real motion, independent manual mechanisms and keyboard precision",
+    "straw: real motion, independent manual mechanisms and keyboard precision",
+    "Blow molding: parison, clamp, pin, inflation and product release interlocks affect real nodes",
+    "All seven lines: Korean/English, mobile model visible during manipulation, manual state retention, focus views and resets",
+    "Straw source snapshot provenance and rendering suspension on inactive tabs",
+    "Offline service-worker reload loads borrowed straw and newly generated roll/bubble GLBs",
+    "A failed model retains its poster and explanations; another machine still loads",
+    "No uncaught browser errors"
+  ]
+}

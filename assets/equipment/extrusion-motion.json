@@ -1,0 +1,139 @@
+{
+  "id": "extrusion",
+  "duration": 12,
+  "poster": "assets/equipment/extrusion-motion-poster.png",
+  "model": "assets/equipment/extrusion-motion.glb",
+  "center": [
+    -0.5,
+    1.6,
+    0
+  ],
+  "span": [
+    11.6,
+    4.2
+  ],
+  "controls": [
+    {
+      "key": "screw",
+      "label": [
+        "스크류 회전각",
+        "Screw rotation angle"
+      ],
+      "max": 720,
+      "unit": "°",
+      "step": 1,
+      "range": [
+        0,
+        12
+      ]
+    },
+    {
+      "key": "flow",
+      "label": [
+        "수지 표시 위치",
+        "Resin marker position"
+      ],
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
+      "range": [
+        0,
+        12
+      ]
+    },
+    {
+      "key": "haul",
+      "label": [
+        "인취 롤 회전각",
+        "Haul-off roll rotation angle"
+      ],
+      "max": 720,
+      "unit": "°",
+      "step": 1,
+      "range": [
+        0,
+        12
+      ]
+    },
+    {
+      "key": "cutter",
+      "label": [
+        "절단날 회전각",
+        "Cutter rotation angle"
+      ],
+      "max": 360,
+      "unit": "°",
+      "step": 1,
+      "range": [
+        0,
+        12
+      ]
+    }
+  ],
+  "views": [
+    {
+      "key": "all",
+      "label": [
+        "전체 라인",
+        "Whole line"
+      ],
+      "center": [
+        -0.5,
+        1.6,
+        0
+      ],
+      "zoom": 1
+    },
+    {
+      "key": "screw",
+      "label": [
+        "스크류·공급",
+        "Screw & feed"
+      ],
+      "center": [
+        -3.1,
+        1.65,
+        0
+      ],
+      "zoom": 2.1
+    },
+    {
+      "key": "finish",
+      "label": [
+        "성형·후단",
+        "Forming & downstream"
+      ],
+      "center": [
+        2.4,
+        1.6,
+        0
+      ],
+      "zoom": 2.0
+    }
+  ],
+  "stages": [
+    [
+      "공급·용융",
+      "Feed & melt"
+    ],
+    [
+      "다이·성형",
+      "Die & forming"
+    ],
+    [
+      "냉각·인취",
+      "Cool & haul off"
+    ],
+    [
+      "제품·배출",
+      "Product & discharge"
+    ]
+  ],
+  "blender": "5.2.0 LTS",
+  "groups": [
+    "cutter",
+    "flow",
+    "haul",
+    "screw"
+  ]
+}

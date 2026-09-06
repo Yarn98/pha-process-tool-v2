@@ -2,11 +2,11 @@
    The activate handler deletes any cache whose name !== CACHE, so bumping the
    version string is how we force a full refresh of cached assets. Keep a short
    trailing token describing the change so the log is auditable. */
-const CACHE = 'pha-cache-v18-injection-controls';
+const CACHE = 'pha-cache-v20-all-equipment';
 /* Keep the ?v= token in sync with the asset links in index.html.
    netlify.toml serves css/js with a 1-year immutable cache, so the
    query token is what actually invalidates browser HTTP caches. */
-const ASSET_V = '?v=18';
+const ASSET_V = '?v=20';
 const PRECACHE_URLS = [
   './',
   './index.html',
@@ -24,6 +24,12 @@ const PRECACHE_URLS = [
   './process-atlas.js' + ASSET_V,
   './process-atlas.css' + ASSET_V,
   './injection-motion.js' + ASSET_V,
+  './equipment-models.js' + ASSET_V,
+  './equipment-motion.js' + ASSET_V,
+  ...['extrusion','compounding','sheet','castfilm','blownfilm','blowmolding','straw'].flatMap(kind=>[
+    './assets/equipment/'+kind+'-motion.glb'+ASSET_V,
+    './assets/equipment/'+kind+'-motion-poster.'+(kind==='straw'?'webp':'png')+ASSET_V
+  ]),
   './assets/equipment/injection-motion.glb' + ASSET_V,
   './assets/equipment/injection-motion-poster.png' + ASSET_V,
   './vendor/three-0.185.1/build/three.module.js',

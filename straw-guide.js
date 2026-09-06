@@ -221,7 +221,7 @@
       style: 'color:#1e3c72;margin-bottom:8px',
       text: t('PHA 스트로 압출 가이드', 'PHA Straw Extrusion Guide'),
     }));
-    root.appendChild(el('figure',{className:'guide-equipment',html:`<img src="assets/equipment/straw.png?v=18" width="1280" height="640" alt="${t('환형 다이·수조·인취 롤·절단과 중공 스트로 형상 개념도','Conceptual annular die, bath, haul-off, cutter and hollow straws')}"><figcaption>${t('다이 → 수조 → 인취 → 절단. 초록색은 수지 경로이며 치수·냉각 성능을 계산한 도면이 아닙니다.','Die → bath → haul-off → cutting. Green indicates the polymer path; this is not dimensional CAD or a cooling-performance calculation.')}</figcaption>`}));
+    root.appendChild(el('figure',{className:'guide-equipment',html:`<div class="equipment-motion" data-equipment-model="straw"></div><figcaption>${t('Straw Optimizer V2의 Blender 원본을 활용한 조작 모델입니다. 다이 → 두 수조 → 벨트 인취 → 회전 절단. 호박색 고리는 흐름 방향 표시이며 실제 속도·냉각·절단 품질 해석이 아닙니다.','Interactive model adapted from the Straw Optimizer V2 Blender scene. Die → two baths → belt haul-off → rotary cutting. Amber rings show direction, not actual speed, cooling or cut-quality simulation.')}</figcaption>`}));
     root.appendChild(el('p', {
       style: 'color:#6b7280;margin-bottom:0',
       text: t(
@@ -256,6 +256,7 @@
     Object.entries(entered).forEach(([id,value])=>{if(document.getElementById(id))document.getElementById(id).value=value;});
     if(priorTab>=0)showStrawTab(root,priorTab);
     if(hadResult)root.querySelector('#sg-calc').click();
+    window.PHAEquipmentMotion?.syncSurface();
   }
 
   // Expose to global scope

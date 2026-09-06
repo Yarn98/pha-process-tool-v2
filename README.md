@@ -13,6 +13,7 @@ npm run test:process
 npm run test:ui
 npm run test:myai
 npm run test:motion
+npm run test:equipment
 npm run check:kb
 npm run build
 # 배포용 파일을 대상으로 UI 검사
@@ -25,13 +26,13 @@ $env:PHA_TEST_ROOT='dist'; npm run test:ui
 
 | 화면 | 기능 | 해석 |
 |---|---|---|
-| 공정 조건 | 그레이드·6개 공정, 사출 3D 동작·단계별 설비도, 입력과 범위 비교 | 제조사 원문 / 현장 수정 / 근거 미확인을 구분 |
+| 공정 조건 | 그레이드·6개 공정, 전 공정 설비의 3D 동작·직접 조작, 입력과 범위 비교 | 제조사 원문 / 현장 수정 / 근거 미확인을 구분 |
 | 트러블슈팅 | 16개 한영 점검 항목, 공정·증상 검색, 플래시 형상 | 진단 → 조건부 조치 → 중단·복귀 기준 → 재검사 |
 | 이력·분석 | 조건 저장, JSON/CSV 교환, 트렌드 | 다른 그레이드·설비 기록의 단순 비교에 유의 |
 | 계산기 | 평균 체류시간, 평판 냉각, 필름 단층 두께 | 단위와 모델 가정 확인 |
 | 물성 DB | 로컬 물성 편집·교환, 제조사 시험조건 | MFR 온도·하중, 충격 단위·노치 조건 보존 |
 | 플래시 제어 | 점검 순서, 형체력·압력·전단률·보압비 계산, 배치 로그 | 압력 역산은 사출기 설정값이 아님 |
-| 컴파운딩·스트로 | 배합 합계 확인·개념 배치 선택, 다열 스트로 생산량·수조 체류 계산 | 배치 선택은 OEM 확인, 최소 체류시간은 시험 입력 필요 |
+| 컴파운딩·스트로 | 전용 3D 설비 조작, 배합 합계·개념 배치 선택, 다열 스트로 생산량·수조 체류 계산 | 배치 선택은 OEM 확인, 최소 체류시간은 시험 입력 필요 |
 | My AI | 사용자 제공 API/LM Studio와 앱 도구 연동 | 키 저장은 사용자 선택; 물리 계산은 같은 정의 사용 |
 
 CA1180P 사출의 일반 금형 / 고내열 시험 모드를 분리합니다. 수정값은 그레이드·공정·해당 금형 모드별로 저장합니다. 이전 프로파일×공정 공통 수정값은 보존하되 자동 입력값이 섞였을 수 있어 자동 적용하지 않습니다. 근거 패널에서 확인 후 재검토하세요.
@@ -73,12 +74,14 @@ S1000P, A1000P, CA1180P, CB0104A, CB0400A, CA1165A, CA1670P, CA1680P, CA1270P의
 | process-evidence.js | 원문 참고 데이터·물리 계산·범위 상태 |
 | process-atlas.js / .css | 단계 설명·출처 패널·형상 예시 |
 | injection-motion.js / vendor/three-0.185.1/ | Blender GLB 재생·단계 이동·회전·확대, 로컬 3D 렌더러 |
+| equipment-motion.js / equipment-models.js | 나머지 7개 공정의 부품별 조작·동작 그룹·관찰 시점 |
 | pha-integration.js | 가이드 연결·재료 분류·TARS 읽기 |
 | custom.js / glossary.js / data/ | 물성·용어·트러블슈팅 원본 JSON |
 | troubleshooting-data.js / scripts/sync-troubleshooting.cjs | JSON에서 생성하는 동일한 오프라인 KB와 검사 |
 | compounding-guide.js / straw-guide.js | 공정 참고 가이드 |
-| assets/equipment/ | Blender PNG 8종·편집 원본 |
+| assets/equipment/ | 8개 공정의 GLB·편집 원본·대체 포스터, 기존 PNG 보존 |
 | scripts/render_equipment.py | 설비도 재생성 |
+| scripts/create_line_models.py | 신규 6개 동작 설비 제작·Straw Optimizer 원본의 조작 모델 변환 |
 | assets/flash-example.png | 생성 플래시 형상 |
 | functions/ 및 배포 설정 | 기존 접근 게이트·API 프록시 |
 
@@ -98,11 +101,24 @@ blender --background --factory-startup --python scripts/create_injection_motion.
 
 재생 시간은 설명용이며 실제 사이클·수지 유동해석과 다릅니다. 계량과 냉각의 실제 중첩은 모델에서 동작을 구별하기 위해 단순화했습니다. [사출 동작 제작·검증](docs/INJECTION_MOTION_20260906.md).
 
+일반 압출·시트·캐스트 필름·블로운 필름·압출 블로우 성형은 **공정 조건**에서, 이축 컴파운딩·스트로는 각 전용 탭에서 같은 재생·관찰·직접 조작 기능을 사용합니다. 스크류, 사이드 피더, 롤, 권취축, 벨트, 절단날과 수지 표시를 부품별로 조작합니다. 블로우 성형은 패리슨 토출 → 금형 닫힘 → 핀 삽입 → 팽창 → 핀 복귀 → 금형 개방·배출 순서를 연결합니다.
+
+스트로는 `D:/My_PJT/Application/straw-optimizer-v2`의 작업 중 Blender 설비를 복사해 중공 다이·수조·벨트·절단기 구조를 차용했습니다. 이 프로젝트의 복사본에 조작과 절단물 배출을 추가했으며, 원본의 출처·스냅샷 해시를 보존했습니다. 나머지 6개 라인은 새로 제작했습니다. [전체 설비의 조작·출처·검증 기록](docs/ALL_EQUIPMENT_MOTION_20260906.md).
+
+```powershell
+blender --background --factory-startup --python-exit-code 1 --python scripts/create_line_models.py
+blender --background --factory-startup --python-exit-code 1 --python tests/blender-line-models.py
+# 특정 모델만 재생성할 때
+blender --background --factory-startup --python-exit-code 1 --python scripts/create_line_models.py -- sheet straw
+```
+
+회전각은 1°, 상대 위치는 0.1% 단위로 조작합니다. 이 값은 모형의 위치이며 실제 RPM·토출량·온도·BUR·생산 조건과 연결되지 않습니다. 수지 표시는 이동 방향을 설명하며, 필름 두께·열전달·체적 보존을 계산하지 않습니다.
+
 ## 저장·오프라인
 
 이력·배치·템플릿·물성은 브라우저 로컬 저장소에, 일부 사진은 IndexedDB와 별도 localStorage 갤러리에 저장합니다. 기기 간 자동 동기화되지 않습니다. JSON/CSV로 백업하세요. 업데이트를 위해 웹사이트 데이터를 지우면 현장 기록도 삭제될 수 있습니다.
 
-서비스워커는 HTML network-first, 버전 자산 precache를 사용합니다. v=18 / pha-cache-v18-injection-controls. 첫 정상 로드 후 로컬 자료·설비 이미지·계산을 사용할 수 있습니다. 외부 TARS API와 CDN Chart.js는 오프라인에서 제한됩니다. file://보다 로컬 HTTP 실행을 권장합니다.
+서비스워커는 HTML network-first, 버전 자산 precache를 사용합니다. v=20 / pha-cache-v20-all-equipment. 첫 정상 로드와 캐시 준비 후 로컬 자료·8개 설비의 3D 조작·계산을 사용할 수 있습니다. 외부 TARS API와 CDN Chart.js는 오프라인에서 제한됩니다. file://보다 로컬 HTTP 실행을 권장합니다.
 
 기존 체크리스트·시험 로그는 유지합니다. 의미가 바뀐 컴파운딩 체크 두 항목은 새 키를 사용하며, 이전 완료 표시는 과거 기록으로 남깁니다.
 

@@ -1,0 +1,155 @@
+{
+  "id": "blownfilm",
+  "duration": 12,
+  "poster": "assets/equipment/blownfilm-motion-poster.png",
+  "model": "assets/equipment/blownfilm-motion.glb",
+  "center": [
+    -0.5,
+    2.8,
+    0
+  ],
+  "span": [
+    11.6,
+    6.7
+  ],
+  "controls": [
+    {
+      "key": "screw",
+      "label": [
+        "스크류 회전각",
+        "Screw rotation angle"
+      ],
+      "max": 720,
+      "unit": "°",
+      "step": 1,
+      "range": [
+        0,
+        12
+      ]
+    },
+    {
+      "key": "flow",
+      "label": [
+        "수지 표시 위치",
+        "Resin marker position"
+      ],
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
+      "range": [
+        0,
+        12
+      ]
+    },
+    {
+      "key": "bubble",
+      "label": [
+        "버블 형상 조절",
+        "Bubble shape adjustment"
+      ],
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
+      "range": [
+        0,
+        12
+      ]
+    },
+    {
+      "key": "haul",
+      "label": [
+        "닙롤 회전각",
+        "Nip roll rotation angle"
+      ],
+      "max": 720,
+      "unit": "°",
+      "step": 1,
+      "range": [
+        0,
+        12
+      ]
+    },
+    {
+      "key": "winder",
+      "label": [
+        "권취축 회전각",
+        "Winder rotation angle"
+      ],
+      "max": 360,
+      "unit": "°",
+      "step": 1,
+      "range": [
+        0,
+        12
+      ]
+    }
+  ],
+  "views": [
+    {
+      "key": "all",
+      "label": [
+        "전체 라인",
+        "Whole line"
+      ],
+      "center": [
+        -0.5,
+        2.8,
+        0
+      ],
+      "zoom": 1
+    },
+    {
+      "key": "screw",
+      "label": [
+        "스크류·공급",
+        "Screw & feed"
+      ],
+      "center": [
+        -3.1,
+        1.65,
+        0
+      ],
+      "zoom": 2.1
+    },
+    {
+      "key": "finish",
+      "label": [
+        "버블·닙롤",
+        "Bubble & nip"
+      ],
+      "center": [
+        0.25,
+        3.1,
+        0
+      ],
+      "zoom": 1.7
+    }
+  ],
+  "stages": [
+    [
+      "용융 공급",
+      "Melt feed"
+    ],
+    [
+      "버블 성형",
+      "Bubble forming"
+    ],
+    [
+      "냉각·인취",
+      "Cool & haul off"
+    ],
+    [
+      "접힘·권취",
+      "Collapse & wind"
+    ]
+  ],
+  "heightRatio": 0.64,
+  "blender": "5.2.0 LTS",
+  "groups": [
+    "bubble",
+    "flow",
+    "haul",
+    "screw",
+    "winder"
+  ]
+}

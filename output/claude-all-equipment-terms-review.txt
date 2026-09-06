@@ -1,0 +1,21 @@
+Claude terminology review — 2026-09-06
+Scope: seven educational Blender equipment lines; only displayed labels provided, no process settings or user records sent.
+
+검토 결과입니다 (근거: 제시된 문구 자체의 KO/EN 의미 대조. 공정 조건 판단은 하지 않았습니다).
+
+**필수 수정**
+1. `패리슨 토출량 / Parison extrusion` — 하단 고지에 "토출량 설정이 아니다"라고 하면서 라벨에 '토출량'을 쓰면 직접 충돌합니다. → `패리슨 토출 진행 / Parison extrusion progress` 권장.
+2. `버블 형상 전개 / Bubble shape adjustment` — KO(전개=진행/펼침)와 EN(adjustment=조절)의 의미가 다릅니다. 둘 중 하나로 통일: `버블 형상 조절 / Bubble shape adjustment` 또는 `… 전개 / … development`.
+3. `회전각` 계열 7개(스크류·인취·절단날·사이드 피더·냉각 롤·권취축·닙) — EN이 `rotation`만 있으면 RPM 조절로 읽힐 수 있습니다. `rotation angle`로 통일 권장. 이것이 각도%↔생산 설정값 혼동의 가장 큰 지점입니다.
+
+**선택 개선**
+4. `냉각 롤 / Cooling roll` — 캐스트 필름 표준 용어는 `Chill roll`.
+5. `닙롤 회전각 / Nip rotation` — EN에 roll 누락: `Nip roll rotation angle`.
+6. `수지 표시 위치 / Polymer marker position` — 수지의 직역은 `Resin`; 통일감 위해 `Resin marker position` 고려.
+7. `탈가스 / Devolatilize` — 명사형 그룹 라벨이면 `Devolatilization`(또는 `Venting`)이 자연스럽습니다.
+8. 하단 EN — `not real RPM, speeds, or production settings`로 쉼표 추가(가독성).
+
+**유지**
+9. 금형 개방량, 블로우 핀 삽입량, 팽창 진행, 벨트 순환 위치, 스크류·공급, 성형·후단, 용융·혼합, 접힘·권취, 환형 다이·수조, 조작 순서 안내문 — KO/EN 의미 일치하며 혼동 소지 낮음. 유지 가능합니다.
+
+핵심은 1·3번입니다: '토출량'과 단독 'rotation'만 고치면 모형 위치와 실제 설정값의 구분이 라벨 수준에서도 명확해집니다.

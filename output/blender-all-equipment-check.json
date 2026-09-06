@@ -1,0 +1,92 @@
+{
+  "status": "pass",
+  "blender": "5.2.0 LTS",
+  "checks": [
+    "extrusion: screw cores remain on their bearing axes",
+    "extrusion: both puller contacts move downstream",
+    "compounding: screw cores remain on their bearing axes",
+    "compounding: both puller contacts move downstream",
+    "compounding: both screws co-rotate",
+    "sheet: screw cores remain on their bearing axes",
+    "sheet: upstack web clearance and both nip contact directions",
+    "castfilm: screw cores remain on their bearing axes",
+    "castfilm: web stays outside chill, guide and winding rolls",
+    "blownfilm: screw cores remain on their bearing axes",
+    "blownfilm: upward nip contacts, web clearance, flattening orientation and bubble morph",
+    "blowmolding: screw cores remain on their bearing axes",
+    "blowmolding: head-anchored parison, cavity-aligned morph, pin retraction before opening and product discharge",
+    "straw: original snapshot hash, belt contact direction, visible fasteners and cut-segment discharge/regrowth",
+    "All seven rigs: embedded geometry, finite transforms and all configured motion groups"
+  ],
+  "models": {
+    "extrusion": {
+      "objects": 138,
+      "motion_groups": [
+        "cutter",
+        "flow",
+        "haul",
+        "screw"
+      ]
+    },
+    "compounding": {
+      "objects": 178,
+      "motion_groups": [
+        "cutter",
+        "flow",
+        "haul",
+        "screw",
+        "side"
+      ]
+    },
+    "sheet": {
+      "objects": 125,
+      "motion_groups": [
+        "flow",
+        "roll",
+        "screw",
+        "winder"
+      ]
+    },
+    "castfilm": {
+      "objects": 108,
+      "motion_groups": [
+        "flow",
+        "roll",
+        "screw",
+        "winder"
+      ]
+    },
+    "blownfilm": {
+      "objects": 112,
+      "motion_groups": [
+        "bubble",
+        "flow",
+        "haul",
+        "screw",
+        "winder"
+      ]
+    },
+    "blowmolding": {
+      "objects": 87,
+      "motion_groups": [
+        "air",
+        "flow",
+        "inflate",
+        "mold",
+        "parison",
+        "pin",
+        "release",
+        "screw"
+      ]
+    },
+    "straw": {
+      "objects": 436,
+      "motion_groups": [
+        "cutter",
+        "flow",
+        "haul",
+        "screw"
+      ]
+    }
+  }
+}

@@ -2,7 +2,7 @@
 (function () {
   'use strict';
   const VENDOR='./vendor/three-0.185.1/';
-  const MODEL='./assets/equipment/injection-motion.glb?v=18';
+  const MODEL='./assets/equipment/injection-motion.glb?v=20';
   const STARTS=[0,4,6,10], DURATION=14;
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
   const state={time:1.2,speed:1,playing:!reduced.matches,phase:0,ready:false,visible:false,frames:0,mode:'cycle',focus:'all'};
@@ -70,10 +70,10 @@
     if(status)status.textContent=state.mode==='manual'?t('직접 조작 · 금형 개방 ','Manual · Mold opening ')+manual.mold.toFixed(1)+'% · '+t('충전 ','Fill ')+manual.fill.toFixed(1)+'%':String(phase+1).padStart(2,'0')+' · '+names[phase][locale==='en'?1:0];
     host.querySelectorAll('[data-motion-stage]').forEach(button=>button.setAttribute('aria-pressed',String(state.mode==='cycle'&&Number(button.dataset.motionStage)===phase)));
     const isManual=state.mode==='manual';
-    document.body.classList.toggle('pha-machine-manual',isManual);
     const toggle=host.querySelector('[data-motion="manual"]');
     if(toggle){toggle.setAttribute('aria-pressed',String(isManual));toggle.textContent=isManual?t('자동 공정으로 돌아가기','Return to cycle'):t('직접 조작','Manual controls');}
     const panel=host.querySelector('.motion-manual');if(panel)panel.hidden=!isManual;
+    if(window.phaSyncMachineOverlay)window.phaSyncMachineOverlay();else document.body.classList.toggle('pha-machine-manual',isManual);
     for(const key of ['play','speed','progress']){const input=host.querySelector('[data-motion="'+key+'"]');if(input)input.disabled=!state.ready||isManual;}
     host.querySelectorAll('[data-axis]').forEach(input=>{
       const key=input.dataset.axis;input.disabled=!state.ready||!canJog(key);input.value=String(target[key]);
@@ -182,14 +182,15 @@
   }
   function detach(){
     token++;cancel();state.visible=false;
-    document.body.classList.remove('pha-machine-manual');
+    runtime?.renderer.domElement.remove();
+    if(window.phaSyncMachineOverlay)window.phaSyncMachineOverlay();else document.body.classList.remove('pha-machine-manual');
     resizeObserver?.disconnect();intersectionObserver?.disconnect();host=null;onStage=()=>{};
   }
   async function mount(targetHost,options={}){
     detach();host=targetHost;locale=options.locale||'ko';onStage=options.onStage||(()=>{});const current=token;
     host.dataset.motionState='loading';
     host.innerHTML=`<div class="motion-load" role="status">${t('움직이는 사출 설비 불러오는 중…','Loading the animated injection machine…')}</div>
-      <img class="motion-poster" src="assets/equipment/injection-motion-poster.png?v=18" width="1280" height="640" alt="${t('내부 스크류와 금형을 드러낸 사출기 절개 모델','Cutaway injection machine showing its screw and mold')}">
+      <img class="motion-poster" src="assets/equipment/injection-motion-poster.png?v=20" width="1280" height="640" alt="${t('내부 스크류와 금형을 드러낸 사출기 절개 모델','Cutaway injection machine showing its screw and mold')}">
       <div class="motion-viewport" hidden></div>
       <div class="motion-toolbar"><button type="button" data-motion="play" disabled>${t('재생','Play')}</button><label>${t('재생 속도','Playback speed')} <select data-motion="speed" aria-label="${t('설명 재생 속도','Illustration playback speed')}" disabled><option value="0.5">0.5×</option><option value="1">1×</option><option value="1.5">1.5×</option></select></label><button type="button" data-motion="manual" aria-pressed="false" disabled>${t('직접 조작','Manual controls')}</button><label>${t('관찰 부위','View')} <select data-motion="focus" aria-label="${t('관찰 부위','Inspection area')}" disabled><option value="all">${t('전체','Whole machine')}</option><option value="screw">${t('스크류','Screw')}</option><option value="mold">${t('금형·취출','Mold & ejector')}</option></select></label><button type="button" data-motion="front" disabled>${t('측면 보기','Side view')}</button><button type="button" data-motion="view" disabled>${t('시점 초기화','Reset view')}</button><span class="motion-phase"></span></div>
       <label class="motion-progress">${t('공정 진행 위치','Cycle position')}<input type="range" min="0" max="100" step="0.1" data-motion="progress" aria-label="${t('공정 진행 위치','Cycle position')}" disabled></label>

@@ -25,6 +25,8 @@ const FILES_TO_COPY = [
   'process-atlas.js',
   'process-atlas.css',
   'injection-motion.js',
+  'equipment-models.js',
+  'equipment-motion.js',
   'sw.js',
   'manifest.webmanifest',
   'README.txt',
