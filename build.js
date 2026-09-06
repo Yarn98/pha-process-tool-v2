@@ -14,12 +14,16 @@ const FILES_TO_COPY = [
   'tokens.css',
   'overrides.css',
   'custom.js',
+  'troubleshooting-data.js',
   'glossary.js',
   'anomaly-codes.js',
   'tars-batch-schema.js',
   'compounding-guide.js',
   'straw-guide.js',
   'pha-integration.js',
+  'process-evidence.js',
+  'process-atlas.js',
+  'process-atlas.css',
   'sw.js',
   'manifest.webmanifest',
   'README.txt',
@@ -29,10 +33,11 @@ const FILES_TO_COPY = [
 // Directories to copy to dist
 const DIRS_TO_COPY = [
   'data',
-  'icons'
+  'icons',
+  'assets'
 ];
 
-const DIST_DIR = 'dist';
+const DIST_DIR = path.resolve(__dirname, 'dist');
 
 /**
  * Recursively copy directory
@@ -54,6 +59,7 @@ function copyDir(src, dest) {
       // Recursively copy subdirectory
       copyDir(srcPath, destPath);
     } else {
+      if (/\.blend\d?$/.test(entry.name)) continue; // Editable source stays in the repo, not the web payload.
       // Copy file
       fs.copyFileSync(srcPath, destPath);
       console.log(`  ✓ ${srcPath} → ${destPath}`);
@@ -65,10 +71,12 @@ function copyDir(src, dest) {
  * Main build function
  */
 function build() {
+  require('./scripts/sync-troubleshooting.cjs');
   console.log('🏗️  Building PHA Process Optimizer...\n');
 
   // Clean dist directory if it exists
   if (fs.existsSync(DIST_DIR)) {
+    if (path.dirname(DIST_DIR) !== path.resolve(__dirname)) throw new Error('Unexpected build destination');
     console.log('🧹 Cleaning existing dist directory...');
     fs.rmSync(DIST_DIR, { recursive: true, force: true });
   }

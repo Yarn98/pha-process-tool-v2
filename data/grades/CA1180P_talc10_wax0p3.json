@@ -1,5 +1,8 @@
 {
   "id": "CA1180P_talc10_wax0p3",
+  "evidence_status": "unverified_legacy_trial",
+  "auto_apply": false,
+  "scope_note": "Additive trial example; not the neat CA1180P manufacturer recipe. Confirm the formulation, machine, and source before use.",
   "title": "CA1180P (PLA80/aPHA20) + talc10phr + carnauba0.3phr",
   "sources": [
     "CJ Biomaterials Leaflet Injection Molding (MFR 7, shrinkage 0.2%, ABS mold compatibility)"

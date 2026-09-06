@@ -5,7 +5,10 @@
   "scripts": {
     "build": "node build.js",
     "start": "echo 'This is a static site. Open index.html in a browser.' && exit 0",
-    "test:myai": "node tests/myai-regression.mjs"
+    "test:myai": "node tests/myai-regression.mjs",
+    "test:process": "node --test tests/process-evidence.test.cjs tests/troubleshooting.test.cjs",
+    "check:kb": "node scripts/sync-troubleshooting.cjs --check",
+    "test:ui": "node tests/process-ui-review.mjs"
   },
   "keywords": [
     "pha",

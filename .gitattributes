@@ -1,0 +1,4 @@
+# Preserve the exact received answer and sent report as audit evidence.
+# Their original whitespace is intentional; do not normalize these two files.
+output/gpt-pro-review-packs/pha-all-processing-gpt6-pro-20260906/provider_answer.md -text -whitespace
+output/gpt-pro-review-packs/pha-all-processing-gpt6-pro-20260906/report.md -text -whitespace

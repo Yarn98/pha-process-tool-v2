@@ -53,413 +53,42 @@
    * ST-1: Production Speed Calculator
    * ───────────────────────────────────────── */
   function buildST1() {
-    const wrap = el('div', { className: 'flash-content active', id: 'straw-tab-0' });
-
-    wrap.innerHTML = `
-      <h3 style="color:#1e3c72;margin-bottom:16px">
-        ${t('생산속도 계산기', 'Production Speed Calculator')}
-      </h3>
-      <p style="color:#6b7280;margin-bottom:16px">
-        ${t(
-          '물구간 체류시간 기준으로 최대 생산속도(N_max)와 목표 속도별 운전 파라미터를 계산합니다.',
-          'Calculates maximum production speed (N_max) based on water-bath residence time and operating parameters for a target speed.'
-        )}
-      </p>
-    `;
-
-    const calc = el('div', { className: 'calculator' });
-
-    // Input grid
-    const grid = el('div', { className: 'weight-calc-grid', style: 'display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px;margin-bottom:16px' });
-
-    const inputs = [
-      { id: 'sg-ls',       label: t('L_s — 스트로 길이 (mm)', 'L_s — Straw length (mm)'),             value: 260, min: 100, max: 500 },
-      { id: 'sg-lw',       label: t('L_w — 물구간 길이 (m)', 'L_w — Water-bath length (m)'),          value: 8.5, min: 1,   max: 20  },
-      { id: 'sg-tcrit',    label: t('t_crit — 임계 체류시간 (s)', 't_crit — Critical residence time (s)'), value: 4.2, min: 1,   max: 10  },
-      { id: 'sg-ms',       label: t('m_s — 스트로 1개 질량 (g)', 'm_s — Mass per straw (g)'),          value: 1.5, min: 0.1, max: 10  },
-      { id: 'sg-ntarget',  label: t('N_target — 목표 생산속도 (str/min, 선택)', 'N_target — Target speed (str/min, optional)'), value: 400, min: 0,   max: 9999 },
+    const wrap=el('div',{className:'flash-content active',id:'straw-tab-0'});
+    const fields=[
+      ['sg-ls','절단 피치: 제품 길이 + 절단 손실 (mm)','Cut pitch: product length + cutting allowance (mm)',260],
+      ['sg-lw','유효 수조 길이 (m)','Effective bath length (m)',8.5],
+      ['sg-tcrit','시험으로 확인한 최소 체류시간 (s)','Trial-verified minimum residence time (s)',''],
+      ['sg-ms','스트로 1개 질량 (g)','Mass per straw (g)',1.5],
+      ['sg-lanes','동시에 생산하는 가닥 수','Number of simultaneous lanes',1],
+      ['sg-ntarget','전체 목표 생산량 (개/min, 선택)','Total target output (pieces/min, optional)','']
     ];
-
-    inputs.forEach(inp => {
-      const box = el('div', { className: 'weight-input-box' });
-      box.appendChild(el('label', { html: inp.label }));
-      const i = el('input', { type: 'number', id: inp.id, value: inp.value, min: inp.min, max: inp.max, step: 'any' });
-      box.appendChild(i);
-      const hint = el('span', { className: 'range-hint', text: `${t('범위', 'Range')}: ${inp.min} – ${inp.max}` });
-      box.appendChild(hint);
-      grid.appendChild(box);
-    });
-
-    calc.appendChild(grid);
-
-    // Formula display
-    const formulaBox = el('div', { className: 'formula', html: `
-      <strong>${t('적용 공식', 'Formulas applied')}:</strong><br>
-      V_line = N &times; L_s/1000 &nbsp; (m/min)<br>
-      t_water = 60 &times; L_w / (N &times; L_s/1000) &nbsp; (s)<br>
-      Q_mass = N &times; m_s &nbsp; (g/min) = 0.06 &times; N &times; m_s &nbsp; (kg/h)<br>
-      N_max = 60 &times; L_w / (L_s/1000 &times; t_crit)<br>
-      L_w_req = N_target &times; (L_s/1000) &times; t_crit / 60<br>
-      T_die &asymp; 171.1 + 0.034 &times; N &nbsp; (${t('die-exit 온도 추정', 'die-exit temp estimate')})
-    ` });
-    calc.appendChild(formulaBox);
-
-    const btnRow = el('div', { style: 'margin:10px 0' });
-    const calcBtn = el('button', { className: 'calc-button', text: t('계산', 'Calculate') });
-    btnRow.appendChild(calcBtn);
-    calc.appendChild(btnRow);
-
-    // Result area
-    const resultArea = el('div', { id: 'sg-result', style: 'display:none' });
-    calc.appendChild(resultArea);
-
-    calcBtn.addEventListener('click', () => {
-      const Ls      = parseFloat(document.getElementById('sg-ls').value);
-      const Lw      = parseFloat(document.getElementById('sg-lw').value);
-      const tcrit   = parseFloat(document.getElementById('sg-tcrit').value);
-      const ms      = parseFloat(document.getElementById('sg-ms').value);
-      const Ntarget = parseFloat(document.getElementById('sg-ntarget').value);
-
-      if ([Ls, Lw, tcrit, ms].some(isNaN) || Ls <= 0 || Lw <= 0 || tcrit <= 0 || ms <= 0) {
-        resultArea.style.display = 'none';
-        alert(t('필수 입력값을 올바르게 입력하세요.', 'Please enter valid required inputs.'));
-        return;
-      }
-
-      const Ls_m   = Ls / 1000;
-      const Nmax   = 60 * Lw / (Ls_m * tcrit);
-      const Vline  = Nmax * Ls_m;
-      const Qmass_gmin = Nmax * ms;
-      const Qmass_kgh  = 0.06 * Nmax * ms;
-      const Tdie   = 171.1 + 0.034 * Nmax;
-
-      let targetHTML = '';
-      if (!isNaN(Ntarget) && Ntarget > 0) {
-        const twater_target = 60 * Lw / (Ntarget * Ls_m);
-        const Lw_req = Ntarget * Ls_m * tcrit / 60;
-        const status = twater_target >= tcrit
-          ? `<span style="color:#065f46;font-weight:700">${t('✅ 충분 (체류시간 충족)', '✅ Sufficient (residence time met)')}</span>`
-          : `<span style="color:#9b1c1c;font-weight:700">${t('⚠️ 부족 — 물구간 연장 필요', '⚠️ Insufficient — extend water bath')}</span>`;
-        targetHTML = `
-          <div class="recommendation-item caution" style="margin-top:12px">
-            <strong>${t('N_target 분석', 'N_target Analysis')}: ${Ntarget.toFixed(0)} str/min</strong><br>
-            t_water @ N_target = <strong>${twater_target.toFixed(2)} s</strong> ${status}<br>
-            ${t('필요 물구간 길이', 'Required water-bath length')}: L_w_req = <strong>${Lw_req.toFixed(2)} m</strong>
-          </div>
-        `;
-      }
-
-      resultArea.style.display = 'block';
-      resultArea.innerHTML = `
-        <div class="calc-result">
-          <h4>${t('계산 결과', 'Results')}</h4>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:12px">
-            <div>
-              <div style="font-size:13px;color:#6b7280">${t('최대 생산속도 (N_max)', 'Max production speed (N_max)')}</div>
-              <div class="calc-result-value">${Nmax.toFixed(1)} <span style="font-size:14px">str/min</span></div>
-            </div>
-            <div>
-              <div style="font-size:13px;color:#6b7280">${t('라인 속도 @ N_max', 'Line speed @ N_max')}</div>
-              <div class="calc-result-value">${Vline.toFixed(2)} <span style="font-size:14px">m/min</span></div>
-            </div>
-            <div>
-              <div style="font-size:13px;color:#6b7280">${t('질량유량 @ N_max', 'Mass flow @ N_max')}</div>
-              <div class="calc-result-value">${Qmass_gmin.toFixed(1)} <span style="font-size:14px">g/min</span></div>
-              <div style="font-size:12px;color:#6b7280">${Qmass_kgh.toFixed(2)} kg/h</div>
-            </div>
-            <div>
-              <div style="font-size:13px;color:#6b7280">${t('Die-exit 온도 추정', 'Die-exit temp estimate')}</div>
-              <div class="calc-result-value">${Tdie.toFixed(1)} <span style="font-size:14px">°C</span></div>
-              <div style="font-size:12px;color:#6b7280">T ≈ 171.1 + 0.034 × N_max</div>
-            </div>
-          </div>
-          ${targetHTML}
-        </div>
-      `;
-    });
-
-    wrap.appendChild(calc);
-
-    // Reference table
-    const refTitle = el('h4', { style: 'color:#1e3c72;margin:24px 0 8px', text: t('스트로 길이별 N_max 참조표 (L_w=8.5m, t_crit=4.2s)', 'N_max reference table by straw length (L_w=8.5m, t_crit=4.2s)') });
-    wrap.appendChild(refTitle);
-
-    const refData = [
-      { len: 180, nmax: 675 },
-      { len: 210, nmax: 578 },
-      { len: 230, nmax: 528 },
-      { len: 260, nmax: 467 },
-      { len: 300, nmax: 405 },
-    ];
-
-    const tableWrap = el('div', { className: 'tablewrap', style: 'margin-bottom:20px' });
-    const tbl = el('table');
-    const thead = el('thead');
-    const hrow = el('tr');
-    hrow.appendChild(el('th', { text: t('스트로 길이 (mm)', 'Straw length (mm)') }));
-    hrow.appendChild(el('th', { text: 'N_max (str/min)' }));
-    hrow.appendChild(el('th', { text: t('V_line @ N_max (m/min)', 'V_line @ N_max (m/min)') }));
-    thead.appendChild(hrow);
-    tbl.appendChild(thead);
-
-    const tbody = el('tbody');
-    refData.forEach(row => {
-      const tr = el('tr');
-      tr.appendChild(el('td', { text: row.len.toString() }));
-      tr.appendChild(el('td', { text: row.nmax.toString() }));
-      const vl = (row.nmax * row.len / 1000).toFixed(2);
-      tr.appendChild(el('td', { text: vl }));
-      tbody.appendChild(tr);
-    });
-    tbl.appendChild(tbody);
-    tableWrap.appendChild(tbl);
-    wrap.appendChild(tableWrap);
-
-    return wrap;
+    wrap.innerHTML=`<h3>${t('체류시간으로 비교하는 생산량','Output from residence time')}</h3><p>${t('절단 피치·질량 예시를 설비 값으로 바꾸고 해당 그레이드·수조 온도·두께의 시험에서 확인한 최소 체류시간을 입력하세요.','Replace example cut pitch and mass with line measurements; enter residence time established for the actual grade, bath temperature and wall thickness.')}</p><div class="weight-calc-grid">${fields.map(([id,ko,en,value])=>`<div class="weight-input-box"><label for="${id}">${t(ko,en)}</label><input type="number" id="${id}" value="${value}" min="${id==='sg-lanes'?1:0}" step="${id==='sg-lanes'?1:'any'}"></div>`).join('')}</div><p class="atlas-note">${t('같은 속도로 생산하는 n개 가닥을 가정합니다. 절단 손실은 피치에 포함하세요. 표시 질량은 제품 생산량이며 스크랩·정지·불량 손실을 더한 압출 토출량은 별도 확인합니다. 체류시간 충족은 결정화나 양품 판정이 아닙니다.','Assumes n lanes at equal speed. Include cutting allowance in the pitch. Displayed mass is product output; separately account for scrap, downtime and rejects when assessing extruder throughput. Meeting an entered residence time does not establish crystallization or product acceptance.')}</p><details><summary>${t('계산식과 단위','Equations and units')}</summary><div class="formula">v = (N_total / n) × L_pitch / 1000 (m/min)<br>t = 60 × L_w / v (s)<br>N_total,limit = 60 × L_w × n / (L_pitch/1000 × t_required)<br>Q = 0.06 × N_total × m_s (kg/h)</div></details><button class="calc-button" id="sg-calc">${t('계산','Calculate')}</button><div id="sg-result" aria-live="polite"></div>`;
+    wrap.querySelector('#sg-calc').addEventListener('click',()=>{
+      const v=fields.map(([id])=>wrap.querySelector('#'+id).value);
+      const r=PHAEvidence.strawCapacity(...v.slice(0,5).map(Number),v[5]===''?undefined:Number(v[5]));
+      const out=wrap.querySelector('#sg-result');
+      if(r.error){out.innerHTML=`<p role="alert" class="atlas-note">${t('양의 유한값과 정수 가닥 수를 입력하세요. 최소 체류시간은 시험 결과가 필요합니다.','Enter finite positive values and an integer lane count. A trial-established minimum residence time is required.')}</p>`;return;}
+      out.innerHTML=`<div class="calc-result"><h4>${t('입력한 체류시간 기준의 기하학적 한계','Geometric limit for the entered residence time')}</h4><p>${t('전체 생산량','Total output')}: <strong>${r.total_per_min.toFixed(1)}</strong> ${t('개/min','pieces/min')} · ${r.perLane_per_min.toFixed(1)} / ${t('가닥','lane')}</p><p>${r.lineSpeed_m_min.toFixed(2)} m/min · ${r.mass_kg_h.toFixed(2)} kg/h</p>${v[5]!==''?`<p>${t('목표 생산량에서 체류시간','Residence at target output')}: ${r.targetResidence_s.toFixed(2)} s · ${t('필요 유효 길이','Required effective length')}: ${r.requiredBath_m.toFixed(2)} m</p><p>${r.meetsEnteredResidence?t('입력한 체류시간 이상입니다. 제품 품질은 별도 확인하세요.','Meets the entered residence time; check product quality separately.'):t('입력한 체류시간에 못 미칩니다. 생산량과 유효 길이를 다시 검토하세요.','Below the entered residence time; review output and effective bath length.')}</p>`:''}</div>`;
+    }); return wrap;
   }
 
-  /* ─────────────────────────────────────────
-   * ST-2: Recommended Process Conditions
-   * ───────────────────────────────────────── */
   function buildST2() {
-    const wrap = el('div', { className: 'flash-content', id: 'straw-tab-1' });
-    wrap.innerHTML = `
-      <h3 style="color:#1e3c72;margin-bottom:16px">${t('권장 공정 조건', 'Recommended Process Conditions')}</h3>
-      <p style="color:#6b7280;line-height:1.7;margin-bottom:16px">
-        ${t(
-          '스트로(빨대) 압출 라인에서 가장 많이 조정하는 5가지: ① 라인 속도 ② 수조 온도 ③ 칠 롤 프로파일 ④ 다이 갭 ⑤ 사이징 보정. 이 5가지만 정리해도 대부분의 치수 · 휨 · 표면 문제를 줄일 수 있습니다.',
-          'The five knobs field teams adjust most on straw lines: (1) line speed, (2) water-bath temperature, (3) chill-roll profile, (4) die gap, and (5) sizing correction. Those five resolve most dimensional, bend, and surface defects.'
-        )}
-      </p>
-
-      <!-- Section A: Morphology-tiered bath strategy -->
-      <h4 style="color:#1e3c72;margin:20px 0 10px">${t('A. 형태학별 수조 전략', 'A. Morphology-tiered water-bath strategy')}</h4>
-      <div class="tablewrap" style="margin-bottom:20px">
-        <table>
-          <thead>
-            <tr>
-              <th>${t('조성 구간', 'Composition window')}</th>
-              <th>${t('권장 전략', 'Recommended strategy')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>${t('PLA 연속상 (PHA < 30 %)', 'PLA-continuous (PHA < 30%)')}</td>
-              <td>${t('저온 사이징 15–25 °C. 가장 빠른 냉각을 우선.', 'Cold sizing at 15–25 °C. Fastest cooling wins.')}</td>
-            </tr>
-            <tr>
-              <td>${t('전이 구간 (PHA 30–60 %)', 'Transition window (PHA 30–60%)')}</td>
-              <td>${t('3단 수조 60–70 °C → 85–95 °C → 40–45 °C. 결정화를 먼저 유도하고 그 다음 냉각.', 'Three-stage bath: 60–70 °C → 85–95 °C → 40–45 °C. Induce crystallization first, then chill.')}</td>
-            </tr>
-            <tr>
-              <td>${t('PHA 연속상 (PHA ≥ 60 %)', 'PHA-continuous (PHA ≥ 60%)')}</td>
-              <td>${t('온수 프리사이징 55–70 °C. 급냉은 표면 결함과 취성 파단을 부를 수 있음.', 'Warm pre-sizing at 55–70 °C. Quench can trigger surface defects and brittle breakage.')}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Section B: Barrel/Die Temperature -->
-      <h4 style="color:#1e3c72;margin:20px 0 10px">${t('B. 배럴/다이 온도 설정', 'B. Barrel / Die Temperature Settings')}</h4>
-      <div class="tablewrap" style="margin-bottom:20px">
-        <table>
-          <thead>
-            <tr>
-              <th>${t('구역', 'Zone')}</th>
-              <th>${t('온도', 'Temperature')}</th>
-              <th>${t('비고', 'Notes')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>${t('배럴 1', 'Barrel 1')}</td><td>160°C</td><td>${t('고체 이송 구간', 'Solids conveying')}</td></tr>
-            <tr><td>${t('배럴 2', 'Barrel 2')}</td><td>166–170°C</td><td>${t('용융 개시', 'Melting onset')}</td></tr>
-            <tr><td>${t('배럴 3', 'Barrel 3')}</td><td>167–170°C</td><td>${t('완전 용융', 'Complete melting')}</td></tr>
-            <tr><td>${t('배럴 4', 'Barrel 4')}</td><td>169–170°C</td><td>${t('균질화', 'Homogenization')}</td></tr>
-            <tr><td>${t('스크린/다이', 'Screen/Die')}</td><td>170°C</td><td>${t('실측 die-exit 확인', 'Verify actual die-exit')}</td></tr>
-            <tr><td>${t('메인 수조', 'Main bath')}</td><td>70–73°C</td><td>${t('Fast-setting 계열 최적', 'Optimized for fast-setting grade')}</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Section C: Formulation Direction -->
-      <h4 style="color:#1e3c72;margin:20px 0 10px">${t('C. 배합 방향', 'C. Formulation Direction')}</h4>
-      <div class="tablewrap" style="margin-bottom:20px">
-        <table>
-          <thead>
-            <tr>
-              <th>${t('방향', 'Direction')}</th>
-              <th>${t('권장 사항', 'Recommendation')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>${t('기본 매트릭스', 'Base matrix')}</td><td>Baseline PHA/CaCO₃ system</td></tr>
-            <tr><td>${t('생산성 강화', 'Productivity boost')}</td><td>PHB-rich fast-setting booster 12–20 wt%</td></tr>
-            <tr><td>${t('표면 보정', 'Surface correction')}</td><td>Silicone/silica process aid 0.15 wt%</td></tr>
-            <tr><td style="color:#9b1c1c;font-weight:700">${t('피해야 할 방향', 'Avoid')}</td><td>${t('Peroxide, carrier mismatch MB, PLA co-recipe', 'Peroxide, carrier mismatch MB, PLA co-recipe')}</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Section D: Productivity by Booster -->
-      <h4 style="color:#1e3c72;margin:20px 0 10px">${t('D. 부스터 함량별 안정 속도', 'D. Stable Speed by Booster Content')}</h4>
-      <div class="tablewrap" style="margin-bottom:20px">
-        <table>
-          <thead>
-            <tr>
-              <th>${t('부스터', 'Booster')}</th>
-              <th>${t('안정 속도', 'Stable Speed')}</th>
-              <th>${t('비고', 'Notes')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr><td>0 wt%</td><td>245–346 str/min</td><td>Baseline</td></tr>
-            <tr><td>12–15 wt%</td><td>380–430 str/min</td><td>${t('장시간 안정', 'Long-term stable')}</td></tr>
-            <tr><td>20 wt%</td><td>${t('최대', 'Max')} 457 str/min</td><td>${t('현 라인 상한', 'Current line ceiling')}</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Section E: Problem Combinations -->
-      <h4 style="color:#1e3c72;margin:20px 0 10px">${t('E. 피해야 할 조합 (경고)', 'E. Problem Combinations to Avoid (Warnings)')}</h4>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:20px">
-        <div class="card" style="border-left-color:#ef4444">
-          <strong style="color:#ef4444">Peroxide</strong><br>
-          <span style="color:#374151">${t('→ 고속 불안정', '→ High-speed instability')}</span>
-        </div>
-        <div class="card" style="border-left-color:#ef4444">
-          <strong style="color:#ef4444">Talc + Peroxide</strong><br>
-          <span style="color:#374151">${t('→ 복합 불안정', '→ Compound instability')}</span>
-        </div>
-        <div class="card" style="border-left-color:#ef4444">
-          <strong style="color:#ef4444">PLA</strong><br>
-          <span style="color:#374151">${t('→ 온수 프리사이징 붕괴', '→ Warm pre-sizing collapse')}</span>
-        </div>
-        <div class="card" style="border-left-color:#ef4444">
-          <strong style="color:#ef4444">${t('Carrier mismatch MB', 'Carrier mismatch MB')}</strong><br>
-          <span style="color:#374151">${t('→ 즉시 단선', '→ Immediate strand breakage')}</span>
-        </div>
-      </div>
-
-      <div class="card" style="border-left-color:#2C5D3F">
-        <strong style="color:#2C5D3F">${t('커터 온도 SOP', 'Cutter-temperature SOP')}</strong><br>
-        <span style="color:#374151;line-height:1.7">
-          ${t(
-            '컷오프 시점 수지 온도는 25 ± 5 °C로 유지하세요. 너무 뜨거우면 절단면이 일그러지고, 너무 차가우면 취성 균열이 납니다.',
-            'Hold the resin temperature at the cutter to 25 ± 5 °C. Too hot skews the cut face; too cold causes brittle cracking.'
-          )}
-        </span>
-      </div>
-    `;
+    const wrap=el('div',{className:'flash-content',id:'straw-tab-1'}),g=PHAEvidence.GRADES.CB0400A;
+    const rows=[...g.stages,['다이 설정온도','Die set temperature',g.straw.die],['결정화 수조','Crystallization bath',g.straw.waterBath]];
+    wrap.innerHTML=`<h3>CB0400A · ${t('제조사 압출 조건','Manufacturer extrusion conditions')}</h3><a href="${g.source}" target="_blank" rel="noopener noreferrer">PHACT CB0400A TDS · ${g.revision} ↗</a><p>${t('이 표는 CB0400A에 한정됩니다. 다른 PHA나 블렌드에 적용하기 전에 원료명·로트와 최신 가공 지침을 확인하세요.','This table applies to CB0400A. Confirm grade, lot and current processing instructions before using it for another PHA or blend.')}</p><div class="tablewrap"><table><thead><tr><th>${t('위치·역할','Location / role')}</th><th>°C</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${t(r[0],r[1])}</td><td>${r[2].join('–')}</td></tr>`).join('')}</tbody></table></div><p>${t('건조 75 °C × 4 h · 공정 투입 수분 <400 ppm. 건조공기 이슬점과 펠릿 수분량은 각각 확인합니다. 공급부 온도를 배럴 1번 설정값으로 자동 치환하지 않습니다.','Drying: 75 °C × 4 h; process moisture <400 ppm. Check drying-air dew point and pellet water separately. Do not automatically map feed temperature to barrel zone 1.')}</p><p class="atlas-note">${t('70–75 °C는 결정화 수조 조건이며 시트 칠롤 값이 아닙니다. 다이 설정온도와 측정 용융온도도 구분합니다. 이 TDS는 190 °C 초과와 고온 장기 체류에 따른 열화에 주의를 요구합니다.','The 70–75 °C bath supports crystallization; it is not a sheet chill-roll setting. Distinguish die setpoint from measured melt temperature. This TDS cautions about degradation above 190 °C and prolonged hot residence.')}</p><details><summary>${t('그레이드 전환·퍼지','Grade change / purging')}</summary><p>${t('CB0400A 문서는 현재 수지에 맞는 퍼지제를 우선하고 없을 때 LDPE를 대안으로 제시합니다. 이전 수지를 제거하고 배럴을 비운 뒤 CB0400A를 투입합니다. 장비·퍼지제의 온도 범위와 작업 절차를 함께 확인하세요.','The CB0400A document prefers a purge compound suited to the current material, with LDPE as its fallback. Remove previous material and empty the barrel before introducing CB0400A. Follow equipment and purge-material temperature limits and procedures.')}</p></details>`;
     return wrap;
   }
 
-  /* ─────────────────────────────────────────
-   * ST-3: Troubleshooting
-   * ───────────────────────────────────────── */
   function buildST3() {
-    const wrap = el('div', { className: 'flash-content', id: 'straw-tab-2' });
-
-    const heading = el('h3', { style: 'color:#1e3c72;margin-bottom:8px', text: t('트러블슈팅', 'Troubleshooting') });
-    const sub = el('p', { style: 'color:#6b7280;margin-bottom:16px', text: t('카드를 클릭하면 상세 정보가 펼쳐집니다.', 'Click a card to expand details.') });
-    wrap.appendChild(heading);
-    wrap.appendChild(sub);
-
-    const symptoms = [
-      {
-        title:  t('Sharkskin / 러프 표면', 'Sharkskin / Rough Surface'),
-        cause:  t('Die 전단 과다', 'Excessive die shear'),
-        check:  t('온도 2-3°C 하향 시 완화?', 'Does lowering temp 2-3°C reduce it?'),
-        action: t('Screen pack 유지, front zone 하향, silicone aid 0.15 wt%', 'Maintain screen pack, reduce front zone temp, add silicone aid 0.15 wt%'),
-      },
-      {
-        title:  t('String-up 직후 단선', 'Strand Break Immediately After String-Up'),
-        cause:  t('용융강도 부족', 'Insufficient melt strength'),
-        check:  t('압력 낮은데 바로 끊김?', 'Low pressure but breaks immediately?'),
-        action: t('속도 저감, peroxide 제거, screen pack 복귀', 'Reduce speed, remove peroxide, restore screen pack'),
-      },
-      {
-        title:  t('고속 범프/거칠음 (400+ str/min)', 'High-Speed Bumps / Roughness (400+ str/min)'),
-        cause:  t('Chain scission + filler 효과', 'Chain scission + filler interaction'),
-        check:  t('334 OK, 400+ 에서만 발생?', 'OK at 334, occurs only at 400+?'),
-        action: t('Peroxide 제거, talc 의존 저감', 'Remove peroxide, reduce reliance on talc'),
-      },
-      {
-        title:  t('수조 진입 직후 취성 파단', 'Brittle Fracture at Bath Entry'),
-        cause:  t('결정화가 너무 빠르거나 초기 수조 조건이 과격함', 'Crystallization is too fast or the first bath step is too aggressive'),
-        check:  t('수조에 닿자마자 부러지나?', 'Does it break as soon as it enters the bath?'),
-        action: t('Fast-setting booster 단독 사용을 피하고 baseline 조성으로 희석', 'Do not run the fast-setting booster alone; dilute it with the baseline recipe'),
-      },
-      {
-        title:  t('500 str/min 부근 걸림', 'Jamming Near 500 str/min'),
-        cause:  t('체류시간 부족, 장력 과다', 'Insufficient residence time, excessive draw tension'),
-        check:  t('457 통과, 500에서만 발생?', 'Passes at 457, fails only at 500?'),
-        action: t('속도 저감, 물구간 증설, die-bath gap 축소', 'Reduce speed, extend water bath, shorten die-bath gap'),
-      },
-      {
-        title:  t('MB 투입 즉시 단선', 'Immediate Break on MB Addition'),
-        cause:  t('Carrier mismatch', 'Carrier mismatch'),
-        check:  t('온도 올려도 개선 없음?', 'No improvement even with higher temperature?'),
-        action: t('동일 계열 PHA carrier MB 사용', 'Use MB with same PHA-family carrier'),
-      },
-      {
-        title:  t('PLA 혼합 — 온수 프리사이징 붕괴', 'PLA Blend — Warm Pre-Sizing Collapse'),
-        cause:  t('수조 온도가 PLA의 Tg보다 높음', 'Bath temperature sits above PLA Tg'),
-        check:  t('저온 사이징에서는 유지되고 온수 단계에서만 무너지나?', 'Does it hold in cold sizing and collapse only in the warm stage?'),
-        action: t('현재 PHA 온수 수조 레시피를 PLA와 공용하지 말고 PLA 연속상은 15–25 °C 저온 사이징으로 분리', 'Do not share the current warm PHA bath recipe with PLA; keep PLA-continuous runs on 15–25 °C cold sizing'),
-      },
+    const wrap=el('div',{className:'flash-content',id:'straw-tab-2'});
+    const ds=[
+      ['표면 거칠음·샤크스킨','Rough surface / sharkskin','미용융·다이 오염·유량 변동·높은 다이 전단을 구분합니다. 표면 확대 관찰과 공급량·압력·측정 용융온도를 비교하고 낮은 토출량의 시험에서 개선되는지 확인하세요.','Distinguish unmelted material, die contamination, flow variation and high die shear. Compare magnified surfaces, feed rate, pressure and measured melt temperature; test whether lower output improves the surface.'],
+      ['찢어짐·절단 균열','Tearing / cutting cracks','열화·불충분한 형상 고정·과도한 인취·칼날과 절단 동기화가 원인 후보입니다. 처음 발생하는 위치를 찾고 두께·체류시간·절단면·보관 후 변화를 비교하세요. 조성비만으로 연속상을 단정하거나 반응성 첨가제를 바로 투입하지 않습니다.','Possible causes include degradation, incomplete shape setting, excessive draw and cutter/blade issues. Locate the first defect and compare wall thickness, residence time, cut faces and post-storage changes. Composition alone does not identify the continuous phase or justify reactive additives.'],
+      ['타원·치수 변동·휨','Ovality / dimensional variation / bending','인취·내부 공기압·사이징·냉각 비대칭·공급 변동을 구분합니다. 여러 방향의 외경·벽 두께와 시간별 변화를 기록하고 정렬·지지·접촉을 확인한 뒤 한 변수씩 조정하세요.','Distinguish haul-off, internal air pressure, sizing, asymmetric cooling and feed variation. Record diameter and wall thickness around the tube and over time; check alignment, support and contact before adjusting one variable.']
     ];
-
-    const container = el('div', { style: 'display:flex;flex-direction:column;gap:12px;margin-bottom:20px' });
-
-    symptoms.forEach((s, idx) => {
-      const card = el('div', {
-        style: 'background:#fff;border:1px solid #dee2e6;border-left:4px solid #1e3c72;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.06);cursor:pointer',
-      });
-
-      const header = el('div', {
-        style: 'padding:14px 16px;display:flex;justify-content:space-between;align-items:center;background:#f8f9fa',
-      });
-      header.appendChild(el('span', { style: 'font-weight:700;color:#1e3c72', text: `${idx + 1}. ${s.title}` }));
-      const chevron = el('span', { style: 'font-size:18px;color:#6b7280;transition:transform .2s', text: '▶' });
-      header.appendChild(chevron);
-
-      const body = el('div', { style: 'display:none;padding:16px' });
-      body.innerHTML = `
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
-          <div>
-            <div style="font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;margin-bottom:4px">${t('원인', 'Cause')}</div>
-            <div style="color:#374151">${s.cause}</div>
-          </div>
-          <div>
-            <div style="font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;margin-bottom:4px">${t('확인', 'Check')}</div>
-            <div style="color:#374151">${s.check}</div>
-          </div>
-          <div>
-            <div style="font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;margin-bottom:4px">${t('대응', 'Action')}</div>
-            <div style="color:#065f46;font-weight:600">${s.action}</div>
-          </div>
-        </div>
-      `;
-
-      header.addEventListener('click', () => {
-        const open = body.style.display !== 'none';
-        body.style.display = open ? 'none' : 'block';
-        chevron.style.transform = open ? '' : 'rotate(90deg)';
-      });
-
-      card.appendChild(header);
-      card.appendChild(body);
-      container.appendChild(card);
-    });
-
-    wrap.appendChild(container);
+    wrap.innerHTML=`<h3>${t('원인을 확인한 뒤 조정','Diagnose before adjusting')}</h3>${ds.map(d=>`<details class="card"><summary>${t(d[0],d[1])}</summary><p>${t(d[2],d[3])}</p></details>`).join('')}<p class="atlas-note">${t('조건부 점검 절차입니다. 증상만으로 분자량 감소나 가교를 확정하지 않습니다. 잼·균열·치수 이탈이 증가하면 증속을 중단합니다. 막힘·과부하는 설비 절차에 따라 감압·정지 후 점검하고 회전부·벤트 안에 공구를 넣지 않습니다.','These are conditional checks; symptoms alone cannot establish molecular-weight loss or crosslinking. Stop increasing speed if jams, cracks or dimensional deviations worsen. For blockage/overload, depressurize and stop according to the equipment procedure before inspection; do not insert tools into moving equipment or vents.')}</p>`;
     return wrap;
   }
-
-  /* ─────────────────────────────────────────
-   * ST-4: Operator Checkpoints
-   * ───────────────────────────────────────── */
-  const CHECKLIST_KEY = 'straw_checklist';
 
   function loadChecklistState() {
     try {
@@ -500,7 +129,7 @@
       { id: 'ck2', section: 'before', text: t('Air pressure 설정 확인', 'Verify air pressure settings') },
       { id: 'ck3', section: 'before', text: t('커팅 동기화 점검', 'Inspect cutting synchronization') },
       // During Operation
-      { id: 'ck4', section: 'during', text: t('실측 die-exit 제품 온도 모니터링', 'Monitor actual die-exit product temperature') },
+      { id: 'ck4', section: 'during', text: t('다이 출구 온도의 측정 위치·방법 기록', 'Record die-exit temperature measurement location and method') },
       { id: 'ck5', section: 'during', text: t('압력 모니터링', 'Monitor pressure') },
       { id: 'ck6', section: 'during', text: t('표면 roughness 모니터링', 'Monitor surface roughness') },
       { id: 'ck7', section: 'during', text: t('물구간 체류시간 모니터링', 'Monitor water-bath residence time') },
@@ -567,106 +196,14 @@
   }
 
   /* ─────────────────────────────────────────
-   * ST-5: Die-exit Temperature Guide
+   * ST-5: Temperature / shape Guide
    * ───────────────────────────────────────── */
   function buildST5() {
-    const wrap = el('div', { className: 'flash-content', id: 'straw-tab-4' });
-
-    wrap.innerHTML = `
-      <h3 style="color:#1e3c72;margin-bottom:16px">${t('Die-exit 온도 가이드', 'Die-exit Temperature Guide')}</h3>
-
-      <!-- Section A: Composition Windows -->
-      <h4 style="color:#1e3c72;margin:20px 0 10px">${t('A. 배합별 온도 창', 'A. Composition-Specific Temperature Windows')}</h4>
-      <div class="tablewrap" style="margin-bottom:20px">
-        <table>
-          <thead>
-            <tr>
-              <th>${t('배합', 'Composition')}</th>
-              <th>${t('실측 온도 범위', 'Measured Temp Range')}</th>
-              <th>${t('비고', 'Notes')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Fast-setting PHB-rich</td>
-              <td>178–182°C</td>
-              <td>${t('안정창, 빠른 결정화', 'Stable window, fast crystallization')}</td>
-            </tr>
-            <tr>
-              <td>Baseline PHA startup</td>
-              <td>190–194°C</td>
-              <td>${t('Sharkskin 소멸 구간', 'Sharkskin elimination zone')}</td>
-            </tr>
-            <tr style="background:#fff1f1">
-              <td style="color:#9b1c1c;font-weight:700">${t('비권장', 'Not recommended')}</td>
-              <td style="color:#9b1c1c">≥200°C ${t('장시간', 'prolonged')}</td>
-              <td style="color:#9b1c1c">${t('열분해 위험', 'Thermal degradation risk')}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Section B: Speed-Temperature Estimator -->
-      <h4 style="color:#1e3c72;margin:20px 0 10px">${t('B. 속도-온도 간이 추정기', 'B. Speed-Temperature Quick Estimator')}</h4>
-      <div class="formula" style="margin-bottom:12px">
-        T_die,meas (°C) &asymp; 171.1 + 0.034 &times; N<br>
-        <span style="font-size:12px;color:#6b7280">
-          ${t('예시', 'Examples')}: 300→181.3°C &nbsp; 350→183.0°C &nbsp; 400→184.7°C &nbsp; 450→186.4°C &nbsp; 500→188.1°C
-        </span>
-      </div>
-
-      <div class="calc-input-group" style="max-width:360px">
-        <label>${t('생산속도 N 입력 (str/min)', 'Enter production speed N (str/min)')}</label>
-        <input type="number" id="sg-t5-n" value="400" min="0" max="9999" step="1" style="width:100%;padding:12px;border:2px solid #ced4da;border-radius:5px;font-size:1em;color:#212529;background:#fff">
-      </div>
-      <button class="calc-button" id="sg-t5-btn" style="margin:10px 0">
-        ${t('온도 추정', 'Estimate Temperature')}
-      </button>
-      <div id="sg-t5-result" style="display:none;margin:12px 0"></div>
-
-      <!-- Section C: Key Message -->
-      <div class="success-box" style="margin-top:24px">
-        <h4 style="margin-bottom:8px">📌 ${t('핵심 메시지', 'Key Message')}</h4>
-        <p>
-          ${t(
-            'PHA는 200°C 이상 melt-processing이 열분해 관점에서 비권장. 냉각/결정화는 20–80°C 범위에서 가능. 일부 PHA계는 50–70°C가 유리.',
-            'Melt-processing PHA above 200°C is not recommended due to thermal degradation risk. Cooling / crystallization is possible in the 20–80°C range; some PHA grades favor 50–70°C.'
-          )}
-        </p>
-      </div>
-    `;
-
-    // Estimator button handler (bound after innerHTML set)
-    const btn = wrap.querySelector('#sg-t5-btn');
-    const result = wrap.querySelector('#sg-t5-result');
-    if (btn && result) {
-      btn.addEventListener('click', () => {
-        const N = parseFloat(wrap.querySelector('#sg-t5-n').value);
-        if (isNaN(N) || N < 0) {
-          result.style.display = 'none';
-          return;
-        }
-        const T = 171.1 + 0.034 * N;
-        const color = T >= 200 ? '#9b1c1c' : T >= 190 ? '#92400e' : '#065f46';
-        result.style.display = 'block';
-        result.innerHTML = `
-          <div class="calc-result">
-            <div style="font-size:13px;color:#6b7280">${t('추정 die-exit 온도', 'Estimated die-exit temperature')} @ N = ${N.toFixed(0)} str/min</div>
-            <div class="calc-result-value" style="color:${color}">${T.toFixed(1)} °C</div>
-            ${T >= 200
-              ? `<div style="color:#9b1c1c;font-weight:700">⚠️ ${t('200°C 이상 — 열분해 위험 구간', '200°C or above — thermal degradation risk zone')}</div>`
-              : ''}
-          </div>
-        `;
-      });
-    }
-
+    const wrap=el('div',{className:'flash-content',id:'straw-tab-4'});
+    wrap.innerHTML=`<h3>${t('온도와 형상 고정의 측정','Temperature and shape-setting measurements')}</h3><div class="atlas-steps">${[['다이 설정','Die setpoint'],['용융온도 측정','Melt measurement'],['수조·체류시간','Bath / residence'],['치수·결정화','Dimensions / crystallization']].map((r,i)=>`<div class="atlas-step"><span>${i+1}</span>${t(...r)}</div>`).join('')}</div><p>${t('생산속도만으로 다이 출구 온도를 계산할 수 없습니다. 그레이드·스크류·토출량·전단·체류시간·센서 위치가 달라지면 온도 응답도 달라집니다.','Production rate alone cannot determine die-exit temperature. Grade, screw geometry, output, shear, residence time and sensor position affect the response.')}</p><ul><li>${t('배럴·다이 설정값과 접촉식 용융온도 측정을 별도로 기록하세요. IR 표면값은 내부 용융온도와 구분하고 방사율·측정 위치를 기록합니다.','Record barrel/die settings separately from contact melt-temperature readings. Keep IR surface readings distinct from internal melt temperature; record emissivity and location.')}</li><li>${t('수조 설정값·측정값·유효 길이·인취 속도를 두께·외경·휨·절단 상태와 함께 기록합니다.','Record bath setpoint, measured temperature, effective length and haul-off speed alongside wall thickness, diameter, bending and cut quality.')}</li><li>${t('유리전이·고화·결정화를 같은 현상으로 취급하지 않습니다. 필요하면 DSC와 보관 후 치수·물성으로 확인합니다.','Do not use glass transition, solidification and crystallization interchangeably. Use DSC and dimensions/properties after conditioning where needed.')}</li></ul><p class="atlas-note">${t('보정 이력이 없는 속도–온도 회귀값과 출처 없는 “실측 온도 창”을 제공하지 않습니다. 시험 조건은 그레이드·설비·측정 방법과 함께 기록하세요.','No speed-temperature regression or measured temperature window is established without calibration history. Record trial conditions with grade, equipment and measurement method.')}</p>`;
     return wrap;
   }
 
-  /* ─────────────────────────────────────────
-   * Main entry point
-   * ───────────────────────────────────────── */
   function initStrawGuide() {
     const root = document.getElementById('strawGuideContainer');
     if (!root) {
@@ -674,6 +211,9 @@
       return;
     }
 
+    const entered = Object.fromEntries([...root.querySelectorAll('input[type=number]')].map(i=>[i.id,i.value]));
+    const priorTab = [...root.querySelectorAll('.flash-tab')].findIndex(b=>b.classList.contains('active'));
+    const hadResult=!!root.querySelector('#sg-result .calc-result');
     root.innerHTML = '';
 
     // Page header
@@ -681,21 +221,22 @@
       style: 'color:#1e3c72;margin-bottom:8px',
       text: t('PHA 스트로 압출 가이드', 'PHA Straw Extrusion Guide'),
     }));
+    root.appendChild(el('figure',{className:'guide-equipment',html:`<img src="assets/equipment/straw.png?v=16" width="1280" height="640" alt="${t('환형 다이·수조·인취 롤·절단과 중공 스트로 형상 개념도','Conceptual annular die, bath, haul-off, cutter and hollow straws')}"><figcaption>${t('다이 → 수조 → 인취 → 절단. 초록색은 수지 경로이며 치수·냉각 성능을 계산한 도면이 아닙니다.','Die → bath → haul-off → cutting. Green indicates the polymer path; this is not dimensional CAD or a cooling-performance calculation.')}</figcaption>`}));
     root.appendChild(el('p', {
       style: 'color:#6b7280;margin-bottom:0',
       text: t(
-        '스트로(빨대) 압출 공정에서 가장 자주 조정하는 5가지: ① 라인 속도 ② 수조 온도 ③ 칠 롤 프로파일 ④ 다이 갭 ⑤ 사이징 보정. 이 5가지만 정리해도 대부분의 치수 · 휨 · 표면 이슈를 줄일 수 있습니다.',
-        'The five knobs field teams adjust most on straw extrusion lines: (1) line speed, (2) water-bath temperature, (3) chill-roll profile, (4) die gap, and (5) sizing correction. These five cover most dimensional, bend, and surface defects.'
+        '그레이드의 근거 조건을 확인하고, 측정값과 형상으로 시험 결과를 비교합니다.',
+        'Check grade-specific source conditions and compare trial results using measurements and product shape.'
       ),
     }));
 
     // Sub-tab nav
     const tabDefs = [
       { label: t('ST-1: 생산속도 계산기', 'ST-1: Production Speed Calc') },
-      { label: t('ST-2: 권장 공정 조건', 'ST-2: Process Conditions') },
+      { label: t('ST-2: CB0400A 원문 조건', 'ST-2: CB0400A source conditions') },
       { label: t('ST-3: 트러블슈팅', 'ST-3: Troubleshooting') },
       { label: t('ST-4: 운영자 체크포인트', 'ST-4: Operator Checkpoints') },
-      { label: t('ST-5: Die-exit 온도', 'ST-5: Die-exit Temperature') },
+      { label: t('ST-5: 온도·형상 측정', 'ST-5: Die-exit Temperature') },
     ];
 
     const tabNav = el('div', { className: 'flash-tabs' });
@@ -712,6 +253,9 @@
     root.appendChild(buildST3());
     root.appendChild(buildST4());
     root.appendChild(buildST5());
+    Object.entries(entered).forEach(([id,value])=>{if(document.getElementById(id))document.getElementById(id).value=value;});
+    if(priorTab>=0)showStrawTab(root,priorTab);
+    if(hadResult)root.querySelector('#sg-calc').click();
   }
 
   // Expose to global scope

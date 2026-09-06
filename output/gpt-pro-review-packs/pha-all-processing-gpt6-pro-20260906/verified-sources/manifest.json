@@ -1,0 +1,65 @@
+[
+  {
+    "grade": "S1000P",
+    "url": "https://cjbiomaterials.com/wp-content/uploads/2024/03/CJBMS-TDS-S1000P.pdf",
+    "file": "S1000P.pdf",
+    "sha256": "55d91f776dcbc6dd569180cf703a6449b146e3f4df094eb24bc16140e1a6f92d",
+    "bytes": 249417
+  },
+  {
+    "grade": "A1000P",
+    "url": "https://cjbiomaterials.com/wp-content/uploads/2024/03/CJBMS-TDS-A1000P.pdf",
+    "file": "A1000P.pdf",
+    "sha256": "ccdaf20622fe2834d71e965bbed4ec1553b321197ec987c40b6946dee240d684",
+    "bytes": 299043
+  },
+  {
+    "grade": "CA1180P",
+    "url": "https://cjbiomaterials.com/wp-content/uploads/2024/03/CJBMS-TDS-CA1180P.pdf",
+    "file": "CA1180P.pdf",
+    "sha256": "48f253d419e8ea9938316af655a618ccf2e4b024dccb86077ef58a8f19417fbf",
+    "bytes": 271398
+  },
+  {
+    "grade": "CB0104A",
+    "url": "https://cjbiomaterials.com/wp-content/uploads/2025/03/TDS-CB0104A.pdf",
+    "file": "CB0104A.pdf",
+    "sha256": "f36aae4bbdc8b6932eba87aba3303b2fba9226a8b34cb25081d7b40be5f6aca0",
+    "bytes": 107043
+  },
+  {
+    "grade": "CB0400A",
+    "url": "https://cjbiomaterials.com/wp-content/uploads/2024/11/PHACT%E2%84%A2-CB0400A.pdf",
+    "file": "CB0400A.pdf",
+    "sha256": "3d0c2c99963ee7fb94c68a5c0107d6a5b0c9dc5b1269fc6cbaffefc51857c778",
+    "bytes": 154682
+  },
+  {
+    "grade": "CA1165A",
+    "url": "https://cjbiomaterials.com/wp-content/uploads/2024/04/PHACT%E2%84%A2-CA1165A-TDS.pdf",
+    "file": "CA1165A.pdf",
+    "sha256": "2d95c6385365ba89a36a9d81cec9a70aeeeba8566ea5e65e0ff8e6b31a95dfa7",
+    "bytes": 410272
+  },
+  {
+    "grade": "CA1670P",
+    "url": "https://cjbiomaterials.com/wp-content/uploads/2024/03/CJBMS-TDS-CA1670P.pdf",
+    "file": "CA1670P.pdf",
+    "sha256": "69dd6fb1265d8b1b7e7057516a5f3665867ca1b3a2404978507ad298f668dbda",
+    "bytes": 343676
+  },
+  {
+    "grade": "CA1680P",
+    "url": "https://cjbiomaterials.com/wp-content/uploads/2024/03/CJBMS-TDS-CA1680P.pdf",
+    "file": "CA1680P.pdf",
+    "sha256": "41bcbcc6dd002b1dc3243237c2758c9352fc28219723602c31c315493df094f9",
+    "bytes": 322882
+  },
+  {
+    "grade": "CA1270P",
+    "url": "https://cjbiomaterials.com/wp-content/uploads/2024/03/CJBMS-TDS-CA1270P.pdf",
+    "file": "CA1270P.pdf",
+    "sha256": "d2a75afb761cc3e50d89830118ccd87cb72bb75efa514c283da4050241ee9ca9",
+    "bytes": 185286
+  }
+]

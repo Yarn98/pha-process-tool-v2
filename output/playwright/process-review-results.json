@@ -1,0 +1,27 @@
+{
+  "status": "pass",
+  "checks": [
+    "manufacturer precedence; legacy ranges, material measurements and history retained",
+    "known grades, compound identity, unknown API material and no Tm-derived setpoints",
+    "mold modes and language switch preserve entered values and units",
+    "24 desktop/mobile x KO/EN x process views: images, stage interactions, no page overflow",
+    "UI and My AI calculation parity; correct residence units; invalid cooling rejection",
+    "My AI explicit units override UI defaults; invalid supplied values are rejected",
+    "Flash subtabs do not deactivate Compounding tabs",
+    "generated defect illustration and educational disclosure load",
+    "range override isolation across grades and mold modes; unsupported blend conditions stay blank",
+    "CB0400A extrusion die source stays separate from sheet and roll conditions",
+    "Pro follow-up: film precision, distinct drying, ISBM/EBM scope, generic PHA identity and retained measurement",
+    "straw: required trial residence, lane count, mass balance and values preserved across language switch",
+    "compounding: invalid/incomplete composition gate; explicit layout selection; no invented zone settings; language retention",
+    "existing compounding trial/checklist preserved; revised meaning does not reuse an old completion",
+    "8 additional desktop/mobile x KO/EN compounding/straw views",
+    "UI/My AI packing ratios, no shear safety label, language retention and measured-density lookup/unknown-density handling",
+    "process/search filters and identical embedded KB when JSON fetch fails",
+    "missing film gap and invalid supplied gap remain distinct in My AI",
+    "real service-worker offline reload and second equipment view",
+    "offline reload retains reviewed KB and does not supply a default crystallization time",
+    "fresh-install material defaults do not override source data with old placeholders",
+    "no uncaught browser errors"
+  ]
+}

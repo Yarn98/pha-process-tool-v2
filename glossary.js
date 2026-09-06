@@ -38,8 +38,8 @@
         en: 'Pellet-level moisture. Excess moisture drives hydrolysis, lowers Mw, and triggers bubbles or splay.'
       },
       why: {
-        ko: 'PHA/PLA는 가공 전 200 ppm 이하 건조가 기본입니다.',
-        en: 'PHA/PLA should be dried below 200 ppm before processing.'
+        ko: '목표 수분은 그레이드별 TDS와 시험법으로 확인합니다. 건조시간만으로 수분을 판정하지 않습니다.',
+        en: 'Verify the moisture target and test method for the grade. Drying time alone does not establish moisture.'
       },
       aliases: { ko: ['수분'], en: ['Moisture'] }
     },
@@ -80,7 +80,7 @@
       aliases: { ko: ['이슬점', 'dew point'], en: ['dew point', 'Dew point'] }
     },
     kb: {
-      label: { ko: 'KB (kneading block · 혼합 블록)', en: 'KB (kneading block)' },
+      label: { ko: 'KB (kneading block · 니딩 블록(혼련 블록))', en: 'KB (kneading block)' },
       gloss: {
         ko: '스크류 내부의 혼합 전용 섹션. 분산은 올라가지만 전단 발열도 함께 커집니다.',
         en: 'The screw mixing section. It improves dispersion but also increases shear heat.'
@@ -92,7 +92,7 @@
       aliases: { ko: ['KB', '혼합 블록'], en: ['KB', 'kneading block'] }
     },
     ce: {
-      label: { ko: 'CE (conveying element · 전도 엘리먼트)', en: 'CE (conveying element)' },
+      label: { ko: 'CE (conveying element · 이송 엘리먼트)', en: 'CE (conveying element)' },
       gloss: {
         ko: '고형 펠릿과 용융을 축 방향으로 앞으로 보내는 기본 스크류 엘리먼트입니다.',
         en: 'The base screw element that mainly conveys solids and melt forward in the axial direction.'
@@ -101,13 +101,13 @@
         ko: '혼합은 약하지만 압력 형성과 체류 시간 관리의 기준 구간이 됩니다.',
         en: 'Mixing is limited, but it sets the baseline for pressure build-up and residence-time control.'
       },
-      aliases: { ko: ['CE', '전도 엘리먼트'], en: ['CE', 'conveying element', 'Conveying element'] }
+      aliases: { ko: ['CE', '이송 엘리먼트'], en: ['CE', 'conveying element', 'Conveying element'] }
     },
     kb90: {
       label: { ko: 'KB90 (혼합 블록 90°)', en: 'KB90 (kneading block 90°)' },
       gloss: {
-        ko: '가장 강한 분산 혼합을 주는 KB 배열. 전단 발열도 가장 크게 올라갑니다.',
-        en: 'The most aggressive KB arrangement for dispersive mixing, with the highest shear-heat penalty.'
+        ko: '이송 성분이 작은 중립 니딩 배열입니다. 혼합과 발열은 디스크 폭·간격·점도·충전 상태에 따라 달라집니다.',
+        en: 'A neutral kneading arrangement with little conveying action. Mixing and heat depend on disc width, spacing, viscosity and fill.'
       },
       why: {
         ko: '분산 불량에는 유리하지만 과하면 갈변과 Mw 저하가 빨라집니다.',
@@ -152,14 +152,14 @@
       aliases: { ko: ['LE', '왼손 엘리먼트'], en: ['LE', 'left-hand element', 'Left-hand element'] }
     },
     zme: {
-      label: { ko: 'ZME (zone mixing element · 존 믹싱 엘리먼트)', en: 'ZME (zone mixing element)' },
+      label: { ko: 'ZME (혼합 엘리먼트 · 제조사 형상 확인)', en: 'ZME (mixing element; verify manufacturer geometry)' },
       gloss: {
-        ko: '존 단위 균일 혼합을 위해 쓰는 완만한 혼합 엘리먼트입니다.',
-        en: 'A gentle mixing element used to even out composition across a processing zone.'
+        ko: 'ZME는 제조사별 형상·코드를 확인해야 합니다. Coperion 자료에는 절개된 산을 가진 역방향 혼합 엘리먼트로 소개됩니다.',
+        en: 'Verify the manufacturer code and geometry. Coperion describes a left-hand element with cut flight crests.'
       },
       why: {
-        ko: '조성 균일도는 올리되 KB보다 전단 부담은 낮출 수 있습니다.',
-        en: 'Improves composition uniformity with less shear penalty than a strong KB section.'
+        ko: '저전단이나 자기 세정성을 단정하지 말고 도면과 운전조건을 확인하세요.',
+        en: 'Do not assume low shear or self-wiping behavior; check drawings and operating conditions.'
       },
       aliases: { ko: ['ZME', '존 믹싱 엘리먼트'], en: ['ZME', 'zone mixing element', 'Zone mixing element'] }
     },
@@ -170,8 +170,8 @@
         en: 'The total time the resin stays inside the screw and barrel.'
       },
       why: {
-        ko: 'PHA는 3–5분을 넘기면 열분해 위험이 빠르게 커집니다.',
-        en: 'PHA thermal-degradation risk rises quickly beyond roughly 3–5 minutes.'
+        ko: '평균 체류시간은 체류량/토출량으로 추정합니다. 정체부와 가동 중단 이력은 따로 확인합니다.',
+        en: 'Mean residence is estimated from hold-up divided by output. Review dead zones and stoppages separately.'
       },
       aliases: { ko: ['체류 시간'], en: ['residence time', 'Residence time'] }
     },

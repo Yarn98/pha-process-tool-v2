@@ -31,6 +31,18 @@
     'Talc':    { type:'F', subtype:'mineral',          Tm:null, Tg:null,notes_ko:'핵제 효과, 낮은 OH',                                                                  notes_en:'Nucleating effect, low OH' },
   };
 
+  // The registry is identity metadata; the audited document is the processing authority.
+  Object.entries(PHA_MATERIAL_REGISTRY).forEach(function ([grade, info]) {
+    info.barrelPeak=null;info.dryTemp=null;info.dryTime=null;
+    info.processingReference=window.PHAEvidence?.GRADES[grade]||null;
+    if(/^C[AB]\d/.test(grade))info.type='blend';
+    if(grade==='CB0104A'||grade==='CB0400A'){
+      info.subtype='PHA/mineral compound';info.notes_ko='배합비는 별도 확인';info.notes_en='Verify the exact formulation';
+    }
+    if(grade==='CaCO3'){info.notes_ko='탄산칼슘 충전재 · 수분/표면처리 확인';info.notes_en='Calcium carbonate filler; verify moisture/surface treatment';}
+    if(grade==='P3HB'){info.notes_ko='고융점·열 이력 확인';info.notes_en='Check melting behavior and thermal history';}
+  });
+
   /* ── Helpers ──────────────────────────────────────────────────────────── */
 
   function t(ko, en) { return (typeof LANG !== 'undefined' && LANG === 'en') ? en : ko; }
@@ -42,22 +54,9 @@
   /* ── P2: Temperature auto-suggestion ─────────────────────────────────── */
 
   function getTemperatureSuggestion(grade) {
-    const info = PHA_MATERIAL_REGISTRY[grade];
-    const warnings = [];
-    if (!info) return { barrelPeak: null, dryTemp: null, dryTime: null, warnings };
-
-    let barrelPeak = info.barrelPeak || null;
-    if (info.Tm && barrelPeak && barrelPeak < info.Tm + 5) {
-      barrelPeak = info.Tm + 5;
-      warnings.push(t(`배럴 피크를 Tm(${info.Tm}°C)+5°C=${barrelPeak}°C로 조정.`, `Barrel peak adjusted to Tm(${info.Tm}°C)+5°C=${barrelPeak}°C.`));
-    }
-    if (barrelPeak && barrelPeak > 180) {
-      warnings.push(t(`배럴 피크 ${barrelPeak}°C → 180°C 벽 초과. 열분해 위험.`, `Barrel peak ${barrelPeak}°C exceeds 180°C wall. Thermal degradation risk.`));
-    }
-    if (info.type === 'S' || info.subtype === 'amorphous') {
-      warnings.push(t('별도 건조 필수 — 다른 grade와 동시 건조 금지.', 'Separate drying required — do not co-dry with other grades.'));
-    }
-    return { barrelPeak, dryTemp: info.dryTemp || null, dryTime: info.dryTime || null, warnings };
+    const record=window.PHAEvidence?.GRADES[grade];
+    return {barrelPeak:null,dryTemp:null,dryTime:null,reference:record||null,
+      warnings:record?[]:[t('공정조건 원문 미확인 — 물성으로 설정값을 자동 추정하지 않습니다.','Processing source unverified — properties are not converted into setpoints.')]};
   }
 
   /* ── P3: H/S/F auto-classification ───────────────────────────────────── */
@@ -68,43 +67,43 @@
 
     // Direct registry lookup
     const info = PHA_MATERIAL_REGISTRY[grade];
-    if (info && info.type !== 'blend') {
+    if (info && ['H','S','F'].includes(info.type)) {
       components.push({ name: grade, type: info.type, wt_pct: 100 });
-      if (info.type === 'S') warnings.push(t('별도 건조 필수.', 'Separate drying required.'));
+      if (info.type === 'S') warnings.push(t('원료별 건조 조건과 컴파운드 조건을 구분하세요.', 'Distinguish raw-resin and compound drying conditions.'));
       return { components, warnings };
     }
 
-    // CA series: PLA/aPHA blends
-    if (/^CA\d/.test(grade)) {
-      components.push({ name: 'PLA', type: 'H', wt_pct: 80 }, { name: 'A1000P', type: 'S', wt_pct: 20 });
-      warnings.push(t('PLA 블렌드 — 별도 건조 및 PLA 주의사항 적용.', 'PLA blend — separate drying and PLA handling required.'));
+    // A commercial compound name does not disclose its exact component percentages.
+    if (/^C[AB]\d/.test(grade)) {
+      warnings.push(t('상용 컴파운드의 정확한 배합비는 공개 자료로 확인되지 않았습니다. 배합표를 확인해 직접 입력하세요.', 'The exact commercial-compound recipe is not disclosed by the reference. Enter the verified formulation manually.'));
       return { components, warnings };
     }
 
     // Blend patterns: PLA_aPHA, PHA_PBAT, PHA_PBS, PHA_PBSA
     const blendDef = [
       [/^PLA_aPHA_(\d+)_(\d+)$/i,  ['PLA', 'H'],    ['A1000P', 'S']],
-      [/^PHA_PBAT_(\d+)_(\d+)$/i,  ['S1000P', 'H'], ['PBAT', 'S']  ],
-      [/^PHA_PBS_(\d+)_(\d+)$/i,   ['S1000P', 'H'], ['PBS', 'S']   ],
-      [/^PHA_PBSA_(\d+)_(\d+)$/i,  ['S1000P', 'H'], ['PBSA', 'S']  ],
     ];
     for (const [rx, h, s] of blendDef) {
       const m = grade.match(rx);
       if (m) {
         const hp = parseInt(m[1], 10), sp = parseInt(m[2], 10);
+        if(hp<0||sp<0||hp+sp!==100){warnings.push(t('배합 합계를 확인하세요.','Check the composition total.'));return {components,warnings};}
         components.push({ name: h[0], type: h[1], wt_pct: hp }, { name: s[0], type: s[1], wt_pct: sp });
-        if (sp >= 20) warnings.push(t('Soft phase ≥20wt% → Type B 스크류 권장.', 'Soft phase ≥20wt% → Type B screw recommended.'));
+        warnings.push(t('표기된 배합비입니다. 조성비만으로 스크류를 선택하지 않습니다.', 'Uses the named composition; fractions alone do not select a screw layout.'));
         return { components, warnings };
       }
+    }
+
+    if(/^PHA_(PBS|PBSA|PBAT)_/i.test(grade)){
+      warnings.push(t('일반 PHA 표기만으로 S1000P를 지정할 수 없습니다. 실제 PHA 그레이드와 배합표를 확인하세요.','A generic PHA name does not identify S1000P. Verify the actual PHA grade and formulation.'));
+      return {components,warnings};
     }
 
     // Commodity fallback
     const single = { PLA: 'H', PBAT: 'S', PBS: 'S', PBSA: 'S' };
     if (single[grade]) { components.push({ name: grade, type: single[grade], wt_pct: 100 }); return { components, warnings }; }
 
-    // Unknown — default to H:100
-    components.push({ name: grade, type: 'H', wt_pct: 100 });
-    warnings.push(t(`미등록 grade "${grade}" — H:100%로 기본 분류. 수동 확인 필요.`, `Unknown grade "${grade}" — defaulted to H:100%. Verify manually.`));
+    warnings.push(t(`미등록 grade "${grade}" — 배합표 확인 필요.`, `Unknown grade "${grade}" — verify the formulation.`));
     return { components, warnings };
   }
 
@@ -118,9 +117,9 @@
       f_talc: 'cg_f_talc', f_caco3: 'cg_f_caco3', f_otherfiller: 'cg_f_otherfiller',
     };
     Object.entries(map).forEach(function ([key, domId]) {
-      if (key in preset) {
+      {
         const node = el(domId);
-        if (node) { node.value = preset[key]; node.dispatchEvent(new Event('input', { bubbles: true })); }
+        if (node) { node.value = key in preset ? preset[key] : 0; node.dispatchEvent(new Event('input', { bubbles: true })); }
       }
     });
     if (typeof cgUpdateComposition === 'function') cgUpdateComposition();
@@ -173,7 +172,7 @@
           '<span style="font-size:13px;color:#1e3c72;font-weight:700">ℹ️ ' +
             t('현재 선택 Grade','Selected Grade') + ': <strong>' + escHtml(grade) + '</strong> → ' + escHtml(summary) +
           '</span>' +
-          '<button class="btn secondary" style="font-size:12px;padding:5px 10px"' +
+          '<button class="btn secondary" style="font-size:12px;padding:5px 10px"' + (components.length?'':' disabled') +
                   ' onclick="window._cgApplyPreset(' + JSON.stringify(preset) + ')">' +
             t('자동 입력','Auto-fill') +
           '</button>' +
@@ -212,8 +211,8 @@
     const plaNotice = isPlaBlend
       ? '<div class="guide-links-notice">' +
           '<strong>' + t('PLA 블렌드 주의사항','PLA Blend Notice') + ':</strong> ' +
-          t(escHtml(grade) + ' → PLA 블렌드. 컴파운딩 시 별도 건조 필수.',
-            escHtml(grade) + ' → PLA blend. Separate drying mandatory.') +
+          t(escHtml(grade) + ' → 원료 혼합물과 제조된 컴파운드는 건조 근거가 다릅니다.',
+            escHtml(grade) + ' → Raw-resin blends and compounded pellets have different drying references.') +
         '</div>'
       : '';
 
@@ -299,25 +298,29 @@
     (function loadTarsGrades() {
       var isPages = location.hostname.endsWith('.pages.dev') || location.hostname.endsWith('.tarspolymer.com');
       var TARS_API = isPages ? '' : 'https://tars-api.sorisem98.workers.dev';
-      fetch(TARS_API + '/api/grades')
+      var controller=new AbortController();
+      var requestTimer=setTimeout(function(){controller.abort();},12000);
+      fetch(TARS_API + '/api/grades', {signal:controller.signal})
         .then(function (res) { return res.ok ? res.json() : Promise.reject(); })
         .then(function (grades) {
           if (!Array.isArray(grades)) return;
+          window.PHA_TARS_STATUS={ok:true,count:grades.length,checkedAt:new Date().toISOString()};
+          if(typeof window.renderPhaApiStatus==='function')window.renderPhaApiStatus();
           var gradeSelect = el('grade');
           var added = 0;
           grades.forEach(function (g) {
             var key = g.name || '';
             if (!key || PHA_MATERIAL_REGISTRY[key]) return;
             // Add to registry
-            var isHard = (g.polymer_type || '').indexOf('PHA') >= 0 && (g.hb4_mol_pct || 0) < 10;
             PHA_MATERIAL_REGISTRY[key] = {
-              type: isHard ? 'H' : 'S',
+              type: 'unknown',
               subtype: g.polymer_type || 'unknown',
               Tm: g.tm_c || null,
               Tg: g.tg_c || null,
-              dryTemp: 60,
-              dryTime: 6,
-              barrelPeak: g.tm_c ? g.tm_c + 5 : 170,
+              dryTemp: null,
+              dryTime: null,
+              barrelPeak: null,
+              processingSource: 'unverified',
               notes_ko: (g.description || g.polymer_type || '') + ' (TARS)',
               notes_en: (g.description || g.polymer_type || '') + ' (TARS)'
             };
@@ -332,7 +335,8 @@
           });
           if (added > 0) console.log('[TARS] Merged ' + added + ' grades into registry');
         })
-        .catch(function () { /* TARS API offline */ });
+        .catch(function () { window.PHA_TARS_STATUS={ok:false};if(typeof window.renderPhaApiStatus==='function')window.renderPhaApiStatus(); })
+        .finally(function(){clearTimeout(requestTimer);});
     })();
   });
 

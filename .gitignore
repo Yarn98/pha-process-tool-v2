@@ -18,3 +18,14 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+# Local review working copies; the sent ZIP and source hash manifest are retained.
+output/gpt-pro-review-packs/pha-all-processing-gpt6-pro-20260906/capture-answer.py
+output/gpt-pro-review-packs/pha-all-processing-gpt6-pro-20260906/local-kb-draft.json
+output/gpt-pro-review-packs/pha-all-processing-gpt6-pro-20260906/provider_render.json
+output/gpt-pro-review-packs/pha-all-processing-gpt6-pro-20260906/files/
+output/gpt-pro-review-packs/pha-all-processing-gpt6-pro-20260906/snippets/
+output/gpt-pro-review-packs/pha-all-processing-gpt6-pro-20260906/artifacts/
+output/gpt-pro-review-packs/pha-all-processing-gpt6-pro-20260906/verified-sources/*.pdf
+output/gpt-pro-review-packs/pha-all-processing-gpt6-pro-20260906/verified-sources/*.png
+output/gpt-pro-review-packs/pha-all-processing-gpt6-pro-20260906/verified-sources/*.txt

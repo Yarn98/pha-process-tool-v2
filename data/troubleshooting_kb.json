@@ -1,552 +1,767 @@
 [
   {
+    "id": "pha-kb-1",
     "process": "compounding",
     "symptom": "Torque spike or extruder overload",
     "symptom_ko": "토크 급등 / 압출기 과부하",
-    "plain_en": "Screw hits the torque limit or the motor-load alarm trips, usually because the resin is too cold, too wet, or being fed too aggressively at once.",
-    "plain_ko": "스크류 토크가 급하게 튀거나 모터 과부하 경보가 울리는 상황입니다. 보통 수지가 너무 차갑거나, 수분이 많거나, 사료를 한꺼번에 너무 많이 넣었을 때 생깁니다.",
+    "plain_en": "Under-melting, excess feed, bridging or downstream restriction are possible causes.",
+    "plain_ko": "미용융, 과도한 공급, 브리징 또는 하류 막힘이 원인 후보입니다.",
     "likely_causes": [
-      "Resin too cold or viscous (melt did not fully form)",
-      "Feed rate exceeds the screw's conveying capacity",
-      "Wet pellets clump in the feed throat",
-      "Worn screw or barrel - flights no longer bite into the melt"
+      "Under-melting, excess feed, bridging or downstream restriction are possible causes."
     ],
     "likely_causes_ko": [
-      "수지가 너무 차갑거나 점도가 높음 (= 충분히 녹지 않음)",
-      "사료율이 스크류의 이송 능력을 초과함",
-      "수분을 머금은 펠릿이 피드 스로트에서 덩어리로 뭉침",
-      "마모된 스크류 · 배럴로 플라이트가 용융을 제대로 밀지 못함"
+      "미용융, 과도한 공급, 브리징 또는 하류 막힘이 원인 후보입니다."
     ],
-    "diagnostics": "Watch motor-load and melt-pressure curves during the spike. Check the hopper for bridging, inspect the vacuum vent for blockage, and verify pellet moisture with a Karl Fischer meter or dew-point reading.",
-    "diagnostics_ko": "스파이크가 생기는 순간의 모터 부하와 용융 압력 곡선을 확인하세요. 호퍼 브리징을 보고, 진공 벤트 막힘을 점검하고, Karl Fischer 또는 이슬점 측정으로 펠릿 수분을 확인합니다.",
+    "diagnostics": "Compare feeder output, torque, pressure and measured melt temperature over the same time period. Check pellet water with a grade-validated method such as oven Karl Fischer; drying-air dew point is not a substitute.",
+    "diagnostics_ko": "공급량·토크·압력·측정 용융온도를 같은 시간축으로 비교합니다. 펠릿 수분은 그레이드에 검증된 방법(예: 오븐 Karl Fischer)으로 확인합니다. 건조공기 이슬점은 대체 측정값이 아닙니다.",
     "quick_fixes": [
-      "Reduce feed rate 10-20 %",
-      "Raise melt temperature by 5-10 °C within the grade window",
-      "Bypass side feeders to clear any blockage downstream",
-      "Purge with a compatible resin (for example, neat PLA)"
+      "If feed exceeds capacity, reduce it within the equipment procedure and observe torque/pressure. For an alarm or blockage, use the specified depressurization and stop sequence before inspection."
     ],
     "quick_fixes_ko": [
-      "사료율 10-20 % 감소",
-      "그레이드 권장 범위 안에서 용융 온도 5-10 °C 상승",
-      "사이드 피더를 일시 우회해 하류 막힘 확인",
-      "호환 수지(예: 순수 PLA)로 퍼지"
+      "공급량이 처리 능력을 넘으면 설비 절차 안에서 낮추고 토크·압력을 관찰합니다. 경보·막힘은 정해진 감압·정지 절차 후 점검합니다."
     ],
     "root_fixes": [
-      "Dry pellets to <= 200 ppm moisture (Karl Fischer or loss-on-drying)",
-      "Measure screw and barrel wear gap and refurbish if clearance exceeds spec",
-      "Tune venting and vacuum so volatiles leave at the correct zone",
-      "Balance feed-throat temperature so it stays cool enough to prevent bridging and warm enough to avoid slip"
+      "Confirm material-specific drying and allowable residual water. Validate loss-on-drying against a water-specific method; inspect feeding, screw/barrel wear and restrictions before changing screw design."
     ],
     "root_fixes_ko": [
-      "펠릿을 <= 200 ppm 수분까지 건조 (Karl Fischer 또는 감량법)",
-      "스크류 · 배럴 간극을 실측하고 규격 초과 시 재가공 또는 교체",
-      "해당 존에 맞게 벤팅과 진공을 조정해 휘발분 배출",
-      "피드 스로트 온도를 적정 범위로 맞춰 브리징과 슬립을 함께 방지"
+      "그레이드별 건조 조건·허용 수분을 확인합니다. 건조감량법은 수분 특이적 방법과 대조 검증하고, 스크류 변경 전 공급계·스크류/배럴 마모·막힘을 점검합니다."
     ],
-    "control_knobs": ["Feed rate", "Zone temperatures", "Screw speed", "Vacuum vent pressure"],
-    "control_knobs_ko": ["사료율", "존 온도", "스크류 회전수", "진공 벤트 압력"],
-    "notes": "aPHA/PHA blends are highly moisture-sensitive. Water drives hydrolysis, drops Mw, and shows up as gels plus torque instability.",
-    "notes_ko": "aPHA/PHA 블렌드는 수분에 매우 민감합니다. 수분은 가수분해를 일으켜 분자량을 낮추고, 겔과 토크 불안을 함께 만듭니다.",
-    "related_images": []
+    "control_knobs": [],
+    "control_knobs_ko": [],
+    "notes": "Conditional engineering guidance. Confirm the cause, grade limits and equipment procedure before a trial; recheck product acceptance after every change.",
+    "notes_ko": "조건부 엔지니어링 점검 안내입니다. 원인·그레이드 한도·설비 절차를 확인한 뒤 시험하고, 변경 후 제품 합격 기준을 다시 확인하세요.",
+    "evidence_level": "conditional_engineering_guidance",
+    "review_version": "2026-09-06-all-processing",
+    "sources": [
+      {
+        "title": "Metrohm: water in plastic pellets",
+        "url": "https://www.metrohm.com/content/dam/metrohm/shared/documents/application-notes/an-k/AN-K-049.pdf",
+        "scope": "Water-specific analytical method; validate extraction for the actual grade"
+      }
+    ],
+    "related_images": [],
+    "stop_conditions": "Stop using the approved procedure when torque/pressure limits are approached. Lower feed can lengthen residence; lower torque alone is not acceptance.",
+    "stop_conditions_ko": "토크·압력 한도에 접근하면 승인된 절차로 정지합니다. 공급량 감소가 체류시간을 늘릴 수 있어 토크 감소만으로 개선을 승인하지 않습니다.",
+    "review_basis": "GPT-6 Pro completed review + local source/code validation"
   },
   {
+    "id": "pha-kb-2",
     "process": "compounding",
     "symptom": "Gels or fish-eyes in pellets or film",
-    "symptom_ko": "겔 · fish-eye (표면의 덩어리 점)",
-    "plain_en": "Small hard lumps usually mean unmelted resin, crosslinks from thermal degradation, or residue left behind from the previous grade.",
-    "plain_ko": "펠릿이나 필름 표면에 보이는 작은 단단한 점입니다. 보통 녹지 않은 수지, 열분해로 생긴 가교물, 이전 그레이드 잔류물 중 하나입니다.",
+    "symptom_ko": "겔·피시아이(덩어리 모양 결점)",
+    "plain_en": "A visible speck may be unmelted polymer, a filler agglomerate, contamination or degraded residue; it does not establish crosslinking.",
+    "plain_ko": "눈에 보이는 점은 미용융 수지, 필러 응집체, 오염 또는 열화 잔류물일 수 있으며 가교를 확정하지 않습니다.",
     "likely_causes": [
-      "Incomplete mixing of scPHA and aPHA components",
-      "Thermal degradation causing crosslinking",
-      "Contamination from the previous resin",
-      "Accumulated stagnant material in dead zones"
+      "A visible speck may be unmelted polymer, a filler agglomerate, contamination or degraded residue; it does not establish crosslinking."
     ],
     "likely_causes_ko": [
-      "scPHA · aPHA 혼합 부족",
-      "열분해로 가교 발생",
-      "이전 수지 잔류 오염",
-      "데드존(정체 영역)에 쌓인 잔류물"
+      "눈에 보이는 점은 미용융 수지, 필러 응집체, 오염 또는 열화 잔류물일 수 있으며 가교를 확정하지 않습니다."
     ],
-    "diagnostics": "Examine the extrudate under a microscope to check gel size and distribution. Review the temperature profile, inspect screw flights and mixing elements for dead spots, and audit the purge procedure.",
-    "diagnostics_ko": "압출물을 현미경으로 관찰해 겔 크기와 분포를 확인하세요. 온도 프로파일을 검토하고, 스크류 플라이트와 혼합 엘리먼트의 데드스팟을 점검하고, 퍼지 절차를 다시 확인합니다.",
+    "diagnostics": "Compare magnified defects, melt-filter residue and uncontaminated feed. Review temperature/time history and rheology; use microscopy, thermal or chemical analysis when identification is needed.",
+    "diagnostics_ko": "확대 관찰한 결함·필터 잔류물·정상 원료를 비교합니다. 온도·체류 이력과 유변 특성을 확인하고 필요하면 현미경·열분석·성분 분석으로 구분합니다.",
     "quick_fixes": [
-      "Raise screw rpm or add kneading elements to improve dispersive mixing",
-      "Lower melt temperature by 5-10 °C to reduce degradation",
-      "Purge between grade changes with a transition resin such as PETG or HDPE",
-      "Use a finer screen pack to filter larger contaminants"
+      "Only after distinguishing under-melting from degradation, trial one change within the grade window. Inspect filter differential pressure before selecting finer filtration; use the approved grade-transition purge procedure."
     ],
     "quick_fixes_ko": [
-      "스크류 rpm을 올리거나 KB(혼합 블록)를 추가해 분산 개선",
-      "용융 온도 5-10 °C 하향으로 열분해 완화",
-      "그레이드 변경 시 전이 수지(PETG · HDPE)로 퍼지",
-      "더 촘촘한 스크린 팩으로 큰 이물 여과"
+      "미용융과 열화를 구분한 뒤 그레이드 범위 안에서 한 변수씩 시험합니다. 필터를 더 촘촘하게 바꾸기 전 차압을 확인하고 승인된 그레이드 전환 퍼지 절차를 따릅니다."
     ],
     "root_fixes": [
-      "Redesign the screw with a stronger mixing section",
-      "Adopt a strict purge SOP plus periodic solvent flush",
-      "Size the extruder around the residence-time target",
-      "Audit incoming raw-material cleanliness"
+      "Address the identified contamination, dead zone or dispersion problem. More RPM, kneading or finer screens can increase shear, pressure and thermal exposure; routine solvent flushing is not a general production remedy."
     ],
     "root_fixes_ko": [
-      "혼합 섹션이 강화된 스크류로 재설계",
-      "엄격한 퍼지 SOP와 주기적 용제 플러시 도입",
-      "목표 체류 시간에 맞춰 압출기 용량 재설정",
-      "원료 청정도 감사"
+      "확인된 오염·정체부·분산 문제를 개선합니다. RPM·니딩·필터 저항 증가는 전단·압력·열 이력을 늘릴 수 있으며 정기적인 용제 세척은 범용 생산 조치가 아닙니다."
     ],
-    "control_knobs": ["Screw rpm", "Zone temperatures", "Screen-pack mesh", "Residence time"],
-    "control_knobs_ko": ["스크류 rpm", "존 온도", "스크린 팩 메시", "체류 시간"],
-    "notes": "Gels hit film and pellet appearance directly. Hold temperature steady and avoid over-shearing.",
-    "notes_ko": "겔은 필름과 펠릿 외관에 직접 영향합니다. 온도를 안정적으로 유지하고 과도한 전단을 피하세요.",
-    "related_images": []
+    "control_knobs": [],
+    "control_knobs_ko": [],
+    "notes": "Conditional engineering guidance. Confirm the cause, grade limits and equipment procedure before a trial; recheck product acceptance after every change.",
+    "notes_ko": "조건부 엔지니어링 점검 안내입니다. 원인·그레이드 한도·설비 절차를 확인한 뒤 시험하고, 변경 후 제품 합격 기준을 다시 확인하세요.",
+    "evidence_level": "conditional_engineering_guidance",
+    "review_version": "2026-09-06-all-processing",
+    "sources": [
+      {
+        "title": "CJ PHACT grade documents",
+        "url": "https://cjbiomaterials.com/wp-content/uploads/2024/11/PHACT%E2%84%A2-CB0400A.pdf",
+        "scope": "CB0400A grade limits, bath and purge only"
+      },
+      {
+        "title": "P(3HB-co-4HB) processing research",
+        "url": "https://journal.polymer-korea.or.kr/journal/archive/view/4300",
+        "scope": "Thermal history, rheology and crystallization mechanisms; not production settings"
+      }
+    ],
+    "related_images": [],
+    "stop_conditions": "Revert or stop if additional mixing or finer filtration increases pressure or thermal load excessively.",
+    "stop_conditions_ko": "혼합 강화·미세 여과로 압력·열부하가 과도해지면 복귀하거나 중단합니다.",
+    "review_basis": "GPT-6 Pro completed review + local source/code validation"
   },
   {
-    "process": "compounding",
-    "symptom": "Die drool or build-up at die lips",
-    "symptom_ko": "다이 드룰 · 다이 립 수지 쌓임",
-    "plain_en": "Resin slowly accumulating at the die lip usually means the melt is too hot, filler is migrating to the surface, or residence time is too long.",
-    "plain_ko": "다이 립 부근에 수지가 서서히 쌓이는 현상입니다. 보통 용융이 너무 뜨겁거나, 필러가 표면으로 이동했거나, 체류 시간이 긴 경우입니다.",
+    "id": "pha-kb-3",
+    "process": "extrusion",
+    "symptom": "Die drool or build-up",
+    "symptom_ko": "다이 드룰·다이 립 침적",
+    "plain_en": "Consider die-lip residue, contamination, pressure/flow instability and formulation-specific migration.",
+    "plain_ko": "다이 립 잔류물·오염·압력/유량 불안정·배합별 성분 이동을 구분합니다.",
     "likely_causes": [
-      "Melt temperature too high",
-      "Filler (talc or CaCO3) migrates to the surface",
-      "Low screw speed creates long residence time",
-      "Die design contains dead zones"
+      "Consider die-lip residue, contamination, pressure/flow instability and formulation-specific migration."
     ],
     "likely_causes_ko": [
-      "용융 온도 과다",
-      "필러(talc · CaCO3) 표면 이동",
-      "스크류 저속으로 체류 시간 증가",
-      "다이 설계 안에 데드존 존재"
+      "다이 립 잔류물·오염·압력/유량 불안정·배합별 성분 이동을 구분합니다."
     ],
-    "diagnostics": "Watch the die face during the run, read die pressure, compare zone setpoints with the recommended profile, and inspect filler dispersion in the pellet cross-section.",
-    "diagnostics_ko": "운전 중 다이 면에 쌓임이 생기는지 보고, 다이 압력을 읽고, 존 설정값을 권장 프로파일과 비교하고, 펠릿 단면에서 필러 분산을 확인합니다.",
+    "diagnostics": "Record where and when deposits form, pressure, output, measured melt temperature and appearance. Compare deposits with feed and extrudate.",
+    "diagnostics_ko": "침적 위치·발생 시간·압력·토출량·측정 용융온도·외관을 기록하고 원료·압출물과 침적물을 비교합니다.",
     "quick_fixes": [
-      "Lower die and end-zone temperature by 5-10 °C",
-      "Raise screw rpm slightly to cut residence time",
-      "Clean die lips and add a breaker plate",
-      "Purge to remove degraded residue"
+      "If buildup is confirmed, follow the equipment's controlled cleaning or shutdown procedure. Change die temperature only after checking whether residue is unmelted, degraded or migrating material."
     ],
     "quick_fixes_ko": [
-      "다이와 말단 존 온도 5-10 °C 하향",
-      "스크류 rpm을 소폭 올려 체류 시간 단축",
-      "다이 립 청소와 브레이커 플레이트 설치",
-      "퍼지로 분해 잔류물 제거"
+      "침적이 확인되면 설비의 청소·정지 절차를 따릅니다. 다이 온도는 미용융·열화·성분 이동 중 어느 문제인지 확인한 뒤 조정합니다."
     ],
     "root_fixes": [
-      "Rebalance filler loading in the formulation",
-      "Modify the die design to eliminate stagnation",
-      "Add an AO (anti-oxidant) package",
-      "Schedule routine die-face cleaning"
+      "Review die flow, stagnant regions and material compatibility with the supplier. Raising RPM or adding a breaker plate is not a universal fix."
     ],
     "root_fixes_ko": [
-      "조성의 필러 함량 재조정",
-      "정체 영역이 없도록 다이 설계 수정",
-      "AO(산화방지제) 패키지 추가",
-      "다이 면 정기 청소 스케줄 수립"
+      "다이 유로·정체부·재료 적합성을 공급사와 검토합니다. RPM 증가나 브레이커 플레이트 추가를 모든 원인에 적용하지 않습니다."
     ],
-    "control_knobs": ["Die temperature", "Screw speed", "Feed rate", "Filler loading"],
-    "control_knobs_ko": ["다이 온도", "스크류 회전수", "사료율", "필러 함량"],
-    "notes": "Die drool drives dimensional instability and unscheduled downtime.",
-    "notes_ko": "다이 드룰은 치수 불안정과 비계획 정지로 이어집니다.",
-    "related_images": []
+    "control_knobs": [],
+    "control_knobs_ko": [],
+    "notes": "Conditional engineering guidance. Confirm the cause, grade limits and equipment procedure before a trial; recheck product acceptance after every change.",
+    "notes_ko": "조건부 엔지니어링 점검 안내입니다. 원인·그레이드 한도·설비 절차를 확인한 뒤 시험하고, 변경 후 제품 합격 기준을 다시 확인하세요.",
+    "evidence_level": "conditional_engineering_guidance",
+    "review_version": "2026-09-06-all-processing",
+    "sources": [
+      {
+        "title": "CJ PHACT grade documents",
+        "url": "https://cjbiomaterials.com/wp-content/uploads/2024/11/PHACT%E2%84%A2-CB0400A.pdf",
+        "scope": "CB0400A grade limits, bath and purge only"
+      },
+      {
+        "title": "P(3HB-co-4HB) processing research",
+        "url": "https://journal.polymer-korea.or.kr/journal/archive/view/4300",
+        "scope": "Thermal history, rheology and crystallization mechanisms; not production settings"
+      }
+    ],
+    "related_images": [],
+    "stop_conditions": "Revert a trial if under-melting, rising pressure or discoloration appears. Stop for a damaged die or persistent blockage.",
+    "stop_conditions_ko": "미용융·압력 상승·변색이 나타나면 시험 조건을 복귀합니다. 다이 손상·지속적 막힘은 정지 후 점검합니다.",
+    "review_basis": "GPT-6 Pro completed review + local source/code validation"
   },
   {
+    "id": "pha-kb-4",
     "process": "sheet_film",
-    "symptom": "Sheet sticks to chill roll / tacky surface",
-    "symptom_ko": "시트가 칠 롤에 달라붙음 / 표면 끈적임",
-    "plain_en": "PHA crystallizes slowly, so the surface stays tacky when the first chill roll is too warm or the cooling profile is uneven.",
-    "plain_ko": "PHA는 결정화가 느려서 첫 칠 롤이 너무 따뜻하거나 냉각이 불균일하면 표면이 끈적한 상태로 남습니다.",
+    "symptom": "Sheet sticks to chill rolls",
+    "symptom_ko": "시트의 롤 점착",
+    "plain_en": "Possible causes include incomplete solidification, slow crystallization, poor contact, roll contamination and excessive nip or wrap.",
+    "plain_ko": "고화 부족·결정화 지연·접촉 불량·롤 오염·과도한 닙/감김이 원인 후보입니다.",
     "likely_causes": [
-      "Slow crystallization of the PHA/PLA blend",
-      "Roll temperature too high",
-      "Weak air knife or insufficient nip pressure",
-      "Residual moisture causes surface foaming"
+      "Possible causes include incomplete solidification, slow crystallization, poor contact, roll contamination and excessive nip or wrap."
     ],
     "likely_causes_ko": [
-      "PHA · PLA 블렌드의 결정화 속도 느림",
-      "롤 온도 과다",
-      "에어 나이프 약함 또는 닙 압력 부족",
-      "잔류 수분으로 표면 기포 발생"
+      "고화 부족·결정화 지연·접촉 불량·롤 오염·과도한 닙/감김이 원인 후보입니다."
     ],
-    "diagnostics": "Read the first-roll surface temperature against the 30-50 °C target. Check dryer dew point plus pellet moisture, watch wrap angle and contact pattern, and note whether haze or gloss shifts with sticking.",
-    "diagnostics_ko": "첫 롤 표면 온도가 30-50 °C 목표에 맞는지 확인하세요. 건조기 이슬점과 펠릿 수분을 보고, 랩 각도와 접촉 상태를 관찰하고, 달라붙을 때 헤이즈나 광택이 같이 변하는지 기록합니다.",
+    "diagnostics": "Compare actual roll-surface and coolant temperatures, line speed, contact time, release location, sheet thickness and surface condition. Check crystallization with suitable measurements when needed. An air knife generally promotes roll contact; it is not a contact-delay device.",
+    "diagnostics_ko": "롤 표면·냉각수 온도, 라인 속도, 접촉시간, 박리 위치, 시트 두께·표면 상태를 비교하고 필요하면 결정화 상태를 측정합니다. 에어 나이프는 일반적으로 롤 접촉을 돕는 장치이며 접촉 지연용이 아닙니다.",
     "quick_fixes": [
-      "Lower first-roll temperature by 5-10 °C and raise cooling-water flow",
-      "Reduce wrap angle or nip pressure",
-      "Use an air knife to delay contact and even out cooling",
-      "Drop melt temperature by 5 °C"
+      "If the issue is insufficient heat removal, review contact/cooling and trial a speed change. If crystallization limits release, determine its temperature/time response before choosing a warmer or colder roll."
     ],
     "quick_fixes_ko": [
-      "첫 롤 온도 5-10 °C 하향 + 냉각수 유량 증가",
-      "랩 각도 또는 닙 압력 감소",
-      "에어 나이프로 접촉을 늦추고 냉각을 균일화",
-      "용융 온도 5 °C 하향"
+      "열 제거가 부족하면 접촉·냉각을 점검하고 속도 변경을 시험합니다. 결정화가 박리를 제한하면 온도·시간 응답을 확인한 뒤 롤 온도의 상·하향을 정합니다."
     ],
     "root_fixes": [
-      "Add a nucleating agent to accelerate crystallization",
-      "Rebalance line speed versus thickness",
-      "Apply a low-adhesion or micro-textured roll coating",
-      "Improve drying to below 400 ppm moisture"
+      "Establish the grade, gauge and line-specific cooling/release window. A straw crystallization-bath setting is not a sheet-roll setting; lowering every roll can slow crystallization."
     ],
     "root_fixes_ko": [
-      "결정핵제를 추가해 결정화 가속",
-      "라인 속도와 두께를 재균형",
-      "저접착 또는 마이크로 텍스처 롤 코팅 적용",
-      "건조를 강화해 수분을 400 ppm 이하로 유지"
+      "그레이드·두께·설비별 냉각·박리 조건을 확인합니다. 스트로 결정화 수조 값을 시트 롤에 옮기지 않으며 모든 롤의 온도를 낮추면 결정화가 느려질 수 있습니다."
     ],
-    "control_knobs": ["Roll temperatures", "Wrap angle / nip pressure", "Air-knife flow", "Melt temperature", "Line speed"],
-    "control_knobs_ko": ["롤 온도", "랩 각도 / 닙 압력", "에어 나이프 유량", "용융 온도", "라인 속도"],
-    "notes": "For tacky sheet, the cooling profile is the main lever because PHA crystallization is slow.",
-    "notes_ko": "PHA는 결정화가 느리므로 점착 문제에서는 냉각 프로파일이 가장 큰 제어 인자입니다.",
-    "related_images": []
+    "control_knobs": [],
+    "control_knobs_ko": [],
+    "notes": "Conditional engineering guidance. Confirm the cause, grade limits and equipment procedure before a trial; recheck product acceptance after every change.",
+    "notes_ko": "조건부 엔지니어링 점검 안내입니다. 원인·그레이드 한도·설비 절차를 확인한 뒤 시험하고, 변경 후 제품 합격 기준을 다시 확인하세요.",
+    "evidence_level": "conditional_engineering_guidance",
+    "review_version": "2026-09-06-all-processing",
+    "sources": [
+      {
+        "title": "CJ PHACT grade documents",
+        "url": "https://cjbiomaterials.com/wp-content/uploads/2024/11/PHACT%E2%84%A2-CB0400A.pdf",
+        "scope": "CB0400A grade limits, bath and purge only"
+      },
+      {
+        "title": "P(3HB-co-4HB) processing research",
+        "url": "https://journal.polymer-korea.or.kr/journal/archive/view/4300",
+        "scope": "Thermal history, rheology and crystallization mechanisms; not production settings"
+      }
+    ],
+    "related_images": [],
+    "stop_conditions": "Revert if sticking, distortion or post-shrinkage worsens; do not add a nucleating agent automatically.",
+    "stop_conditions_ko": "점착·변형·후수축이 악화되면 복귀하고 핵제를 자동으로 추가하지 않습니다.",
+    "review_basis": "GPT-6 Pro completed review + local source/code validation"
   },
   {
+    "id": "pha-kb-5",
     "process": "sheet_film",
-    "symptom": "Gauge variation or web sagging",
-    "symptom_ko": "게이지(두께) 편차 · 시트 늘어짐",
-    "plain_en": "Sheet thickness drifting across width or length usually comes from a non-uniform die gap, melt-temperature variation, excessive line speed, or uneven cooling.",
-    "plain_ko": "시트 두께가 폭 방향 또는 길이 방향으로 일정하지 않은 상태입니다. 보통 다이 갭 불균일, 용융 온도 편차, 라인 속도 과다, 롤 냉각 편차 중 하나가 원인입니다.",
+    "symptom": "Gauge variation across width",
+    "symptom_ko": "폭 방향 두께 편차",
+    "plain_en": "Distinguish cross-direction die-flow variation from machine-direction surging, roll alignment and unstable contact.",
+    "plain_ko": "폭 방향 다이 유량 편차와 길이 방향 서징·롤 정렬·접촉 불안을 구분합니다.",
     "likely_causes": [
-      "Non-uniform die gap",
-      "Inconsistent melt temperature",
-      "Excessive line speed",
-      "Uneven cooling across roll width"
+      "Distinguish cross-direction die-flow variation from machine-direction surging, roll alignment and unstable contact."
     ],
     "likely_causes_ko": [
-      "다이 갭 불균일",
-      "용융 온도 편차",
-      "라인 속도 과다",
-      "롤 폭 방향 냉각 편차"
+      "폭 방향 다이 유량 편차와 길이 방향 서징·롤 정렬·접촉 불안을 구분합니다."
     ],
-    "diagnostics": "Measure sheet thickness across the width, check die-bolt torque, record the die and roll temperature profile, and watch screw-speed plus pressure stability.",
-    "diagnostics_ko": "폭 방향 시트 두께를 측정하고, 다이 볼트 토크를 확인하고, 다이와 롤의 온도 프로파일을 기록하고, 스크류 속도와 압력 안정성을 봅니다.",
+    "diagnostics": "Measure a thickness profile across width and over time alongside output, pressure, roll speed and measured temperatures. Verify the thickness gauge and die/roll alignment.",
+    "diagnostics_ko": "폭·시간별 두께 분포를 토출량·압력·롤 속도·측정 온도와 함께 확인합니다. 두께 측정기와 다이·롤 정렬을 점검합니다.",
     "quick_fixes": [
-      "Adjust die bolts to correct the gap",
-      "Fine-tune zone temperatures to hold a uniform melt",
-      "Reduce line speed or raise output to stabilize the draw",
-      "Balance roll temperatures side to side"
+      "Stabilize feeding and take-off first. Adjust die lips or roll settings only with the equipment procedure and a confirmed directional thickness error."
     ],
     "quick_fixes_ko": [
-      "다이 볼트 조정으로 갭 보정",
-      "존 온도 미세 조정으로 용융 균일화",
-      "라인 속도 감소 또는 출력 증가로 드로우 안정화",
-      "롤 좌우 온도 평형 맞추기"
+      "공급과 인취를 먼저 안정화합니다. 방향별 두께 오차를 확인하고 설비 절차에 따라 다이 립·롤을 조정합니다."
     ],
     "root_fixes": [
-      "Calibrate the die and bolt tension on a regular schedule",
-      "Install automatic thickness-gauge feedback control",
-      "Upgrade to a multi-manifold die for more uniform flow",
-      "Improve roll polishing and alignment"
+      "Separate flow, die, roll and measurement contributions. Establish repeatable thickness response before choosing automatic control or die replacement."
     ],
     "root_fixes_ko": [
-      "다이와 볼트 텐션을 정기 교정",
-      "자동 두께 게이지와 피드백 제어 설치",
-      "균일 유동을 위한 멀티 매니폴드 다이 업그레이드",
-      "롤 연마와 얼라인먼트 개선"
+      "공급·다이·롤·측정 오차의 기여를 구분하고 반복 가능한 두께 응답을 확인한 뒤 자동제어·다이 교체를 검토합니다."
     ],
-    "control_knobs": ["Die bolts", "Zone temperatures", "Line speed", "Roll temperatures"],
-    "control_knobs_ko": ["다이 볼트", "존 온도", "라인 속도", "롤 온도"],
-    "notes": "Uniform sheet gauge is the baseline for downstream thermoforming quality.",
-    "notes_ko": "균일한 시트 두께는 후속 열성형 품질의 출발점입니다.",
-    "related_images": []
+    "control_knobs": [],
+    "control_knobs_ko": [],
+    "notes": "Conditional engineering guidance. Confirm the cause, grade limits and equipment procedure before a trial; recheck product acceptance after every change.",
+    "notes_ko": "조건부 엔지니어링 점검 안내입니다. 원인·그레이드 한도·설비 절차를 확인한 뒤 시험하고, 변경 후 제품 합격 기준을 다시 확인하세요.",
+    "evidence_level": "conditional_engineering_guidance",
+    "review_version": "2026-09-06-all-processing",
+    "sources": [
+      {
+        "title": "CJ PHACT grade documents",
+        "url": "https://cjbiomaterials.com/wp-content/uploads/2024/11/PHACT%E2%84%A2-CB0400A.pdf",
+        "scope": "CB0400A grade limits, bath and purge only"
+      },
+      {
+        "title": "P(3HB-co-4HB) processing research",
+        "url": "https://journal.polymer-korea.or.kr/journal/archive/view/4300",
+        "scope": "Thermal history, rheology and crystallization mechanisms; not production settings"
+      }
+    ],
+    "related_images": [],
+    "stop_conditions": "Stop adjustments if pressure or die-lip damage is a concern; follow the OEM die-adjustment procedure.",
+    "stop_conditions_ko": "압력·다이 립 손상이 우려되면 조정을 중단하고 OEM 조정 절차를 따릅니다.",
+    "review_basis": "GPT-6 Pro completed review + local source/code validation"
   },
   {
+    "id": "pha-kb-6",
     "process": "injection",
     "symptom": "Short shot (incomplete fill)",
-    "symptom_ko": "미충전 (Short shot)",
-    "plain_en": "The cavity does not fill to the end. Usual causes are low injection speed or pressure, low melt or mold temperature, a tight gate, or high viscosity from poor mixing.",
-    "plain_ko": "캐비티가 끝까지 채워지지 않는 결함입니다. 사출 속도 또는 압력 부족, 용융 · 금형 온도 부족, 좁은 게이트, 혼합 부족으로 인한 고점도 중 하나가 주 원인입니다.",
+    "symptom_ko": "미충전(쇼트 샷)",
+    "plain_en": "Possible causes include insufficient delivered volume, restricted flow/venting, premature V/P transfer or a pressure/velocity limit.",
+    "plain_ko": "실제 공급 체적 부족·유로/벤트 저항·이른 V/P 전환·압력/속도 제한이 원인 후보입니다.",
     "likely_causes": [
-      "Insufficient injection speed or pressure",
-      "Melt or mold temperature too low",
-      "Flow restriction at the gate",
-      "High viscosity due to poor mixing"
+      "Possible causes include insufficient delivered volume, restricted flow/venting, premature V/P transfer or a pressure/velocity limit."
     ],
     "likely_causes_ko": [
-      "사출 속도 또는 압력 부족",
-      "용융 또는 금형 온도 부족",
-      "게이트부 유동 제한",
-      "혼합 부족으로 점도 상승"
+      "실제 공급 체적 부족·유로/벤트 저항·이른 V/P 전환·압력/속도 제한이 원인 후보입니다."
     ],
-    "diagnostics": "Run a short-shot study by stepping the shot size upward. Watch the flow pattern and gate freeze, compare actual melt temperature against the setpoint, and inspect the screw and nozzle for restriction.",
-    "diagnostics_ko": "샷 용량을 조금씩 올리는 쇼트샷 스터디를 진행하세요. 유동 패턴과 게이트 동결 시점을 보고, 실제 용융 온도를 설정값과 비교하고, 스크류와 노즐 막힘을 확인합니다.",
+    "diagnostics": "Use fill-only parts, cushion, actual pressure/velocity and transfer records; inspect gates and vents after the specified stop procedure. Identify the screw-position sign convention.",
+    "diagnostics_ko": "충전만 한 제품, 쿠션, 실제 압력·속도, 전환 기록을 확인합니다. 정해진 정지 절차 후 게이트·벤트를 점검하고 스크류 위치값의 증가 방향을 확인합니다.",
     "quick_fixes": [
-      "Raise injection speed by 10-20 mm/s",
-      "Increase melt temperature by 5 °C inside the grade window",
-      "Delay V/P transfer by 1-2 % of stroke",
-      "Increase first-stage hold pressure by 30-50 bar"
+      "Correct the identified limit within resin and machine constraints, then repeat a fill-only trial. Do not prescribe a universal speed, pressure or V/P position increment."
     ],
     "quick_fixes_ko": [
-      "사출 속도 10-20 mm/s 상승",
-      "그레이드 권장 범위 안에서 용융 온도 5 °C 상승",
-      "V/P 전환 위치를 스트로크의 1-2 % 지연",
-      "1차 보압 30-50 bar 상승"
+      "확인된 제한을 수지·장비 한도 안에서 조정하고 충전만 하는 시험을 반복합니다. 일률적인 속도·압력·V/P 위치 증분을 지시하지 않습니다."
     ],
     "root_fixes": [
-      "Optimize runner and gate design",
-      "Ensure venting is adequate so trapped air can escape",
-      "Use mold-flow review to rebalance wall thickness",
-      "Confirm the material is dried and blended uniformly"
+      "Establish delivery consistency, fill/transfer response and venting before tuning packing. Fix restrictive geometry or feeding problems when supported by measurements."
     ],
     "root_fixes_ko": [
-      "러너와 게이트 설계 최적화",
-      "공기 갇힘을 줄이도록 벤팅 확보",
-      "몰드 플로우 검토로 두께 재균형",
-      "원료 건조와 블렌드 균질성 재확인"
+      "보압 조정 전에 공급 재현성·충전/전환 응답·벤트를 확인하고 측정으로 확인된 형상·공급 문제를 개선합니다."
     ],
-    "control_knobs": ["Injection speed", "Melt temperature", "V/P transfer position", "Hold pressure"],
-    "control_knobs_ko": ["사출 속도", "용융 온도", "V/P 전환 위치", "보압"],
-    "notes": "Short shot is common in lower-flow PHA blends, so use a structured fill study instead of guessing.",
-    "notes_ko": "저유동 PHA 블렌드에서 미충전은 흔하므로, 감으로 맞추지 말고 구조화된 충진 스터디로 접근하세요.",
-    "related_images": []
+    "control_knobs": [],
+    "control_knobs_ko": [],
+    "notes": "Conditional engineering guidance. Confirm the cause, grade limits and equipment procedure before a trial; recheck product acceptance after every change.",
+    "notes_ko": "조건부 엔지니어링 점검 안내입니다. 원인·그레이드 한도·설비 절차를 확인한 뒤 시험하고, 변경 후 제품 합격 기준을 다시 확인하세요.",
+    "evidence_level": "conditional_engineering_guidance",
+    "review_version": "2026-09-06-all-processing",
+    "sources": [
+      {
+        "title": "CJ CA1180P injection document",
+        "url": "https://cjbiomaterials.com/wp-content/uploads/2024/03/CJBMS-TDS-CA1180P.pdf",
+        "scope": "Grade-specific conditions and transition purge; troubleshooting steps are engineering guidance"
+      }
+    ],
+    "related_images": [],
+    "stop_conditions": "Revert if flash or burn marks increase. Do not solve an unfilled cavity solely by increasing packing.",
+    "stop_conditions_ko": "플래시·번 마크가 증가하면 복귀하고 미충전을 보압 증가만으로 해결하지 않습니다.",
+    "review_basis": "GPT-6 Pro completed review + local source/code validation"
   },
   {
+    "id": "pha-kb-7",
     "process": "injection",
-    "symptom": "Splay/silver streaks or bubbles",
-    "symptom_ko": "실버 스트릭 · 기포 (Splay)",
-    "plain_en": "Silvery streaks or bubbles on the surface usually mean moisture-driven hydrolysis. Overheated melt or excessive injection speed can push the same defect.",
-    "plain_ko": "표면에 은빛 줄무늬나 기포가 보이는 결함입니다. 대부분 수분 가수분해가 원인이며, 용융 온도 과다나 사출 속도 과다도 같은 결함을 밀어 올립니다.",
+    "symptom": "Splay or silver streaks",
+    "symptom_ko": "은줄·실버 스트릭",
+    "plain_en": "Residual water, entrained air, volatiles or degradation can produce similar streaks.",
+    "plain_ko": "잔류 수분·혼입 공기·휘발분·열화는 비슷한 줄무늬를 만들 수 있습니다.",
     "likely_causes": [
-      "Moisture in pellets drives hydrolysis and gas evolution",
-      "Excess melt temperature causes degradation",
-      "High injection speed creates shear heating",
-      "Vacuum leaks pull in air"
+      "Residual water, entrained air, volatiles or degradation can produce similar streaks."
     ],
     "likely_causes_ko": [
-      "펠릿 수분으로 가수분해와 가스 발생",
-      "용융 온도 과다로 분해 발생",
-      "사출 속도 과다로 전단 발열 증가",
-      "진공 누설로 공기 유입"
+      "잔류 수분·혼입 공기·휘발분·열화는 비슷한 줄무늬를 만들 수 있습니다."
     ],
-    "diagnostics": "Check dew point and pellet moisture with a moisture analyzer, watch for bubbling at the nozzle, record actual nozzle temperature, look for yellow or brown degradation, and review screw rpm plus back-pressure settings.",
-    "diagnostics_ko": "이슬점과 펠릿 수분을 수분 분석기로 확인하고, 노즐에서 기포가 보이는지 보고, 실제 노즐 온도를 기록하고, 황색 또는 갈색 변색을 확인하고, 스크류 rpm과 백 프레셔 설정을 검토합니다.",
+    "diagnostics": "Verify pellet water against the grade specification; record drying air separately. Compare streak location with melt temperature/time history, decompression and plasticization.",
+    "diagnostics_ko": "펠릿 수분을 그레이드 규격과 비교하고 건조공기 상태는 별도로 기록합니다. 줄무늬 위치를 용융온도·체류 이력·석백·가소화 조건과 비교합니다.",
     "quick_fixes": [
-      "Re-dry the resin to the moisture target (< 0.02 % or 200 ppm)",
-      "Lower nozzle temperature by 5 °C",
-      "Reduce injection speed by 10-20 mm/s",
-      "Purge the barrel to remove degraded residue"
+      "If water is confirmed, correct drying/handling. If thermal exposure or air entrainment is implicated, adjust that cause within the grade/machine limits and compare parts."
     ],
     "quick_fixes_ko": [
-      "목표 수분(< 0.02 % 또는 200 ppm)까지 재건조",
-      "노즐 온도 5 °C 하향",
-      "사출 속도 10-20 mm/s 감소",
-      "배럴 퍼지로 분해 잔류물 제거"
+      "수분이 원인이면 건조·이송을 개선합니다. 열 이력·공기 혼입이 원인이면 그레이드·장비 범위 안에서 해당 변수를 조정하고 제품을 비교합니다."
     ],
     "root_fixes": [
-      "Install a dryer capable of -40 °C dew point",
-      "Keep melt temperature below 190 °C to avoid PLA degradation",
-      "Hold screw back pressure low (3-5 bar)",
-      "Purge with PLA on a regular schedule to keep the barrel clean"
+      "Document a grade-specific drying and plasticization procedure. State whether back pressure is hydraulic or plastic pressure; do not reuse a universal ppm or pressure value."
     ],
     "root_fixes_ko": [
-      "-40 °C 이슬점 가능한 건조기 설치",
-      "PLA 분해 방지를 위해 용융 온도 190 °C 이하 유지",
-      "스크류 백 프레셔를 낮게 유지 (3-5 bar)",
-      "정기적으로 PLA 퍼지해 배럴 청결 유지"
+      "그레이드별 건조·가소화 절차를 기록합니다. 배압이 유압 기준인지 수지압 기준인지 표시하고 범용 ppm·압력값을 적용하지 않습니다."
     ],
-    "control_knobs": ["Drying temperature/time", "Nozzle and barrel temperatures", "Injection speed", "Back pressure"],
-    "control_knobs_ko": ["건조 온도/시간", "노즐 · 배럴 온도", "사출 속도", "백 프레셔"],
-    "notes": "Splay is mostly a moisture problem. Fix dryness first, then trim temperature and speed.",
-    "notes_ko": "실버 스트릭은 대부분 수분 문제입니다. 먼저 건조를 바로잡고, 그다음 온도와 속도를 다듬으세요.",
-    "related_images": []
+    "control_knobs": [],
+    "control_knobs_ko": [],
+    "notes": "Conditional engineering guidance. Confirm the cause, grade limits and equipment procedure before a trial; recheck product acceptance after every change.",
+    "notes_ko": "조건부 엔지니어링 점검 안내입니다. 원인·그레이드 한도·설비 절차를 확인한 뒤 시험하고, 변경 후 제품 합격 기준을 다시 확인하세요.",
+    "evidence_level": "conditional_engineering_guidance",
+    "review_version": "2026-09-06-all-processing",
+    "sources": [
+      {
+        "title": "CJ CA1180P injection document",
+        "url": "https://cjbiomaterials.com/wp-content/uploads/2024/03/CJBMS-TDS-CA1180P.pdf",
+        "scope": "Grade-specific conditions and transition purge; troubleshooting steps are engineering guidance"
+      }
+    ],
+    "related_images": [],
+    "stop_conditions": "Stop and investigate persistent gas, discoloration or operating-limit violations.",
+    "stop_conditions_ko": "지속적인 가스·변색·공정 한도 이탈은 중단하고 원인을 확대 확인합니다.",
+    "review_basis": "GPT-6 Pro completed review + local source/code validation"
   },
   {
+    "id": "pha-kb-8",
     "process": "injection",
-    "symptom": "Flash (excess material escaping parting line)",
-    "symptom_ko": "플래시 (파팅라인 외부로 수지 유출)",
-    "plain_en": "Material escapes the parting line when hold pressure is too high, melt or mold temperature is too high, the parting surface is worn, or clamp force is not enough.",
-    "plain_ko": "파팅라인 바깥으로 수지가 새어 나오는 결함입니다. 보압 과다, 용융 또는 금형 온도 과다, 파팅면 마모, 클램프 부족 중 하나가 원인입니다.",
+    "symptom": "Flash at parting line",
+    "symptom_ko": "파팅라인 플래시(버)",
+    "plain_en": "Possible causes include a parting-surface gap, worn vents, filling pressure or overpacking; flash is not proof of overpacking alone.",
+    "plain_ko": "파팅면 틈·벤트 마모·충전압·과보압이 원인 후보이며 플래시만으로 과보압을 단정하지 않습니다.",
     "likely_causes": [
-      "Hold pressure is excessive",
-      "Melt or mold temperature is too high",
-      "Mold parting surfaces are worn or damaged",
-      "Clamp force is not adequate"
+      "Possible causes include a parting-surface gap, worn vents, filling pressure or overpacking; flash is not proof of overpacking alone."
     ],
     "likely_causes_ko": [
-      "보압 과다",
-      "용융 또는 금형 온도 과다",
-      "파팅면 마모 또는 손상",
-      "클램프 힘 부족"
+      "파팅면 틈·벤트 마모·충전압·과보압이 원인 후보이며 플래시만으로 과보압을 단정하지 않습니다."
     ],
-    "diagnostics": "Inspect the parting line for wear, compare clamp force against required tonnage, check hold pressure and hold time, and verify mold alignment plus venting condition.",
-    "diagnostics_ko": "파팅라인 마모를 검사하고, 클램프 힘을 필요 톤수와 비교하고, 보압과 보압 시간을 확인하고, 금형 얼라인먼트와 벤트 상태를 점검합니다.",
+    "diagnostics": "Compare fill-only and packed parts to locate the onset. Check cavity-pressure or plastic-pressure history, projected area and mold contact/vent condition.",
+    "diagnostics_ko": "충전만 한 제품과 보압을 적용한 제품을 비교해 발생 시점을 찾습니다. 캐비티압 또는 수지압 이력·투영면적·금형 접촉/벤트 상태를 확인합니다.",
     "quick_fixes": [
-      "Reduce hold pressure by 50-100 bar",
-      "Lower melt temperature by 5 °C",
-      "Lower mold temperature by 5 °C or raise clamp tonnage 10-20 %",
-      "Remove debris between the mold halves"
+      "For packing-induced flash, trial reduced packing while checking mass, sink and dimensions. For fill-stage flash or mold gaps, correct that cause; do not simply increase clamping force."
     ],
     "quick_fixes_ko": [
-      "보압 50-100 bar 하향",
-      "용융 온도 5 °C 하향",
-      "금형 온도 5 °C 하향 또는 클램프 톤수 10-20 % 상승",
-      "금형 사이 이물 제거"
+      "보압 중 플래시라면 보압을 낮춘 시험에서 중량·싱크·치수를 함께 확인합니다. 충전 중 발생·금형 틈이면 해당 원인을 개선하고 형체력을 바로 늘리지 않습니다."
     ],
     "root_fixes": [
-      "Recondition the mold parting surfaces",
-      "Install hard stops so over-clamp cannot distort the mold",
-      "Review part and gate design to avoid over-packing",
-      "Keep mold vents clean and adequate"
+      "Review mold condition and clamp requirements within mold/machine limits. Calculated separating force is not an automatic machine clamp setting."
     ],
     "root_fixes_ko": [
-      "파팅면 재가공",
-      "과도한 클램프로 금형이 변형되지 않도록 하드 스톱 설치",
-      "과충진을 줄이도록 파트와 게이트 설계 재검토",
-      "금형 벤트를 청결하고 충분하게 유지"
+      "금형·장비 한도 안에서 금형 상태와 필요한 형체력을 검토합니다. 계산한 금형 벌어짐 힘은 자동 형체력 설정값이 아닙니다."
     ],
-    "control_knobs": ["Hold pressure", "Melt and mold temperatures", "Clamp force"],
-    "control_knobs_ko": ["보압", "용융 · 금형 온도", "클램프 힘"],
-    "notes": "Flash is a sign of over-pack or mold damage. Rebalance pressure first, then inspect the tool.",
-    "notes_ko": "플래시는 과충진 또는 금형 손상의 신호입니다. 먼저 압력 균형을 잡고, 그다음 금형을 확인하세요.",
-    "related_images": []
+    "control_knobs": [],
+    "control_knobs_ko": [],
+    "notes": "Conditional engineering guidance. Confirm the cause, grade limits and equipment procedure before a trial; recheck product acceptance after every change.",
+    "notes_ko": "조건부 엔지니어링 점검 안내입니다. 원인·그레이드 한도·설비 절차를 확인한 뒤 시험하고, 변경 후 제품 합격 기준을 다시 확인하세요.",
+    "evidence_level": "conditional_engineering_guidance",
+    "review_version": "2026-09-06-all-processing",
+    "sources": [
+      {
+        "title": "CJ CA1180P injection document",
+        "url": "https://cjbiomaterials.com/wp-content/uploads/2024/03/CJBMS-TDS-CA1180P.pdf",
+        "scope": "Grade-specific conditions and transition purge; troubleshooting steps are engineering guidance"
+      }
+    ],
+    "related_images": [],
+    "stop_conditions": "Escalate suspected sealing-surface damage to maintenance; stay within mold and machine clamp limits.",
+    "stop_conditions_ko": "씰 접촉면 손상이 의심되면 정비로 전환하고 금형·장비 형체력 한도를 지킵니다.",
+    "review_basis": "GPT-6 Pro completed review + local source/code validation"
   },
   {
+    "id": "pha-kb-9",
     "process": "injection",
-    "symptom": "Sink marks or voids",
-    "symptom_ko": "수축 자국 · 공극 (Sink / Void)",
-    "plain_en": "A sink mark or internal void usually means packing pressure is low, hold time is short, the section is too thick, or cooling is uneven.",
-    "plain_ko": "수축 자국이나 내부 공극은 보압 부족, 짧은 보압 시간, 두꺼운 단면, 불균일 냉각 중 하나에서 주로 나옵니다.",
+    "symptom": "Sink marks or internal voids",
+    "symptom_ko": "싱크 마크·내부 보이드",
+    "plain_en": "Distinguish shrinkage from trapped gas, local thick sections and insufficient pressure transmission before gate freeze.",
+    "plain_ko": "수축과 포획 가스·국부 두꺼운 부위·게이트 고화 전 압력 전달 부족을 구분합니다.",
     "likely_causes": [
-      "Packing or holding pressure is too low",
-      "Hold time is too short",
-      "Ribs or bosses are too thick",
-      "Cooling is uneven or mold temperature is too low"
+      "Distinguish shrinkage from trapped gas, local thick sections and insufficient pressure transmission before gate freeze."
     ],
     "likely_causes_ko": [
-      "보압 또는 유지 압력 부족",
-      "보압 시간 부족",
-      "리브 또는 보스 두께 과다",
-      "냉각 불균일 또는 낮은 금형 온도"
+      "수축과 포획 가스·국부 두꺼운 부위·게이트 고화 전 압력 전달 부족을 구분합니다."
     ],
-    "diagnostics": "Locate the sink or void, check part-weight repeatability, run a gate-seal study, and review hold pressure plus hold-time settings.",
-    "diagnostics_ko": "수축 자국이나 공극 위치를 확인하고, 파트 중량 반복성을 점검하고, 게이트 동결 스터디를 돌리고, 보압과 보압 시간 설정을 검토합니다.",
+    "diagnostics": "Compare sectioned parts, part mass versus packing time, gate-freeze response and cavity pressure where available.",
+    "diagnostics_ko": "절단면, 보압시간에 따른 제품 중량, 게이트 고화 응답과 가능하면 캐비티압을 비교합니다.",
     "quick_fixes": [
-      "Raise first-stage hold pressure by 30-70 bar and extend hold time by 0.5-1 s",
-      "Increase cooling time by 2-3 s",
-      "Move V/P transfer earlier so more packing remains available",
-      "Use a smoother packing-pressure ramp"
+      "If shrinkage is confirmed, trial packing pressure/time while the gate remains effective and check flash/stress. Choose V/P transfer from fill response; an earlier transfer does not necessarily improve packing."
     ],
     "quick_fixes_ko": [
-      "1차 보압 30-70 bar 상승 + 보압 시간 0.5-1 s 연장",
-      "냉각 시간 2-3 s 증가",
-      "보압 여유를 늘리도록 V/P 전환을 더 앞당김",
-      "더 완만한 보압 램프 적용"
+      "수축이 확인되면 게이트로 압력이 전달되는 동안 보압·시간을 시험하고 플래시·응력을 확인합니다. V/P는 충전 응답으로 정하며 이른 전환이 보압을 항상 개선하지는 않습니다."
     ],
     "root_fixes": [
-      "Redesign the part to avoid thick sections",
-      "Modify gate location or gate size to improve packing access",
-      "Balance mold temperature within ±1 °C",
-      "Consider a nucleating agent to speed crystallization"
+      "Review gate size/location, wall transitions and cooling uniformity using measurements. Establish gate-freeze time rather than indefinitely extending packing."
     ],
     "root_fixes_ko": [
-      "두꺼운 단면을 피하도록 파트 재설계",
-      "충진 접근성을 높이도록 게이트 위치 또는 크기 수정",
-      "금형 온도 ±1 °C 이내로 균형 유지",
-      "결정화 가속을 위한 결정핵제 검토"
+      "측정 결과로 게이트 크기·위치·두께 변화·냉각 균일성을 검토하고 보압을 계속 늘리기보다 게이트 고화시간을 확인합니다."
     ],
-    "control_knobs": ["Hold pressure", "Hold time", "Cooling time", "Gate design"],
-    "control_knobs_ko": ["보압", "보압 시간", "냉각 시간", "게이트 설계"],
-    "notes": "Sink marks come from internal shrinkage. Packing and uniform cooling are the primary levers.",
-    "notes_ko": "수축 자국은 내부 수축에서 옵니다. 보압과 균일 냉각이 가장 큰 제어 인자입니다.",
-    "related_images": []
+    "control_knobs": [],
+    "control_knobs_ko": [],
+    "notes": "Conditional engineering guidance. Confirm the cause, grade limits and equipment procedure before a trial; recheck product acceptance after every change.",
+    "notes_ko": "조건부 엔지니어링 점검 안내입니다. 원인·그레이드 한도·설비 절차를 확인한 뒤 시험하고, 변경 후 제품 합격 기준을 다시 확인하세요.",
+    "evidence_level": "conditional_engineering_guidance",
+    "review_version": "2026-09-06-all-processing",
+    "sources": [
+      {
+        "title": "CJ CA1180P injection document",
+        "url": "https://cjbiomaterials.com/wp-content/uploads/2024/03/CJBMS-TDS-CA1180P.pdf",
+        "scope": "Grade-specific conditions and transition purge; troubleshooting steps are engineering guidance"
+      }
+    ],
+    "related_images": [],
+    "stop_conditions": "Revert if flash, residual stress or ejection problems increase.",
+    "stop_conditions_ko": "플래시·잔류응력·탈형 문제가 증가하면 복귀합니다.",
+    "review_basis": "GPT-6 Pro completed review + local source/code validation"
   },
   {
+    "id": "pha-kb-10",
     "process": "injection",
-    "symptom": "Warping or twisting",
-    "symptom_ko": "휨 · 뒤틀림 (Warp / Twist)",
-    "plain_en": "Warping usually comes from uneven cooling, too much molecular orientation, weak support at ejection, or shrinkage mismatch between PLA and aPHA phases.",
-    "plain_ko": "휨과 뒤틀림은 부위별 냉각 차이, 과도한 배향, 이젝션 시 지지 부족, PLA와 aPHA 상의 수축률 차이에서 주로 발생합니다.",
+    "symptom": "Warpage or distortion",
+    "symptom_ko": "휨·변형",
+    "plain_en": "Consider differential shrinkage/crystallization, asymmetric cooling, orientation and ejection stress.",
+    "plain_ko": "차등 수축·결정화, 비대칭 냉각, 배향, 취출 응력을 구분합니다.",
     "likely_causes": [
-      "Cooling is uneven across the part",
-      "High injection speed creates too much orientation",
-      "Support during ejection is insufficient",
-      "PLA and aPHA phases shrink at different rates"
+      "Consider differential shrinkage/crystallization, asymmetric cooling, orientation and ejection stress."
     ],
     "likely_causes_ko": [
-      "파트 전역 냉각 불균일",
-      "높은 사출 속도로 배향 과다",
-      "이젝션 시 지지 부족",
-      "PLA와 aPHA 상의 수축률 차이"
+      "차등 수축·결정화, 비대칭 냉각, 배향, 취출 응력을 구분합니다."
     ],
-    "diagnostics": "Measure mold temperature at multiple points, watch the part while it cools, check for cavity-to-cavity packing imbalance, and review injection plus hold speed profiles.",
-    "diagnostics_ko": "금형 여러 지점 온도를 측정하고, 냉각 중 파트 거동을 관찰하고, 캐비티 간 보압 불균형을 확인하고, 사출과 보압 속도 프로파일을 검토합니다.",
+    "diagnostics": "Record warpage direction, wall geometry, mold-surface temperatures, ejection condition and dimensional change after conditioning.",
+    "diagnostics_ko": "휨 방향·두께 형상·금형 표면온도·취출 상태·보관 후 치수 변화를 기록합니다.",
     "quick_fixes": [
-      "Equalize mold temperatures within ±1 °C",
-      "Use a softer hold-pressure ramp and extend the second stage",
-      "Reduce injection-speed-driven orientation",
-      "Add support pins or lifters to the part design"
+      "Correct a confirmed cooling or ejection asymmetry first; compare a single fill/packing change against weight and dimensional stability."
     ],
     "quick_fixes_ko": [
-      "금형 온도 ±1 °C 이내로 평형",
-      "더 부드러운 보압 램프 사용 + 2차 단계 연장",
-      "사출 속도를 조정해 배향 감소",
-      "파트 설계에 지지 핀 또는 리프터 추가"
+      "확인된 냉각·취출 비대칭을 먼저 개선하고 충전·보압 변수를 한 번에 하나씩 변경해 중량·치수 안정성과 비교합니다."
     ],
     "root_fixes": [
-      "Optimize mold cooling-channel design",
-      "Balance runner layout and gate position",
-      "Evaluate nucleating agents or fiber reinforcement",
-      "Add annealing or post-mold conditioning where needed"
+      "Review part/gate design and mold ejection support. Nucleation, reinforcement or annealing requires formulation-specific trials and dimensional/property checks."
     ],
     "root_fixes_ko": [
-      "금형 냉각 채널 설계 최적화",
-      "러너 레이아웃과 게이트 위치 밸런싱",
-      "결정핵제 또는 섬유 보강 검토",
-      "필요 시 어닐링 또는 후공정 컨디셔닝 도입"
+      "제품·게이트 설계와 금형의 취출 지지를 검토합니다. 핵제·보강재·어닐링은 배합별 시험과 치수·물성 확인이 필요합니다."
     ],
-    "control_knobs": ["Mold temperature", "Injection / hold speed profile", "Cooling time", "Gate and runner design"],
-    "control_knobs_ko": ["금형 온도", "사출 / 보압 속도 프로파일", "냉각 시간", "게이트 · 러너 설계"],
-    "notes": "Warp comes from differential shrinkage. Temperature balance and uniform packing matter most.",
-    "notes_ko": "뒤틀림은 수축 차이에서 옵니다. 온도 평형과 균일 보압이 가장 중요합니다.",
-    "related_images": []
+    "control_knobs": [],
+    "control_knobs_ko": [],
+    "notes": "Conditional engineering guidance. Confirm the cause, grade limits and equipment procedure before a trial; recheck product acceptance after every change.",
+    "notes_ko": "조건부 엔지니어링 점검 안내입니다. 원인·그레이드 한도·설비 절차를 확인한 뒤 시험하고, 변경 후 제품 합격 기준을 다시 확인하세요.",
+    "evidence_level": "conditional_engineering_guidance",
+    "review_version": "2026-09-06-all-processing",
+    "sources": [
+      {
+        "title": "CJ CA1180P injection document",
+        "url": "https://cjbiomaterials.com/wp-content/uploads/2024/03/CJBMS-TDS-CA1180P.pdf",
+        "scope": "Grade-specific conditions and transition purge; troubleshooting steps are engineering guidance"
+      }
+    ],
+    "related_images": [],
+    "stop_conditions": "Do not accept dimensional improvement with unacceptable loss of toughness. Compare impact/elongation at the same conditioning.",
+    "stop_conditions_ko": "허용할 수 없는 인성 저하를 동반한 치수 개선은 승인하지 않습니다. 같은 보관·전처리 조건으로 충격·신율을 비교합니다.",
+    "review_basis": "GPT-6 Pro completed review + local source/code validation"
   },
   {
+    "id": "pha-kb-11",
     "process": "thermoforming",
-    "symptom": "Poor form definition or tearing",
-    "symptom_ko": "성형 윤곽 불량 · 찢어짐",
-    "plain_en": "Poor form definition or tearing usually means the sheet is too cold, plug-assist temperature is low, the mold closes too fast, or sheet thickness is not uniform.",
-    "plain_ko": "성형 윤곽이 흐리거나 찢어지는 결함입니다. 보통 시트 온도 부족, 낮은 플러그 어시스트 온도, 빠른 금형 폐쇄, 불균일한 시트 두께 중 하나가 원인입니다.",
+    "symptom": "Cracking or whitening during forming",
+    "symptom_ko": "열성형 중 균열·백화",
+    "plain_en": "Consider through-thickness temperature gradients, excessive local draw, sheet history and tooling contact.",
+    "plain_ko": "두께 방향 온도차·국부 과연신·시트 이력·금형 접촉을 구분합니다.",
     "likely_causes": [
-      "Sheet temperature is too low",
-      "Plug-assist temperature is not high enough",
-      "Mold closing speed is too fast",
-      "Sheet thickness is non-uniform"
+      "Consider through-thickness temperature gradients, excessive local draw, sheet history and tooling contact."
     ],
     "likely_causes_ko": [
-      "시트 온도 부족",
-      "플러그 어시스트 온도 부족",
-      "금형 폐쇄 속도 과다",
-      "시트 두께 불균일"
+      "두께 방향 온도차·국부 과연신·시트 이력·금형 접촉을 구분합니다."
     ],
-    "diagnostics": "Monitor sheet surface temperature with an IR thermometer, inspect the formed part for thin spots, review heat time and oven-zone settings, and compare plug-assist temperature against the sheet.",
-    "diagnostics_ko": "IR 온도계로 시트 표면 온도를 확인하고, 성형품의 박육 부위를 살피고, 가열 시간과 오븐 존 설정을 검토하고, 플러그 어시스트 온도를 시트 온도와 비교합니다.",
+    "diagnostics": "Map sheet surface temperatures and validate through-thickness heating, gauge, draw distribution and crack location. An IR surface reading alone does not establish the core temperature.",
+    "diagnostics_ko": "시트 표면온도와 두께 방향 가열·두께·연신 분포·균열 위치를 확인합니다. IR 표면값만으로 내부 온도를 판단하지 않습니다.",
     "quick_fixes": [
-      "Raise oven temperature by 5 °C and extend heat time",
-      "Heat the plug assist close to sheet temperature",
-      "Slow mold closing speed so the sheet can flow",
-      "Pre-stretch the sheet with air before forming"
+      "If under-heating is confirmed, trial heat distribution/time within the grade window. Set plug temperature and speed for the actual plug material and draw response; do not match plug temperature to sheet temperature by default."
     ],
     "quick_fixes_ko": [
-      "오븐 온도 5 °C 상승 + 가열 시간 연장",
-      "플러그 어시스트를 시트 온도에 가깝게 가열",
-      "시트가 흐를 시간을 주도록 금형 폐쇄 속도 감소",
-      "성형 전 공압으로 예비 신장"
+      "가열 부족이 확인되면 그레이드 범위에서 가열 분포·시간을 시험합니다. 플러그 온도·속도는 플러그 재질과 연신 응답에 맞추며 시트 온도와 자동으로 같게 두지 않습니다."
     ],
     "root_fixes": [
-      "Install closed-loop sheet-temperature control",
-      "Keep extrusion sheet gauge uniform",
-      "Optimize mold and plug design for even material distribution",
-      "Adopt a temperature-controlled plug assist"
+      "Establish a grade/gauge-specific forming window and inspect conditioned parts. Review thickness distribution, tooling radii and plug design before changing formulation."
     ],
     "root_fixes_ko": [
-      "시트 온도 폐루프 제어 설치",
-      "압출 시 시트 두께 균일화",
-      "재료 분배가 고르게 되도록 금형과 플러그 설계 최적화",
-      "온도 제어 플러그 어시스트 도입"
+      "그레이드·두께별 성형 범위를 확인하고 보관 후 제품을 검사합니다. 배합 변경 전 두께 분포·금형 곡률·플러그 설계를 검토합니다."
     ],
-    "control_knobs": ["Oven temperature", "Heat time", "Plug-assist temperature", "Mold closing speed"],
-    "control_knobs_ko": ["오븐 온도", "가열 시간", "플러그 어시스트 온도", "금형 폐쇄 속도"],
-    "notes": "PHA/PLA thermoforming has a narrow process window, so thermal management must stay precise.",
-    "notes_ko": "PHA/PLA 열성형은 공정 윈도우가 좁아 열관리를 정밀하게 유지해야 합니다.",
-    "related_images": []
+    "control_knobs": [],
+    "control_knobs_ko": [],
+    "notes": "Conditional engineering guidance. Confirm the cause, grade limits and equipment procedure before a trial; recheck product acceptance after every change.",
+    "notes_ko": "조건부 엔지니어링 점검 안내입니다. 원인·그레이드 한도·설비 절차를 확인한 뒤 시험하고, 변경 후 제품 합격 기준을 다시 확인하세요.",
+    "evidence_level": "conditional_engineering_guidance",
+    "review_version": "2026-09-06-all-processing",
+    "sources": [
+      {
+        "title": "CJ PHACT grade documents",
+        "url": "https://cjbiomaterials.com/wp-content/uploads/2024/11/PHACT%E2%84%A2-CB0400A.pdf",
+        "scope": "CB0400A grade limits, bath and purge only"
+      },
+      {
+        "title": "P(3HB-co-4HB) processing research",
+        "url": "https://journal.polymer-korea.or.kr/journal/archive/view/4300",
+        "scope": "Thermal history, rheology and crystallization mechanisms; not production settings"
+      }
+    ],
+    "related_images": [],
+    "stop_conditions": "Stop increasing heat if local thinning, tearing or scorching worsens.",
+    "stop_conditions_ko": "국부 박육·찢김·그을림이 증가하면 가열 증가를 중단합니다.",
+    "review_basis": "GPT-6 Pro completed review + local source/code validation"
+  },
+  {
+    "id": "pha-kb-12",
+    "process": "blownfilm",
+    "symptom": "Bubble instability or repeated rupture",
+    "symptom_ko": "버블 흔들림·반복 파단",
+    "plain_en": "Possible causes include output variation, asymmetric air cooling, excessive draw and insufficient melt strength for this grade.",
+    "plain_ko": "토출 변동·비대칭 공랭·과도한 연신·해당 그레이드의 용융강도 부족이 원인 후보입니다.",
+    "likely_causes": [
+      "Possible causes include output variation, asymmetric air cooling, excessive draw and insufficient melt strength for this grade."
+    ],
+    "likely_causes_ko": [
+      "토출 변동·비대칭 공랭·과도한 연신·해당 그레이드의 용융강도 부족이 원인 후보입니다."
+    ],
+    "diagnostics": "Record output, die pressure, measured melt temperature, bubble diameter, BUR, haul-off speed and frost-line position together; inspect where instability starts.",
+    "diagnostics_ko": "토출량·다이압·측정 용융온도·버블 직경·BUR·인취 속도·프로스트 라인을 함께 기록하고 불안정이 시작되는 위치를 확인합니다.",
+    "quick_fixes": [
+      "Stabilize output and air distribution. Within equipment limits, trial lower draw/output if instability is draw-related; do not raise melt temperature automatically."
+    ],
+    "quick_fixes_ko": [
+      "토출과 공기 분포를 안정화합니다. 연신 관련 불안정이면 장비 한도에서 연신·토출량을 낮춰 시험하고 용융온도를 자동으로 올리지 않습니다."
+    ],
+    "root_fixes": [
+      "Confirm blown-film suitability with the resin supplier and extensional response under relevant conditions. Film mass balance estimates one-wall thickness, not bubble stability."
+    ],
+    "root_fixes_ko": [
+      "공급사와 블로운 필름 적합성을 확인하고 관련 조건에서 신장 응답을 평가합니다. 질량수지는 한 겹 두께를 계산하며 버블 안정성을 판정하지 않습니다."
+    ],
+    "control_knobs": [],
+    "control_knobs_ko": [],
+    "notes": "Conditional engineering guidance. Confirm the cause, grade limits and equipment procedure before a trial; recheck product acceptance after every change.",
+    "notes_ko": "조건부 엔지니어링 점검 안내입니다. 원인·그레이드 한도·설비 절차를 확인한 뒤 시험하고, 변경 후 제품 합격 기준을 다시 확인하세요.",
+    "evidence_level": "conditional_engineering_guidance",
+    "review_version": "2026-09-06-all-processing",
+    "sources": [
+      {
+        "title": "CJ PHACT grade documents",
+        "url": "https://cjbiomaterials.com/wp-content/uploads/2024/11/PHACT%E2%84%A2-CB0400A.pdf",
+        "scope": "CB0400A grade limits, bath and purge only"
+      },
+      {
+        "title": "P(3HB-co-4HB) processing research",
+        "url": "https://journal.polymer-korea.or.kr/journal/archive/view/4300",
+        "scope": "Thermal history, rheology and crystallization mechanisms; not production settings"
+      }
+    ],
+    "related_images": [],
+    "stop_conditions": "Stop increasing speed if bubble breaks or tension instability worsens; check blocking after winding.",
+    "stop_conditions_ko": "버블 파단·장력 불안이 악화되면 증속을 중단하고 권취 후 블로킹을 확인합니다.",
+    "review_basis": "GPT-6 Pro completed review + local source/code validation"
+  },
+  {
+    "id": "pha-kb-13",
+    "process": "blowmolding",
+    "symptom": "Parison sag or uneven bottle wall",
+    "symptom_ko": "패리슨 처짐·용기 벽 두께 불균일",
+    "plain_en": "Consider insufficient melt strength, long hang time, head residence, temperature/flow imbalance and die programming.",
+    "plain_ko": "용융강도 부족·긴 대기시간·헤드 체류·온도/유동 불균일·다이 프로그래밍을 구분합니다.",
+    "likely_causes": [
+      "Consider insufficient melt strength, long hang time, head residence, temperature/flow imbalance and die programming."
+    ],
+    "likely_causes_ko": [
+      "용융강도 부족·긴 대기시간·헤드 체류·온도/유동 불균일·다이 프로그래밍을 구분합니다."
+    ],
+    "diagnostics": "Record parison length/diameter over time and wall distribution, extrusion timing and measured melt temperature. Identify blowing air pressure separately from melt or hydraulic pressure.",
+    "diagnostics_ko": "시간별 패리슨 길이·직경·벽 두께와 토출 타이밍·측정 용융온도를 기록합니다. 블로우 공기압과 용융압·유압을 구분합니다.",
+    "quick_fixes": [
+      "For confirmed sag, trial hang-time or output/programming changes within equipment and grade limits; check pinch-off and wall distribution after each change."
+    ],
+    "quick_fixes_ko": [
+      "처짐이 확인되면 장비·그레이드 범위 안에서 대기시간·토출·프로그래밍을 시험하고 핀치오프·벽 두께를 매번 확인합니다."
+    ],
+    "root_fixes": [
+      "Verify extrusion-blow-molding grade suitability and head residence; use supplier/line trials to establish settings. A material's Tm or MFR alone does not establish parison performance."
+    ],
+    "root_fixes_ko": [
+      "압출 블로우 성형 그레이드 적합성과 헤드 체류를 확인하고 공급사·설비 시험으로 조건을 정합니다. Tm·MFR만으로 패리슨 성능을 판정하지 않습니다."
+    ],
+    "control_knobs": [],
+    "control_knobs_ko": [],
+    "notes": "Conditional engineering guidance. Confirm the cause, grade limits and equipment procedure before a trial; recheck product acceptance after every change.",
+    "notes_ko": "조건부 엔지니어링 점검 안내입니다. 원인·그레이드 한도·설비 절차를 확인한 뒤 시험하고, 변경 후 제품 합격 기준을 다시 확인하세요.",
+    "evidence_level": "conditional_engineering_guidance",
+    "review_version": "2026-09-06-all-processing",
+    "sources": [
+      {
+        "title": "CJ PHACT grade documents",
+        "url": "https://cjbiomaterials.com/wp-content/uploads/2024/11/PHACT%E2%84%A2-CB0400A.pdf",
+        "scope": "CB0400A grade limits, bath and purge only"
+      },
+      {
+        "title": "P(3HB-co-4HB) processing research",
+        "url": "https://journal.polymer-korea.or.kr/journal/archive/view/4300",
+        "scope": "Thermal history, rheology and crystallization mechanisms; not production settings"
+      }
+    ],
+    "related_images": [],
+    "stop_conditions": "For persistent leakage or blowouts, reassess material suitability and tooling instead of continuing to increase blowing pressure.",
+    "stop_conditions_ko": "누설·블로우아웃이 지속되면 공기압을 계속 올리지 말고 재료 적합성과 금형을 재검토합니다.",
+    "review_basis": "GPT-6 Pro completed review + local source/code validation"
+  },
+  {
+    "id": "pha-kb-14",
+    "process": "castfilm",
+    "symptom": "Neck-in, draw resonance or unstable release",
+    "symptom_ko": "폭 수축·드로 레조넌스·박리 불안",
+    "plain_en": "Consider air-gap draw, output/haul-off mismatch, unstable roll contact and grade-specific crystallization.",
+    "plain_ko": "에어갭 연신·토출/인취 불균형·롤 접촉 불안·그레이드별 결정화를 구분합니다.",
+    "likely_causes": [
+      "Consider air-gap draw, output/haul-off mismatch, unstable roll contact and grade-specific crystallization."
+    ],
+    "likely_causes_ko": [
+      "에어갭 연신·토출/인취 불균형·롤 접촉 불안·그레이드별 결정화를 구분합니다."
+    ],
+    "diagnostics": "Measure width and thickness over time with air gap, output, pressure, haul-off speed and actual roll-surface temperature.",
+    "diagnostics_ko": "폭·두께의 시간 변화를 에어갭·토출량·압력·인취 속도·롤 표면온도와 함께 측정합니다.",
+    "quick_fixes": [
+      "Stabilize feeding and roll contact, then trial air gap or draw changes for the observed instability. Choose the roll-temperature direction from cooling and crystallization evidence."
+    ],
+    "quick_fixes_ko": [
+      "공급·롤 접촉을 안정화한 뒤 관찰된 불안정에 맞춰 에어갭·연신 조건을 시험합니다. 롤 온도의 조정 방향은 냉각·결정화 근거로 정합니다."
+    ],
+    "root_fixes": [
+      "Establish a grade/thickness-specific draw and release window; do not transfer blown-film BUR or straw-bath settings to cast film."
+    ],
+    "root_fixes_ko": [
+      "그레이드·두께별 연신·박리 범위를 확인하고 블로운 필름 BUR·스트로 수조 값을 캐스트 필름에 옮기지 않습니다."
+    ],
+    "control_knobs": [],
+    "control_knobs_ko": [],
+    "notes": "Conditional engineering guidance. Confirm the cause, grade limits and equipment procedure before a trial; recheck product acceptance after every change.",
+    "notes_ko": "조건부 엔지니어링 점검 안내입니다. 원인·그레이드 한도·설비 절차를 확인한 뒤 시험하고, 변경 후 제품 합격 기준을 다시 확인하세요.",
+    "evidence_level": "conditional_engineering_guidance",
+    "review_version": "2026-09-06-all-processing",
+    "sources": [
+      {
+        "title": "CJ PHACT grade documents",
+        "url": "https://cjbiomaterials.com/wp-content/uploads/2024/11/PHACT%E2%84%A2-CB0400A.pdf",
+        "scope": "CB0400A grade limits, bath and purge only"
+      },
+      {
+        "title": "P(3HB-co-4HB) processing research",
+        "url": "https://journal.polymer-korea.or.kr/journal/archive/view/4300",
+        "scope": "Thermal history, rheology and crystallization mechanisms; not production settings"
+      }
+    ],
+    "related_images": [],
+    "stop_conditions": "Revert if neck-in, release, gauge variation or repeated web breaks worsen.",
+    "stop_conditions_ko": "폭 수축·박리·두께 편차·반복 필름 파단이 악화되면 복귀합니다.",
+    "review_basis": "GPT-6 Pro completed review + local source/code validation"
+  },
+  {
+    "id": "pha-kb-15",
+    "process": "straw",
+    "symptom": "Ovality, cutting cracks or dimensional drift",
+    "symptom_ko": "스트로 타원·절단 균열·치수 변화",
+    "plain_en": "Possible causes include sizing/air-pressure imbalance, incomplete shape setting, excessive draw and cutter issues.",
+    "plain_ko": "사이징/공기압 불균형·형상 고정 부족·과도한 인취·절단 문제가 원인 후보입니다.",
+    "likely_causes": [
+      "Possible causes include sizing/air-pressure imbalance, incomplete shape setting, excessive draw and cutter issues."
+    ],
+    "likely_causes_ko": [
+      "사이징/공기압 불균형·형상 고정 부족·과도한 인취·절단 문제가 원인 후보입니다."
+    ],
+    "diagnostics": "Locate the first defect along die, bath, haul-off and cutter. Record lane count, diameter/wall thickness, effective bath length and residence time; compare conditioned dimensions.",
+    "diagnostics_ko": "다이·수조·인취·절단 중 최초 결함 위치를 찾습니다. 가닥 수·외경/벽 두께·유효 수조 길이·체류시간을 기록하고 보관 후 치수를 비교합니다.",
+    "quick_fixes": [
+      "Correct confirmed alignment/cutter problems; trial draw or bath residence based on the grade document and measured shape-setting response."
+    ],
+    "quick_fixes_ko": [
+      "확인된 정렬·절단 문제를 개선하고 그레이드 지침과 측정한 형상 고정 응답에 따라 인취·수조 체류를 시험합니다."
+    ],
+    "root_fixes": [
+      "For CB0400A, use its named die and crystallization-bath references. Establish minimum residence time for the actual thickness; speed alone does not determine die-exit temperature."
+    ],
+    "root_fixes_ko": [
+      "CB0400A는 해당 문서의 다이·결정화 수조 조건을 확인합니다. 실제 두께에서 최소 체류시간을 검증하며 속도만으로 다이 출구 온도를 계산하지 않습니다."
+    ],
+    "control_knobs": [],
+    "control_knobs_ko": [],
+    "notes": "Conditional engineering guidance. Confirm the cause, grade limits and equipment procedure before a trial; recheck product acceptance after every change.",
+    "notes_ko": "조건부 엔지니어링 점검 안내입니다. 원인·그레이드 한도·설비 절차를 확인한 뒤 시험하고, 변경 후 제품 합격 기준을 다시 확인하세요.",
+    "evidence_level": "conditional_engineering_guidance",
+    "review_version": "2026-09-06-all-processing",
+    "sources": [
+      {
+        "title": "CJ PHACT grade documents",
+        "url": "https://cjbiomaterials.com/wp-content/uploads/2024/11/PHACT%E2%84%A2-CB0400A.pdf",
+        "scope": "CB0400A grade limits, bath and purge only"
+      },
+      {
+        "title": "P(3HB-co-4HB) processing research",
+        "url": "https://journal.polymer-korea.or.kr/journal/archive/view/4300",
+        "scope": "Thermal history, rheology and crystallization mechanisms; not production settings"
+      }
+    ],
+    "related_images": [],
+    "stop_conditions": "Stop increasing speed if jams, cutting cracks or dimensional deviations increase.",
+    "stop_conditions_ko": "잼·절단 균열·치수 이탈이 증가하면 증속을 중단합니다.",
+    "review_basis": "GPT-6 Pro completed review + local source/code validation"
+  },
+  {
+    "id": "pha-kb-16",
+    "process": "compounding",
+    "symptom": "Vent flooding or strand bubbles",
+    "symptom_ko": "벤트 역류·스트랜드 기포",
+    "plain_en": "Possible causes include entrained air/water, high local fill, downstream pressure and poor vent isolation.",
+    "plain_ko": "혼입 공기·수분, 국부 충만도, 하류 압력, 벤트 씰 구성이 원인 후보입니다.",
+    "likely_causes": [
+      "Entrained air or volatiles; vent flooding; insufficient melt seal; downstream restriction"
+    ],
+    "likely_causes_ko": [
+      "혼입 공기·휘발분, 벤트 역류, 용융 씰 불충분, 하류 막힘"
+    ],
+    "diagnostics": "Compare vacuum level, feeder/vent behavior, torque, pressure and pellet water. Locate the melt seal and partially filled vent zone on the screw drawing.",
+    "diagnostics_ko": "진공도·공급/벤트 상태·토크·압력·펠릿 수분을 비교하고 스크류 도면에서 용융 씰과 벤트의 부분 충만 구간을 확인합니다.",
+    "quick_fixes": [
+      "For flooding or blockage, use the equipment's feed reduction, depressurization and stop procedure. Inspect only after isolation; do not insert tools into an operating vent."
+    ],
+    "quick_fixes_ko": [
+      "역류·막힘은 설비의 공급량 감소·감압·정지 절차를 따릅니다. 격리 후 점검하고 가동 중 벤트 안으로 공구를 넣지 않습니다."
+    ],
+    "root_fixes": [
+      "Correct the verified drying, vacuum, seal or restriction problem with the equipment supplier. Longer conveying elements alone do not guarantee a melt seal."
+    ],
+    "root_fixes_ko": [
+      "확인된 건조·진공·씰·막힘 문제를 장비 공급사와 개선합니다. 이송 엘리먼트를 길게 하는 것만으로 용융 씰 형성을 보장하지 않습니다."
+    ],
+    "control_knobs": [],
+    "control_knobs_ko": [],
+    "notes": "Conditional engineering guidance; check equipment and grade constraints before a trial.",
+    "notes_ko": "조건부 엔지니어링 안내입니다. 장비·그레이드 한도를 확인한 뒤 시험하세요.",
+    "evidence_level": "conditional_engineering_guidance",
+    "review_version": "2026-09-06-all-processing",
+    "related_images": [],
+    "sources": [
+      {
+        "title": "Coperion: extrusion feeding and air escape",
+        "url": "https://www.coperion.com/media/3969/2017_twinscrewextrusion_platsticstechnology_04-2017_en.pdf",
+        "scope": "Feeding, fill and air-escape mechanisms"
+      }
+    ],
+    "stop_conditions": "Stop and isolate for persistent vent discharge, blockage or equipment-limit violations.",
+    "stop_conditions_ko": "벤트 토출·막힘이 지속되거나 설비 한도를 벗어나면 정지·격리 후 점검합니다.",
+    "review_basis": "GPT-6 Pro completed review + local source/code validation"
   }
 ]
