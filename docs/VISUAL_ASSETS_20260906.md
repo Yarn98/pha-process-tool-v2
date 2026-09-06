@@ -2,6 +2,8 @@
 
 현재 앱에는 Blender 설비 PNG **총 8종**과 생성 플래시 형상 1종을 사용합니다. 아래에는 최초 6종과 후속 2종의 제작 기록을 구분했습니다.
 
+사출 설비에는 이후 Blender 애니메이션 GLB·편집 원본·별도 대체 포스터를 추가했습니다. 공정 조건과 플래시 제어의 공정 흐름에서 같은 3D 모델을 재생합니다. [제작 및 동작 검증](INJECTION_MOTION_20260906.md).
+
 Blender 5.2.0 LTS background Python으로 6개 scene을 렌더했습니다. scripts/render_equipment.py를 재실행하면 재생성됩니다. PNG는 1280×640, Cycles 24 samples + denoise입니다. 회색 설비와 초록 수지 경로로 통일했습니다.
 
 | 파일 (assets/equipment/) | 내용 |

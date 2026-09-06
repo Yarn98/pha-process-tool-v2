@@ -221,7 +221,7 @@
       style: 'color:#1e3c72;margin-bottom:8px',
       text: t('PHA 스트로 압출 가이드', 'PHA Straw Extrusion Guide'),
     }));
-    root.appendChild(el('figure',{className:'guide-equipment',html:`<img src="assets/equipment/straw.png?v=16" width="1280" height="640" alt="${t('환형 다이·수조·인취 롤·절단과 중공 스트로 형상 개념도','Conceptual annular die, bath, haul-off, cutter and hollow straws')}"><figcaption>${t('다이 → 수조 → 인취 → 절단. 초록색은 수지 경로이며 치수·냉각 성능을 계산한 도면이 아닙니다.','Die → bath → haul-off → cutting. Green indicates the polymer path; this is not dimensional CAD or a cooling-performance calculation.')}</figcaption>`}));
+    root.appendChild(el('figure',{className:'guide-equipment',html:`<img src="assets/equipment/straw.png?v=18" width="1280" height="640" alt="${t('환형 다이·수조·인취 롤·절단과 중공 스트로 형상 개념도','Conceptual annular die, bath, haul-off, cutter and hollow straws')}"><figcaption>${t('다이 → 수조 → 인취 → 절단. 초록색은 수지 경로이며 치수·냉각 성능을 계산한 도면이 아닙니다.','Die → bath → haul-off → cutting. Green indicates the polymer path; this is not dimensional CAD or a cooling-performance calculation.')}</figcaption>`}));
     root.appendChild(el('p', {
       style: 'color:#6b7280;margin-bottom:0',
       text: t(

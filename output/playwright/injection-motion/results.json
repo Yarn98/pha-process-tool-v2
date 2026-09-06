@@ -1,0 +1,18 @@
+{
+  "status": "pass",
+  "root": "D:\\My_PJT\\Application\\pha_optimizer_convertor\\dist",
+  "checks": [
+    "Blender GLB loaded with animation tracks and automatic playback advances",
+    "Actual model transforms: screw recovery and axial fill, pellet/runner motion, cavity fill, closed-mold cooling, opening and ejection",
+    "Pause, step seek and playback-speed controls; language/grade changes preserve playback position",
+    "Flash Process flow uses the same animation; language and surface switches retain a single renderer",
+    "Precise manual axes with smooth travel, keyboard control, filling, mold/ejector interlocks, release, reset and close-up views",
+    "Manual mode and precise targets survive Korean/English remounts and mobile layout",
+    "Rotate/reset views and mobile Korean layout without page overflow",
+    "Playback rendering suspends on hidden tabs and non-injection processes",
+    "Real service-worker offline reload loads GLB and all local renderer modules",
+    "Reduced-motion preference starts paused, permits explicit playback and applies manual input without animation",
+    "Model load failure retains poster and usable stage explanations",
+    "No uncaught browser errors"
+  ]
+}

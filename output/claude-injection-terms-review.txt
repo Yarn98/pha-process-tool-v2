@@ -1,0 +1,8 @@
+2026-09-06 — Claude terminology review of injection motion controls
+Only the UI labels and explanatory text were sent. No project files or user data were sent.
+
+**필요한 수정**: ⑧ "Ejector extension" → "Ejector advance"(전진량과 대응), ⑭ "관찰 부위 / Inspect" → "Inspect view" 또는 국문을 "관찰 시점"으로 통일 권장. 표기 통일: 표준어는 '스크루'이나 업계 관행 '스크류' 사용 시 전체 일관 유지.
+
+**그대로 사용 가능**: ①~④ 사이클 단계 명칭, ⑤~⑦ 슬라이더 명칭, ⑨~⑬ 안내 문구 모두 업계 통용 용어와 부합하고, "%는 모형 이동 비율" 명시로 실제 설정값 오인 여지도 차단됨.
+
+**표현의 한계**: '후퇴량을 줄여 충전'은 모형 조작 논리로는 맞으나 실공정의 사출(전진) 동작과 방향 서술이 반대라 초심자가 혼동할 수 있음. '형개/형폐' 등 현장 축약어와의 차이는 학습용 명칭으로 허용 범위.

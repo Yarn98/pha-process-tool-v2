@@ -24,6 +24,7 @@ const FILES_TO_COPY = [
   'process-evidence.js',
   'process-atlas.js',
   'process-atlas.css',
+  'injection-motion.js',
   'sw.js',
   'manifest.webmanifest',
   'README.txt',
@@ -34,7 +35,8 @@ const FILES_TO_COPY = [
 const DIRS_TO_COPY = [
   'data',
   'icons',
-  'assets'
+  'assets',
+  'vendor'
 ];
 
 const DIST_DIR = path.resolve(__dirname, 'dist');

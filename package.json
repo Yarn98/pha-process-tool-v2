@@ -8,7 +8,8 @@
     "test:myai": "node tests/myai-regression.mjs",
     "test:process": "node --test tests/process-evidence.test.cjs tests/troubleshooting.test.cjs",
     "check:kb": "node scripts/sync-troubleshooting.cjs --check",
-    "test:ui": "node tests/process-ui-review.mjs"
+    "test:ui": "node tests/process-ui-review.mjs",
+    "test:motion": "node tests/injection-motion.mjs"
   },
   "keywords": [
     "pha",

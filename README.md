@@ -12,6 +12,7 @@ python -m http.server 8097 --bind 127.0.0.1
 npm run test:process
 npm run test:ui
 npm run test:myai
+npm run test:motion
 npm run check:kb
 npm run build
 # 배포용 파일을 대상으로 UI 검사
@@ -24,7 +25,7 @@ $env:PHA_TEST_ROOT='dist'; npm run test:ui
 
 | 화면 | 기능 | 해석 |
 |---|---|---|
-| 공정 조건 | 그레이드·6개 공정, 단계별 설비도, 입력과 범위 비교 | 제조사 원문 / 현장 수정 / 근거 미확인을 구분 |
+| 공정 조건 | 그레이드·6개 공정, 사출 3D 동작·단계별 설비도, 입력과 범위 비교 | 제조사 원문 / 현장 수정 / 근거 미확인을 구분 |
 | 트러블슈팅 | 16개 한영 점검 항목, 공정·증상 검색, 플래시 형상 | 진단 → 조건부 조치 → 중단·복귀 기준 → 재검사 |
 | 이력·분석 | 조건 저장, JSON/CSV 교환, 트렌드 | 다른 그레이드·설비 기록의 단순 비교에 유의 |
 | 계산기 | 평균 체류시간, 평판 냉각, 필름 단층 두께 | 단위와 모델 가정 확인 |
@@ -71,6 +72,7 @@ S1000P, A1000P, CA1180P, CB0104A, CB0400A, CA1165A, CA1670P, CA1680P, CA1270P의
 | index.html | 셸·기존 계산/기록/My AI |
 | process-evidence.js | 원문 참고 데이터·물리 계산·범위 상태 |
 | process-atlas.js / .css | 단계 설명·출처 패널·형상 예시 |
+| injection-motion.js / vendor/three-0.185.1/ | Blender GLB 재생·단계 이동·회전·확대, 로컬 3D 렌더러 |
 | pha-integration.js | 가이드 연결·재료 분류·TARS 읽기 |
 | custom.js / glossary.js / data/ | 물성·용어·트러블슈팅 원본 JSON |
 | troubleshooting-data.js / scripts/sync-troubleshooting.cjs | JSON에서 생성하는 동일한 오프라인 KB와 검사 |
@@ -86,11 +88,21 @@ blender --background --factory-startup --python scripts/render_equipment.py
 
 설비도는 개념도이며 기계 도면·유동해석이 아닙니다. 생성 플래시는 실측 불량이나 원인 증거가 아닙니다. [제작 내역](docs/VISUAL_ASSETS_20260906.md).
 
+사출은 **공정 조건의 설비 흐름**과 **플래시 제어 → 공정 흐름**에서 움직이는 절개 모델을 제공합니다. 스크류 회전·후퇴/전진, 수지 이동과 캐비티 충전, 금형 개폐·이젝터·제품 취출을 볼 수 있습니다. 재생/일시정지, 0.5×/1×/1.5× 재생, 단계 이동, 회전·확대를 지원합니다. 기기의 동작 줄이기 설정에서는 일시정지로 시작하며, 보이지 않는 탭에서는 재생을 멈춥니다. 3D 로드 실패 시 설명용 그림을 유지합니다.
+
+**직접 조작**에서는 스크류·금형·이젝터를 상대 이동값으로 조절하고 충전·취출을 확인할 수 있습니다. 금형 개방 후 이젝터 전진, 이젝터 복귀 후 금형 닫힘 순서가 연결됩니다. 관찰 부위 선택으로 스크류나 금형을 확대합니다. Blender의 BoltFactory 체결부와 드라이버를 사용하며, 원본 `MachineControls`에서도 기계 축을 조절할 수 있습니다.
+
+```powershell
+blender --background --factory-startup --python scripts/create_injection_motion.py
+```
+
+재생 시간은 설명용이며 실제 사이클·수지 유동해석과 다릅니다. 계량과 냉각의 실제 중첩은 모델에서 동작을 구별하기 위해 단순화했습니다. [사출 동작 제작·검증](docs/INJECTION_MOTION_20260906.md).
+
 ## 저장·오프라인
 
 이력·배치·템플릿·물성은 브라우저 로컬 저장소에, 일부 사진은 IndexedDB와 별도 localStorage 갤러리에 저장합니다. 기기 간 자동 동기화되지 않습니다. JSON/CSV로 백업하세요. 업데이트를 위해 웹사이트 데이터를 지우면 현장 기록도 삭제될 수 있습니다.
 
-서비스워커는 HTML network-first, 버전 자산 precache를 사용합니다. v=16 / pha-cache-v16-pro-processing-review. 첫 정상 로드 후 로컬 자료·설비 이미지·계산을 사용할 수 있습니다. 외부 TARS API와 CDN Chart.js는 오프라인에서 제한됩니다. file://보다 로컬 HTTP 실행을 권장합니다.
+서비스워커는 HTML network-first, 버전 자산 precache를 사용합니다. v=18 / pha-cache-v18-injection-controls. 첫 정상 로드 후 로컬 자료·설비 이미지·계산을 사용할 수 있습니다. 외부 TARS API와 CDN Chart.js는 오프라인에서 제한됩니다. file://보다 로컬 HTTP 실행을 권장합니다.
 
 기존 체크리스트·시험 로그는 유지합니다. 의미가 바뀐 컴파운딩 체크 두 항목은 새 키를 사용하며, 이전 완료 표시는 과거 기록으로 남깁니다.
 

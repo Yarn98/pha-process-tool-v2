@@ -1,0 +1,253 @@
+{
+  "blender": "5.2.0 LTS",
+  "addons": [
+    {
+      "module": "bl_ext.blender_org.antlandscape",
+      "name": "A.N.T.Landscape",
+      "version": [
+        0,
+        2,
+        0
+      ],
+      "enabled": true,
+      "loaded": true
+    },
+    {
+      "module": "bl_ext.blender_org.add_camera_rigs",
+      "name": "Add Camera Rigs",
+      "version": [
+        1,
+        8,
+        2
+      ],
+      "enabled": true,
+      "loaded": true
+    },
+    {
+      "module": "io_anim_bvh",
+      "name": "BioVision Motion Capture (BVH) format",
+      "version": [
+        1,
+        0,
+        1
+      ],
+      "enabled": true,
+      "loaded": true
+    },
+    {
+      "module": "bl_pkg",
+      "name": "Blender Extensions",
+      "version": [
+        0,
+        0,
+        1
+      ],
+      "enabled": true,
+      "loaded": true
+    },
+    {
+      "module": "blender_mcp",
+      "name": "Blender MCP",
+      "version": [
+        1,
+        5
+      ],
+      "enabled": true,
+      "loaded": true
+    },
+    {
+      "module": "bl_ext.blender_org.boltfactory",
+      "name": "BoltFactory",
+      "version": [
+        0,
+        7,
+        1
+      ],
+      "enabled": true,
+      "loaded": true
+    },
+    {
+      "module": "bl_ext.blender_org.bool_tool",
+      "name": "Bool Tool",
+      "version": [
+        2,
+        1,
+        0
+      ],
+      "enabled": true,
+      "loaded": true
+    },
+    {
+      "module": "cycles",
+      "name": "Cycles Render Engine",
+      "version": null,
+      "enabled": true,
+      "loaded": true
+    },
+    {
+      "module": "bl_ext.blender_org.extra_curve_objectes",
+      "name": "Extra Curve Objects",
+      "version": [
+        0,
+        2,
+        0
+      ],
+      "enabled": true,
+      "loaded": true
+    },
+    {
+      "module": "bl_ext.blender_org.extra_mesh_objects",
+      "name": "Extra Mesh Objects",
+      "version": [
+        0,
+        4,
+        1
+      ],
+      "enabled": true,
+      "loaded": true
+    },
+    {
+      "module": "io_scene_fbx",
+      "name": "FBX format",
+      "version": [
+        5,
+        15,
+        0
+      ],
+      "enabled": true,
+      "loaded": true
+    },
+    {
+      "module": "io_scene_gltf2",
+      "name": "glTF 2.0 format",
+      "version": [
+        5,
+        2,
+        39
+      ],
+      "enabled": true,
+      "loaded": true
+    },
+    {
+      "module": "hydra_storm",
+      "name": "Hydra Storm render engine",
+      "version": [
+        1,
+        0,
+        0
+      ],
+      "enabled": true,
+      "loaded": true
+    },
+    {
+      "module": "bl_ext.blender_org.looptools",
+      "name": "LoopTools",
+      "version": [
+        4,
+        7,
+        7
+      ],
+      "enabled": true,
+      "loaded": true
+    },
+    {
+      "module": "ui_translate",
+      "name": "Manage UI translations",
+      "version": [
+        2,
+        1,
+        0
+      ],
+      "enabled": true,
+      "loaded": true
+    },
+    {
+      "module": "bl_ext.blender_org.material_utilities",
+      "name": "Material Utilities",
+      "version": [
+        2,
+        2,
+        3
+      ],
+      "enabled": true,
+      "loaded": true
+    },
+    {
+      "module": "node_wrangler",
+      "name": "Node Wrangler",
+      "version": [
+        4,
+        1,
+        0
+      ],
+      "enabled": true,
+      "loaded": true
+    },
+    {
+      "module": "pose_library",
+      "name": "Pose Library",
+      "version": [
+        2,
+        0
+      ],
+      "enabled": true,
+      "loaded": true
+    },
+    {
+      "module": "rigify",
+      "name": "Rigify",
+      "version": [
+        0,
+        6,
+        10
+      ],
+      "enabled": true,
+      "loaded": true
+    },
+    {
+      "module": "bl_ext.blender_org.sapling_tree_gen",
+      "name": "Sapling Tree Gen",
+      "version": [
+        0,
+        3,
+        7
+      ],
+      "enabled": true,
+      "loaded": true
+    },
+    {
+      "module": "io_curve_svg",
+      "name": "Scalable Vector Graphics (SVG) 1.1 format",
+      "version": null,
+      "enabled": true,
+      "loaded": true
+    },
+    {
+      "module": "io_mesh_uv_layout",
+      "name": "UV Layout",
+      "version": [
+        1,
+        2,
+        0
+      ],
+      "enabled": true,
+      "loaded": true
+    },
+    {
+      "module": "viewport_vr_preview",
+      "name": "VR Scene Inspection",
+      "version": [
+        0,
+        11,
+        2
+      ],
+      "enabled": true,
+      "loaded": true
+    }
+  ],
+  "extension_repositories": [
+    "blender_org",
+    "user_default",
+    "system"
+  ]
+}

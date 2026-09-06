@@ -1,0 +1,27 @@
+{
+  "generator": "Blender 5.2.0 LTS",
+  "fps": 24,
+  "duration_seconds": 14,
+  "timing_basis": "illustrative playback only",
+  "stages": [
+    0,
+    4,
+    6,
+    10
+  ],
+  "scene": "Injection cycle cutaway",
+  "addon_used": {
+    "name": "BoltFactory",
+    "version": "0.7.1",
+    "source": "https://extensions.blender.org/add-ons/boltfactory/"
+  },
+  "rig_controller": "MachineControls",
+  "stroke_basis": "normalized educational travel, not OEM dimensions",
+  "mechanisms": [
+    "screw rotation/retraction",
+    "axial injection",
+    "pellet/runner motion and cavity filling",
+    "closed-mold cooling",
+    "mold opening/ejector/closing"
+  ]
+}
