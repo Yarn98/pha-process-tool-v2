@@ -1,13 +1,13 @@
 /* Shared, local Blender GLB viewer for seven educational process lines. */
 (function(){
   'use strict';
-  const VERSION='?v=20',VENDOR='./vendor/three-0.185.1/';
+  const VERSION='?v=21',VENDOR='./vendor/three-0.185.1/';
   const reduced=matchMedia('(prefers-reduced-motion: reduce)'),saved=new Map(),cache=new Map();
   let host=null,meta=null,state=null,asset=null,engine=null,imports=null,onStage=()=>{};
-  let locale='ko',token=0,raf=0,lastTick=0,resizeObserver=null,intersectionObserver=null;
+  let locale='ko',token=0,raf=0,lastTick=0,resizeObserver=null,intersectionObserver=null,studyPanel=null;
   const t=(ko,en)=>locale==='en'?en:ko,text=pair=>pair[locale==='en'?1:0];
   const clamp=(value,min,max)=>Math.min(max,Math.max(min,value));
-  window.phaSyncMachineOverlay=()=>document.body.classList.toggle('pha-machine-manual',!!document.querySelector('.tabpage.active .motion-manual:not([hidden])'));
+  window.phaSyncMachineOverlay=()=>document.body.classList.toggle('pha-machine-manual',!!document.querySelector('.tabpage.active :is(.equipment-motion,.injection-motion):not(.is-study-photo) .motion-manual:not([hidden]),.tabpage.active .equipment-study[open]'));
 
   function initial(definition){
     const values=Object.fromEntries(definition.controls.map(control=>[control.key,definition.initial?.[control.key]||0]));
@@ -15,7 +15,7 @@
   }
   function stop(){if(raf)cancelAnimationFrame(raf);raf=0;lastTick=0;}
   function changing(){return state?.mode==='manual'&&meta.controls.some(c=>Math.abs(state.actual[c.key]-state.target[c.key])>.001);}
-  function canRun(){return !!(engine&&asset&&host?.isConnected&&state?.visible&&document.visibilityState==='visible'&&(state.playing||changing()));}
+  function canRun(){return !!(engine&&asset&&host?.isConnected&&!host.classList.contains('is-study-photo')&&state?.ready&&state.visible&&document.visibilityState==='visible'&&(state.playing||state.studyPlaying||changing()));}
   function schedule(){if(canRun()&&!raf)raf=requestAnimationFrame(tick);else if(!canRun())stop();}
   function enabled(key){
     if(meta.id!=='blowmolding')return true;
@@ -41,16 +41,26 @@
     });
     for(const [key,group] of asset.groups){
       let second=state.time;
-      if(state.mode==='manual'){
+      if(state.mode==='study'){
+        const drive=state.study;
+        const turns=meta.id==='straw'||key==='winder'||key==='cutter'?1:2;
+        second=drive?.type==='spin'&&key===drive.group?(drive.angle/360/turns%1)*group.duration:0;
+      }
+      if(state.mode==='manual'||state.mode==='study'&&state.study?.type==='travel'){
         const control=meta.controls.find(c=>c.key===key);
         second=control?control.range[0]+(control.range[1]-control.range[0])*state.actual[key]/control.max:0;
       }
       group.mixer.setTime(clamp(second,0,group.duration-.00001));
     }
+    // The smaller guide roll follows the same surface speed as the primary roll.
+    if(state.mode==='study'&&state.study?.group==='roll'&&asset.guide){
+      const guide=asset.guide;
+      guide.mixer.setTime((state.study.angle/720*guide.ratio%1)*guide.duration);
+    }
     if(meta.id==='blowmolding'){
       const nodes=asset.nodes,a=state.actual;
       for(const name of ['ParisonLength','InflatedBody','ReleasedBottle'])if(nodes[name])nodes[name].visible=true;
-      if(state.mode==='manual'){
+      if(state.mode==='manual'||state.mode==='study'){
         const bodyReady=a.inflate>.01||(a.pin>99&&a.parison>99&&a.mold<.1);
         nodes.ParisonLength.visible=!bodyReady&&!state.released;
         nodes.ParisonLength.scale.set(1,Math.max(.001,a.parison/100),1);
@@ -90,7 +100,7 @@
     host.querySelector('[data-eq="manual"]').setAttribute('aria-pressed',String(manual));
     host.querySelector('.motion-manual').hidden=!manual;
     window.phaSyncMachineOverlay();state.phase=phase;
-    host.querySelector('.motion-phase').textContent=manual?t('직접 조작 · 모형의 상대 위치','Manual · Relative model position'):String(phase+1).padStart(2,'0')+' · '+text(meta.stages[phase]);
+    host.querySelector('.motion-phase').textContent=state.mode==='study'?t('계산 동작 · 선택한 기구만 표시','Calculated motion · Selected mechanism'):manual?t('직접 조작 · 모형의 상대 위치','Manual · Relative model position'):String(phase+1).padStart(2,'0')+' · '+text(meta.stages[phase]);
     const progress=host.querySelector('[data-eq="progress"]');progress.value=String(state.time/meta.duration*100);progress.setAttribute('aria-valuetext',text(meta.stages[phase]));
     for(const key of ['play','speed','progress'])host.querySelector('[data-eq="'+key+'"]').disabled=!state.ready||manual;
     for(const control of meta.controls){
@@ -106,14 +116,31 @@
     }else notice.textContent=t('슬라이더 또는 키보드 화살표로 부품과 흐름 표시를 조절합니다.','Use sliders or keyboard arrows to move the mechanisms and flow markers.');
     host.querySelectorAll('[data-eq-stage]').forEach(button=>button.setAttribute('aria-pressed',String(!manual&&Number(button.dataset.eqStage)===phase)));
     if(layoutChanged&&state.ready)resize();
-    if(!manual)onStage(phase);
+    if(state.mode==='cycle')onStage(phase);
+  }
+  function stopStudy(){if(!state)return;state.studyPlaying=false;stop();studyPanel?.clearStatus();}
+  function leaveStudy(){if(state.mode==='study'){stopStudy();state.mode='cycle';}}
+  function startStudy(drive){
+    stopStudy();state.playing=false;state.mode='study';state.study={...drive,angle:0,elapsed:0};state.studyPlaying=drive.type==='travel'||drive.rpm>0;
+    if(drive.type==='travel')for(const control of meta.controls)state.actual[control.key]=state.target[control.key]=meta.initial?.[control.key]||0;
+    state.released=false;state.drop=0;advanceStudy(0);paint();update();schedule();
+  }
+  function advanceStudy(dt){
+    const drive=state.study;if(!drive||!state.studyPlaying)return;
+    drive.elapsed+=dt*drive.scale;
+    if(drive.type==='spin')drive.angle=PHAKinematics.degrees(drive.rpm,drive.elapsed);
+    else{
+      const fraction=drive.seconds===0?0:Math.min(1,drive.elapsed/drive.seconds);
+      state.actual.mold=state.target.mold=100*(1-fraction);
+      if(drive.seconds===0||fraction===1){state.studyPlaying=false;drive.onComplete?.();}
+    }
   }
   function tick(now){
     raf=0;if(!canRun()){lastTick=0;return;}
-    if(lastTick){const dt=Math.min((now-lastTick)/1000,.10);if(state.mode==='manual')manualStep(dt);else state.time=(state.time+dt*state.speed)%meta.duration;}
+    if(lastTick){const dt=Math.min((now-lastTick)/1000,.10);if(state.mode==='study')advanceStudy(dt);else if(state.mode==='manual')manualStep(dt);else state.time=(state.time+dt*state.speed)%meta.duration;}
     lastTick=now;paint();update();if(canRun())raf=requestAnimationFrame(tick);else lastTick=0;
   }
-  function seek(second){state.mode='cycle';state.playing=false;state.time=clamp(second,0,meta.duration-.001);stop();paint();update();}
+  function seek(second){stopStudy();state.mode='cycle';state.playing=false;state.time=clamp(second,0,meta.duration-.001);stop();paint();update();}
   function resetManual(){
     for(const control of meta.controls)state.actual[control.key]=state.target[control.key]=meta.initial?.[control.key]||0;
     state.released=false;state.drop=0;stop();paint();update();
@@ -128,7 +155,7 @@
   function resize(){
     if(!engine||!asset||!host?.isConnected)return;
     const viewport=host.querySelector('.motion-viewport'),width=viewport.clientWidth;if(!width)return;
-    const compact=state.mode==='manual'&&matchMedia('(max-width:760px)').matches;
+    const compact=(state.mode==='manual'||host.classList.contains('is-study-open'))&&matchMedia('(max-width:760px)').matches;
     const height=Math.round(compact?Math.min(width*.55,220):width*(width<480?.72:meta.heightRatio||.5));viewport.style.height=height+'px';
     engine.renderer.setSize(width,height,false);
     const ratio=width/height,vertical=Math.max(meta.span[1],meta.span[0]/ratio)*1.08;
@@ -168,13 +195,20 @@
     }
     const missing=definition.controls.filter(control=>!groups.has(control.key)).map(control=>control.key);
     if(missing.length)throw new Error('Missing Blender mechanism animation: '+missing.join(', '));
-    const loaded={model:gltf.scene,groups,nodes,members};cache.set(definition.id,loaded);return loaded;
+    let guide=null;
+    const guideDefinition={sheet:['SheetGuideRoll',.46/.29],castfilm:['FilmGuideRoll',.70/.29]}[definition.id];
+    if(guideDefinition){
+      const list=(tracks.roll||[]).filter(track=>engine.THREE.PropertyBinding.parseTrackName(track.name).nodeName===guideDefinition[0]);
+      if(list.length){const clip=new engine.THREE.AnimationClip('studyGuide',-1,list),mixer=new engine.THREE.AnimationMixer(gltf.scene);mixer.clipAction(clip).play();guide={mixer,duration:clip.duration,ratio:guideDefinition[1]};}
+    }
+    const loaded={model:gltf.scene,groups,nodes,members,guide};cache.set(definition.id,loaded);return loaded;
   }
   function trimCache(){
     while(cache.size>2){
       const entry=[...cache].find(([,value])=>value!==asset);if(!entry)break;
       const [key,old]=entry;
       old.groups.forEach(group=>group.mixer.stopAllAction());
+      old.guide?.mixer.stopAllAction();
       const geometries=new Set(),materials=new Set();old.model.traverse(node=>{if(node.geometry)geometries.add(node.geometry);if(node.material)(Array.isArray(node.material)?node.material:[node.material]).forEach(mat=>materials.add(mat));});
       geometries.forEach(item=>item.dispose());materials.forEach(item=>item.dispose());cache.delete(key);
     }
@@ -184,9 +218,11 @@
     host.querySelector('.motion-viewport').hidden=true;host.querySelector('.motion-poster').hidden=false;
     const message=host.querySelector('.motion-load');message.hidden=false;message.textContent=t('3D를 열지 못했습니다. 설비 그림과 공정 설명을 확인하세요.','3D could not load. The equipment image and process explanations remain available.');
     host.querySelectorAll('button,input,select').forEach(element=>element.disabled=true);
+    state.studyPlaying=false;
+    host.querySelectorAll('.study-viewbar button,.equipment-study input,.equipment-study select,.equipment-study [data-study-stop]').forEach(el=>el.disabled=false);studyPanel?.refresh();
   }
   function detach(){
-    token++;stop();if(state)state.visible=false;resizeObserver?.disconnect();intersectionObserver?.disconnect();
+    token++;stopStudy();stop();if(state)state.visible=false;resizeObserver?.disconnect();intersectionObserver?.disconnect();
     engine?.renderer.domElement.remove();host=null;onStage=()=>{};window.phaSyncMachineOverlay();
   }
   async function mount(element,options={}){
@@ -199,12 +235,16 @@
       <label class="motion-progress">${t('공정 진행 위치','Cycle position')}<input type="range" data-eq="progress" min="0" max="100" step=".1" aria-label="${t('공정 진행 위치','Cycle position')}" disabled></label><p class="motion-hint">${t('드래그 회전 · 휠/두 손가락 확대 · ','Drag to rotate · Wheel/pinch to zoom · ')}${meta.amberFlow?t('호박색 고리는 흐름 방향 표시','Amber rings mark the flow direction'):t('밝은 초록 점은 흐름 방향 표시','Bright green markers show flow direction')}</p>
       <div class="motion-manual" hidden><p class="motion-manual-intro">${meta.id==='blowmolding'?t('패리슨 토출 → 금형 닫힘 → 핀 삽입 → 팽창 → 핀 복귀 → 금형 개방 순서로 조작하세요.','Extrude the parison → close the mold → insert the pin → inflate → retract the pin → open the mold.'):t('부품별로 회전·이동을 멈춰 관찰하거나 위치를 직접 바꿔보세요.','Inspect individual mechanisms at rest or adjust their positions directly.')}</p><div class="motion-axes">${meta.controls.map(control=>'<label class="motion-axis"><span>'+text(control.label)+'<output aria-live="off" data-eq-value="'+control.key+'"></output></span><input type="range" data-eq-axis="'+control.key+'" min="0" max="'+control.max+'" step="'+control.step+'" aria-label="'+text(control.label)+'" disabled></label>').join('')}</div><p class="motion-interlock" role="status"></p><div class="motion-manual-footer"><button type="button" data-eq="reset" disabled>${t('초기 위치','Reset model')}</button><small>${t('각도·%는 모형 위치입니다. 실제 RPM·속도·생산 설정값이 아닙니다.','Angles and % are model positions, not real RPM, speeds or production settings.')}</small></div></div>
       ${options.stages!==false?'<div class="motion-stages">'+meta.stages.map((name,index)=>'<button type="button" data-eq-stage="'+index+'" aria-pressed="false">'+String(index+1).padStart(2,'0')+' · '+text(name)+'</button>').join('')+'</div>':''}`;
+    studyPanel=window.PHAEquipmentStudy?.mount(host,{kind:meta.id,locale,start:startStudy,stop:stopStudy,pause:()=>{state.playing=false;stop();update();}});
+    host.querySelector('.motion-toolbar').addEventListener('click',leaveStudy,true);
+    host.querySelector('.motion-toolbar').addEventListener('change',leaveStudy,true);
     try{
       await ensureEngine();const loaded=await load(definition);if(current!==token||!host?.isConnected){trimCache();return;}
       if(asset?.model)engine.scene.remove(asset.model);asset=loaded;engine.scene.add(asset.model);trimCache();state.ready=true;
       host.querySelector('.motion-viewport').appendChild(engine.renderer.domElement);host.querySelector('.motion-viewport').hidden=false;host.querySelector('.motion-poster').hidden=true;host.querySelector('.motion-load').hidden=true;host.dataset.motionState='ready';
       engine.renderer.domElement.setAttribute('aria-label',t('설비 부품과 수지 이동을 보여주는 조작 가능한 3D 모델','Interactive 3D equipment model showing mechanisms and polymer movement'));
       host.querySelectorAll('button,input,select').forEach(element=>element.disabled=false);
+      studyPanel?.refresh();
       host.querySelector('[data-eq="speed"]').value=String(state.speed);host.querySelector('[data-eq="focus"]').value=state.focus;
       host.querySelector('[data-eq="play"]').onclick=()=>{state.playing=!state.playing;update();schedule();};
       host.querySelector('[data-eq="speed"]').onchange=event=>{state.speed=Number(event.target.value);};
@@ -232,7 +272,7 @@
   }
   document.addEventListener('visibilitychange',schedule);
   window.addEventListener('pha-language-change',()=>requestAnimationFrame(syncSurface));
-  reduced.addEventListener('change',event=>{if(event.matches&&state){state.playing=false;stop();if(state.mode==='manual'){manualStep(10);paint();}update();}});
+  reduced.addEventListener('change',event=>{if(event.matches&&state){state.playing=false;stopStudy();stop();if(state.mode==='manual'){manualStep(10);paint();}update();}});
   window.PHAEquipmentMotion={mount,detach,syncSurface,seekStage(index){if(meta&&index>=0&&index<4)seek(index*meta.duration/4+.25);},getState(){return state?{...state,kind:meta.id,actual:{...state.actual},target:{...state.target}}:null;}};
   if(['localhost','127.0.0.1'].includes(location.hostname))window.__phaEquipmentTest=()=>({
     ...window.PHAEquipmentMotion.getState(),cached:[...cache.keys()],groups:asset?Object.fromEntries([...asset.groups].map(([key,group])=>[key,{duration:group.duration,tracks:group.tracks}])):{},

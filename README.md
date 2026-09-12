@@ -4,6 +4,8 @@ PHA 가공의 **초기 시운전 참고 조건, 계산, 현장 기록**을 제�
 
 검토 기준: **2026-09-06**. 프로젝트 코드와 질문을 GPT-6 Pro에 전달하고 완료 답변을 제조사 원문·코드와 대조했습니다. [전체 가공 검토와 반영 보고서](docs/ALL_PROCESSING_REVIEW_20260906.md) / [1차 리뷰 기록](docs/PROCESS_REVIEW_20260906.md).
 
+**2026-09-13 설비 개선:** 사출·압출·시트·캐스트 필름·블로운 필름·압출 블로우 성형·컴파운딩·스트로 8종에 **Unreal 상세 이미지**와 **회전수·속도 계산에 따른 3D 동작**을 연결했습니다. 스트로는 Straw Optimizer v2의 완료된 환형 다이 이미지를 그대로 차용하고, 다른 7종은 기존 Blender 설비를 Unreal 5.8.2에서 새로 렌더링했습니다. [설비별 검토·재생성·검증](docs/UNREAL_EQUIPMENT_20260913.md).
+
 ## 실행과 검증
 
 ```powershell
@@ -14,6 +16,8 @@ npm run test:ui
 npm run test:myai
 npm run test:motion
 npm run test:equipment
+npm run test:kinematics
+npm run test:study
 npm run check:kb
 npm run build
 # 배포용 파일을 대상으로 UI 검사
@@ -75,6 +79,8 @@ S1000P, A1000P, CA1180P, CB0104A, CB0400A, CA1165A, CA1670P, CA1680P, CA1270P의
 | process-atlas.js / .css | 단계 설명·출처 패널·형상 예시 |
 | injection-motion.js / vendor/three-0.185.1/ | Blender GLB 재생·단계 이동·회전·확대, 로컬 3D 렌더러 |
 | equipment-motion.js / equipment-models.js | 나머지 7개 공정의 부품별 조작·동작 그룹·관찰 시점 |
+| equipment-study.js / equipment-kinematics.js | 8종 설비의 Unreal/3D 전환, 단위가 명확한 계산과 선택 기구 동작 |
+| assets/equipment/unreal/ / scripts/unreal/ | 1600×900 WebP 8장·원본 해시, Blender→Unreal 렌더링·패키징 스크립트 |
 | pha-integration.js | 가이드 연결·재료 분류·TARS 읽기 |
 | custom.js / glossary.js / data/ | 물성·용어·트러블슈팅 원본 JSON |
 | troubleshooting-data.js / scripts/sync-troubleshooting.cjs | JSON에서 생성하는 동일한 오프라인 KB와 검사 |
@@ -94,6 +100,8 @@ blender --background --factory-startup --python scripts/render_equipment.py
 사출은 **공정 조건의 설비 흐름**과 **플래시 제어 → 공정 흐름**에서 움직이는 절개 모델을 제공합니다. 스크류 회전·후퇴/전진, 수지 이동과 캐비티 충전, 금형 개폐·이젝터·제품 취출을 볼 수 있습니다. 재생/일시정지, 0.5×/1×/1.5× 재생, 단계 이동, 회전·확대를 지원합니다. 기기의 동작 줄이기 설정에서는 일시정지로 시작하며, 보이지 않는 탭에서는 재생을 멈춥니다. 3D 로드 실패 시 설명용 그림을 유지합니다.
 
 **직접 조작**에서는 스크류·금형·이젝터를 상대 이동값으로 조절하고 충전·취출을 확인할 수 있습니다. 금형 개방 후 이젝터 전진, 이젝터 복귀 후 금형 닫힘 순서가 연결됩니다. 관찰 부위 선택으로 스크류나 금형을 확대합니다. Blender의 BoltFactory 체결부와 드라이버를 사용하며, 원본 `MachineControls`에서도 기계 축을 조절할 수 있습니다.
+
+**회전수·속도 계산과 동작 확인**을 펼치면 RPM, 선속도·현재 롤 직경, 절단 길이·피치, 이동 거리·평균 속도를 입력할 수 있습니다. 선택한 기구를 0.1×/0.25×/1×로 표시합니다. 스트로는 1날, 펠릿 절단기는 4날 모형 기준이며 절단 횟수는 스트랜드 1개당입니다. 이동은 일정 평균 속도의 편도 동작입니다. 예제 입력값을 생산 추천값으로 저장하지 않으며, 유변학·열전달·냉각/보압 시간은 이 기능에서 계산하지 않습니다. 기존 TARS/제조사 공정 근거와 계산기는 별도로 유지합니다.
 
 ```powershell
 blender --background --factory-startup --python scripts/create_injection_motion.py

@@ -6,6 +6,15 @@ node_modules/
 
 # Logs
 *.log
+unreal/**/Content/
+unreal/**/Saved/
+unreal/**/Intermediate/
+unreal/**/DerivedDataCache/
+unreal/**/Binaries/
+unreal/**/Config/DefaultInput.ini
+output/unreal/fbx/
+output/unreal/*.png
+output/unreal/render-error.txt
 npm-debug.log*
 
 # OS files

@@ -27,6 +27,8 @@ const FILES_TO_COPY = [
   'injection-motion.js',
   'equipment-models.js',
   'equipment-motion.js',
+  'equipment-kinematics.js',
+  'equipment-study.js',
   'sw.js',
   'manifest.webmanifest',
   'README.txt',

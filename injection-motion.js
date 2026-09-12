@@ -2,7 +2,7 @@
 (function () {
   'use strict';
   const VENDOR='./vendor/three-0.185.1/';
-  const MODEL='./assets/equipment/injection-motion.glb?v=20';
+  const MODEL='./assets/equipment/injection-motion.glb?v=21';
   const STARTS=[0,4,6,10], DURATION=14;
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
   const state={time:1.2,speed:1,playing:!reduced.matches,phase:0,ready:false,visible:false,frames:0,mode:'cycle',focus:'all'};
@@ -10,14 +10,14 @@
   const manual={screw:100,rotation:0,mold:0,ejector:0,fill:0,released:false,fall:0,releaseX:0,flow:''};
   const target={screw:100,rotation:0,mold:0,ejector:0};
   let host=null,locale='ko',onStage=()=>{},runtime=null,loading=null,token=0,raf=0,lastTick=0,failed=false;
-  let resizeObserver=null,intersectionObserver=null;
+  let resizeObserver=null,intersectionObserver=null,studyPanel=null;
   const t=(ko,en)=>locale==='en'?en:ko;
   const phaseAt=time=>time<4?0:time<6?1:time<10?2:3;
   const names=[['가소화·계량','Plasticize & meter'],['금형 충전','Fill the mold'],['보압·냉각','Pack & cool'],['금형 개방·취출','Open & eject']];
 
   function cancel(){if(raf)cancelAnimationFrame(raf);raf=0;lastTick=0;}
   function movingManual(){return state.mode==='manual'&&(axes.some(key=>Math.abs(manual[key]-target[key])>.001)||(manual.released&&manual.fall<1));}
-  function canRun(){return !!(runtime&&(state.playing||movingManual())&&state.visible&&host?.isConnected&&document.visibilityState==='visible');}
+  function canRun(){return !!(runtime&&state.ready&&(state.playing||state.studyPlaying||movingManual())&&state.visible&&host?.isConnected&&!host.classList.contains('is-study-photo')&&document.visibilityState==='visible');}
   function canJog(axis){
     if(axis==='ejector')return manual.mold>=99.99&&target.mold>=99.99;
     if(axis==='mold')return manual.ejector<.01&&target.ejector<.01;
@@ -52,9 +52,9 @@
   }
   function paint(){
     if(!runtime||!host?.isConnected)return;
-    const poseTime=state.mode==='manual'?(manual.flow==='meter'?(manual.rotation/180+manual.screw*.04)%3.99:4+(100-manual.screw)/100*1.99):state.time;
+    const poseTime=state.mode==='manual'||state.mode==='study'?(manual.flow==='meter'?(manual.rotation/180+manual.screw*.04)%3.99:4+(100-manual.screw)/100*1.99):state.time;
     runtime.mixer.setTime(Math.min(DURATION-.001,Math.max(0,poseTime)));
-    if(state.mode==='manual')applyManual();
+    if(state.mode==='manual'||state.mode==='study')applyManual();
     runtime.scene.updateMatrixWorld(true);
     runtime.renderer.render(runtime.scene,runtime.camera);
     state.frames++;
@@ -84,12 +84,29 @@
     const lock=host.querySelector('.motion-interlock');
     const message=manual.ejector>.01||target.ejector>.01?t('이젝터를 0%로 복귀하면 금형을 닫을 수 있습니다.','Retract the ejector to 0% before closing the mold.'):manual.mold<99.99?t('금형을 100% 열면 이젝터를 조작할 수 있습니다.','Open the mold to 100% to operate the ejector.'):t('이젝터를 100% 전진시키면 제품이 분리됩니다.','Advance the ejector to 100% to release the part.');
     if(lock&&lock.textContent!==message)lock.textContent=message;
-    if(!isManual)onStage(phase);
+    if(state.mode==='study'&&status)status.textContent=t('계산 동작 · 선택한 기구만 표시','Calculated motion · Selected mechanism');
+    if(state.mode==='cycle')onStage(phase);
+  }
+  function stopStudy(){state.studyPlaying=false;cancel();studyPanel?.clearStatus();}
+  function leaveStudy(){if(state.mode==='study'){stopStudy();leaveManual();}}
+  function startStudy(drive){
+    stopStudy();state.playing=false;prepareShot();state.mode='study';state.study={...drive,elapsed:0};state.studyPlaying=drive.type==='travel'||drive.rpm>0;
+    advanceStudy(0);paint();update();schedule();
+  }
+  function advanceStudy(dt){
+    const drive=state.study;if(!drive||!state.studyPlaying)return;
+    drive.elapsed+=dt*drive.scale;
+    if(drive.type==='spin'){manual.rotation=PHAKinematics.degrees(drive.rpm,drive.elapsed)%720;manual.flow='meter';}
+    else{
+      const fraction=drive.seconds===0?0:Math.min(1,drive.elapsed/drive.seconds);
+      manual.screw=100*(1-fraction);manual.fill=100*fraction;manual.flow=drive.seconds>0&&fraction<1?'fill':'';
+      if(drive.seconds===0||fraction===1){state.studyPlaying=false;drive.onComplete?.();}
+    }
   }
   function tick(now){
     raf=0;
     if(!canRun()){lastTick=0;return;}
-    if(lastTick){const dt=Math.min((now-lastTick)/1000,.1);if(state.mode==='manual')stepManual(dt);else state.time=(state.time+dt*state.speed)%DURATION;}
+    if(lastTick){const dt=Math.min((now-lastTick)/1000,.1);if(state.mode==='study')advanceStudy(dt);else if(state.mode==='manual')stepManual(dt);else state.time=(state.time+dt*state.speed)%DURATION;}
     lastTick=now;paint();update();
     if(canRun())raf=requestAnimationFrame(tick);else{lastTick=0;if(manual.flow){manual.flow='';paint();}}
   }
@@ -98,7 +115,7 @@
     state.mode='cycle';
     if(runtime){runtime.nodes.MoldedPart.visible=true;runtime.nodes.RunnerFill.visible=true;runtime.particles.forEach(node=>node.visible=true);}
   }
-  function seek(time){leaveManual();state.time=Math.min(DURATION-.001,Math.max(0,time));state.playing=false;cancel();paint();update();}
+  function seek(time){stopStudy();leaveManual();state.time=Math.min(DURATION-.001,Math.max(0,time));state.playing=false;cancel();paint();update();}
   function prepareShot(){
     Object.assign(manual,{screw:100,rotation:0,mold:0,ejector:0,fill:0,released:false,fall:0,releaseX:0,flow:''});
     Object.assign(target,{screw:100,rotation:0,mold:0,ejector:0});cancel();paint();update();
@@ -128,7 +145,8 @@
     if(!runtime||!host?.isConnected)return;
     const viewport=host.querySelector('.motion-viewport');
     const width=viewport?.clientWidth||0;if(!width)return;
-    const height=Math.round(width*(width<480?.66:.50));
+    const compact=host.classList.contains('is-study-open')&&matchMedia('(max-width:760px)').matches;
+    const height=Math.round(compact?Math.min(width*.55,220):width*(width<480?.66:.50));
     viewport.style.height=height+'px';
     runtime.renderer.setSize(width,height,false);
     const aspect=width/height,vertical=10.8/aspect;
@@ -179,9 +197,11 @@
     host.querySelector('.motion-viewport')?.setAttribute('hidden','');
     const poster=host.querySelector('.motion-poster');if(poster)poster.hidden=false;
     host.querySelectorAll('button,input,select').forEach(el=>el.disabled=true);
+    state.studyPlaying=false;
+    host.querySelectorAll('.study-viewbar button,.equipment-study input,.equipment-study select,.equipment-study [data-study-stop]').forEach(el=>el.disabled=false);studyPanel?.refresh();
   }
   function detach(){
-    token++;cancel();state.visible=false;
+    token++;stopStudy();cancel();state.visible=false;
     runtime?.renderer.domElement.remove();
     if(window.phaSyncMachineOverlay)window.phaSyncMachineOverlay();else document.body.classList.remove('pha-machine-manual');
     resizeObserver?.disconnect();intersectionObserver?.disconnect();host=null;onStage=()=>{};
@@ -190,7 +210,7 @@
     detach();host=targetHost;locale=options.locale||'ko';onStage=options.onStage||(()=>{});const current=token;
     host.dataset.motionState='loading';
     host.innerHTML=`<div class="motion-load" role="status">${t('움직이는 사출 설비 불러오는 중…','Loading the animated injection machine…')}</div>
-      <img class="motion-poster" src="assets/equipment/injection-motion-poster.png?v=20" width="1280" height="640" alt="${t('내부 스크류와 금형을 드러낸 사출기 절개 모델','Cutaway injection machine showing its screw and mold')}">
+      <img class="motion-poster" src="assets/equipment/injection-motion-poster.png?v=21" width="1280" height="640" alt="${t('내부 스크류와 금형을 드러낸 사출기 절개 모델','Cutaway injection machine showing its screw and mold')}">
       <div class="motion-viewport" hidden></div>
       <div class="motion-toolbar"><button type="button" data-motion="play" disabled>${t('재생','Play')}</button><label>${t('재생 속도','Playback speed')} <select data-motion="speed" aria-label="${t('설명 재생 속도','Illustration playback speed')}" disabled><option value="0.5">0.5×</option><option value="1">1×</option><option value="1.5">1.5×</option></select></label><button type="button" data-motion="manual" aria-pressed="false" disabled>${t('직접 조작','Manual controls')}</button><label>${t('관찰 부위','View')} <select data-motion="focus" aria-label="${t('관찰 부위','Inspection area')}" disabled><option value="all">${t('전체','Whole machine')}</option><option value="screw">${t('스크류','Screw')}</option><option value="mold">${t('금형·취출','Mold & ejector')}</option></select></label><button type="button" data-motion="front" disabled>${t('측면 보기','Side view')}</button><button type="button" data-motion="view" disabled>${t('시점 초기화','Reset view')}</button><span class="motion-phase"></span></div>
       <label class="motion-progress">${t('공정 진행 위치','Cycle position')}<input type="range" min="0" max="100" step="0.1" data-motion="progress" aria-label="${t('공정 진행 위치','Cycle position')}" disabled></label>
@@ -201,6 +221,9 @@
       ${options.stages?'<div class="motion-stages">'+names.map((name,i)=>'<button type="button" data-motion-stage="'+i+'" aria-pressed="false">'+String(i+1).padStart(2,'0')+' · '+name[locale==='en'?1:0]+'</button>').join('')+'</div>':''}`;
     host.querySelector('[data-motion="speed"]').value=String(state.speed);
     host.querySelector('[data-motion="focus"]').value=state.focus;
+    studyPanel=window.PHAEquipmentStudy?.mount(host,{kind:'injection',locale,start:startStudy,stop:stopStudy,pause:()=>{state.playing=false;cancel();update();}});
+    host.querySelector('.motion-toolbar').addEventListener('click',leaveStudy,true);
+    host.querySelector('.motion-toolbar').addEventListener('change',leaveStudy,true);
     if(failed){fallback();return;}
     try{
       if(!loading)loading=create();await loading;
@@ -210,6 +233,7 @@
       host.querySelector('.motion-viewport').hidden=false;host.querySelector('.motion-poster').hidden=true;
       host.querySelector('.motion-load').hidden=true;host.dataset.motionState='ready';
       host.querySelectorAll('button,input,select').forEach(el=>el.disabled=false);
+      studyPanel?.refresh();
       host.querySelector('[data-motion="play"]').onclick=()=>{state.playing=!state.playing;update();schedule();};
       host.querySelector('[data-motion="speed"]').onchange=event=>{state.speed=Number(event.target.value);};
       host.querySelector('[data-motion="progress"]').oninput=event=>seek(Number(event.target.value)/100*DURATION);
@@ -241,7 +265,7 @@
     }else detach();
   }
   window.addEventListener('pha-language-change',()=>requestAnimationFrame(syncSurface));
-  reduced.addEventListener('change',event=>{if(event.matches){state.playing=false;cancel();if(state.mode==='manual'){stepManual(10);manual.flow='';paint();}update();}});
+  reduced.addEventListener('change',event=>{if(event.matches){state.playing=false;stopStudy();cancel();if(state.mode==='manual'){stepManual(10);manual.flow='';paint();}update();}});
   window.PHAInjectionMotion={mount,detach,syncSurface,seekStage(index){if(index>=0&&index<4)seek(STARTS[index]+.35);},getState:()=>({...state,manual:{...manual},target:{...target}})};
   if(['localhost','127.0.0.1'].includes(location.hostname))window.__phaInjectionMotionTest=()=>({
     ...state,manual:{...manual},target:{...target},camera:runtime?{zoom:runtime.camera.zoom,target:runtime.controls.target.toArray()}:null,clips:runtime?.clips.map(c=>({name:c.name,duration:c.duration,tracks:c.tracks.length}))||[],
