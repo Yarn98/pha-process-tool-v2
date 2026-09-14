@@ -6,6 +6,8 @@ PHA 가공의 **초기 시운전 참고 조건, 계산, 현장 기록**을 제�
 
 **2026-09-13 설비 개선:** 사출·압출·시트·캐스트 필름·블로운 필름·압출 블로우 성형·컴파운딩·스트로 8종에 **Unreal 상세 이미지**와 **회전수·속도 계산에 따른 3D 동작**을 연결했습니다. 스트로는 Straw Optimizer v2의 완료된 환형 다이 이미지를 그대로 차용하고, 다른 7종은 기존 Blender 설비를 Unreal 5.8.2에서 새로 렌더링했습니다. [설비별 검토·재생성·검증](docs/UNREAL_EQUIPMENT_20260913.md).
 
+**2026-09-14 트러블슈팅 시각 가이드:** 16개 점검 항목에 25개 대표 결함 형상, 정상 비교, 확대 이미지, 3D·단면과 기존 KB의 확인·조치 흐름을 연결했습니다. **열성형 설비를 신규 제작**해 히터·플러그·시트 성형·클램프·이형을 단계별로 조작합니다. [제작·출처·검증](docs/TROUBLESHOOTING_VISUALS_20260914.md).
+
 ## 실행과 검증
 
 ```powershell
@@ -19,6 +21,8 @@ npm run test:equipment
 npm run test:kinematics
 npm run test:study
 npm run check:kb
+npm run check:ts-visuals
+npm run test:ts-visuals
 npm run build
 # 배포용 파일을 대상으로 UI 검사
 $env:PHA_TEST_ROOT='dist'; npm run test:ui
@@ -31,7 +35,7 @@ $env:PHA_TEST_ROOT='dist'; npm run test:ui
 | 화면 | 기능 | 해석 |
 |---|---|---|
 | 공정 조건 | 그레이드·6개 공정, 전 공정 설비의 3D 동작·직접 조작, 입력과 범위 비교 | 제조사 원문 / 현장 수정 / 근거 미확인을 구분 |
-| 트러블슈팅 | 16개 한영 점검 항목, 공정·증상 검색, 플래시 형상 | 진단 → 조건부 조치 → 중단·복귀 기준 → 재검사 |
+| 트러블슈팅 | 16개 한영 점검 항목, 25개 형상, 확대 이미지, 정상/단면/3D·설비 조작, 공정·증상 검색 | 검토 KB의 진단 → 조건부 조치 → 중단·복귀 기준 → 재검사 |
 | 이력·분석 | 조건 저장, JSON/CSV 교환, 트렌드 | 다른 그레이드·설비 기록의 단순 비교에 유의 |
 | 계산기 | 평균 체류시간, 평판 냉각, 필름 단층 두께 | 단위와 모델 가정 확인 |
 | 물성 DB | 로컬 물성 편집·교환, 제조사 시험조건 | MFR 온도·하중, 충격 단위·노치 조건 보존 |
@@ -84,6 +88,9 @@ S1000P, A1000P, CA1180P, CB0104A, CB0400A, CA1165A, CA1670P, CA1680P, CA1270P의
 | pha-integration.js | 가이드 연결·재료 분류·TARS 읽기 |
 | custom.js / glossary.js / data/ | 물성·용어·트러블슈팅 원본 JSON |
 | troubleshooting-data.js / scripts/sync-troubleshooting.cjs | JSON에서 생성하는 동일한 오프라인 KB와 검사 |
+| troubleshooting-visuals.js / .css / troubleshooting-viewer.js | 증상별 공유 확대창, 정상·단면·설비 관찰과 단계 조작 |
+| data/troubleshooting_visuals.json / troubleshooting-visuals-data.js | 16개 항목·25개 형상의 한영 설명, KB 내용/검토 버전과 자산 연결 |
+| assets/troubleshooting/ / art/troubleshooting/ | 웹용 GLB·WebP / 배포에서 제외되는 Blender·생성 이미지 편집 원본과 프롬프트 |
 | compounding-guide.js / straw-guide.js | 공정 참고 가이드 |
 | assets/equipment/ | 8개 공정의 GLB·편집 원본·대체 포스터, 기존 PNG 보존 |
 | scripts/render_equipment.py | 설비도 재생성 |
@@ -126,7 +133,7 @@ blender --background --factory-startup --python-exit-code 1 --python scripts/cre
 
 이력·배치·템플릿·물성은 브라우저 로컬 저장소에, 일부 사진은 IndexedDB와 별도 localStorage 갤러리에 저장합니다. 기기 간 자동 동기화되지 않습니다. JSON/CSV로 백업하세요. 업데이트를 위해 웹사이트 데이터를 지우면 현장 기록도 삭제될 수 있습니다.
 
-서비스워커는 HTML network-first, 버전 자산 precache를 사용합니다. v=20 / pha-cache-v20-all-equipment. 첫 정상 로드와 캐시 준비 후 로컬 자료·8개 설비의 3D 조작·계산을 사용할 수 있습니다. 외부 TARS API와 CDN Chart.js는 오프라인에서 제한됩니다. file://보다 로컬 HTTP 실행을 권장합니다.
+서비스워커는 HTML network-first, 버전 자산 precache를 사용합니다. v=22 / pha-cache-v22-troubleshooting-visuals. 첫 정상 로드와 캐시 준비 후 로컬 자료·8개 기존 설비·16개 결함 모형의 3D 조작·계산을 사용할 수 있습니다. 외부 TARS API와 CDN Chart.js는 오프라인에서 제한됩니다. file://보다 로컬 HTTP 실행을 권장합니다.
 
 기존 체크리스트·시험 로그는 유지합니다. 의미가 바뀐 컴파운딩 체크 두 항목은 새 키를 사용하며, 이전 완료 표시는 과거 기록으로 남깁니다.
 

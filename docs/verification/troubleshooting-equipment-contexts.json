@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "equipment": [
+    "compounding",
+    "extrusion",
+    "sheet",
+    "injection",
+    "blownfilm",
+    "blowmolding",
+    "castfilm",
+    "straw"
+  ],
+  "errors": []
+}

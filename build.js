@@ -15,6 +15,11 @@ const FILES_TO_COPY = [
   'overrides.css',
   'custom.js',
   'troubleshooting-data.js',
+  'troubleshooting-visuals-data.js',
+  'troubleshooting-visuals-sw.js',
+  'troubleshooting-visuals.js',
+  'troubleshooting-viewer.js',
+  'troubleshooting-visuals.css',
   'glossary.js',
   'anomaly-codes.js',
   'tars-batch-schema.js',
@@ -78,6 +83,7 @@ function copyDir(src, dest) {
  */
 function build() {
   require('./scripts/sync-troubleshooting.cjs');
+  require('./scripts/sync-troubleshooting-visuals.cjs');
   console.log('🏗️  Building PHA Process Optimizer...\n');
 
   // Clean dist directory if it exists

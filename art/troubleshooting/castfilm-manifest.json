@@ -1,0 +1,29 @@
+{
+  "family": "castfilm",
+  "blender": "5.2.1 LTS",
+  "units": "illustrative scene units",
+  "physical_process_solver": false,
+  "glb": "assets/troubleshooting/castfilm.glb",
+  "states": [
+    {
+      "state": "normal_full",
+      "png": "output/troubleshooting-build/renders/castfilm-normal_full.png",
+      "mesh_count": 5
+    },
+    {
+      "state": "neckin_full",
+      "png": "output/troubleshooting-build/renders/castfilm-neckin_full.png",
+      "mesh_count": 5
+    },
+    {
+      "state": "resonance_full",
+      "png": "output/troubleshooting-build/renders/castfilm-resonance_full.png",
+      "mesh_count": 5
+    },
+    {
+      "state": "release_full",
+      "png": "output/troubleshooting-build/renders/castfilm-release_full.png",
+      "mesh_count": 5
+    }
+  ]
+}

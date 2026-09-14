@@ -1,0 +1,19 @@
+{
+  "family": "die",
+  "blender": "5.2.1 LTS",
+  "units": "illustrative scene units",
+  "physical_process_solver": false,
+  "glb": "assets/troubleshooting/die.glb",
+  "states": [
+    {
+      "state": "normal_full",
+      "png": "output/troubleshooting-build/renders/die-normal_full.png",
+      "mesh_count": 1
+    },
+    {
+      "state": "drool_full",
+      "png": "output/troubleshooting-build/renders/die-drool_full.png",
+      "mesh_count": 16
+    }
+  ]
+}

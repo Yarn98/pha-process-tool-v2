@@ -1,0 +1,19 @@
+{
+  "family": "short-shot",
+  "blender": "5.2.1 LTS",
+  "units": "illustrative scene units",
+  "physical_process_solver": false,
+  "glb": "assets/troubleshooting/short-shot.glb",
+  "states": [
+    {
+      "state": "normal_full",
+      "png": "output/troubleshooting-build/renders/short-shot-normal_full.png",
+      "mesh_count": 1
+    },
+    {
+      "state": "short_full",
+      "png": "output/troubleshooting-build/renders/short-shot-short_full.png",
+      "mesh_count": 1
+    }
+  ]
+}

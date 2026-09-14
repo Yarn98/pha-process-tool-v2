@@ -1,0 +1,39 @@
+{
+  "family": "sink-void",
+  "blender": "5.2.1 LTS",
+  "units": "illustrative scene units",
+  "physical_process_solver": false,
+  "glb": "assets/troubleshooting/sink-void.glb",
+  "states": [
+    {
+      "state": "normal_full",
+      "png": "output/troubleshooting-build/renders/sink-void-normal_full.png",
+      "mesh_count": 1
+    },
+    {
+      "state": "normal_section",
+      "png": "output/troubleshooting-build/renders/sink-void-normal_section.png",
+      "mesh_count": 1
+    },
+    {
+      "state": "sink_full",
+      "png": "output/troubleshooting-build/renders/sink-void-sink_full.png",
+      "mesh_count": 1
+    },
+    {
+      "state": "sink_section",
+      "png": "output/troubleshooting-build/renders/sink-void-sink_section.png",
+      "mesh_count": 1
+    },
+    {
+      "state": "void_full",
+      "png": "output/troubleshooting-build/renders/sink-void-void_full.png",
+      "mesh_count": 1
+    },
+    {
+      "state": "void_section",
+      "png": "output/troubleshooting-build/renders/sink-void-void_section.png",
+      "mesh_count": 1
+    }
+  ]
+}

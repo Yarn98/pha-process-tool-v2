@@ -1,0 +1,194 @@
+{
+  "status": "passed",
+  "root": "dist",
+  "checks": [
+    "16 actual card entry points and click-to-open comparison",
+    "All 25 real GLB cases, normal comparison, available cutaways, camera and exact KO stop criteria",
+    "Thermoforming heater/plug/sheet motion, pause, reduced-motion start, keyboard tabs and Escape disposal",
+    "Existing Straw Optimizer-derived equipment loads with its original Blender animation",
+    "All 16 EN action flows, new terminology, KO/EN switching and original filters",
+    "Mismatched KB content does not present a stale action infographic",
+    "390px and 320px touch operation with no horizontal overflow",
+    "WebGL, model fetch and dynamic-module failures retain imagery and reviewed actions",
+    "Service-worker offline reload covers all 16 models and preserves local records"
+  ],
+  "visualCases": [
+    {
+      "id": "feed-check",
+      "modelState": "ready",
+      "visibleGroups": [
+        "inspection_full"
+      ]
+    },
+    {
+      "id": "gel-fisheye",
+      "modelState": "ready",
+      "visibleGroups": [
+        "speck_full"
+      ]
+    },
+    {
+      "id": "die-drool",
+      "modelState": "ready",
+      "visibleGroups": [
+        "drool_full"
+      ]
+    },
+    {
+      "id": "roll-sticking",
+      "modelState": "ready",
+      "visibleGroups": [
+        "sticking_full"
+      ]
+    },
+    {
+      "id": "cross-web-gauge",
+      "modelState": "ready",
+      "visibleGroups": [
+        "uneven_section"
+      ]
+    },
+    {
+      "id": "short-shot",
+      "modelState": "ready",
+      "visibleGroups": [
+        "short_full"
+      ]
+    },
+    {
+      "id": "silver-streak",
+      "modelState": "ready",
+      "visibleGroups": [
+        "streak_full"
+      ]
+    },
+    {
+      "id": "parting-flash",
+      "modelState": "ready",
+      "visibleGroups": [
+        "flash_full"
+      ]
+    },
+    {
+      "id": "sink-mark",
+      "modelState": "ready",
+      "visibleGroups": [
+        "sink_full"
+      ]
+    },
+    {
+      "id": "internal-void",
+      "modelState": "ready",
+      "visibleGroups": [
+        "void_section"
+      ]
+    },
+    {
+      "id": "warpage",
+      "modelState": "ready",
+      "visibleGroups": [
+        "warped_full"
+      ]
+    },
+    {
+      "id": "thermo-crack",
+      "modelState": "ready",
+      "visibleGroups": [
+        "crack_full"
+      ]
+    },
+    {
+      "id": "thermo-whitening",
+      "modelState": "ready",
+      "visibleGroups": [
+        "whitening_full"
+      ]
+    },
+    {
+      "id": "bubble-wobble",
+      "modelState": "ready",
+      "visibleGroups": [
+        "wobble_full"
+      ]
+    },
+    {
+      "id": "bubble-break",
+      "modelState": "ready",
+      "visibleGroups": [
+        "broken_full"
+      ]
+    },
+    {
+      "id": "parison-sag",
+      "modelState": "ready",
+      "visibleGroups": [
+        "sag_full"
+      ]
+    },
+    {
+      "id": "bottle-wall",
+      "modelState": "ready",
+      "visibleGroups": [
+        "wall_section"
+      ]
+    },
+    {
+      "id": "neck-in",
+      "modelState": "ready",
+      "visibleGroups": [
+        "neckin_full"
+      ]
+    },
+    {
+      "id": "draw-resonance",
+      "modelState": "ready",
+      "visibleGroups": [
+        "resonance_full"
+      ]
+    },
+    {
+      "id": "unstable-release",
+      "modelState": "ready",
+      "visibleGroups": [
+        "release_full"
+      ]
+    },
+    {
+      "id": "straw-oval",
+      "modelState": "ready",
+      "visibleGroups": [
+        "oval_full"
+      ]
+    },
+    {
+      "id": "straw-crack",
+      "modelState": "ready",
+      "visibleGroups": [
+        "crack_full"
+      ]
+    },
+    {
+      "id": "straw-dimension",
+      "modelState": "ready",
+      "visibleGroups": [
+        "dimension_full"
+      ]
+    },
+    {
+      "id": "vent-flooding",
+      "modelState": "ready",
+      "visibleGroups": [
+        "flooding_full"
+      ]
+    },
+    {
+      "id": "strand-bubbles",
+      "modelState": "ready",
+      "visibleGroups": [
+        "bubbles_section"
+      ]
+    }
+  ],
+  "errors": [],
+  "productionDeployed": false
+}

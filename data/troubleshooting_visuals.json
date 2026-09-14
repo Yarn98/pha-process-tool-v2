@@ -1,0 +1,505 @@
+{
+  "schema_version": 1,
+  "version": "2026-09-14-v1",
+  "kb_review_version": "2026-09-06-all-processing",
+  "entries": [
+    {
+      "kb_id": "pha-kb-1",
+      "family": "feed",
+      "equipment": "compounding",
+      "cases": [
+        {
+          "id": "feed-check",
+          "label_ko": "공급·구동·하류 점검 위치",
+          "label_en": "Feed, drive and downstream checks",
+          "state": "inspection",
+          "normal": "normal",
+          "caption_ko": "토크 급등은 제품 외관으로 판정하지 않습니다. 강조된 위치의 공급량·토크·압력 기록을 함께 확인합니다.",
+          "caption_en": "A torque spike is not diagnosed from part appearance. Compare feed, torque and pressure records at the highlighted locations.",
+          "comparison": "inspection"
+        }
+      ],
+      "kb_signature": "ce23808f",
+      "model": "assets/troubleshooting/feed.glb",
+      "thumbnail": "assets/troubleshooting/pha-kb-1-thumb.webp",
+      "states": [
+        "normal_full",
+        "inspection_full"
+      ]
+    },
+    {
+      "kb_id": "pha-kb-2",
+      "family": "film-speck",
+      "equipment": "compounding",
+      "cases": [
+        {
+          "id": "gel-fisheye",
+          "label_ko": "덩어리 결점·피시아이",
+          "label_en": "Lump defect / fisheye",
+          "state": "speck",
+          "normal": "normal",
+          "section": true,
+          "image": "gel-fisheye",
+          "caption_ko": "필름 안의 덩어리와 주변 변형을 확대했습니다. 형태만으로 미용융·응집·오염·열화를 구분할 수 없습니다.",
+          "caption_en": "An inclusion and surrounding film distortion are enlarged. Appearance alone does not distinguish unmelted material, agglomeration, contamination or degradation."
+        }
+      ],
+      "kb_signature": "ee7e701f",
+      "model": "assets/troubleshooting/film-speck.glb",
+      "thumbnail": "assets/troubleshooting/pha-kb-2-thumb.webp",
+      "states": [
+        "normal_full",
+        "normal_section",
+        "speck_full",
+        "speck_section"
+      ]
+    },
+    {
+      "kb_id": "pha-kb-3",
+      "family": "die",
+      "equipment": "extrusion",
+      "cases": [
+        {
+          "id": "die-drool",
+          "label_ko": "다이 립 침적",
+          "label_en": "Die-lip buildup",
+          "state": "drool",
+          "normal": "normal",
+          "caption_ko": "깨끗한 출구와 립 가장자리에 잔사가 쌓인 모습을 비교합니다. 잔사의 기원은 별도 확인합니다.",
+          "caption_en": "Compare a clean outlet with residue accumulated on the die lip. Identify the origin of the residue separately."
+        }
+      ],
+      "kb_signature": "5057d94c",
+      "model": "assets/troubleshooting/die.glb",
+      "thumbnail": "assets/troubleshooting/pha-kb-3-thumb.webp",
+      "states": [
+        "normal_full",
+        "drool_full"
+      ]
+    },
+    {
+      "kb_id": "pha-kb-4",
+      "family": "roll-release",
+      "equipment": "sheet",
+      "motion": "roll",
+      "cases": [
+        {
+          "id": "roll-sticking",
+          "label_ko": "롤에서 떨어지지 않는 시트",
+          "label_en": "Sheet sticking to the roll",
+          "state": "sticking",
+          "normal": "normal",
+          "caption_ko": "정상 이탈 경로와 롤을 더 따라가는 경로를 비교합니다. 접촉 길이는 설명용이며 결정화·점착 예측값이 아닙니다.",
+          "caption_en": "Compare the intended release path with a sheet following the roll farther. Contact length is illustrative, not a crystallization or adhesion prediction."
+        }
+      ],
+      "kb_signature": "4263e111",
+      "model": "assets/troubleshooting/roll-release.glb",
+      "thumbnail": "assets/troubleshooting/pha-kb-4-thumb.webp",
+      "states": [
+        "normal_full",
+        "sticking_full"
+      ]
+    },
+    {
+      "kb_id": "pha-kb-5",
+      "family": "sheet-gauge",
+      "equipment": "sheet",
+      "cases": [
+        {
+          "id": "cross-web-gauge",
+          "label_ko": "폭 방향 두께 차이",
+          "label_en": "Cross-web thickness variation",
+          "state": "uneven",
+          "normal": "normal",
+          "section": true,
+          "caption_ko": "폭 방향으로 두꺼운 곳과 얇은 곳을 과장해 표현했습니다. 이동 방향의 주기적 편차와 구분해 측정합니다.",
+          "caption_en": "Thick and thin regions across the width are exaggerated. Measure separately from periodic variation along the machine direction.",
+          "default_section": true
+        }
+      ],
+      "kb_signature": "7ee0ec53",
+      "model": "assets/troubleshooting/sheet-gauge.glb",
+      "thumbnail": "assets/troubleshooting/pha-kb-5-thumb.webp",
+      "states": [
+        "normal_full",
+        "normal_section",
+        "uneven_full",
+        "uneven_section"
+      ]
+    },
+    {
+      "kb_id": "pha-kb-6",
+      "family": "short-shot",
+      "equipment": "injection",
+      "cases": [
+        {
+          "id": "short-shot",
+          "label_ko": "끝까지 채워지지 않은 성형품",
+          "label_en": "Incomplete filling",
+          "state": "short",
+          "normal": "normal",
+          "image": "short-shot",
+          "caption_ko": "성형품 끝단이 덜 채워진 예시입니다. 파손된 조각과 구분하고, 충전 전용 시편과 실제 사출 기록으로 확인합니다.",
+          "caption_en": "The end of the part is incompletely filled. Distinguish this from post-molding breakage and check fill-only parts and actual injection records."
+        }
+      ],
+      "kb_signature": "83330fea",
+      "model": "assets/troubleshooting/short-shot.glb",
+      "thumbnail": "assets/troubleshooting/pha-kb-6-thumb.webp",
+      "states": [
+        "normal_full",
+        "short_full"
+      ]
+    },
+    {
+      "kb_id": "pha-kb-7",
+      "family": "silver",
+      "equipment": "injection",
+      "cases": [
+        {
+          "id": "silver-streak",
+          "label_ko": "흐름 방향의 은색 줄",
+          "label_en": "Silvery streaks along flow",
+          "state": "streak",
+          "normal": "normal",
+          "image": "silver-streak",
+          "caption_ko": "연속된 표면의 은색 줄을 강조했습니다. 수분·공기·휘발분·열화의 원인을 외관만으로 확정하지 않습니다.",
+          "caption_en": "Silvery streaks on a continuous surface are highlighted. Do not infer moisture, air, volatiles or degradation from appearance alone."
+        }
+      ],
+      "kb_signature": "ff370a2f",
+      "model": "assets/troubleshooting/silver.glb",
+      "thumbnail": "assets/troubleshooting/pha-kb-7-thumb.webp",
+      "states": [
+        "normal_full",
+        "streak_full"
+      ]
+    },
+    {
+      "kb_id": "pha-kb-8",
+      "family": "flash",
+      "equipment": "injection",
+      "cases": [
+        {
+          "id": "parting-flash",
+          "label_ko": "파팅라인 밖의 얇은 막",
+          "label_en": "Thin flash beyond the parting line",
+          "state": "flash",
+          "normal": "normal",
+          "image": "flash",
+          "caption_ko": "제품 가장자리 밖으로 나온 얇은 막입니다. 충전 중인지 보압 중인지 발생 단계를 나누어 확인합니다.",
+          "caption_en": "A thin fin extends beyond the part edge. Determine whether it appears during filling or packing."
+        }
+      ],
+      "kb_signature": "b9774a30",
+      "model": "assets/troubleshooting/flash.glb",
+      "thumbnail": "assets/troubleshooting/pha-kb-8-thumb.webp",
+      "states": [
+        "normal_full",
+        "flash_full"
+      ]
+    },
+    {
+      "kb_id": "pha-kb-9",
+      "family": "sink-void",
+      "equipment": "injection",
+      "cases": [
+        {
+          "id": "sink-mark",
+          "label_ko": "표면의 싱크 마크",
+          "label_en": "Surface sink mark",
+          "state": "sink",
+          "normal": "normal",
+          "section": true,
+          "image": "sink",
+          "caption_ko": "표면이 안쪽으로 오목하지만 외피는 이어져 있습니다. 설명용으로 내부 빈 공간을 함께 만들지 않은 예시입니다.",
+          "caption_en": "The surface is depressed while the skin remains continuous. This teaching example does not also include an internal cavity."
+        },
+        {
+          "id": "internal-void",
+          "label_ko": "닫힌 외피 아래의 보이드",
+          "label_en": "Void beneath a closed skin",
+          "state": "void",
+          "normal": "normal",
+          "section": true,
+          "default_section": true,
+          "caption_ko": "겉은 닫혀 있어도 내부에 빈 공간이 있을 수 있습니다. 단면을 열어 확인하며 수축·가스 원인을 별도로 구분합니다.",
+          "caption_en": "An internal cavity can be present beneath a closed exterior. Open the cutaway and investigate shrinkage versus gas-related causes separately."
+        }
+      ],
+      "kb_signature": "c80ea09",
+      "model": "assets/troubleshooting/sink-void.glb",
+      "thumbnail": "assets/troubleshooting/pha-kb-9-thumb.webp",
+      "states": [
+        "normal_full",
+        "normal_section",
+        "sink_full",
+        "sink_section",
+        "void_full",
+        "void_section"
+      ]
+    },
+    {
+      "kb_id": "pha-kb-10",
+      "family": "warp",
+      "equipment": "injection",
+      "cases": [
+        {
+          "id": "warpage",
+          "label_ko": "기준 평면에서 벗어난 휨",
+          "label_en": "Warpage relative to a reference plane",
+          "state": "warped",
+          "normal": "normal",
+          "caption_ko": "평평한 기준과 휜 패널을 비교합니다. 변형 크기는 과장한 예시이며 실제 치수 예측이 아닙니다.",
+          "caption_en": "Compare a flat reference with a warped panel. The deformation is exaggerated and is not a dimensional prediction."
+        }
+      ],
+      "kb_signature": "415dba69",
+      "model": "assets/troubleshooting/warp.glb",
+      "thumbnail": "assets/troubleshooting/pha-kb-10-thumb.webp",
+      "states": [
+        "normal_full",
+        "warped_full"
+      ]
+    },
+    {
+      "kb_id": "pha-kb-11",
+      "family": "thermoforming",
+      "motion": "forming",
+      "cases": [
+        {
+          "id": "thermo-crack",
+          "label_ko": "열성형 벽면 균열",
+          "label_en": "Thermoforming wall crack",
+          "state": "crack",
+          "normal": "normal",
+          "image": "thermo-crack",
+          "caption_ko": "늘어난 컵 벽면의 균열 예시입니다. 가열 이력·두께·균열 위치를 함께 확인합니다. 플러그 이동은 설명용입니다.",
+          "caption_en": "A crack in the drawn cup wall is illustrated. Check heating history, thickness and crack location together. Plug motion is illustrative."
+        },
+        {
+          "id": "thermo-whitening",
+          "label_ko": "열성형 국부 백화",
+          "label_en": "Local whitening during thermoforming",
+          "state": "whitening",
+          "normal": "normal",
+          "image": "thermo-whitening",
+          "caption_ko": "벽이 끊어지지 않은 상태의 국부 백화를 표현했습니다. 균열과 구분하고 국부 연신과 시트의 열이력을 확인합니다.",
+          "caption_en": "Local whitening is shown in a continuous wall. Distinguish it from a crack and examine local stretching and sheet thermal history."
+        }
+      ],
+      "kb_signature": "a350b8be",
+      "model": "assets/troubleshooting/thermoforming.glb",
+      "thumbnail": "assets/troubleshooting/pha-kb-11-thumb.webp",
+      "states": [
+        "normal_full",
+        "crack_full",
+        "whitening_full"
+      ]
+    },
+    {
+      "kb_id": "pha-kb-12",
+      "family": "bubble",
+      "equipment": "blownfilm",
+      "motion": "bubble",
+      "cases": [
+        {
+          "id": "bubble-wobble",
+          "label_ko": "버블 중심 흔들림",
+          "label_en": "Bubble centerline oscillation",
+          "state": "wobble",
+          "normal": "normal",
+          "caption_ko": "안정된 버블과 흔들리는 버블을 비교합니다. 흔들림의 크기·주기는 설명용이며 운전 안정성 계산값이 아닙니다.",
+          "caption_en": "Compare a steady bubble with an oscillating bubble. Amplitude and period are illustrative, not calculated operating stability."
+        },
+        {
+          "id": "bubble-break",
+          "label_ko": "버블의 국부 파단",
+          "label_en": "Local bubble rupture",
+          "state": "broken",
+          "normal": "normal",
+          "caption_ko": "필름의 연속성이 끊어진 위치를 표시합니다. 실제 최초 파단 위치와 인취·공기·토출 기록을 대조합니다.",
+          "caption_en": "A break in film continuity is shown. Compare the real first rupture location with haul-off, air and output records."
+        }
+      ],
+      "kb_signature": "e75fc391",
+      "model": "assets/troubleshooting/bubble.glb",
+      "thumbnail": "assets/troubleshooting/pha-kb-12-thumb.webp",
+      "states": [
+        "normal_full",
+        "wobble_full",
+        "broken_full"
+      ]
+    },
+    {
+      "kb_id": "pha-kb-13",
+      "family": "blowmolding",
+      "equipment": "blowmolding",
+      "motion": "parison",
+      "cases": [
+        {
+          "id": "parison-sag",
+          "label_ko": "대기 중 패리슨 처짐",
+          "label_en": "Parison sag during waiting",
+          "state": "sag",
+          "normal": "normal_parison",
+          "caption_ko": "기준 패리슨과 늘어져 길어진 패리슨을 비교합니다. 표시된 처짐량은 설명용이며 점도·온도·중력 해석의 결과가 아닙니다.",
+          "caption_en": "Compare the reference parison with an elongated one. The sag shown is illustrative and is not the output of a viscosity, temperature or gravity calculation."
+        },
+        {
+          "id": "bottle-wall",
+          "label_ko": "용기 벽 두께 불균일",
+          "label_en": "Uneven bottle wall thickness",
+          "state": "wall",
+          "normal": "normal_bottle",
+          "section": true,
+          "default_section": true,
+          "caption_ko": "용기 단면의 얇고 두꺼운 벽을 비교합니다. 블로우 공기압과 용융 수지압을 구분해 기록합니다.",
+          "caption_en": "Compare thin and thick walls in a bottle cutaway. Record blowing-air pressure separately from melt pressure."
+        }
+      ],
+      "kb_signature": "92b75a7",
+      "model": "assets/troubleshooting/blowmolding.glb",
+      "thumbnail": "assets/troubleshooting/pha-kb-13-thumb.webp",
+      "states": [
+        "normal_parison_full",
+        "normal_bottle_full",
+        "normal_bottle_section",
+        "sag_full",
+        "wall_full",
+        "wall_section"
+      ]
+    },
+    {
+      "kb_id": "pha-kb-14",
+      "family": "castfilm",
+      "equipment": "castfilm",
+      "motion": "cast",
+      "cases": [
+        {
+          "id": "neck-in",
+          "label_ko": "다이 아래의 폭 수축",
+          "label_en": "Neck-in below the die",
+          "state": "neckin",
+          "normal": "normal",
+          "caption_ko": "다이 출구 이후 폭이 좁아지는 형상입니다. 주기적인 폭·두께 변화와 구분합니다.",
+          "caption_en": "The web narrows after leaving the die. Distinguish this from periodic width and thickness variation."
+        },
+        {
+          "id": "draw-resonance",
+          "label_ko": "반복되는 폭·두께 변화",
+          "label_en": "Periodic width and thickness variation",
+          "state": "resonance",
+          "normal": "normal",
+          "caption_ko": "드로 레조넌스의 주기적 변화를 개념적으로 표시합니다. 파장·두께는 실측값이 아닙니다.",
+          "caption_en": "Periodic draw-resonance variation is shown conceptually. Wavelength and thickness are not measured values."
+        },
+        {
+          "id": "unstable-release",
+          "label_ko": "칠롤 박리 경로 불안정",
+          "label_en": "Unstable release from the chill roll",
+          "state": "release",
+          "normal": "normal",
+          "caption_ko": "칠롤에서 떨어지는 경로가 달라지는 예시입니다. 접촉·고화·결정화 상태를 확인한 뒤 조치합니다.",
+          "caption_en": "The release path from the chill roll changes. Check contact, solidification and crystallization behavior before taking action."
+        }
+      ],
+      "kb_signature": "901d97b2",
+      "model": "assets/troubleshooting/castfilm.glb",
+      "thumbnail": "assets/troubleshooting/pha-kb-14-thumb.webp",
+      "states": [
+        "normal_full",
+        "neckin_full",
+        "resonance_full",
+        "release_full"
+      ]
+    },
+    {
+      "kb_id": "pha-kb-15",
+      "family": "straw",
+      "equipment": "straw",
+      "motion": "straw",
+      "cases": [
+        {
+          "id": "straw-oval",
+          "label_ko": "스트로 타원 단면",
+          "label_en": "Oval straw cross-section",
+          "state": "oval",
+          "normal": "normal",
+          "section": true,
+          "caption_ko": "원형과 타원형 단면을 비교합니다. 다이·수조·인취·절단 중 최초 발생 위치를 찾습니다.",
+          "caption_en": "Compare circular and oval cross-sections. Locate the first occurrence along the die, bath, haul-off and cutter."
+        },
+        {
+          "id": "straw-crack",
+          "label_ko": "절단면에서 시작된 균열",
+          "label_en": "Crack starting at the cut edge",
+          "state": "crack",
+          "normal": "normal",
+          "image": "straw-crack",
+          "caption_ko": "절단면에서 길이 방향으로 이어지는 균열 예시입니다. 칼날·정렬·수지의 고화 상태를 함께 봅니다.",
+          "caption_en": "A crack extends axially from the cut edge. Inspect the blade, alignment and polymer solidification state together."
+        },
+        {
+          "id": "straw-dimension",
+          "label_ko": "보관 전후 치수 변화",
+          "label_en": "Dimensional change after storage",
+          "state": "dimension",
+          "normal": "normal",
+          "caption_ko": "회색 기준 윤곽과 변한 길이·단면을 비교합니다. 변화량은 설명용이며 실제 보관 전후 측정을 대신하지 않습니다.",
+          "caption_en": "Compare the grey reference outline with altered length and section. The change is illustrative and does not replace measurements before and after storage."
+        }
+      ],
+      "kb_signature": "65a382f1",
+      "model": "assets/troubleshooting/straw.glb",
+      "thumbnail": "assets/troubleshooting/pha-kb-15-thumb.webp",
+      "states": [
+        "normal_full",
+        "normal_section",
+        "oval_full",
+        "oval_section",
+        "crack_full",
+        "dimension_full"
+      ]
+    },
+    {
+      "kb_id": "pha-kb-16",
+      "family": "vent",
+      "equipment": "compounding",
+      "cases": [
+        {
+          "id": "vent-flooding",
+          "label_ko": "벤트로 올라온 용융물",
+          "label_en": "Melt rising into the vent",
+          "state": "flooding",
+          "normal": "normal_vent",
+          "caption_ko": "벤트 개구부로 용융물이 올라온 위치를 표현했습니다. 지속 역류·막힘은 정지·격리 후 점검합니다.",
+          "caption_en": "Melt rising through the vent opening is illustrated. Persistent flooding or blockage requires stopping and isolation before inspection."
+        },
+        {
+          "id": "strand-bubbles",
+          "label_ko": "스트랜드 내부 빈 공간",
+          "label_en": "Internal cavities in a strand",
+          "state": "bubbles",
+          "normal": "normal_strand",
+          "section": true,
+          "default_section": true,
+          "caption_ko": "스트랜드의 닫힌 외피 아래 빈 공간을 단면으로 보여 줍니다. 수분·공기 등 원인은 별도 확인합니다.",
+          "caption_en": "A cutaway reveals cavities below the strand's closed skin. Investigate moisture, air and other causes separately."
+        }
+      ],
+      "kb_signature": "5b4e490a",
+      "model": "assets/troubleshooting/vent.glb",
+      "thumbnail": "assets/troubleshooting/pha-kb-16-thumb.webp",
+      "states": [
+        "normal_vent_full",
+        "normal_strand_full",
+        "normal_strand_section",
+        "flooding_full",
+        "bubbles_full",
+        "bubbles_section"
+      ]
+    }
+  ]
+}

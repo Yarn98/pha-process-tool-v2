@@ -1,0 +1,98 @@
+{
+  "status": "passed",
+  "base_commit": "c7274a11202a71a536b0d6f9d6b055d6299c9ce1",
+  "reports": {
+    "process_ui": {
+      "status": "pass",
+      "checks": [
+        "manufacturer precedence; legacy ranges, material measurements and history retained",
+        "known grades, compound identity, unknown API material and no Tm-derived setpoints",
+        "mold modes and language switch preserve entered values and units",
+        "24 desktop/mobile x KO/EN x process views: images, stage interactions, no page overflow",
+        "UI and My AI calculation parity; correct residence units; invalid cooling rejection",
+        "My AI explicit units override UI defaults; invalid supplied values are rejected",
+        "Flash subtabs do not deactivate Compounding tabs",
+        "generated defect illustration and educational disclosure load",
+        "range override isolation across grades and mold modes; unsupported blend conditions stay blank",
+        "CB0400A extrusion die source stays separate from sheet and roll conditions",
+        "Pro follow-up: film precision, distinct drying, ISBM/EBM scope, generic PHA identity and retained measurement",
+        "straw: required trial residence, lane count, mass balance and values preserved across language switch",
+        "compounding: invalid/incomplete composition gate; explicit layout selection; no invented zone settings; language retention",
+        "existing compounding trial/checklist preserved; revised meaning does not reuse an old completion",
+        "8 additional desktop/mobile x KO/EN compounding/straw views",
+        "UI/My AI packing ratios, no shear safety label, language retention and measured-density lookup/unknown-density handling",
+        "process/search filters and identical embedded KB when JSON fetch fails",
+        "missing film gap and invalid supplied gap remain distinct in My AI",
+        "real service-worker offline reload and second equipment view",
+        "offline reload retains reviewed KB and does not supply a default crystallization time",
+        "fresh-install material defaults do not override source data with old placeholders",
+        "no uncaught browser errors"
+      ]
+    },
+    "injection_motion": {
+      "status": "pass",
+      "root": "D:\\My_PJT\\Application\\pha_optimizer_convertor",
+      "checks": [
+        "Blender GLB loaded with animation tracks and automatic playback advances",
+        "Actual model transforms: screw recovery and axial fill, pellet/runner motion, cavity fill, closed-mold cooling, opening and ejection",
+        "Pause, step seek and playback-speed controls; language/grade changes preserve playback position",
+        "Flash Process flow uses the same animation; language and surface switches retain a single renderer",
+        "Precise manual axes with smooth travel, keyboard control, filling, mold/ejector interlocks, release, reset and close-up views",
+        "Manual mode and precise targets survive Korean/English remounts and mobile layout",
+        "Rotate/reset views and mobile Korean layout without page overflow",
+        "Playback rendering suspends on hidden tabs and non-injection processes",
+        "Real service-worker offline reload loads GLB and all local renderer modules",
+        "Reduced-motion preference starts paused, permits explicit playback and applies manual input without animation",
+        "Model load failure retains poster and usable stage explanations",
+        "No uncaught browser errors"
+      ]
+    },
+    "all_equipment": {
+      "status": "pass",
+      "root": "D:\\My_PJT\\Application\\pha_optimizer_convertor",
+      "checks": [
+        "extrusion: real motion, independent manual mechanisms and keyboard precision",
+        "sheet: real motion, independent manual mechanisms and keyboard precision",
+        "castfilm: real motion, independent manual mechanisms and keyboard precision",
+        "blownfilm: real motion, independent manual mechanisms and keyboard precision",
+        "compounding: real motion, independent manual mechanisms and keyboard precision",
+        "straw: real motion, independent manual mechanisms and keyboard precision",
+        "Blow molding: parison, clamp, pin, inflation and product release interlocks affect real nodes",
+        "All seven lines: Korean/English, mobile model visible during manipulation, manual state retention, focus views and resets",
+        "Straw source snapshot provenance and rendering suspension on inactive tabs",
+        "Offline service-worker reload loads borrowed straw and newly generated roll/bubble GLBs",
+        "A failed model retains its poster and explanations; another machine still loads",
+        "No uncaught browser errors"
+      ]
+    },
+    "equipment_study": {
+      "ok": true,
+      "checks": [
+        "injection: 1600×900 Unreal image, pause/resume and physical-unit motion on real GLB nodes",
+        "extrusion: 1600×900 Unreal image, pause/resume and physical-unit motion on real GLB nodes",
+        "sheet: 1600×900 Unreal image, pause/resume and physical-unit motion on real GLB nodes",
+        "castfilm: 1600×900 Unreal image, pause/resume and physical-unit motion on real GLB nodes",
+        "blownfilm: 1600×900 Unreal image, pause/resume and physical-unit motion on real GLB nodes",
+        "blowmolding: 1600×900 Unreal image, pause/resume and physical-unit motion on real GLB nodes",
+        "compounding: 1600×900 Unreal image, pause/resume and physical-unit motion on real GLB nodes",
+        "straw: 1600×900 Unreal image, pause/resume and physical-unit motion on real GLB nodes",
+        "Straw cut length drives 30 cuts/min; roll circumference gives 9.55 RPM; invalid and blank fields block playback",
+        "Guide roll diameter ratio preserves surface speed; injection completes the specified one-way stroke with mold closed",
+        "All eight Unreal images and models remain available after offline reload",
+        "Failed GLB keeps the Unreal image and calculator usable while disabling motion",
+        "WebGL context loss leaves the Unreal detail button available"
+      ]
+    }
+  },
+  "additional_passed_commands": [
+    "npm run test:process (9 tests)",
+    "npm run test:myai",
+    "npm run test:kinematics (4 tests)",
+    "node --test tests/troubleshooting-visuals.test.cjs (5 tests)",
+    "npm run check:kb (16 entries)",
+    "npm run check:ts-visuals (16 entries / 25 cases / 98 URLs)",
+    "npm run build"
+  ],
+  "dist_source_byte_parity": true,
+  "dist_excludes_blender_sources": true
+}

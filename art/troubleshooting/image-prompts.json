@@ -1,0 +1,30 @@
+{
+  "method": "built-in image_gen",
+  "created": "2026-09-14",
+  "images": [
+    {
+      "id": "gel-fisheye",
+      "prompt": "Use case: scientific-educational. Create a single photorealistic macro product photograph for a polymer processing troubleshooting guide. Warm ivory seamless studio background, pale sage green polymer, credible soft studio light and sharply readable defect detail, landscape 3:2 composition. One continuous scene with ONE physical specimen; no collage, split screen, text, labels, arrows, numbers, logos, watermark or UI. Educational generated illustration, not a measured PHA sample, not evidence of a particular process cause. A thin translucent polymer film sample with one visibly embedded small opaque whitish lump, making an elongated oval fisheye halo in the otherwise smooth film. The inclusion is encapsulated in the film, not a through hole; no cracks, no burn marks. Place the inclusion near the center and show the subtle raised area with transmitted and grazing light."
+    },
+    {
+      "id": "short-shot",
+      "prompt": "Use case: scientific-educational. Create a single photorealistic macro product photograph for a polymer processing troubleshooting guide. Warm ivory seamless studio background, pale sage green polymer, credible soft studio light and sharply readable defect detail, landscape 3:2 composition. One continuous scene with ONE physical specimen; no collage, split screen, text, labels, arrows, numbers, logos, watermark or UI. Educational generated illustration, not a measured PHA sample, not evidence of a particular process cause. A small injection-moulded shallow rectangular tray with one corner visibly incomplete because it was not fully filled. A smooth rounded arrested melt-front edge stops before the far right corner of the rim and base. The remaining three corners are fully formed. This is an incomplete molded shape, NOT a part broken after molding; no fragments, cracks or torn fracture texture. Three-quarter view showing the missing corner clearly."
+    },
+    {
+      "id": "silver-streak",
+      "prompt": "Use case: scientific-educational. Create a single photorealistic macro product photograph for a polymer processing troubleshooting guide. Warm ivory seamless studio background, pale sage green polymer, credible soft studio light and sharply readable defect detail, landscape 3:2 composition. One continuous scene with ONE physical specimen; no collage, split screen, text, labels, arrows, numbers, logos, watermark or UI. Educational generated illustration, not a measured PHA sample, not evidence of a particular process cause. A flat injection-moulded rectangular panel whose intact upper surface bears several fine, gently curved silvery streaks fanning out from one edge along a common flow direction. Streaks are integrated into the surface, not cracks, scratches, added wires or holes. Mostly matte green polymer with silver wisps visible through changing reflected highlights. No moisture droplets."
+    },
+    {
+      "id": "thermo-crack",
+      "prompt": "Use case: scientific-educational. Create a single photorealistic macro product photograph for a polymer processing troubleshooting guide. Warm ivory seamless studio background, pale sage green polymer, credible soft studio light and sharply readable defect detail, landscape 3:2 composition. One continuous scene with ONE physical specimen; no collage, split screen, text, labels, arrows, numbers, logos, watermark or UI. Educational generated illustration, not a measured PHA sample, not evidence of a particular process cause. A thin-walled thermoformed green drinking cup shown close-up at a three-quarter side angle. One fine but clearly visible crack runs down about a third of the upper side wall from the rim, in a locally stretched region. The rest of the cup and rim remain intact. No loose fragments, no splash, no contents, no decorative patterns. Show the cup wall thickness at the lip."
+    },
+    {
+      "id": "thermo-whitening",
+      "prompt": "Use case: scientific-educational. Create a single photorealistic macro product photograph for a polymer processing troubleshooting guide. Warm ivory seamless studio background, pale sage green polymer, credible soft studio light and sharply readable defect detail, landscape 3:2 composition. One continuous scene with ONE physical specimen; no collage, split screen, text, labels, arrows, numbers, logos, watermark or UI. Educational generated illustration, not a measured PHA sample, not evidence of a particular process cause. A thin-walled thermoformed green drinking cup shown close-up at a three-quarter side angle. One irregular chalky pale stress-whitened patch appears in a locally stretched upper wall region just below the rim, with a soft transition back to sage green. The wall is continuous and intact, no crack or hole. The patch is inside the polymer appearance, not powder, dirt, frost, droplets, paint, texture decoration or glare."
+    },
+    {
+      "id": "straw-crack",
+      "prompt": "Use case: scientific-educational. Create a single photorealistic macro product photograph for a polymer processing troubleshooting guide. Warm ivory seamless studio background, pale sage green polymer, credible soft studio light and sharply readable defect detail, landscape 3:2 composition. One continuous scene with ONE physical specimen; no collage, split screen, text, labels, arrows, numbers, logos, watermark or UI. Educational generated illustration, not a measured PHA sample, not evidence of a particular process cause. The cut end of a single pale green hollow plastic drinking straw in a detailed macro view. The circular hollow bore and thin wall are clear, and one small axial crack starts at the freshly cut rim and runs a short distance along the tube. The rest of the rim is clean and the tube is straight. No whole straw broken in half, no wood fibres, no drinking contents, no cutting machine or hand."
+    }
+  ]
+}

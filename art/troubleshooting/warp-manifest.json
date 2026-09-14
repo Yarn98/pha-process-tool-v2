@@ -1,0 +1,19 @@
+{
+  "family": "warp",
+  "blender": "5.2.1 LTS",
+  "units": "illustrative scene units",
+  "physical_process_solver": false,
+  "glb": "assets/troubleshooting/warp.glb",
+  "states": [
+    {
+      "state": "normal_full",
+      "png": "output/troubleshooting-build/renders/warp-normal_full.png",
+      "mesh_count": 1
+    },
+    {
+      "state": "warped_full",
+      "png": "output/troubleshooting-build/renders/warp-warped_full.png",
+      "mesh_count": 1
+    }
+  ]
+}

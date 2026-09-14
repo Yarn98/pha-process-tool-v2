@@ -1,0 +1,39 @@
+{
+  "family": "straw",
+  "blender": "5.2.1 LTS",
+  "units": "illustrative scene units",
+  "physical_process_solver": false,
+  "glb": "assets/troubleshooting/straw.glb",
+  "states": [
+    {
+      "state": "normal_full",
+      "png": "output/troubleshooting-build/renders/straw-normal_full.png",
+      "mesh_count": 1
+    },
+    {
+      "state": "normal_section",
+      "png": "output/troubleshooting-build/renders/straw-normal_section.png",
+      "mesh_count": 1
+    },
+    {
+      "state": "oval_full",
+      "png": "output/troubleshooting-build/renders/straw-oval_full.png",
+      "mesh_count": 1
+    },
+    {
+      "state": "oval_section",
+      "png": "output/troubleshooting-build/renders/straw-oval_section.png",
+      "mesh_count": 1
+    },
+    {
+      "state": "crack_full",
+      "png": "output/troubleshooting-build/renders/straw-crack_full.png",
+      "mesh_count": 1
+    },
+    {
+      "state": "dimension_full",
+      "png": "output/troubleshooting-build/renders/straw-dimension_full.png",
+      "mesh_count": 1
+    }
+  ]
+}

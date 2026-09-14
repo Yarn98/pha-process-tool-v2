@@ -1,0 +1,9 @@
+{
+  "parison-sag":{"caption_ko":"기준 패리슨과 늘어져 길어진 패리슨을 비교합니다. 표시된 처짐량은 설명용이며 점도·온도·중력 해석의 결과가 아닙니다.","caption_en":"Compare the reference parison with an elongated one. The sag shown is illustrative and is not the output of a viscosity, temperature or gravity calculation."},
+  "unstable-release":{"caption_ko":"칠롤에서 떨어지는 경로가 달라지는 예시입니다. 접촉·고화·결정화 상태를 확인한 뒤 조치합니다.","caption_en":"The release path from the chill roll changes. Check contact, solidification and crystallization behavior before taking action."},
+  "straw-crack":{"caption_ko":"절단면에서 길이 방향으로 이어지는 균열 예시입니다. 칼날·정렬·수지의 고화 상태를 함께 봅니다.","caption_en":"A crack extends axially from the cut edge. Inspect the blade, alignment and polymer solidification state together."},
+  "thermo-whitening":{"label_en":"Local whitening during thermoforming"},
+  "cross-web-gauge":{"caption_ko":"폭 방향으로 두꺼운 곳과 얇은 곳을 과장해 표현했습니다. 이동 방향의 주기적 편차와 구분해 측정합니다."},
+  "warpage":{"caption_ko":"평평한 기준과 휜 패널을 비교합니다. 변형 크기는 과장한 예시이며 실제 치수 예측이 아닙니다."},
+  "bubble-wobble":{"label_en":"Bubble centerline oscillation"}
+}

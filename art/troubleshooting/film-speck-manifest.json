@@ -1,0 +1,29 @@
+{
+  "family": "film-speck",
+  "blender": "5.2.1 LTS",
+  "units": "illustrative scene units",
+  "physical_process_solver": false,
+  "glb": "assets/troubleshooting/film-speck.glb",
+  "states": [
+    {
+      "state": "normal_full",
+      "png": "output/troubleshooting-build/renders/film-speck-normal_full.png",
+      "mesh_count": 1
+    },
+    {
+      "state": "normal_section",
+      "png": "output/troubleshooting-build/renders/film-speck-normal_section.png",
+      "mesh_count": 1
+    },
+    {
+      "state": "speck_full",
+      "png": "output/troubleshooting-build/renders/film-speck-speck_full.png",
+      "mesh_count": 3
+    },
+    {
+      "state": "speck_section",
+      "png": "output/troubleshooting-build/renders/film-speck-speck_section.png",
+      "mesh_count": 3
+    }
+  ]
+}

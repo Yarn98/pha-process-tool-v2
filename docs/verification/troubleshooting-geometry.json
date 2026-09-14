@@ -1,0 +1,106 @@
+{
+  "status": "passed",
+  "blender": "5.2.1 LTS",
+  "families": [
+    {
+      "family": "feed",
+      "states": 2,
+      "finite_geometry": true
+    },
+    {
+      "family": "film-speck",
+      "states": 4,
+      "finite_geometry": true
+    },
+    {
+      "family": "die",
+      "states": 2,
+      "finite_geometry": true
+    },
+    {
+      "family": "roll-release",
+      "states": 2,
+      "finite_geometry": true
+    },
+    {
+      "family": "sheet-gauge",
+      "states": 4,
+      "finite_geometry": true
+    },
+    {
+      "family": "short-shot",
+      "states": 2,
+      "finite_geometry": true
+    },
+    {
+      "family": "silver",
+      "states": 2,
+      "finite_geometry": true
+    },
+    {
+      "family": "flash",
+      "states": 2,
+      "finite_geometry": true
+    },
+    {
+      "family": "sink-void",
+      "states": 6,
+      "finite_geometry": true,
+      "checks": [
+        "six closed solids",
+        "continuous sink skin",
+        "closed exterior over internal void",
+        "section opens internal cavity"
+      ]
+    },
+    {
+      "family": "warp",
+      "states": 2,
+      "finite_geometry": true
+    },
+    {
+      "family": "thermoforming",
+      "states": 3,
+      "finite_geometry": true,
+      "checks": [
+        "heater, plug, telescoping rod, four clamps and sheet controls",
+        "sheet uses authored Form morph; surface thickness is not predicted"
+      ]
+    },
+    {
+      "family": "bubble",
+      "states": 3,
+      "finite_geometry": true
+    },
+    {
+      "family": "blowmolding",
+      "states": 6,
+      "finite_geometry": true
+    },
+    {
+      "family": "castfilm",
+      "states": 4,
+      "finite_geometry": true
+    },
+    {
+      "family": "straw",
+      "states": 6,
+      "finite_geometry": true,
+      "checks": [
+        "open bore with closed material wall",
+        "oval cross-section",
+        "cut-edge crack remains a closed material solid"
+      ]
+    },
+    {
+      "family": "vent",
+      "states": 6,
+      "finite_geometry": true,
+      "checks": [
+        "closed strand exterior",
+        "section exposes internal cavities"
+      ]
+    }
+  ],
+  "process_solver_validation": false
+}

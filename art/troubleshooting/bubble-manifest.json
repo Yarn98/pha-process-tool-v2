@@ -1,0 +1,24 @@
+{
+  "family": "bubble",
+  "blender": "5.2.1 LTS",
+  "units": "illustrative scene units",
+  "physical_process_solver": false,
+  "glb": "assets/troubleshooting/bubble.glb",
+  "states": [
+    {
+      "state": "normal_full",
+      "png": "output/troubleshooting-build/renders/bubble-normal_full.png",
+      "mesh_count": 6
+    },
+    {
+      "state": "wobble_full",
+      "png": "output/troubleshooting-build/renders/bubble-wobble_full.png",
+      "mesh_count": 6
+    },
+    {
+      "state": "broken_full",
+      "png": "output/troubleshooting-build/renders/bubble-broken_full.png",
+      "mesh_count": 6
+    }
+  ]
+}

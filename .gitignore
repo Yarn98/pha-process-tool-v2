@@ -15,6 +15,10 @@ unreal/**/Config/DefaultInput.ini
 output/unreal/fbx/
 output/unreal/*.png
 output/unreal/render-error.txt
+output/troubleshooting-build/
+output/troubleshooting-visual-review/
+output/playwright/troubleshooting-visuals/
+art/troubleshooting/*.blend1
 npm-debug.log*
 
 # OS files

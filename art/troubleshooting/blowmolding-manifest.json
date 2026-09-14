@@ -1,0 +1,39 @@
+{
+  "family": "blowmolding",
+  "blender": "5.2.1 LTS",
+  "units": "illustrative scene units",
+  "physical_process_solver": false,
+  "glb": "assets/troubleshooting/blowmolding.glb",
+  "states": [
+    {
+      "state": "normal_parison_full",
+      "png": "output/troubleshooting-build/renders/blowmolding-normal_parison_full.png",
+      "mesh_count": 2
+    },
+    {
+      "state": "normal_bottle_full",
+      "png": "output/troubleshooting-build/renders/blowmolding-normal_bottle_full.png",
+      "mesh_count": 1
+    },
+    {
+      "state": "normal_bottle_section",
+      "png": "output/troubleshooting-build/renders/blowmolding-normal_bottle_section.png",
+      "mesh_count": 1
+    },
+    {
+      "state": "sag_full",
+      "png": "output/troubleshooting-build/renders/blowmolding-sag_full.png",
+      "mesh_count": 2
+    },
+    {
+      "state": "wall_full",
+      "png": "output/troubleshooting-build/renders/blowmolding-wall_full.png",
+      "mesh_count": 1
+    },
+    {
+      "state": "wall_section",
+      "png": "output/troubleshooting-build/renders/blowmolding-wall_section.png",
+      "mesh_count": 1
+    }
+  ]
+}

@@ -39,7 +39,9 @@
         "scope": "Water-specific analytical method; validate extraction for the actual grade"
       }
     ],
-    "related_images": [],
+    "related_images": [
+      "assets/troubleshooting/feed-inspection_full.webp"
+    ],
     "stop_conditions": "Stop using the approved procedure when torque/pressure limits are approached. Lower feed can lengthen residence; lower torque alone is not acceptance.",
     "stop_conditions_ko": "토크·압력 한도에 접근하면 승인된 절차로 정지합니다. 공급량 감소가 체류시간을 늘릴 수 있어 토크 감소만으로 개선을 승인하지 않습니다.",
     "review_basis": "GPT-6 Pro completed review + local source/code validation"
@@ -89,7 +91,9 @@
         "scope": "Thermal history, rheology and crystallization mechanisms; not production settings"
       }
     ],
-    "related_images": [],
+    "related_images": [
+      "assets/troubleshooting/gel-fisheye-example.webp"
+    ],
     "stop_conditions": "Revert or stop if additional mixing or finer filtration increases pressure or thermal load excessively.",
     "stop_conditions_ko": "혼합 강화·미세 여과로 압력·열부하가 과도해지면 복귀하거나 중단합니다.",
     "review_basis": "GPT-6 Pro completed review + local source/code validation"
@@ -139,7 +143,9 @@
         "scope": "Thermal history, rheology and crystallization mechanisms; not production settings"
       }
     ],
-    "related_images": [],
+    "related_images": [
+      "assets/troubleshooting/die-drool_full.webp"
+    ],
     "stop_conditions": "Revert a trial if under-melting, rising pressure or discoloration appears. Stop for a damaged die or persistent blockage.",
     "stop_conditions_ko": "미용융·압력 상승·변색이 나타나면 시험 조건을 복귀합니다. 다이 손상·지속적 막힘은 정지 후 점검합니다.",
     "review_basis": "GPT-6 Pro completed review + local source/code validation"
@@ -189,7 +195,9 @@
         "scope": "Thermal history, rheology and crystallization mechanisms; not production settings"
       }
     ],
-    "related_images": [],
+    "related_images": [
+      "assets/troubleshooting/roll-release-sticking_full.webp"
+    ],
     "stop_conditions": "Revert if sticking, distortion or post-shrinkage worsens; do not add a nucleating agent automatically.",
     "stop_conditions_ko": "점착·변형·후수축이 악화되면 복귀하고 핵제를 자동으로 추가하지 않습니다.",
     "review_basis": "GPT-6 Pro completed review + local source/code validation"
@@ -239,7 +247,9 @@
         "scope": "Thermal history, rheology and crystallization mechanisms; not production settings"
       }
     ],
-    "related_images": [],
+    "related_images": [
+      "assets/troubleshooting/sheet-gauge-uneven_section.webp"
+    ],
     "stop_conditions": "Stop adjustments if pressure or die-lip damage is a concern; follow the OEM die-adjustment procedure.",
     "stop_conditions_ko": "압력·다이 립 손상이 우려되면 조정을 중단하고 OEM 조정 절차를 따릅니다.",
     "review_basis": "GPT-6 Pro completed review + local source/code validation"
@@ -284,7 +294,9 @@
         "scope": "Grade-specific conditions and transition purge; troubleshooting steps are engineering guidance"
       }
     ],
-    "related_images": [],
+    "related_images": [
+      "assets/troubleshooting/short-shot-example.webp"
+    ],
     "stop_conditions": "Revert if flash or burn marks increase. Do not solve an unfilled cavity solely by increasing packing.",
     "stop_conditions_ko": "플래시·번 마크가 증가하면 복귀하고 미충전을 보압 증가만으로 해결하지 않습니다.",
     "review_basis": "GPT-6 Pro completed review + local source/code validation"
@@ -329,7 +341,9 @@
         "scope": "Grade-specific conditions and transition purge; troubleshooting steps are engineering guidance"
       }
     ],
-    "related_images": [],
+    "related_images": [
+      "assets/troubleshooting/silver-streak-example.webp"
+    ],
     "stop_conditions": "Stop and investigate persistent gas, discoloration or operating-limit violations.",
     "stop_conditions_ko": "지속적인 가스·변색·공정 한도 이탈은 중단하고 원인을 확대 확인합니다.",
     "review_basis": "GPT-6 Pro completed review + local source/code validation"
@@ -374,7 +388,9 @@
         "scope": "Grade-specific conditions and transition purge; troubleshooting steps are engineering guidance"
       }
     ],
-    "related_images": [],
+    "related_images": [
+      "assets/troubleshooting/flash-example.webp"
+    ],
     "stop_conditions": "Escalate suspected sealing-surface damage to maintenance; stay within mold and machine clamp limits.",
     "stop_conditions_ko": "씰 접촉면 손상이 의심되면 정비로 전환하고 금형·장비 형체력 한도를 지킵니다.",
     "review_basis": "GPT-6 Pro completed review + local source/code validation"
@@ -419,7 +435,10 @@
         "scope": "Grade-specific conditions and transition purge; troubleshooting steps are engineering guidance"
       }
     ],
-    "related_images": [],
+    "related_images": [
+      "assets/troubleshooting/sink-example.webp",
+      "assets/troubleshooting/sink-void-void_section.webp"
+    ],
     "stop_conditions": "Revert if flash, residual stress or ejection problems increase.",
     "stop_conditions_ko": "플래시·잔류응력·탈형 문제가 증가하면 복귀합니다.",
     "review_basis": "GPT-6 Pro completed review + local source/code validation"
@@ -464,7 +483,9 @@
         "scope": "Grade-specific conditions and transition purge; troubleshooting steps are engineering guidance"
       }
     ],
-    "related_images": [],
+    "related_images": [
+      "assets/troubleshooting/warp-warped_full.webp"
+    ],
     "stop_conditions": "Do not accept dimensional improvement with unacceptable loss of toughness. Compare impact/elongation at the same conditioning.",
     "stop_conditions_ko": "허용할 수 없는 인성 저하를 동반한 치수 개선은 승인하지 않습니다. 같은 보관·전처리 조건으로 충격·신율을 비교합니다.",
     "review_basis": "GPT-6 Pro completed review + local source/code validation"
@@ -514,7 +535,10 @@
         "scope": "Thermal history, rheology and crystallization mechanisms; not production settings"
       }
     ],
-    "related_images": [],
+    "related_images": [
+      "assets/troubleshooting/thermo-crack-example.webp",
+      "assets/troubleshooting/thermo-whitening-example.webp"
+    ],
     "stop_conditions": "Stop increasing heat if local thinning, tearing or scorching worsens.",
     "stop_conditions_ko": "국부 박육·찢김·그을림이 증가하면 가열 증가를 중단합니다.",
     "review_basis": "GPT-6 Pro completed review + local source/code validation"
@@ -564,7 +588,10 @@
         "scope": "Thermal history, rheology and crystallization mechanisms; not production settings"
       }
     ],
-    "related_images": [],
+    "related_images": [
+      "assets/troubleshooting/bubble-wobble_full.webp",
+      "assets/troubleshooting/bubble-broken_full.webp"
+    ],
     "stop_conditions": "Stop increasing speed if bubble breaks or tension instability worsens; check blocking after winding.",
     "stop_conditions_ko": "버블 파단·장력 불안이 악화되면 증속을 중단하고 권취 후 블로킹을 확인합니다.",
     "review_basis": "GPT-6 Pro completed review + local source/code validation"
@@ -614,7 +641,10 @@
         "scope": "Thermal history, rheology and crystallization mechanisms; not production settings"
       }
     ],
-    "related_images": [],
+    "related_images": [
+      "assets/troubleshooting/blowmolding-sag_full.webp",
+      "assets/troubleshooting/blowmolding-wall_section.webp"
+    ],
     "stop_conditions": "For persistent leakage or blowouts, reassess material suitability and tooling instead of continuing to increase blowing pressure.",
     "stop_conditions_ko": "누설·블로우아웃이 지속되면 공기압을 계속 올리지 말고 재료 적합성과 금형을 재검토합니다.",
     "review_basis": "GPT-6 Pro completed review + local source/code validation"
@@ -664,7 +694,11 @@
         "scope": "Thermal history, rheology and crystallization mechanisms; not production settings"
       }
     ],
-    "related_images": [],
+    "related_images": [
+      "assets/troubleshooting/castfilm-neckin_full.webp",
+      "assets/troubleshooting/castfilm-resonance_full.webp",
+      "assets/troubleshooting/castfilm-release_full.webp"
+    ],
     "stop_conditions": "Revert if neck-in, release, gauge variation or repeated web breaks worsen.",
     "stop_conditions_ko": "폭 수축·박리·두께 편차·반복 필름 파단이 악화되면 복귀합니다.",
     "review_basis": "GPT-6 Pro completed review + local source/code validation"
@@ -714,7 +748,11 @@
         "scope": "Thermal history, rheology and crystallization mechanisms; not production settings"
       }
     ],
-    "related_images": [],
+    "related_images": [
+      "assets/troubleshooting/straw-oval_full.webp",
+      "assets/troubleshooting/straw-crack-example.webp",
+      "assets/troubleshooting/straw-dimension_full.webp"
+    ],
     "stop_conditions": "Stop increasing speed if jams, cutting cracks or dimensional deviations increase.",
     "stop_conditions_ko": "잼·절단 균열·치수 이탈이 증가하면 증속을 중단합니다.",
     "review_basis": "GPT-6 Pro completed review + local source/code validation"
@@ -752,7 +790,10 @@
     "notes_ko": "조건부 엔지니어링 안내입니다. 장비·그레이드 한도를 확인한 뒤 시험하세요.",
     "evidence_level": "conditional_engineering_guidance",
     "review_version": "2026-09-06-all-processing",
-    "related_images": [],
+    "related_images": [
+      "assets/troubleshooting/vent-flooding_full.webp",
+      "assets/troubleshooting/vent-bubbles_section.webp"
+    ],
     "sources": [
       {
         "title": "Coperion: extrusion feeding and air escape",

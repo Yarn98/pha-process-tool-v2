@@ -1,0 +1,19 @@
+{
+  "family": "silver",
+  "blender": "5.2.1 LTS",
+  "units": "illustrative scene units",
+  "physical_process_solver": false,
+  "glb": "assets/troubleshooting/silver.glb",
+  "states": [
+    {
+      "state": "normal_full",
+      "png": "output/troubleshooting-build/renders/silver-normal_full.png",
+      "mesh_count": 1
+    },
+    {
+      "state": "streak_full",
+      "png": "output/troubleshooting-build/renders/silver-streak_full.png",
+      "mesh_count": 1
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "family": "vent",
+  "blender": "5.2.1 LTS",
+  "units": "illustrative scene units",
+  "physical_process_solver": false,
+  "glb": "assets/troubleshooting/vent.glb",
+  "states": [
+    {
+      "state": "normal_vent_full",
+      "png": "output/troubleshooting-build/renders/vent-normal_vent_full.png",
+      "mesh_count": 4
+    },
+    {
+      "state": "normal_strand_full",
+      "png": "output/troubleshooting-build/renders/vent-normal_strand_full.png",
+      "mesh_count": 1
+    },
+    {
+      "state": "normal_strand_section",
+      "png": "output/troubleshooting-build/renders/vent-normal_strand_section.png",
+      "mesh_count": 1
+    },
+    {
+      "state": "flooding_full",
+      "png": "output/troubleshooting-build/renders/vent-flooding_full.png",
+      "mesh_count": 9
+    },
+    {
+      "state": "bubbles_full",
+      "png": "output/troubleshooting-build/renders/vent-bubbles_full.png",
+      "mesh_count": 1
+    },
+    {
+      "state": "bubbles_section",
+      "png": "output/troubleshooting-build/renders/vent-bubbles_section.png",
+      "mesh_count": 1
+    }
+  ]
+}

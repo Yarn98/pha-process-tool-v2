@@ -301,8 +301,8 @@
     .log-header{flex-direction:column;align-items:stretch}
   }
 </style>
-<link rel="stylesheet" href="./tokens.css?v=21">
-<link rel="stylesheet" href="./overrides.css?v=21">
+<link rel="stylesheet" href="./tokens.css?v=22">
+<link rel="stylesheet" href="./overrides.css?v=22">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#2C5D3F">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -310,8 +310,9 @@
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
 <script type="importmap">{"imports":{"three":"./vendor/three-0.185.1/build/three.module.js"}}</script>
-<script src="process-evidence.js?v=21"></script>
-<link rel="stylesheet" href="process-atlas.css?v=21">
+<script src="process-evidence.js?v=22"></script>
+<link rel="stylesheet" href="process-atlas.css?v=22">
+<link rel="stylesheet" href="troubleshooting-visuals.css?v=22">
 </head>
 <body class="app-locked">
 <a class="skip-link" href="#mainContent">본문 바로가기 / Skip to content</a>
@@ -895,7 +896,7 @@
   <button class="mtb-item" data-tab="hist"><span class="mtb-n">02</span><span>이력</span></button>
   <button class="mtb-item" data-tab="calc"><span class="mtb-n">03</span><span>계산기</span></button>
   <button class="mtb-item" data-tab="flash"><span class="mtb-n">04</span><span>플래시</span></button>
-  <button class="mtb-item" data-tab="more" id="moreBtn"><span class="mtb-n">⋯</span><span>더보기</span></button>
+  <button class="mtb-item" data-tab="more" id="moreBtn" aria-controls="morePopover" aria-expanded="false"><span class="mtb-n">⋯</span><span>더보기</span></button>
 </nav>
 <div id="morePopover" class="more-popover hidden">
   <button data-tab="ts" data-i18n="tab_ts_m">트러블슈팅</button>
@@ -1751,10 +1752,12 @@ function renderTS(){
         const notes = pick(item, 'notes');
         const plain = pick(item, 'plain');
         const stopConditions=pick(item,'stop_conditions');
-        html += `<h4 style="margin-top:12px">${phaEscapeHtml(symptom)}</h4>`;
+        html += `<article class="ts-kb-item"><h4 style="margin-top:12px">${phaEscapeHtml(symptom)}</h4>`;
         if (plain) {
           html += `<p style="color:var(--muted);font-style:italic;margin:4px 0 8px;"><strong>${phaEscapeHtml(TS_LABELS.plain)}:</strong> ${phaEscapeHtml(plain)}</p>`;
         }
+        if(window.PHATroubleVisuals)html+=window.PHATroubleVisuals.card(item,LANG);
+        html+=`<details class="ts-kb-detail"${term?' open':''}><summary>${LANG==='ko'?'진단·조치 전체 보기':'Full diagnostics and actions'}</summary>`;
         if (Array.isArray(causes) && causes.length) {
           html += `<strong>${phaEscapeHtml(TS_LABELS.causes)}:</strong><ul>` + causes.map(x => `<li>${phaEscapeHtml(x)}</li>`).join('') + `</ul>`;
         }
@@ -1775,6 +1778,7 @@ function renderTS(){
           html += `<p><em>${phaEscapeHtml(notes)}</em></p>`;
         }
         if(stopConditions)html+=`<p class="atlas-note"><strong>${LANG==='ko'?'복귀·중단 기준: ':'Revert / stop: '}</strong>${phaEscapeHtml(stopConditions)}</p>`;
+        html+='</details></article>';
       });
       card.innerHTML = html;
       cont.appendChild(card);
@@ -3440,6 +3444,7 @@ function switchTab(tabId){
   });
   /* close more popover */
   const pop=$('morePopover'); if(pop) pop.classList.add('hidden');
+  $('moreBtn')?.setAttribute('aria-expanded','false');
   /* trigger chart init if switching to ana tab */
   if(tabId==='ana') analyze();
   if(tabId==='myai' && typeof initMyAI==='function') initMyAI();
@@ -3452,6 +3457,7 @@ function initMobileTabBar(){
       const tab=this.dataset.tab;
       if(tab==='more'){
         $('morePopover').classList.toggle('hidden');
+        this.setAttribute('aria-expanded',String(!$('morePopover').classList.contains('hidden')));
         return;
       }
       switchTab(tab);
@@ -3468,6 +3474,7 @@ function initMobileTabBar(){
     if(!pop||pop.classList.contains('hidden'))return;
     if(!e.target.closest('#morePopover')&&!e.target.closest('[data-tab="more"]')){
       pop.classList.add('hidden');
+      $('moreBtn')?.setAttribute('aria-expanded','false');
     }
   });
 }
@@ -3497,13 +3504,15 @@ function closeLightbox(){
   document.body.style.overflow='';
 }
 
+// Navigation must work while images and other load-event resources are pending.
+initMobileTabBar();
+
 // Initialize on load
 window.addEventListener('load', () => {
   flashContentReady = true;
   renderFlashContent();
   loadTemplatesFromStorage();
   initPhotoStorage();
-  initMobileTabBar();
 });
 
 /* ========= My AI tab: OpenAI-compatible tool-calling client ========= */
@@ -4802,22 +4811,24 @@ window.addEventListener('load', () => {
 <!-- See custom.js for implementation -->
 
   <!-- Phase 4a shared batch-session contract -->
-<script src="anomaly-codes.js?v=21"></script>
-<script src="tars-batch-schema.js?v=21"></script>
-<script src="glossary.js?v=21"></script>
+<script src="anomaly-codes.js?v=22"></script>
+<script src="tars-batch-schema.js?v=22"></script>
+<script src="glossary.js?v=22"></script>
   <!-- Load external script containing material/troubleshooting/photo logic -->
-  <script src="troubleshooting-data.js?v=21"></script>
-  <script src="custom.js?v=21"></script>
+  <script src="troubleshooting-data.js?v=22"></script>
+  <script src="troubleshooting-visuals-data.js?v=22"></script>
+  <script src="troubleshooting-visuals.js?v=22"></script>
+  <script src="custom.js?v=22"></script>
   <!-- Compounding & Straw guide modules -->
-  <script src="compounding-guide.js?v=21"></script>
-  <script src="straw-guide.js?v=21"></script>
-  <script src="pha-integration.js?v=21"></script>
-  <script src="equipment-kinematics.js?v=21"></script>
-  <script src="equipment-study.js?v=21"></script>
-  <script src="equipment-models.js?v=21"></script>
-<script src="equipment-motion.js?v=21"></script>
-<script src="injection-motion.js?v=21"></script>
-  <script src="process-atlas.js?v=21"></script>
+  <script src="compounding-guide.js?v=22"></script>
+  <script src="straw-guide.js?v=22"></script>
+  <script src="pha-integration.js?v=22"></script>
+  <script src="equipment-kinematics.js?v=22"></script>
+  <script src="equipment-study.js?v=22"></script>
+  <script src="equipment-models.js?v=22"></script>
+<script src="equipment-motion.js?v=22"></script>
+<script src="injection-motion.js?v=22"></script>
+  <script src="process-atlas.js?v=22"></script>
   <script>
     // Initialize guide tabs and integration after all scripts loaded
     window.addEventListener('load', function(){

@@ -1,0 +1,678 @@
+{
+  "version": "2026-09-14-v1",
+  "representation": "educational imagery and geometry; no measured samples or process predictions",
+  "files": [
+    {
+      "file": "assets/troubleshooting/feed-normal_full.webp",
+      "source": "output/troubleshooting-build/renders/feed-normal_full.png",
+      "source_sha256": "b27d44ef425ef5db68c6850b227d4287ba4a080be5ec07d684d46a6d9caedce0",
+      "sha256": "4a8ebbb2a19f1379aab593a9d5fb5ddfa40610bd9d91ef77aaba12f0d028b576",
+      "bytes": 13966
+    },
+    {
+      "file": "assets/troubleshooting/feed-inspection_full.webp",
+      "source": "output/troubleshooting-build/renders/feed-inspection_full.png",
+      "source_sha256": "08fc291379d71d4a9f2a0cf50d78d7b134073cc3e4c7f320a4448e2b446edbcc",
+      "sha256": "8c8d56ee1914db1d2317d2334c131938c85a939c73b4d750861f47856a708a8e",
+      "bytes": 15082
+    },
+    {
+      "file": "assets/troubleshooting/feed.glb",
+      "source": "scripts/create_troubleshooting_models.py",
+      "source_sha256": "57ed2a3efd5406040a2553ca0ab564a9a2283c43f4ddb89e61c0d38c53e85b3d",
+      "sha256": "9aa61dda9634be2ff0a32564908394f2ca3bed6aed615e7b320018573f08d96c",
+      "bytes": 261908
+    },
+    {
+      "file": "assets/troubleshooting/film-speck-normal_full.webp",
+      "source": "output/troubleshooting-build/renders/film-speck-normal_full.png",
+      "source_sha256": "daa8b68840a90e81016f418a5eef5fbb69fa7ed05b08acfca8c176cb100405b2",
+      "sha256": "093f1a0da998e1abd7e27772531810c3e9fac4bc072a33b6d71f38f2d31923b1",
+      "bytes": 6882
+    },
+    {
+      "file": "assets/troubleshooting/film-speck-normal_section.webp",
+      "source": "output/troubleshooting-build/renders/film-speck-normal_section.png",
+      "source_sha256": "d4c60ba12db104f9c19707361a4399e0f261c4d96315fbdf5746b812d2120ddf",
+      "sha256": "120eb267bc26a851efe3e4e3f7f629389a29d50d2e6deaca8b9c7ac960d9bda3",
+      "bytes": 6958
+    },
+    {
+      "file": "assets/troubleshooting/film-speck-speck_full.webp",
+      "source": "output/troubleshooting-build/renders/film-speck-speck_full.png",
+      "source_sha256": "1b39d5d176b5f0fe456297b7580c685a28240a8e899553c4332c115888f7869d",
+      "sha256": "1cfbb362eda87b816e5008d97d4148a6b06b6eebdd4efb9983ad730ea00ee588",
+      "bytes": 7536
+    },
+    {
+      "file": "assets/troubleshooting/film-speck-speck_section.webp",
+      "source": "output/troubleshooting-build/renders/film-speck-speck_section.png",
+      "source_sha256": "d45f4ed64a8a735ce659f6a567e0d6d92bce18284b98a345ef54c41c8e706849",
+      "sha256": "e3a170673d61c89aa1d1df1b9a4d722a696647c3a352573b90ce70dc07d0e1aa",
+      "bytes": 8102
+    },
+    {
+      "file": "assets/troubleshooting/film-speck.glb",
+      "source": "scripts/create_troubleshooting_models.py",
+      "source_sha256": "57ed2a3efd5406040a2553ca0ab564a9a2283c43f4ddb89e61c0d38c53e85b3d",
+      "sha256": "d81b712b5f3c872abc8ea393e7df9dec370d6cdff1de901737896f0e87266f50",
+      "bytes": 512148
+    },
+    {
+      "file": "assets/troubleshooting/die-normal_full.webp",
+      "source": "output/troubleshooting-build/renders/die-normal_full.png",
+      "source_sha256": "ae3f6d088bfefe93fa1f6e4568a141c1b6053a8501f20d8a68f1cf60dbcb388e",
+      "sha256": "47723fb95b413fcb291c8e1997740f8db563baaff22b48f3f334c49e64f32325",
+      "bytes": 9698
+    },
+    {
+      "file": "assets/troubleshooting/die-drool_full.webp",
+      "source": "output/troubleshooting-build/renders/die-drool_full.png",
+      "source_sha256": "afc7dc21243d7f0d139b4a5bf0ca7cdd2fe9eda65f57a9bf119e35a333589e27",
+      "sha256": "7a188e77f5995fd5692edb1f683c3eb5f52cd0aa51f70ad060a862ba903a432d",
+      "bytes": 11012
+    },
+    {
+      "file": "assets/troubleshooting/die.glb",
+      "source": "scripts/create_troubleshooting_models.py",
+      "source_sha256": "57ed2a3efd5406040a2553ca0ab564a9a2283c43f4ddb89e61c0d38c53e85b3d",
+      "sha256": "aa493f75cbb938691e28795d97f04bf7e67228af7b497f44468f9fe23d670a94",
+      "bytes": 441400
+    },
+    {
+      "file": "assets/troubleshooting/roll-release-normal_full.webp",
+      "source": "output/troubleshooting-build/renders/roll-release-normal_full.png",
+      "source_sha256": "15b2efaef891e0678e61e0f06285aaa14885a6dcde94782f01c621dc0a51be10",
+      "sha256": "721b8658946329c7d0057f33b596d7fa2e6142ba7b8f028ab62e6cbf3dca0cc2",
+      "bytes": 10594
+    },
+    {
+      "file": "assets/troubleshooting/roll-release-sticking_full.webp",
+      "source": "output/troubleshooting-build/renders/roll-release-sticking_full.png",
+      "source_sha256": "779f1f95aac8cea52f60951e932b5df78f86c12f423f9c4fbe6aa90903da79cd",
+      "sha256": "6760f31beb1743b1f3088b764be8626e2959fd2697e8df1527b89af36a53aaeb",
+      "bytes": 10050
+    },
+    {
+      "file": "assets/troubleshooting/roll-release.glb",
+      "source": "scripts/create_troubleshooting_models.py",
+      "source_sha256": "57ed2a3efd5406040a2553ca0ab564a9a2283c43f4ddb89e61c0d38c53e85b3d",
+      "sha256": "4f4a7de5654fdda2338739913d46f3537ee091f00157de5978886601060ae54d",
+      "bytes": 87552
+    },
+    {
+      "file": "assets/troubleshooting/sheet-gauge-normal_full.webp",
+      "source": "output/troubleshooting-build/renders/sheet-gauge-normal_full.png",
+      "source_sha256": "8b2279086b7673c7ceb7ac7e9fb52a082b1e7ea3af5e46bfbcb859fa74e48525",
+      "sha256": "908a8afc802dca9a39e336d32840a055dc888bdecdcf9afbc033cdba0646ad3d",
+      "bytes": 6914
+    },
+    {
+      "file": "assets/troubleshooting/sheet-gauge-normal_section.webp",
+      "source": "output/troubleshooting-build/renders/sheet-gauge-normal_section.png",
+      "source_sha256": "cef0e59ef948a69536d51391eeb04a8a56c96130389a82f4fd07a793cae5acc3",
+      "sha256": "5d0519006dfa218e33209965029a0fedc809ce87fde4bdb36b4671dcbb7937f7",
+      "bytes": 7168
+    },
+    {
+      "file": "assets/troubleshooting/sheet-gauge-uneven_full.webp",
+      "source": "output/troubleshooting-build/renders/sheet-gauge-uneven_full.png",
+      "source_sha256": "5303ae5f48feb6e3e76e7f12bd9859d011d99ec0d8af93f976eb2f7dd9ee12eb",
+      "sha256": "67986afef9d37578946fb53ac6e2b6451e338e18fe1a29fdf9b767b1111656f1",
+      "bytes": 7662
+    },
+    {
+      "file": "assets/troubleshooting/sheet-gauge-uneven_section.webp",
+      "source": "output/troubleshooting-build/renders/sheet-gauge-uneven_section.png",
+      "source_sha256": "0b9abb01746d6052d5a8b83393d89736df045b7aa97fc92cf4ebfc5e40e8bef6",
+      "sha256": "3a7e42073fd9562879632dc86b81b1d7c0c715c1d161ad6791e665be043fe793",
+      "bytes": 7878
+    },
+    {
+      "file": "assets/troubleshooting/sheet-gauge.glb",
+      "source": "scripts/create_troubleshooting_models.py",
+      "source_sha256": "57ed2a3efd5406040a2553ca0ab564a9a2283c43f4ddb89e61c0d38c53e85b3d",
+      "sha256": "f99fd34b92565c5ff95a5a6530fd184e586a1c25531b2f20471bd82d9a511418",
+      "bytes": 370320
+    },
+    {
+      "file": "assets/troubleshooting/short-shot-normal_full.webp",
+      "source": "output/troubleshooting-build/renders/short-shot-normal_full.png",
+      "source_sha256": "5128d1e069ea3240b26bf8e68803d19f10481f7f8417d7fa03b1c5b5caa3d3e7",
+      "sha256": "12089d9621f22aa52ba683fa6fdb2007ef3e15ce69a8bc28641b9156162e0072",
+      "bytes": 10890
+    },
+    {
+      "file": "assets/troubleshooting/short-shot-short_full.webp",
+      "source": "output/troubleshooting-build/renders/short-shot-short_full.png",
+      "source_sha256": "f767b8a5cb55ba7a7f84c4d0b539532f5f997010d8dff53f899073e908b86160",
+      "sha256": "9d8821a5d8e1ac362c267455b405e4db0c6c9f73b1bc2c75e683ba53c5a0260e",
+      "bytes": 10126
+    },
+    {
+      "file": "assets/troubleshooting/short-shot.glb",
+      "source": "scripts/create_troubleshooting_models.py",
+      "source_sha256": "57ed2a3efd5406040a2553ca0ab564a9a2283c43f4ddb89e61c0d38c53e85b3d",
+      "sha256": "bc6517b36d516192b39d89490c395b973a1c867b3fa7728c01fe0a3230a6c458",
+      "bytes": 108120
+    },
+    {
+      "file": "assets/troubleshooting/silver-normal_full.webp",
+      "source": "output/troubleshooting-build/renders/silver-normal_full.png",
+      "source_sha256": "364e47c518d7a35b4ee2b2ed538d044c199b7cd527db8c8536bd412b70948703",
+      "sha256": "b17405dd4d4202c49c73bf25e1cc2deff6dda247d5cbbde49d3d2aa6707df1ff",
+      "bytes": 7260
+    },
+    {
+      "file": "assets/troubleshooting/silver-streak_full.webp",
+      "source": "output/troubleshooting-build/renders/silver-streak_full.png",
+      "source_sha256": "07197e68fe977489c243ae020a6e00b1a953a26b2bc3ff853b532f4d4fffbfab",
+      "sha256": "d1ac2c36c94438490b040cd3d3993b014a77be54e4828fbd57cc6a48d45c0945",
+      "bytes": 10622
+    },
+    {
+      "file": "assets/troubleshooting/silver.glb",
+      "source": "scripts/create_troubleshooting_models.py",
+      "source_sha256": "57ed2a3efd5406040a2553ca0ab564a9a2283c43f4ddb89e61c0d38c53e85b3d",
+      "sha256": "5a6e269ade003eaa2783730b351641e43006b3c8488f0c7b2fda06e6104a9d65",
+      "bytes": 261164
+    },
+    {
+      "file": "assets/troubleshooting/flash-normal_full.webp",
+      "source": "output/troubleshooting-build/renders/flash-normal_full.png",
+      "source_sha256": "d30cd49d13191e20eeabde2f956ce4f07f73addf24c0db35842df168d8516005",
+      "sha256": "12089d9621f22aa52ba683fa6fdb2007ef3e15ce69a8bc28641b9156162e0072",
+      "bytes": 10890
+    },
+    {
+      "file": "assets/troubleshooting/flash-flash_full.webp",
+      "source": "output/troubleshooting-build/renders/flash-flash_full.png",
+      "source_sha256": "6a5407750ad723782abc7e0c2fdc228e29bfa60fe22d0662d702e62683a80c14",
+      "sha256": "a7f55f9e0df1b7602f8044dbffce486647da8ee3a8fa3eeecd2d4afe4b43240f",
+      "bytes": 11212
+    },
+    {
+      "file": "assets/troubleshooting/flash.glb",
+      "source": "scripts/create_troubleshooting_models.py",
+      "source_sha256": "57ed2a3efd5406040a2553ca0ab564a9a2283c43f4ddb89e61c0d38c53e85b3d",
+      "sha256": "3a7a8a0552ab7652eadfdce6dd37f4a911afec0f89e6286b7d5a6c9c8db8bc95",
+      "bytes": 113596
+    },
+    {
+      "file": "assets/troubleshooting/sink-void-normal_full.webp",
+      "source": "output/troubleshooting-build/renders/sink-void-normal_full.png",
+      "source_sha256": "07331cd7a803271056cb7691862ad34b3c1eaa1965412d9b82c606a58327a35d",
+      "sha256": "1ed3dd932113fad69d70d3468ea5676979dd5ccf842c30479aefa0b9c03359be",
+      "bytes": 8444
+    },
+    {
+      "file": "assets/troubleshooting/sink-void-normal_section.webp",
+      "source": "output/troubleshooting-build/renders/sink-void-normal_section.png",
+      "source_sha256": "8dab8bdcbc55d4bbe13bd905ed89cb2e987d383563b3cf6431d93a641dd3dc0f",
+      "sha256": "638c36a6102f9dcae486b5947dd135942a5346018ecc53fd0576aa662d388288",
+      "bytes": 8248
+    },
+    {
+      "file": "assets/troubleshooting/sink-void-sink_full.webp",
+      "source": "output/troubleshooting-build/renders/sink-void-sink_full.png",
+      "source_sha256": "1652309ce314989544cb7c0545961583027618eaa179660e6ea9941969696533",
+      "sha256": "4b408b432197a74d9a623880c59604c030411dcd772c5012add51ee218af2bf5",
+      "bytes": 8480
+    },
+    {
+      "file": "assets/troubleshooting/sink-void-sink_section.webp",
+      "source": "output/troubleshooting-build/renders/sink-void-sink_section.png",
+      "source_sha256": "9c636cf86ad5c0668bda8e5ead36a7a80a6903b8710f802c225aaf5d792c5ec5",
+      "sha256": "b3b6b42d236aa7727b991b78bbf2a16db41265e2c865152805f4b55dcded6b24",
+      "bytes": 8464
+    },
+    {
+      "file": "assets/troubleshooting/sink-void-void_full.webp",
+      "source": "output/troubleshooting-build/renders/sink-void-void_full.png",
+      "source_sha256": "2b2bd5032ddd901e2f3796c56c7b989ff2569b55e1dd17b902a4b4717cf429d1",
+      "sha256": "9d7829620885d1a9fb8bee8371e28514845c3c9b2439556ecfc8022fbe933b99",
+      "bytes": 8444
+    },
+    {
+      "file": "assets/troubleshooting/sink-void-void_section.webp",
+      "source": "output/troubleshooting-build/renders/sink-void-void_section.png",
+      "source_sha256": "fc16c8fa4a6749d4f6ee52f9a2b825e26192648a03bec45b6b7207415c1ad77a",
+      "sha256": "5f6e2169f012161a49ac272b0627d7b824a02e1b9405d3bdfb103bb876d333ce",
+      "bytes": 9686
+    },
+    {
+      "file": "assets/troubleshooting/sink-void.glb",
+      "source": "scripts/create_troubleshooting_models.py",
+      "source_sha256": "57ed2a3efd5406040a2553ca0ab564a9a2283c43f4ddb89e61c0d38c53e85b3d",
+      "sha256": "5073abc361b2a413696f13c230b32edcf8e5f3b9be12c86f34d12bf08c789db9",
+      "bytes": 648604
+    },
+    {
+      "file": "assets/troubleshooting/warp-normal_full.webp",
+      "source": "output/troubleshooting-build/renders/warp-normal_full.png",
+      "source_sha256": "f6ade3949c1d085d50bcadc06fb5bdf8f2fa4d1dd6030aa431874bca723739b3",
+      "sha256": "011f01d5bc41c8b2b616292d025a28f1ae86d71bbea855c27b3e79904486565f",
+      "bytes": 7130
+    },
+    {
+      "file": "assets/troubleshooting/warp-warped_full.webp",
+      "source": "output/troubleshooting-build/renders/warp-warped_full.png",
+      "source_sha256": "e398e2a53b5decf20cd9f7a31d897845d831ac5b214e47fc034ec7602f5fa6c8",
+      "sha256": "26311cac962e52459b71a78831a24bf1917c30f7d0479d176b8f943c8c6db513",
+      "bytes": 10570
+    },
+    {
+      "file": "assets/troubleshooting/warp.glb",
+      "source": "scripts/create_troubleshooting_models.py",
+      "source_sha256": "57ed2a3efd5406040a2553ca0ab564a9a2283c43f4ddb89e61c0d38c53e85b3d",
+      "sha256": "bdf490b55f0065c82253f52ac5fbaa6d9cd87029a9d320da0dbebd96592f2450",
+      "bytes": 226944
+    },
+    {
+      "file": "assets/troubleshooting/thermoforming-normal_full.webp",
+      "source": "output/troubleshooting-build/renders/thermoforming-normal_full.png",
+      "source_sha256": "2534f9a30672b48148a019eb659ffe9ecb06596dbf5c2b70fb836fb46b526f4d",
+      "sha256": "23eb3f5cbf8522efe65c7ae3cde16529e2beebf1e5cfa3c5c06d488538e69025",
+      "bytes": 20204
+    },
+    {
+      "file": "assets/troubleshooting/thermoforming-crack_full.webp",
+      "source": "output/troubleshooting-build/renders/thermoforming-crack_full.png",
+      "source_sha256": "33ccd500c21b982f5ad41eb7d22ef257fb83fcef8f7025bd24bc80d6a4bb73dd",
+      "sha256": "71548db91ee40d4a9584b3e69e865d209df31b27d04ca793f6d6bc0a78e6fb65",
+      "bytes": 20196
+    },
+    {
+      "file": "assets/troubleshooting/thermoforming-whitening_full.webp",
+      "source": "output/troubleshooting-build/renders/thermoforming-whitening_full.png",
+      "source_sha256": "a92b1f750151120f69b71d120084093c7197b26691b646b38a87b61a97aa0e39",
+      "sha256": "b134b1de933cddd8aa86136c55a9190abf1a3f8a82a4cd3389d095569fb6c369",
+      "bytes": 20286
+    },
+    {
+      "file": "assets/troubleshooting/thermoforming.glb",
+      "source": "scripts/create_troubleshooting_models.py",
+      "source_sha256": "57ed2a3efd5406040a2553ca0ab564a9a2283c43f4ddb89e61c0d38c53e85b3d",
+      "sha256": "910ee74ec73dd1859de4d5f3c5676ddb8a0dca30cb0bfb7414b6c65699271411",
+      "bytes": 1038612
+    },
+    {
+      "file": "assets/troubleshooting/bubble-normal_full.webp",
+      "source": "output/troubleshooting-build/renders/bubble-normal_full.png",
+      "source_sha256": "81ac7ff4df8ea72bd099ff3143ecc61fecc8b124ddd63b005538547bc11428b8",
+      "sha256": "2bcedb9a4d7f6297aa2c86ccfeec4d98f1f578b3fc99ee8fbf309347dda362b7",
+      "bytes": 8634
+    },
+    {
+      "file": "assets/troubleshooting/bubble-wobble_full.webp",
+      "source": "output/troubleshooting-build/renders/bubble-wobble_full.png",
+      "source_sha256": "8053aa6671173856ac2502f4d4ff28d6db730df2ccbe751b2177aa7a95a7a1e9",
+      "sha256": "a5b33a2f2e6765d49dfb40d0db2dc30b42dc3d8a36efc2a4e8844731675c40e0",
+      "bytes": 8958
+    },
+    {
+      "file": "assets/troubleshooting/bubble-broken_full.webp",
+      "source": "output/troubleshooting-build/renders/bubble-broken_full.png",
+      "source_sha256": "177ba68de14bd7b89178277a5f90ebd0b7a66b5ff337b0b7675b8e552c93f4b8",
+      "sha256": "84e97f5d070628480c366ecffdd66a4c0c542770e4b1089e6af762be0a6e1b02",
+      "bytes": 9062
+    },
+    {
+      "file": "assets/troubleshooting/bubble.glb",
+      "source": "scripts/create_troubleshooting_models.py",
+      "source_sha256": "57ed2a3efd5406040a2553ca0ab564a9a2283c43f4ddb89e61c0d38c53e85b3d",
+      "sha256": "2bb93eb0dfbe0a41835fb11c456ecb2ef8ea55e660ac70384fc1ff550fe72816",
+      "bytes": 737608
+    },
+    {
+      "file": "assets/troubleshooting/blowmolding-normal_parison_full.webp",
+      "source": "output/troubleshooting-build/renders/blowmolding-normal_parison_full.png",
+      "source_sha256": "a1dbf32af3c8b656ca15f144d3d036226f350d468b0ac2343415f4d9bae20540",
+      "sha256": "a02b3a5606faa24eae54c864d27110f51132c521a611ce3e1770a37734c0870c",
+      "bytes": 5088
+    },
+    {
+      "file": "assets/troubleshooting/blowmolding-normal_bottle_full.webp",
+      "source": "output/troubleshooting-build/renders/blowmolding-normal_bottle_full.png",
+      "source_sha256": "96e3f299883674ff2d2f4e7592f571800a0515dd00cda2ec5d9857bd46b39039",
+      "sha256": "f4607451abb9b11cbce74031dabb4b19e9f02fb812bd40275c3321673c9303e4",
+      "bytes": 5744
+    },
+    {
+      "file": "assets/troubleshooting/blowmolding-normal_bottle_section.webp",
+      "source": "output/troubleshooting-build/renders/blowmolding-normal_bottle_section.png",
+      "source_sha256": "46df923ea695357a2ae58de465011cef7497cc5c001bb1e672bfda7c938582dd",
+      "sha256": "16f9e1ffc004a1c4dcb7c8100b339b4054aa55390520c2b2db6db425adfb148f",
+      "bytes": 6904
+    },
+    {
+      "file": "assets/troubleshooting/blowmolding-sag_full.webp",
+      "source": "output/troubleshooting-build/renders/blowmolding-sag_full.png",
+      "source_sha256": "a4763adef399b34569f3b71501cebd8bd93f15045490fcccf4f33256e61cfeab",
+      "sha256": "97be883cf7990cb6d2c25c9ddfc94cd4ea060b8358e77dbed48ab0bf08182186",
+      "bytes": 5332
+    },
+    {
+      "file": "assets/troubleshooting/blowmolding-wall_full.webp",
+      "source": "output/troubleshooting-build/renders/blowmolding-wall_full.png",
+      "source_sha256": "3645f07d60669a8efecff27ab32bb36b9867a1485ea979b75cfddce9f72c481a",
+      "sha256": "459a8e1f73fc896fc855d6fbe48d4e8db1dfc7c0d321905b941a5368fb2b85c2",
+      "bytes": 5766
+    },
+    {
+      "file": "assets/troubleshooting/blowmolding-wall_section.webp",
+      "source": "output/troubleshooting-build/renders/blowmolding-wall_section.png",
+      "source_sha256": "d8e15387640c09b913dc9e7cac61a1554ace877212213966d554c11ba76eb007",
+      "sha256": "7ccc3825ba1cf1b2d74b6b778ebf39082508c36fbde6b25504ae16be2554ffa3",
+      "bytes": 7152
+    },
+    {
+      "file": "assets/troubleshooting/blowmolding.glb",
+      "source": "scripts/create_troubleshooting_models.py",
+      "source_sha256": "57ed2a3efd5406040a2553ca0ab564a9a2283c43f4ddb89e61c0d38c53e85b3d",
+      "sha256": "87bc45301369f966662a3da2f09f400689856f4ba1ffc8bb9ca5789510c81fad",
+      "bytes": 501220
+    },
+    {
+      "file": "assets/troubleshooting/castfilm-normal_full.webp",
+      "source": "output/troubleshooting-build/renders/castfilm-normal_full.png",
+      "source_sha256": "8c792a601043cd42447744f14a520e7b2ea012e99412c37644893528a9f19959",
+      "sha256": "0938cee30e790e9b84203a9276c9edde9ef4ab1c634f09fb8f227483920c48c7",
+      "bytes": 10896
+    },
+    {
+      "file": "assets/troubleshooting/castfilm-neckin_full.webp",
+      "source": "output/troubleshooting-build/renders/castfilm-neckin_full.png",
+      "source_sha256": "756d0262fe37010541dadd69839a4a3b786ac09e3dabc4ebb317205141b4998c",
+      "sha256": "3bc4dcd64fa1d83afca2f662ac8580e0e306277286add55c800f366dcf82cf57",
+      "bytes": 10898
+    },
+    {
+      "file": "assets/troubleshooting/castfilm-resonance_full.webp",
+      "source": "output/troubleshooting-build/renders/castfilm-resonance_full.png",
+      "source_sha256": "1289c931d712bce5aa69d2671b87758c1324322688ad0fe92bfbe76601f4cbc0",
+      "sha256": "1c7aea25832b81f73e9782e03b5e32416aa68f47491ba4df454cab2d78fa154a",
+      "bytes": 11168
+    },
+    {
+      "file": "assets/troubleshooting/castfilm-release_full.webp",
+      "source": "output/troubleshooting-build/renders/castfilm-release_full.png",
+      "source_sha256": "8094d0dfd5fc3b9507fbdbd7d1b80668de2e53cf19a8f7bded6f2bb76a57416c",
+      "sha256": "1f6c4a1c54984ea9477aacd5c2b735ecb22e8fa4c8d2a788d2fcb0caf5e91f0b",
+      "bytes": 10590
+    },
+    {
+      "file": "assets/troubleshooting/castfilm.glb",
+      "source": "scripts/create_troubleshooting_models.py",
+      "source_sha256": "57ed2a3efd5406040a2553ca0ab564a9a2283c43f4ddb89e61c0d38c53e85b3d",
+      "sha256": "ed9f7c95653d2335045a31ff8fad6318f63959a8172d7cf82c7c706fb2332eee",
+      "bytes": 236012
+    },
+    {
+      "file": "assets/troubleshooting/straw-normal_full.webp",
+      "source": "output/troubleshooting-build/renders/straw-normal_full.png",
+      "source_sha256": "d9d3f7195228f30df49ebd07c91ba1238e35b2dde0b061d4403bb9f8e587b2bc",
+      "sha256": "28cadfd3c3b09356304dda60e85e968a9545921d8e6a6a3a89824f0f62edc70c",
+      "bytes": 7234
+    },
+    {
+      "file": "assets/troubleshooting/straw-normal_section.webp",
+      "source": "output/troubleshooting-build/renders/straw-normal_section.png",
+      "source_sha256": "8b5ac5873235f73df5718e88742435b726eee80f6e7ff07ee0615454054e96f7",
+      "sha256": "4a8552d23d56e4081ba31e4fdbd95b61c0e0a415f449bbad5c773c4221680279",
+      "bytes": 10674
+    },
+    {
+      "file": "assets/troubleshooting/straw-oval_full.webp",
+      "source": "output/troubleshooting-build/renders/straw-oval_full.png",
+      "source_sha256": "20e33f1982c6d89dc77abdb22870136dc6a0d9969b6e19a9dd31c3fa96af6854",
+      "sha256": "5ffff13e77e948a81f6eafbe82bca894d0cdc6ea39ad1ed22ff311f6322e852e",
+      "bytes": 7244
+    },
+    {
+      "file": "assets/troubleshooting/straw-oval_section.webp",
+      "source": "output/troubleshooting-build/renders/straw-oval_section.png",
+      "source_sha256": "a7a194a9d90dd68cd534c187a727eac8afc50df2c35c0032ba2b64eb1b674049",
+      "sha256": "d99f456a26e44a0025f77ae9eeebe724fba4ce12a84fd423e2b2651460eb5ca3",
+      "bytes": 11056
+    },
+    {
+      "file": "assets/troubleshooting/straw-crack_full.webp",
+      "source": "output/troubleshooting-build/renders/straw-crack_full.png",
+      "source_sha256": "9d3eefe38ca7f62763088f18a20061cb6a9eb62e13281d19dd0dddd8e8dbb404",
+      "sha256": "eef7902fd644929b03b0938613708921ae2e637051475abcd22c11251f6de0c9",
+      "bytes": 7668
+    },
+    {
+      "file": "assets/troubleshooting/straw-dimension_full.webp",
+      "source": "output/troubleshooting-build/renders/straw-dimension_full.png",
+      "source_sha256": "6f078cebe1c351154a74ee5dfbbf2a7726c8a04cf3a26b85958ad835d37deafb",
+      "sha256": "02b32e2db45353bf5636c28c4c86b9f7a2530fd95cec9eaf3f4e9954fdfb9948",
+      "bytes": 11398
+    },
+    {
+      "file": "assets/troubleshooting/straw.glb",
+      "source": "scripts/create_troubleshooting_models.py",
+      "source_sha256": "57ed2a3efd5406040a2553ca0ab564a9a2283c43f4ddb89e61c0d38c53e85b3d",
+      "sha256": "bfbdbdbf7147b08525709bae62c1e67b71b9e46acf5adc13ae24a130a242e683",
+      "bytes": 99444
+    },
+    {
+      "file": "assets/troubleshooting/vent-normal_vent_full.webp",
+      "source": "output/troubleshooting-build/renders/vent-normal_vent_full.png",
+      "source_sha256": "683de588f9ef0e4862a2d536ec80db6e5171ebccf8a2c90f4287fd868f472f1d",
+      "sha256": "f986af10c1fd36a9221c5631772006a74d8d95a2f8f9bb974e5f9ebfb161373b",
+      "bytes": 13012
+    },
+    {
+      "file": "assets/troubleshooting/vent-normal_strand_full.webp",
+      "source": "output/troubleshooting-build/renders/vent-normal_strand_full.png",
+      "source_sha256": "184dc9464c27b31529ada3cd9de1cb7391835696da5bb7d3708a1161a6025d28",
+      "sha256": "15b24d978eacd29ba97d0e4ab40f3894b92ed964ddbcbd3f9ffa07525081393e",
+      "bytes": 7342
+    },
+    {
+      "file": "assets/troubleshooting/vent-normal_strand_section.webp",
+      "source": "output/troubleshooting-build/renders/vent-normal_strand_section.png",
+      "source_sha256": "e8c846373a7ef6e45469f08aadf79f37ad6934f140c4c863f3528bda69b110e9",
+      "sha256": "d4ba3bdbd399ac99c7eaadf513f645101fa3ce79dc61f68ba0ae107cf5c51775",
+      "bytes": 7208
+    },
+    {
+      "file": "assets/troubleshooting/vent-flooding_full.webp",
+      "source": "output/troubleshooting-build/renders/vent-flooding_full.png",
+      "source_sha256": "cb00dd39b9aa118b2bed5100882d41345a416112bdd0c8cfc2a42705c6a015b4",
+      "sha256": "52d5ea869f165212577d73d7fad26ec96cf627f5d657385d56e7d91ee5c9af1e",
+      "bytes": 11640
+    },
+    {
+      "file": "assets/troubleshooting/vent-bubbles_full.webp",
+      "source": "output/troubleshooting-build/renders/vent-bubbles_full.png",
+      "source_sha256": "0bc5a84e3b519fe92555cdbd524ffbd0ba484f6293a16a29de458d8fed9e9948",
+      "sha256": "a345862d9e12ed7aa6e8c89d4fb99fe49d54467d98daa78365f04b6ddcd1fdc6",
+      "bytes": 7338
+    },
+    {
+      "file": "assets/troubleshooting/vent-bubbles_section.webp",
+      "source": "output/troubleshooting-build/renders/vent-bubbles_section.png",
+      "source_sha256": "8dc5b2d5581a693734a4e29648ed3ec20bb0c427ba98a4c2044005e8fcc83674",
+      "sha256": "2cc1cd980cfd3936f923bd8b3df4d997422261fbe62558c941ae56d96d333a2a",
+      "bytes": 9484
+    },
+    {
+      "file": "assets/troubleshooting/vent.glb",
+      "source": "scripts/create_troubleshooting_models.py",
+      "source_sha256": "57ed2a3efd5406040a2553ca0ab564a9a2283c43f4ddb89e61c0d38c53e85b3d",
+      "sha256": "0dc162a64fd3a67fa4fd1af7f06a4e8624dd1869078997078e2a6891e81caa22",
+      "bytes": 338672
+    },
+    {
+      "file": "assets/troubleshooting/flash-example.webp",
+      "source": "art/troubleshooting/images/flash.png",
+      "source_sha256": "e02896caef68762b508757c869f6fcec50d2ea69fe013355cebf0f21c3856ad3",
+      "sha256": "9660a1c0d9cb70e83f223eb9dd759a4c6f6134fa5bb1e14a46e7d5fe3a8a39ef",
+      "bytes": 19252
+    },
+    {
+      "file": "assets/troubleshooting/gel-fisheye-example.webp",
+      "source": "art/troubleshooting/images/gel-fisheye.png",
+      "source_sha256": "a089f36475ffefc3fd6c3676c62a0d89463c22312a231ff625d21917758ac9ae",
+      "sha256": "4492be7a7ef0dfd3a423059e634c74a41a04c47355840ff3e6d95a7279b324c8",
+      "bytes": 39902
+    },
+    {
+      "file": "assets/troubleshooting/short-shot-example.webp",
+      "source": "art/troubleshooting/images/short-shot.png",
+      "source_sha256": "8e57147fd1ed251b07bd4ebf8b747b5d32dde6a78434140d7529aaece3c49a8c",
+      "sha256": "c574a7553309c55ee4917da07e9595720333acb6d0d41cc997acdf69d2607dd8",
+      "bytes": 30878
+    },
+    {
+      "file": "assets/troubleshooting/silver-streak-example.webp",
+      "source": "art/troubleshooting/images/silver-streak.png",
+      "source_sha256": "fd46f4889beff031b3b8bef8af254d6d11db35424d2762ce96f82bda3982b920",
+      "sha256": "b9b866c3a3cee9b4ee75de69ddc9a365a30e5d2be453a742e972b4f355fe07e4",
+      "bytes": 52110
+    },
+    {
+      "file": "assets/troubleshooting/sink-example.webp",
+      "source": "art/troubleshooting/images/sink.png",
+      "source_sha256": "81c1899518b47f0f02f930af9af65e02586513a90e950a1639a830e4d3e55325",
+      "sha256": "dec5af5fc6602c7d0d7a2c1e296c37e6affed510a45d7963625d74e332671de4",
+      "bytes": 46488
+    },
+    {
+      "file": "assets/troubleshooting/straw-crack-example.webp",
+      "source": "art/troubleshooting/images/straw-crack.png",
+      "source_sha256": "6dcfe49cf5be097d18f2008f381806a9feaaf5957f3cdc376c0c69d894453743",
+      "sha256": "ad7c239e601e01c4fd5915d719132340222607421bcfdcd2affb7c66bc800929",
+      "bytes": 18190
+    },
+    {
+      "file": "assets/troubleshooting/thermo-crack-example.webp",
+      "source": "art/troubleshooting/images/thermo-crack.png",
+      "source_sha256": "ab78944bfbfee2c404e6ff4f3c110e26ef993c68293adc9ffe9e9114fc05e0ba",
+      "sha256": "c3b255d3e6a49ee853c1939cfe376b8df5893e6b853e7a3ad84b6dd974903742",
+      "bytes": 21288
+    },
+    {
+      "file": "assets/troubleshooting/thermo-whitening-example.webp",
+      "source": "art/troubleshooting/images/thermo-whitening.png",
+      "source_sha256": "50dc9917a29a3de7923e304b62c637f58a2c317bd438bbfde197c73fa760124b",
+      "sha256": "7207bf504e49d3e6387482da73e802cdd50d38c8ff924125dc6083227b0fb5da",
+      "bytes": 30372
+    },
+    {
+      "file": "assets/troubleshooting/pha-kb-1-thumb.webp",
+      "source": "assets/troubleshooting/feed-inspection_full.webp",
+      "source_sha256": "8c8d56ee1914db1d2317d2334c131938c85a939c73b4d750861f47856a708a8e",
+      "sha256": "df558fc8b84d26953ec70aa5099859a9572e0ceaabc339994770b28b7bce7a20",
+      "bytes": 4164
+    },
+    {
+      "file": "assets/troubleshooting/pha-kb-2-thumb.webp",
+      "source": "assets/troubleshooting/gel-fisheye-example.webp",
+      "source_sha256": "4492be7a7ef0dfd3a423059e634c74a41a04c47355840ff3e6d95a7279b324c8",
+      "sha256": "3bdeb08c38d7b3da3f6769bfdecc68e41e23d48b3e3a63451c03ee253f21268c",
+      "bytes": 3676
+    },
+    {
+      "file": "assets/troubleshooting/pha-kb-3-thumb.webp",
+      "source": "assets/troubleshooting/die-drool_full.webp",
+      "source_sha256": "7a188e77f5995fd5692edb1f683c3eb5f52cd0aa51f70ad060a862ba903a432d",
+      "sha256": "1705ba98d172e6ff18731042349e1b67d0aa4ec8391b70829509ec4dbdc6bcde",
+      "bytes": 2850
+    },
+    {
+      "file": "assets/troubleshooting/pha-kb-4-thumb.webp",
+      "source": "assets/troubleshooting/roll-release-sticking_full.webp",
+      "source_sha256": "6760f31beb1743b1f3088b764be8626e2959fd2697e8df1527b89af36a53aaeb",
+      "sha256": "76aab24d09e29ec0aca241fbe27f7eca286c2f9ee5ca539b204dfac361a9a297",
+      "bytes": 2596
+    },
+    {
+      "file": "assets/troubleshooting/pha-kb-5-thumb.webp",
+      "source": "assets/troubleshooting/sheet-gauge-uneven_section.webp",
+      "source_sha256": "3a7e42073fd9562879632dc86b81b1d7c0c715c1d161ad6791e665be043fe793",
+      "sha256": "e2fb01bd36a7275d86ecc0588f99167e010ecc7184d416aa2dc0d1be4568600d",
+      "bytes": 1894
+    },
+    {
+      "file": "assets/troubleshooting/pha-kb-6-thumb.webp",
+      "source": "assets/troubleshooting/short-shot-example.webp",
+      "source_sha256": "c574a7553309c55ee4917da07e9595720333acb6d0d41cc997acdf69d2607dd8",
+      "sha256": "9d6c2f65f47157a0f272c0882efa9fa4760b4bc6a51206fa236b22e191f6ba0d",
+      "bytes": 3384
+    },
+    {
+      "file": "assets/troubleshooting/pha-kb-7-thumb.webp",
+      "source": "assets/troubleshooting/silver-streak-example.webp",
+      "source_sha256": "b9b866c3a3cee9b4ee75de69ddc9a365a30e5d2be453a742e972b4f355fe07e4",
+      "sha256": "9ce120564aa0084dbffb772746289c9f6d6851dc9dca9dff7214dbe22158a27e",
+      "bytes": 3974
+    },
+    {
+      "file": "assets/troubleshooting/pha-kb-8-thumb.webp",
+      "source": "assets/troubleshooting/flash-example.webp",
+      "source_sha256": "9660a1c0d9cb70e83f223eb9dd759a4c6f6134fa5bb1e14a46e7d5fe3a8a39ef",
+      "sha256": "9a9a9fcde7bba946be44fd4420f651eeb570d965b47e1c1e1a4cf69f3e3c6e07",
+      "bytes": 2718
+    },
+    {
+      "file": "assets/troubleshooting/pha-kb-9-thumb.webp",
+      "source": "assets/troubleshooting/sink-example.webp",
+      "source_sha256": "dec5af5fc6602c7d0d7a2c1e296c37e6affed510a45d7963625d74e332671de4",
+      "sha256": "ab1a96d6ed7f396c6c3afd9ce8497bf8dfd99eb2e4a47ed60c1bb116c91f405c",
+      "bytes": 2876
+    },
+    {
+      "file": "assets/troubleshooting/pha-kb-10-thumb.webp",
+      "source": "assets/troubleshooting/warp-warped_full.webp",
+      "source_sha256": "26311cac962e52459b71a78831a24bf1917c30f7d0479d176b8f943c8c6db513",
+      "sha256": "bca45e30e01533aac07577979008bc57a2e3ecfee9840fe12ea17cad87d94e52",
+      "bytes": 2522
+    },
+    {
+      "file": "assets/troubleshooting/pha-kb-11-thumb.webp",
+      "source": "assets/troubleshooting/thermo-crack-example.webp",
+      "source_sha256": "c3b255d3e6a49ee853c1939cfe376b8df5893e6b853e7a3ad84b6dd974903742",
+      "sha256": "0a818350dc592f79c906493b369ac12175621b77e5bbd052eb65fb89c6e9b0e2",
+      "bytes": 3172
+    },
+    {
+      "file": "assets/troubleshooting/pha-kb-12-thumb.webp",
+      "source": "assets/troubleshooting/bubble-wobble_full.webp",
+      "source_sha256": "a5b33a2f2e6765d49dfb40d0db2dc30b42dc3d8a36efc2a4e8844731675c40e0",
+      "sha256": "09fdebf1f1a1f6ad52d113aa16820fccc2f70662e7c1ae35f9b2347ba0c991dc",
+      "bytes": 2272
+    },
+    {
+      "file": "assets/troubleshooting/pha-kb-13-thumb.webp",
+      "source": "assets/troubleshooting/blowmolding-sag_full.webp",
+      "source_sha256": "97be883cf7990cb6d2c25c9ddfc94cd4ea060b8358e77dbed48ab0bf08182186",
+      "sha256": "24c7dbb642bd943674faf40e43e053f28176693c3e10dde3fb4e87b4dce90825",
+      "bytes": 1176
+    },
+    {
+      "file": "assets/troubleshooting/pha-kb-14-thumb.webp",
+      "source": "assets/troubleshooting/castfilm-neckin_full.webp",
+      "source_sha256": "3bc4dcd64fa1d83afca2f662ac8580e0e306277286add55c800f366dcf82cf57",
+      "sha256": "03e375b9b1d07675e55d208f4800190375c203fd9be289381c78c59167527753",
+      "bytes": 2666
+    },
+    {
+      "file": "assets/troubleshooting/pha-kb-15-thumb.webp",
+      "source": "assets/troubleshooting/straw-oval_full.webp",
+      "source_sha256": "5ffff13e77e948a81f6eafbe82bca894d0cdc6ea39ad1ed22ff311f6322e852e",
+      "sha256": "05c981a2a0037923d5f6a8a7faea61ae6d74a07a674f4a39423dd3b56403ea25",
+      "bytes": 1954
+    },
+    {
+      "file": "assets/troubleshooting/pha-kb-16-thumb.webp",
+      "source": "assets/troubleshooting/vent-flooding_full.webp",
+      "source_sha256": "52d5ea869f165212577d73d7fad26ec96cf627f5d657385d56e7d91ee5c9af1e",
+      "sha256": "4d7574e146b36f8e8ec1e8707868c5b9ce58f40ea620d4bcaecc511828620848",
+      "bytes": 3076
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "family": "thermoforming",
+  "blender": "5.2.1 LTS",
+  "units": "illustrative scene units",
+  "physical_process_solver": false,
+  "glb": "assets/troubleshooting/thermoforming.glb",
+  "states": [
+    {
+      "state": "normal_full",
+      "png": "output/troubleshooting-build/renders/thermoforming-normal_full.png",
+      "mesh_count": 27
+    },
+    {
+      "state": "crack_full",
+      "png": "output/troubleshooting-build/renders/thermoforming-crack_full.png",
+      "mesh_count": 27
+    },
+    {
+      "state": "whitening_full",
+      "png": "output/troubleshooting-build/renders/thermoforming-whitening_full.png",
+      "mesh_count": 27
+    }
+  ]
+}

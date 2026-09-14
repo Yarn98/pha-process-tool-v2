@@ -1,0 +1,19 @@
+{
+  "family": "feed",
+  "blender": "5.2.1 LTS",
+  "units": "illustrative scene units",
+  "physical_process_solver": false,
+  "glb": "assets/troubleshooting/feed.glb",
+  "states": [
+    {
+      "state": "normal_full",
+      "png": "output/troubleshooting-build/renders/feed-normal_full.png",
+      "mesh_count": 9
+    },
+    {
+      "state": "inspection_full",
+      "png": "output/troubleshooting-build/renders/feed-inspection_full.png",
+      "mesh_count": 12
+    }
+  ]
+}

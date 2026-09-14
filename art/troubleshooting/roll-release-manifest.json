@@ -1,0 +1,19 @@
+{
+  "family": "roll-release",
+  "blender": "5.2.1 LTS",
+  "units": "illustrative scene units",
+  "physical_process_solver": false,
+  "glb": "assets/troubleshooting/roll-release.glb",
+  "states": [
+    {
+      "state": "normal_full",
+      "png": "output/troubleshooting-build/renders/roll-release-normal_full.png",
+      "mesh_count": 4
+    },
+    {
+      "state": "sticking_full",
+      "png": "output/troubleshooting-build/renders/roll-release-sticking_full.png",
+      "mesh_count": 4
+    }
+  ]
+}

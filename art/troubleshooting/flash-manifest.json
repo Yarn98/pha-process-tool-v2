@@ -1,0 +1,19 @@
+{
+  "family": "flash",
+  "blender": "5.2.1 LTS",
+  "units": "illustrative scene units",
+  "physical_process_solver": false,
+  "glb": "assets/troubleshooting/flash.glb",
+  "states": [
+    {
+      "state": "normal_full",
+      "png": "output/troubleshooting-build/renders/flash-normal_full.png",
+      "mesh_count": 1
+    },
+    {
+      "state": "flash_full",
+      "png": "output/troubleshooting-build/renders/flash-flash_full.png",
+      "mesh_count": 2
+    }
+  ]
+}
