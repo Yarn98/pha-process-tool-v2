@@ -1,0 +1,132 @@
+{
+  "id": "vent-guide",
+  "blender": "5.2.1 LTS",
+  "representation": "original_educational_cutaway",
+  "physical_process_solver": false,
+  "units": "illustrative scene units; not screw dimensions or operating conditions",
+  "reference": "Leistritz / SPE 2023 PHA two-vent functional concept; supplied slide inspected, no image pixels, logos or layout reused",
+  "reference_url": "https://www.4spe.org/files/Chapters/D22/presentationofthemonth_springenewsletter.pdf#page=35",
+  "states": [
+    {
+      "state": "without_reverse_full",
+      "png": "art/troubleshooting/vent-guide-without_reverse_full.png",
+      "mesh_count": 226
+    },
+    {
+      "state": "upstream_reverse_full",
+      "png": "art/troubleshooting/vent-guide-upstream_reverse_full.png",
+      "mesh_count": 226
+    }
+  ],
+  "mesh_reuse": {
+    "mesh_objects": 452,
+    "unique_mesh_data": 150,
+    "reused_mesh_objects": 302,
+    "method": "byte-identical attributes, topology and materials; no simplification"
+  },
+  "state_difference": "only highlighted element handedness/material; neither state predicts seal performance or user outcomes",
+  "motion": {
+    "frame": "Three glTF Y-up; +X feed-to-die; all flow markers direct children of identity state groups",
+    "screw": "spin_axis=x on two pivot nodes per state; rotate both in same direction",
+    "flow": "vent_flow=solid|melt|atm_gas|vac_gas; vent_from and vent_to Three parent-local vectors; t=(phase+vent_phase)%1; lerp(from,to,t)",
+    "focus": "vent_focus=atm|vac|seal on static equipment meshes and compared element; includes nearby barrel context",
+    "scope": "directional explanation only, no timing, fill fraction, energy or residence prediction"
+  },
+  "topology": {
+    "atmospheric_x": -3.6,
+    "controlled_melting_x": [
+      -2.95,
+      -0.42
+    ],
+    "compared_element_x": [
+      -0.38,
+      0.25
+    ],
+    "vacuum_x": 2.02,
+    "pressure_building_x": [
+      2.8,
+      5.4
+    ]
+  },
+  "assets": [
+    {
+      "file": "assets/troubleshooting/vent-guide-without_reverse_full.webp",
+      "source": "art/troubleshooting/vent-guide-without_reverse_full.png",
+      "source_sha256": "b6c820b4f73e934050cbc852d809798b5051b183e6c337aac847a3279168b5cf",
+      "sha256": "3e3be2b1034c864daff816987c9d8268a0c2557c1d62ba76e75224c7b50ad72e",
+      "bytes": 62282
+    },
+    {
+      "file": "assets/troubleshooting/vent-guide-upstream_reverse_full.webp",
+      "source": "art/troubleshooting/vent-guide-upstream_reverse_full.png",
+      "source_sha256": "af07aa38ff351229c78dc4e963eb5387be5b1e7935c7b9d4ccfbd215eb6f8088",
+      "sha256": "9344ef20895056f718ab3227f534702e2db242b4d95b9a6fa2293ce7c3759b98",
+      "bytes": 62900
+    },
+    {
+      "file": "assets/troubleshooting/vent-guide.glb",
+      "source": "scripts/create_vent_guide_model.py",
+      "source_sha256": "356404891d3afb6e6311b9d6687350c524bd6de40b55e7205fc8f1e8369f5b50",
+      "sha256": "92bda9085d35783fb2a2e8a30aab65c8b9f985e344843e17edf339a4f607f78d",
+      "bytes": 1890544
+    }
+  ],
+  "native_sha256": "9ef21624538e9a57e3b919310b29771ef738550e6a6c14afc72ec21c298f0828",
+  "deduplication_validation": {
+    "old_bytes": 4033428,
+    "new_bytes": 1890544,
+    "reduction_percent": 53.13,
+    "old_meshes": 452,
+    "new_meshes": 150,
+    "checked_nodes": 468,
+    "positions_triangles_materials_transforms_extras_preserved": true,
+    "max_derived_normal_component_difference": 7.18235969543457e-05,
+    "comparison_basis": "Exact position and oriented triangle multisets, names, hierarchy, materials, transforms and extras per node. Draw order excluded. Derived normals checked within 1e-4; unused procedural UV rounding excluded because no textures exist. No geometry simplification.",
+    "poster_comparison": [
+      {
+        "state": "without_reverse_full",
+        "size": [
+          1600,
+          960
+        ],
+        "mean_absolute_pixel_difference_0_255": [
+          0.005942708333333334,
+          0.005914713541666667,
+          0.006229166666666667
+        ],
+        "rms": [
+          0.35247081734993796,
+          0.33069627461111,
+          0.29641960686387353
+        ],
+        "max_channel_difference_0_255": [
+          135,
+          124,
+          102
+        ]
+      },
+      {
+        "state": "upstream_reverse_full",
+        "size": [
+          1600,
+          960
+        ],
+        "mean_absolute_pixel_difference_0_255": [
+          0.0060305989583333336,
+          0.0059765625,
+          0.006321614583333334
+        ],
+        "rms": [
+          0.35350643116497893,
+          0.3316507010395124,
+          0.29672693676173045
+        ],
+        "max_channel_difference_0_255": [
+          136,
+          125,
+          102
+        ]
+      }
+    ]
+  }
+}

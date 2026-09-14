@@ -57,6 +57,10 @@ export class TroubleshootingViewer{
     else this.model.traverse(node=>{
       const data=node.userData,base=data.basePosition;
       if(data.spin_axis){node.quaternion.copy(data.baseQuaternion);node.rotateOnAxis(new THREE.Vector3(1,0,0),Math.PI*2*this.phase);}
+      if(data.vent_flow&&Array.isArray(data.vent_from)&&Array.isArray(data.vent_to)){
+        const progress=(this.phase+(data.vent_phase||0))%1;
+        node.position.set(...data.vent_from).lerp(new THREE.Vector3(...data.vent_to),progress);
+      }
       const role=data.thermo_part;
       if(role==='heater'){node.position.copy(base);node.position.x=base.x+5.5*clamp((this.phase-.1)/.18);}
       if(role==='plug'){node.position.copy(base);node.position.y=base.y-3*clamp((this.phase-.2)/.35)*(1-clamp((this.phase-.76)/.18));}
@@ -76,7 +80,10 @@ export class TroubleshootingViewer{
     this.model?.traverseVisible(node=>{
       if(!node.isMesh)return;
       for(let parent=node;parent;parent=parent.parent)if(parent.userData.thermo_part==='heater')return;
-      if(detail&&!node.userData.sectionable&&node.userData.thermo_part!=='sheet')return;
+      if(typeof detail==='string'){
+        let inFocus=false;for(let parent=node;parent;parent=parent.parent)if(parent.userData.vent_focus===detail)inFocus=true;
+        if(!inFocus)return;
+      }else if(detail&&!node.userData.sectionable&&node.userData.thermo_part!=='sheet')return;
       node.geometry.computeBoundingBox();box.union(node.geometry.boundingBox.clone().applyMatrix4(node.matrixWorld));added=true;
     });
     return added?box:(detail?this.bounds(false):new THREE.Box3(new THREE.Vector3(-3,0,-2),new THREE.Vector3(3,4,2)));
@@ -112,6 +119,7 @@ export class TroubleshootingViewer{
     this.draw();
   }
   cameraAction(action){
+    if(['atm','vac','seal'].includes(action)){this.frame(action);return;}
     if(action==='reset'||action==='detail'||action==='end'){this.frame(action==='detail'||action==='end',action==='end');return;}
     const offset=this.camera.position.clone().sub(this.controls.target);
     if(action==='in'||action==='out')offset.multiplyScalar(action==='in'?.82:1.22);
@@ -121,7 +129,7 @@ export class TroubleshootingViewer{
   }
   draw(){if(this.destroyed||!this.active||!this.inView||document.hidden||!this.container.clientWidth)return;this.floor.visible=this.camera.position.y>this.floor.position.y+.1;this.renderer.render(this.scene,this.camera);this.frames++;}
   snapshot(){
-    const nodes=[];this.model?.traverseVisible(node=>{if(node.userData.thermo_part||node.userData.spin_axis||node.morphTargetInfluences)nodes.push({name:node.name,role:node.userData.thermo_part,position:node.position.toArray(),quaternion:node.quaternion.toArray(),morphs:node.morphTargetInfluences?.slice()});});
+    const nodes=[];this.model?.traverseVisible(node=>{if(node.userData.thermo_part||node.userData.spin_axis||node.userData.vent_flow||node.morphTargetInfluences)nodes.push({name:node.name,role:node.userData.thermo_part,flow:node.userData.vent_flow,position:node.position.toArray(),quaternion:node.quaternion.toArray(),morphs:node.morphTargetInfluences?.slice()});});
     return {frames:this.frames,phase:this.phase,context:this.context,groups:this.model?.children.map(x=>x.name)||[],visibleGroups:this.model?.children.filter(x=>x.visible).map(x=>x.name)||[],camera:this.camera.position.toArray(),nodes};
   }
   dispose(){

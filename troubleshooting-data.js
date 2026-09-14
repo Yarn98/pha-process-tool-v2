@@ -763,47 +763,70 @@ window.PHA_TROUBLESHOOTING_DATA = [
     "process": "compounding",
     "symptom": "Vent flooding or strand bubbles",
     "symptom_ko": "벤트 역류·스트랜드 기포",
-    "plain_en": "Possible causes include entrained air/water, high local fill, downstream pressure and poor vent isolation.",
-    "plain_ko": "혼입 공기·수분, 국부 충만도, 하류 압력, 벤트 씰 구성이 원인 후보입니다.",
+    "plain_en": "Identify the vent's job and the lumps first. Compare layouts with and without upstream reverse conveying; less outflow is not a fix if MI or quality deteriorates.",
+    "plain_ko": "벤트 역할과 덩어리의 정체부터 확인합니다. 역이송 제거·벤트 전 배치를 나눠 보고, 역류가 줄어도 MI·품질이 나빠지면 조정을 다시 검토합니다.",
     "likely_causes": [
-      "Entrained air or volatiles; vent flooding; insufficient melt seal; downstream restriction"
+      "Late or uneven melting; filler agglomerates or refrozen deposits may resemble unmelted resin",
+      "Local filling or downstream screen/die resistance; insert orientation, wear or deposits",
+      "Solids carried by air at an early atmospheric vent; unstable melt seal, moisture or gas load at a melt vent"
     ],
     "likely_causes_ko": [
-      "혼입 공기·휘발분, 벤트 역류, 용융 씰 불충분, 하류 막힘"
+      "용융 지연·불균일, 미용융처럼 보이는 충전재 응집·재고화 부착물",
+      "국부 충만·후단 스크린/다이 저항, 벤트 인서트 방향·마모·부착물",
+      "초기 대기 벤트의 공기 동반 분말 배출, 용융 벤트의 씰 불안정·수분·가스 부하"
     ],
-    "diagnostics": "Compare vacuum level, feeder/vent behavior, torque, pressure and pellet water. Locate the melt seal and partially filled vent zone on the screw drawing.",
-    "diagnostics_ko": "진공도·공급/벤트 상태·토크·압력·펠릿 수분을 비교하고 스크류 도면에서 용융 씰과 벤트의 부분 충만 구간을 확인합니다.",
+    "diagnostics": "Separate an early solids/air vent from melt degassing. Identify lumps and compare actual melt temperature, net shaft power, pressure, moisture and MI under the same test conditions. Review melting and sealing upstream of the vent, and conveying space after the reverse element; assess each layout separately.",
+    "diagnostics_ko": "초기 고상 공기 배출과 용융 탈기를 구분합니다. 덩어리의 정체, 실측 수지온도·순축동력·압력·수분과 동일 시험조건의 MI를 비교합니다. 벤트 전 용융·씰, 역이송 이후 이송 여유를 구성별로 확인합니다.",
     "quick_fixes": [
-      "For flooding or blockage, use the equipment's feed reduction, depressurization and stop procedure. Inspect only after isolation; do not insert tools into an operating vent."
+      "Use the OEM stop, depressurization and isolation procedure for persistent flooding or blockage. Inspect inserts, restrictions and temperature control before changing process settings; never probe an operating vent.",
+      "For confirmed incomplete melting with equipment faults excluded, compare a bounded change to early melting-zone heat input while holding RPM, feed rate and downstream cooling fixed. Check melt temperature, power, pressure, MI and product quality together."
     ],
     "quick_fixes_ko": [
-      "역류·막힘은 설비의 공급량 감소·감압·정지 절차를 따릅니다. 격리 후 점검하고 가동 중 벤트 안으로 공구를 넣지 않습니다."
+      "지속 역류·막힘은 장비의 정지·감압·격리 절차에 따릅니다. 인서트·후단 저항·온도제어 이상부터 확인하며 가동 벤트에 공구를 넣지 않습니다.",
+      "설비 이상을 배제하고 실제 용융 부족을 확인했다면 초기 용융부 열 공급을 제한적으로 비교합니다. RPM·투입량·후단 냉각은 유지하고 수지온도·동력·압력·MI·제품 품질을 함께 봅니다."
     ],
     "root_fixes": [
-      "Correct the verified drying, vacuum, seal or restriction problem with the equipment supplier. Longer conveying elements alone do not guarantee a melt seal."
+      "If acceptable melting and partly filled venting cannot coexist with preserved quality, review melting length, material renewal, the minimum needed seal and downstream pumping capacity with the OEM. One reverse element or a longer conveying section is not a universal fix.",
+      "An early atmospheric vent and downstream vacuum vent divide different jobs; not every PHA line requires exactly two vents. Select layout, drying and degassing stages for the material and gas load."
     ],
     "root_fixes_ko": [
-      "확인된 건조·진공·씰·막힘 문제를 장비 공급사와 개선합니다. 이송 엘리먼트를 길게 하는 것만으로 용융 씰 형성을 보장하지 않습니다."
+      "품질을 유지하며 용융과 부분 충만 탈기를 함께 확보할 수 없다면 장비사와 용융 길이·재료 갱신·필요한 씰·후단 압력 형성을 재검토합니다. 역이송 한 개나 이송부 연장만으로 해결을 보장하지 않습니다.",
+      "앞쪽 대기 벤트와 뒤쪽 진공 벤트는 역할을 나눈 배치입니다. 모든 PHA 공정에 정확히 두 개가 필요한 것은 아니며 원료·가스 부하에 맞춰 건조·탈기 단계를 정합니다."
     ],
     "control_knobs": [],
     "control_knobs_ko": [],
-    "notes": "Conditional engineering guidance; check equipment and grade constraints before a trial.",
-    "notes_ko": "조건부 엔지니어링 안내입니다. 장비·그레이드 한도를 확인한 뒤 시험하세요.",
+    "notes": "Use the source-linked Vent guide for conditional temperature/screw guidance. RPM up or throughput down can worsen MI; cooled-pellet MI is not reversible shear thinning. Hold test conditions and check selective ingredient loss. No fixed temperature increment or universal screw recipe is prescribed.",
+    "notes_ko": "벤트 가이드에서 출처별 조건부 승온·스크류 검토 방향을 확인합니다. RPM 증가·토출량 감소도 MI를 악화시킬 수 있습니다. 냉각 후 MI 상승을 일시적 전단박화로 해석하지 않으며 시험조건·선택적 첨가제 유실도 확인합니다. 고정 승온 폭·공통 스크류 조합은 제시하지 않습니다.",
     "evidence_level": "conditional_engineering_guidance",
-    "review_version": "2026-09-06-all-processing",
+    "review_version": "2026-09-14-vent-guide",
     "related_images": [
       "assets/troubleshooting/vent-flooding_full.webp",
       "assets/troubleshooting/vent-bubbles_section.webp"
     ],
     "sources": [
       {
-        "title": "Coperion: extrusion feeding and air escape",
-        "url": "https://www.coperion.com/media/3969/2017_twinscrewextrusion_platsticstechnology_04-2017_en.pdf",
-        "scope": "Feeding, fill and air-escape mechanisms"
+        "title": "Leistritz / SPE 2023: PHA processing",
+        "url": "https://www.4spe.org/files/Chapters/D22/presentationofthemonth_springenewsletter.pdf#page=35",
+        "scope": "PHA vent roles and low-shear/seal functions; grade-dependent conditions, not a universal recipe"
+      },
+      {
+        "title": "Coperion: troubleshooting the degassing zone",
+        "url": "https://www.coperion.com/en/know-how/ask-the-expert/troubleshooting-degassing-zone-of-twin-screw-extruder",
+        "scope": "Hardware, restriction, conveying and vacuum checks; no PHA temperature prescription"
+      },
+      {
+        "title": "PHB thermal degradation and rheology (2006)",
+        "url": "https://doi.org/10.1016/j.eurpolymj.2006.01.022",
+        "scope": "Thermal history and molecular-weight/viscosity changes; not kinetics for an unspecified PHA grade"
+      },
+      {
+        "title": "ISO 1133-2: sensitive-material MFR testing",
+        "url": "https://www.iso.org/standard/44274.html",
+        "scope": "Public test-scope description: temperature/time and moisture control, not a new grade-specific test condition"
       }
     ],
-    "stop_conditions": "Stop and isolate for persistent vent discharge, blockage or equipment-limit violations.",
-    "stop_conditions_ko": "벤트 토출·막힘이 지속되거나 설비 한도를 벗어나면 정지·격리 후 점검합니다.",
-    "review_basis": "GPT-6 Pro completed review + local source/code validation"
+    "stop_conditions": "Follow OEM stop/isolation procedures for persistent outflow, blockage or equipment limits. Revert the trial if MI or quality exceeds agreed acceptance, even when outflow decreases; cooling does not restore lost molecular weight.",
+    "stop_conditions_ko": "지속 역류·막힘·설비 한도 이탈은 장비의 정지·격리 절차를 따릅니다. 역류가 줄어도 MI·품질이 합의한 허용 범위를 벗어나면 시험 조건을 복귀합니다. 후단 냉각은 떨어진 분자량을 회복시키지 않습니다.",
+    "review_basis": "2026-09-14 completed GPT-6 Pro vent review + local primary-source validation; conditional guidance, no measured layout comparison"
   }
 ];

@@ -18,6 +18,7 @@ output/unreal/render-error.txt
 output/troubleshooting-build/
 output/troubleshooting-visual-review/
 output/playwright/troubleshooting-visuals/
+output/playwright/vent-guide/
 art/troubleshooting/*.blend1
 npm-debug.log*
 
@@ -42,3 +43,8 @@ output/gpt-pro-review-packs/pha-all-processing-gpt6-pro-20260906/artifacts/
 output/gpt-pro-review-packs/pha-all-processing-gpt6-pro-20260906/verified-sources/*.pdf
 output/gpt-pro-review-packs/pha-all-processing-gpt6-pro-20260906/verified-sources/*.png
 output/gpt-pro-review-packs/pha-all-processing-gpt6-pro-20260906/verified-sources/*.txt
+# Keep reference downloads locally; commit their URLs, hashes and research conclusions.
+output/research/pha-vent-20260914/*.pdf
+output/research/pha-vent-20260914/*.png
+output/research/pha-vent-20260914/entek-2021.txt
+output/research/pha-vent-20260914/leistritz-bioplastics-workshop-2023.txt

@@ -8,7 +8,7 @@ function signature(item){const text=JSON.stringify(fields.map(f=>item[f]));let n
 const assets=new Set(['data/troubleshooting_visuals.json','data/troubleshooting_kb.json']);
 for(const entry of spec.entries){
   const item=kb.find(x=>x.id===entry.kb_id);if(!item)throw new Error('Unknown KB '+entry.kb_id);
-  if(item.review_version!==spec.kb_review_version)throw new Error('KB review mismatch '+item.id);
+  if(item.review_version!==(entry.kb_review_version||spec.kb_review_version))throw new Error('KB review mismatch '+item.id);
   entry.kb_signature=signature(item);
   entry.model='assets/troubleshooting/'+entry.family+'.glb';assets.add(entry.model);
   entry.thumbnail='assets/troubleshooting/'+entry.kb_id+'-thumb.webp';assets.add(entry.thumbnail);

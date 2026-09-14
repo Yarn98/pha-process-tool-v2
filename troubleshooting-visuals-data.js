@@ -466,6 +466,7 @@ window.PHATroubleVisualData = {
     },
     {
       "kb_id": "pha-kb-16",
+      "kb_review_version": "2026-09-14-vent-guide",
       "family": "vent",
       "equipment": "compounding",
       "cases": [
@@ -490,7 +491,7 @@ window.PHATroubleVisualData = {
           "caption_en": "A cutaway reveals cavities below the strand's closed skin. Investigate moisture, air and other causes separately."
         }
       ],
-      "kb_signature": "5b4e490a",
+      "kb_signature": "aff895d2",
       "model": "assets/troubleshooting/vent.glb",
       "thumbnail": "assets/troubleshooting/pha-kb-16-thumb.webp",
       "states": [

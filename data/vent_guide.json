@@ -1,0 +1,374 @@
+{
+  "version": "pha-vent-guide-20260914-v1",
+  "review_version": "2026-09-14-vent-guide",
+  "kb_id": "pha-kb-16",
+  "review_date": "2026-09-14",
+  "title": {
+    "ko": "벤트로 수지가 나올 때",
+    "en": "When material escapes through a vent"
+  },
+  "summary": {
+    "ko": "먼저 벤트의 역할과 덩어리의 정체를 확인하세요. 역류가 줄어도 MI·품질이 나빠지면 해결된 것이 아닙니다.",
+    "en": "First identify the vent's job and the material coming out. Less vent discharge is not a successful fix if MI or product quality deteriorates."
+  },
+  "scope": {
+    "ko": "공급량과 RPM을 따로 제어하는 동방향 이축 압출기의 조건부 점검 가이드입니다. 원인 확정이나 생산 설정값이 아닙니다.",
+    "en": "Conditional checks for co-rotating twin-screw extrusion with independently controlled feed rate and RPM. This is not a confirmed diagnosis or a production setpoint."
+  },
+  "sources": [
+    {
+      "id": "leistritz-pha-2023",
+      "title": "Leistritz / SPE — PLA, PHA & TPS system design (2023), pp. 23–37",
+      "url": "https://www.4spe.org/files/Chapters/D22/presentationofthemonth_springenewsletter.pdf#page=35",
+      "scope": {
+        "ko": "35쪽은 PHA의 초기 대기 벤트, 그레이드별 온도, 저전단·진공 앞 씰과 추가 진공 가능성을 설명합니다. 앞쪽 PP/PLA 비교의 수치는 PHA 조건으로 쓰지 않습니다.",
+        "en": "Page 35 covers an early atmospheric vent, grade-dependent temperature, low shear, a seal before vacuum and possible additional vacuum. Numerical PP/PLA examples on earlier pages are not PHA setpoints."
+      }
+    },
+    {
+      "id": "coperion-degassing",
+      "title": "Coperion — Troubleshooting the degassing zone",
+      "url": "https://www.coperion.com/en/know-how/ask-the-expert/troubleshooting-degassing-zone-of-twin-screw-extruder",
+      "scope": {
+        "ko": "인서트·스크린/다이·벤트 아래 니딩·마모·진공 누설을 점검하는 일반 장비 가이드입니다. PHA 전용 온도나 스크류 처방은 없습니다.",
+        "en": "General equipment checks for inserts, screens/dies, kneading under the vent, wear and vacuum leaks. It gives no PHA-specific temperature or screw recipe."
+      }
+    },
+    {
+      "id": "entek-air-2021",
+      "title": "ENTEK — Extrusion Solutions (July 2021), p. 4",
+      "url": "https://entek.com/wp-content/uploads/2021/06/ExtrusionSolutions_July_2021.pdf#page=4",
+      "scope": {
+        "ko": "공기와 함께 분말이 대기 벤트로 나오는 현상을 설명합니다. 용융수지 넘침과 구분하는 근거이며 PHA의 분해 한계를 정하지 않습니다.",
+        "en": "Describes powder carried out of an atmospheric vent by air. This distinguishes solids carryover from melt flooding; it does not establish PHA degradation limits."
+      }
+    },
+    {
+      "id": "phb-thermal-2006",
+      "title": "Yamaguchi & Arakawa — PHB thermal degradation and rheology (2006)",
+      "url": "https://doi.org/10.1016/j.eurpolymj.2006.01.022",
+      "scope": {
+        "ko": "PHB의 열 이력에 따른 분자량·점도 변화를 다룬 연구입니다. 현재 PHA 그레이드의 허용 온도·시간이나 MI 변화량으로 환산하지 않습니다.",
+        "en": "A study of thermal history, molecular weight and viscosity in PHB. It does not supply temperature/time limits or an MI-change prediction for the current PHA grade."
+      }
+    },
+    {
+      "id": "iso-mfr-sensitive",
+      "title": "ISO 1133-2 — MFR testing of time-temperature/moisture-sensitive materials",
+      "url": "https://www.iso.org/standard/44274.html",
+      "scope": {
+        "ko": "공개 설명에서 시험 중 온도·시간·수분 관리의 필요성을 확인했습니다. 표준 전문이나 특정 PHA의 시험 온도·하중을 새로 승인한 것은 아닙니다.",
+        "en": "The public description supports control of test temperature, time and moisture. The full standard was not used to approve a test temperature or load for a particular PHA."
+      }
+    },
+    {
+      "id": "leistritz-rate-2023",
+      "title": "Leistritz — Twin Screw Report (2023)",
+      "url": "https://extruders.leistritz.com/en-us/extrusion/newsletter/2023-03-twin-screw/Twin-Screw-Newsletter-2023.pdf",
+      "scope": {
+        "ko": "공식 PDF의 색인 발췌에서 공급량/RPM, 혼련·탈기와 열화의 상충을 확인했습니다. 전체 PDF 직접 열람은 실패했으며 수치 조건은 채택하지 않았습니다.",
+        "en": "Indexed excerpts of the official PDF describe feed-rate/RPM, mixing, venting and degradation tradeoffs. Direct access to the full PDF failed; no numerical settings were adopted."
+      }
+    }
+  ],
+  "vent_rationale": {
+    "ko": "앞의 대기 벤트는 원료와 들어온 공기의 출구, 뒤의 진공 벤트는 용융수지에 남은 가스의 출구입니다. 멜트 씰이 두 압력 구역의 가스 흐름을 분리해 앞쪽 공기가 진공으로 계속 들어오는 일을 줄입니다.",
+    "en": "The early atmospheric vent lets incoming air escape. The downstream vacuum vent removes gas remaining in the melt. A melt seal separates gas flow between these pressure regions, limiting continuous air entry from upstream."
+  },
+  "vents": [
+    {
+      "id": "atm",
+      "title": { "ko": "앞쪽 대기 벤트 · ATM", "en": "Early atmospheric vent · ATM" },
+      "purpose": {
+        "ko": "투입 공기를 먼저 빼고, 표면 수분에서 나온 증기가 빠져나갈 길을 만듭니다.",
+        "en": "Releases feed air early and provides an escape path for vapour from surface moisture."
+      },
+      "state": {
+        "ko": "초기 고상 탈기용이라면 아직 덜 녹은 원료가 있어도 됩니다. 분말이 공기에 실려 나오는지 따로 확인합니다.",
+        "en": "An early solids vent may contain unmelted feed by design. Check separately for powder carried out by air."
+      },
+      "if_missing": {
+        "ko": "필요한 공기 배출 경로가 없으면 공기가 용융부로 넘어갈 수 있습니다. 전처리 건조를 대신하는 장치는 아닙니다.",
+        "en": "Without an adequate escape path, feed air may travel into the melting zone. This vent does not replace required predrying."
+      },
+      "source_ids": ["leistritz-pha-2023", "entek-air-2021"]
+    },
+    {
+      "id": "vac",
+      "title": { "ko": "뒤쪽 진공 벤트 · VAC", "en": "Downstream vacuum vent · VAC" },
+      "purpose": {
+        "ko": "용융 후 남은 수분·휘발 성분을 낮은 압력에서 제거합니다.",
+        "en": "Removes remaining moisture and volatiles from the melt at reduced pressure."
+      },
+      "state": {
+        "ko": "필요한 용융을 끝낸 뒤, 수지가 공간 일부만 채우는 탈기 구간과 안정된 멜트 씰이 필요합니다.",
+        "en": "After the required melting, the vent needs a partially filled degassing region and a stable melt seal."
+      },
+      "if_missing": {
+        "ko": "대기 탈기만으로 부족한 배합은 잔류 가스·기포가 남을 수 있습니다. 탈기 부하에 따라 추가 진공 단계가 필요할 수도 있습니다.",
+        "en": "If atmospheric venting is insufficient for the formulation, residual gas or voids may remain. The gas load may justify another vacuum stage."
+      },
+      "source_ids": ["leistritz-pha-2023", "coperion-degassing"]
+    }
+  ],
+  "configuration_comparison_note": {
+    "ko": "역이송 제거 구성과 벤트 전 역이송 구성에서 필요한 용융·씰·이송 기능을 각각 확인합니다. 어느 쪽이 적합한지는 비교 가능한 조건의 실제 벤트 배출·MI·품질로 판단합니다.",
+    "en": "Check the melting, sealing and conveying functions each layout needs. Judge suitability by actual vent discharge, MI and quality under comparable conditions."
+  },
+  "configurations": [
+    {
+      "id": "without_reverse",
+      "title": { "ko": "역이송 제거 구성", "en": "Layout without reverse conveying" },
+      "summary": {
+        "ko": "불필요한 저항을 줄일 수 있지만, 용융·씰에 필요했던 기능도 함께 줄었는지 확인합니다.",
+        "en": "Removing restriction may help, but check whether it also removed a function needed for melting or sealing."
+      },
+      "check": [
+        {
+          "ko": "용융 탈기 벤트 전에 필요한 용융이 끝나는가? 남은 니딩의 길이·위치·재료 혼합 기능을 봅니다.",
+          "en": "Is the required melting complete before the melt vent? Review the remaining kneading length, position and material-mixing function."
+        },
+        {
+          "ko": "다른 요소가 멜트 씰을 유지하는가? 진공 변동·공기 유입과 벤트 아래 이송 공간을 함께 확인합니다.",
+          "en": "Do other elements maintain a melt seal? Check vacuum fluctuations, air ingress and conveying space beneath the vent."
+        }
+      ],
+      "interpretation": {
+        "ko": "제거 후 실제 용융·씰이 부족해졌을 때만 그 기능을 보완합니다. 역이송이 없다는 이유로 무조건 다시 넣지 않습니다.",
+        "en": "Restore a function only if melting or sealing became inadequate after removal. Absence of a reverse element alone does not justify reinstalling one."
+      },
+      "source_ids": ["leistritz-pha-2023", "coperion-degassing"]
+    },
+    {
+      "id": "upstream_reverse",
+      "title": { "ko": "벤트 전 역이송 구성", "en": "Reverse conveying before the vent" },
+      "summary": {
+        "ko": "역이송 앞의 충만 구간은 용융·씰을 도울 수 있습니다. 저항이 과하면 그곳의 체류·발열도 커질 수 있습니다.",
+        "en": "The filled region upstream of a reverse element may help melting and sealing. Excessive restriction may also increase residence and heating there."
+      },
+      "check": [
+        {
+          "ko": "역이송 앞에서 실제로 충분히 녹는가? 요소 개수보다 앞뒤 요소의 기능과 실제 수지온도를 봅니다.",
+          "en": "Is melting adequate upstream of the reverse element? Review neighbouring element functions and actual melt temperature rather than element count alone."
+        },
+        {
+          "ko": "역이송 이후 벤트까지 부분 충만으로 전환할 이송 여유가 있는가? 후단 압력·스크린 저항도 확인합니다.",
+          "en": "Is there enough conveying capacity after it to become partially filled at the vent? Also check downstream pressure and screen resistance."
+        }
+      ],
+      "interpretation": {
+        "ko": "씰이 안정되고 MI·품질도 유지될 때 필요한 기능을 남깁니다. 체류·과열이 확인되면 강도를 더하지 말고 용융·씰·이송을 나눠 재검토합니다.",
+        "en": "Retain the needed function when the seal is stable and MI and quality are preserved. If excessive residence or heating is found, review melting, sealing and conveying separately before adding restriction."
+      },
+      "source_ids": ["leistritz-pha-2023", "coperion-degassing"]
+    }
+  ],
+  "symptoms": [
+    {
+      "id": "particles",
+      "label": { "ko": "덩어리도 함께 나와요", "en": "Lumps come out too" },
+      "meaning": {
+        "ko": "용융 지연은 후보 원인입니다. 하지만 벤트에서 식은 수지·다른 성분·충전재 응집도 덩어리처럼 보입니다.",
+        "en": "Late melting is one possibility. Cooled deposits, other ingredients or filler agglomerates can also look like unmelted lumps."
+      },
+      "checks": [
+        {
+          "ko": "고상 대기 벤트인지 용융 탈기 벤트인지 먼저 구분하고, 채취 위치·시점·원료 대비 형상·조성을 확인합니다.",
+          "en": "First distinguish a solids atmospheric vent from a melt vent; check sampling location/time, morphology and composition against the feed."
+        },
+        {
+          "ko": "DSC에서 다시 녹는 것만으로 과거 미용융을 증명할 수는 없습니다. 덜 녹은 입자와 과열된 용융수지가 함께 있을 가능성도 확인합니다.",
+          "en": "Remelting in DSC alone does not prove the material was never melted. Partially unmelted particles and an overheated melt fraction may coexist."
+        }
+      ],
+      "action": {
+        "ko": "실제 용융 부족이면 히터·냉각을 확인한 뒤 초기 열 공급·용융 길이·재료 혼합을 검토합니다. 충전재를 녹이려고 PHA 전체를 가열하지 않습니다.",
+        "en": "For confirmed inadequate melting, check heating/cooling before reviewing early heat input, melting length and mixing. Do not heat the whole PHA stream to try to melt filler."
+      },
+      "accept": {
+        "ko": "해당 벤트에 맞는 용융·이송 상태와 분산을 확보하고, MI·제품 품질을 함께 유지해야 합니다.",
+        "en": "The vent must have the appropriate material state and conveying behaviour, with adequate dispersion and preserved MI and product quality."
+      },
+      "source_ids": ["leistritz-pha-2023", "entek-air-2021", "phb-thermal-2006"]
+    },
+    {
+      "id": "rpm_mi",
+      "label": { "ko": "RPM 올린 뒤 MI가 올라요", "en": "MI rises after increasing RPM" },
+      "meaning": {
+        "ko": "RPM을 올려 벤트 배출은 줄었는데 MI가 올랐다면, 이송·용융이 좋아지는 동시에 열·기계적 노출이 커졌을 가능성을 확인합니다. 원인이 확정된 것은 아닙니다.",
+        "en": "If vent discharge falls but MI rises after increasing RPM, check whether improved conveying or melting coincides with greater thermal/mechanical exposure. This is a possible mechanism, not a confirmed cause."
+      },
+      "checks": [
+        {
+          "ko": "실측 수지온도·순축동력·압력과 덩어리를 함께 봅니다. 회전당 공급량은 충만율 자체가 아닙니다.",
+          "en": "Compare actual melt temperature, net shaft power, pressure and lumps. Feed per revolution is not the actual fill fraction."
+        },
+        {
+          "ko": "같은 배합·건조·시험 온도·하중·예열시간으로 MI를 비교합니다. 가공 후 MI 상승을 운전 중의 일시적 전단박화로 설명하지 않습니다.",
+          "en": "Compare MI at the same formulation, drying, test temperature, load and preheat time. A higher post-processing MI is not explained by transient shear thinning during extrusion."
+        }
+      ],
+      "action": {
+        "ko": "RPM을 계속 올리기보다 벤트 전 용융·씰과 벤트 아래 이송을 개선할 여지를 찾습니다. MI만으로 열분해·가수분해·기계적 손상 중 하나를 확정하지 않습니다.",
+        "en": "Look for improvements to melting/sealing before the vent and conveying beneath it, instead of escalating RPM. MI alone does not identify thermal, hydrolytic or mechanical damage."
+      },
+      "accept": {
+        "ko": "역류 감소와 함께 반복 MI·탈기·분산·제품 규격이 유지될 때만 채택 후보입니다.",
+        "en": "Consider adoption only if reduced vent discharge accompanies acceptable repeat MI, degassing, dispersion and product results."
+      },
+      "source_ids": ["leistritz-rate-2023", "phb-thermal-2006", "iso-mfr-sensitive"]
+    },
+    {
+      "id": "rate_mi",
+      "label": { "ko": "토출량 줄인 뒤 MI가 올라요", "en": "MI rises after reducing throughput" },
+      "meaning": {
+        "ko": "양을 줄여도 수지 1 kg이 받는 에너지나 혼련 구간 노출은 늘 수 있습니다. 감량 후 벤트 배출이 줄었는지는 별도로 확인하며, 감량 자체를 해결책으로 보지 않습니다.",
+        "en": "Reducing throughput can increase energy per kg or exposure in mixing zones. Check vent discharge separately; do not assume that reducing throughput also reduces vent discharge."
+      },
+      "checks": [
+        {
+          "ko": "SME = 순축동력 ÷ 질량유량입니다. 공급량보다 동력이 덜 줄면 SME가 커집니다. 토크 %만으로 계산하거나 이를 손상량으로 읽지 않습니다.",
+          "en": "SME = net shaft power ÷ mass flow. It rises if power falls less proportionally than rate. Do not calculate it from torque % alone or read it as a damage measurement."
+        },
+        {
+          "ko": "투입량·제품 회수량·벤트 유실량을 구분합니다. 첨가제가 선택적으로 빠져 최종 배합과 MI가 바뀌었는지도 확인합니다.",
+          "en": "Distinguish feed input, recovered product and vent loss. Check whether selective additive loss changed the final formulation and MI."
+        }
+      ],
+      "action": {
+        "ko": "감량을 기본 처방으로 삼지 않습니다. 필요한 용융·탈기는 유지하면서 불필요한 체류·혼련을 줄이는 기능 변경을 비교합니다.",
+        "en": "Do not treat rate reduction as the default remedy. Compare functional changes that reduce unnecessary residence or mixing while preserving melting and degassing."
+      },
+      "accept": {
+        "ko": "같은 배합·시험조건의 MI와 품질이 유지되어야 합니다. SME가 낮아졌다는 사실만으로 채택하지 않습니다.",
+        "en": "MI and quality must remain acceptable at the same formulation and test conditions. A lower SME alone is not sufficient for adoption."
+      },
+      "source_ids": ["leistritz-rate-2023", "iso-mfr-sensitive"]
+    },
+    {
+      "id": "pressure",
+      "label": { "ko": "수지가 차오르거나 압력이 변해요", "en": "Melt backs up or pressure changes" },
+      "meaning": {
+        "ko": "후단 저항으로 충만 구간이 벤트까지 늘어났을 수 있습니다. 인서트·부착물·마모와 점도 변화도 함께 봅니다.",
+        "en": "Downstream resistance may extend the filled region back to the vent. Also review the insert, deposits, wear and viscosity changes."
+      },
+      "checks": [
+        {
+          "ko": "스크린 차압·헤드 압력의 정상 기록과 비교합니다. 인서트 방향·형상, 벤트 아래 니딩과 이송 공간을 확인합니다.",
+          "en": "Compare screen pressure drop and head pressure with normal records. Check insert direction/type, kneading beneath the vent and conveying space."
+        },
+        {
+          "ko": "진공 벤트는 배관 막힘·누설·씰과 수분을 추가 확인합니다. 대기·진공 벤트의 원인이 같다고 가정하지 않습니다.",
+          "en": "For the vacuum vent, also check blocked/leaking lines, seals and moisture. Do not assume both vents share the same cause."
+        }
+      ],
+      "action": {
+        "ko": "정지·감압·격리 후 부품을 점검·복구합니다. 막힘이 없다면 벤트 이후 압력 형성부를 검토합니다.",
+        "en": "Stop, depressurize and isolate before inspecting or restoring parts. If no blockage is found, review pressure generation downstream of the vent."
+      },
+      "accept": {
+        "ko": "압력·진공·역류가 안정되고 탈기·품질도 유지되어야 합니다. 진공을 약하게 해 기포가 늘면 해결이 아닙니다.",
+        "en": "Pressure, vacuum and vent discharge must stabilize while degassing and quality remain acceptable. Reducing vacuum is not a fix if voids increase."
+      },
+      "source_ids": ["coperion-degassing", "leistritz-pha-2023"]
+    }
+  ],
+  "temperature": {
+    "title": { "ko": "승온은 언제 도움이 되나요?", "en": "When can more early heat help?" },
+    "when": {
+      "ko": "실제 용융 부족이 확인되고 히터·센서·냉각이 정상일 때입니다. 초기 열 공급이 기계적 용융 부담을 줄일 가능성이 있지만 PHA에서 확인해야 합니다.",
+      "en": "When inadequate melting is confirmed and heaters, sensors and cooling work correctly. Earlier heat input may reduce mechanical melting demand, but this needs validation for the PHA."
+    },
+    "trial": {
+      "ko": "그레이드·OEM 범위에서 초기 용융부만 제한적으로 비교합니다. 첫 비교는 RPM·공급량·배합·스크린·진공·후단 냉각을 유지하고 실제 온도·동력·압력·MI를 기록합니다.",
+      "en": "Compare a limited change in the early melting zone within grade/OEM limits. Initially hold RPM, feed, formulation, screen, vacuum and downstream cooling fixed; record actual temperature, power, pressure and MI."
+    },
+    "accept": {
+      "ko": "용융·역류가 개선되고 실측 수지온도·반복 MI·탈기·분산·제품 규격이 함께 유지될 때 채택 후보입니다.",
+      "en": "Consider adoption when melting improves and vent discharge decreases while actual melt temperature, repeat MI, degassing, dispersion and product specifications remain acceptable."
+    },
+    "revert": {
+      "ko": "MI·품질이 허용 범위를 벗어나거나 압력·온도가 장비 한계를 향하면 시험을 중단하고 검증된 상태로 복귀합니다. 후단 냉각은 이미 잃은 분자량을 되돌리지 못합니다.",
+      "en": "Stop the trial and return to a validated state if MI/quality leave acceptable limits or pressure/temperature approach equipment limits. Downstream cooling cannot restore molecular weight already lost."
+    },
+    "source_ids": ["leistritz-pha-2023", "phb-thermal-2006", "iso-mfr-sensitive"]
+  },
+  "sequence": [
+    {
+      "title": { "ko": "무엇이 나오는지 확인", "en": "Identify what comes out" },
+      "body": {
+        "ko": "고상·용융 벤트를 구분하고 덩어리를 원료와 비교합니다. 같은 배합·시험조건의 MI를 준비합니다. 지속 역류를 오래 재현해 기준을 만들지 않습니다.",
+        "en": "Identify a solids or melt vent and compare lumps with feed material. Establish comparable formulation and MI test conditions. Do not prolong ongoing overflow to create a baseline."
+      }
+    },
+    {
+      "title": { "ko": "설비 정상 상태부터 복구", "en": "Restore normal equipment condition" },
+      "body": {
+        "ko": "인서트·마모·스크린·다이·히터·냉각을 확인합니다. 분해 점검은 정지·감압·격리 후 진행합니다.",
+        "en": "Check the insert, wear, screen, die, heating and cooling. Stop, depressurize and isolate before dismantling for inspection."
+      }
+    },
+    {
+      "title": { "ko": "확인된 용융 부족만 겨냥", "en": "Target confirmed inadequate melting" },
+      "body": {
+        "ko": "첫 시험은 다른 조건을 유지한 초기 열 공급 비교입니다. 역류와 MI·품질을 함께 판정합니다.",
+        "en": "First compare early heat input while holding other conditions fixed. Judge vent discharge together with MI and quality."
+      }
+    },
+    {
+      "title": { "ko": "허용 가능한 범위가 없으면 기능 재설계", "en": "Redesign functions if no acceptable window exists" },
+      "body": {
+        "ko": "OEM과 용융 → 필요한 씰 → 부분 충만 탈기 → 후단 압력 형성을 검토합니다. 용융이 늦어지면 벤트 위치도 함께 봅니다.",
+        "en": "Review melting → required seal → partially filled degassing → downstream pressure generation with the OEM. Reconsider vent position if melting finishes too late."
+      }
+    }
+  ],
+  "not_universal": {
+    "ko": "모든 PHA에 벤트가 꼭 두 개 필요한 것은 아닙니다. 원문도 추가 진공이 필요할 수 있다고 설명합니다. 벤트 수·L/D·온도·요소 각도와 개수는 배합·탈기 부하·설비에 따라 달라집니다. 원문의 40:1 L/D와 90° 니딩 예시는 공통 처방이 아니며, 90° 중립 니딩은 역이송과 다른 요소입니다.",
+    "en": "Not every PHA process requires exactly two vents; the source also allows for additional vacuum. Vent count, L/D, temperature, element angles and counts depend on formulation, gas load and equipment. Its 40:1 L/D and 90° kneading examples are not universal recipes; neutral 90° kneading is not a reverse-conveying element."
+  },
+  "terms": [
+    {
+      "term": { "ko": "벤트 역류", "en": "Vent discharge / flooding" },
+      "meaning": {
+        "ko": "여기서는 재료가 벤트로 나오는 현상입니다. 압력에 의한 넘침·회전에 딸린 배출·분말 비산을 구분하며 실제 축 방향 역류로 단정하지 않습니다.",
+        "en": "Here this means material leaving through a vent. Distinguish pressure-driven flooding, rotational carryover and powder entrainment; it does not prove axial reverse flow."
+      }
+    },
+    {
+      "term": { "ko": "멜트 씰", "en": "Melt seal" },
+      "meaning": {
+        "ko": "수지가 통로를 채워 가스 경로와 압력 구역을 분리하는 부분입니다. 특정 역이송 한 개와 같은 뜻은 아닙니다.",
+        "en": "A melt-filled region that separates gas paths and pressure zones. It is not synonymous with one particular reverse element."
+      }
+    },
+    {
+      "term": { "ko": "부분 충만", "en": "Partially filled" },
+      "meaning": {
+        "ko": "스크류 통로의 일부만 수지가 채워 가스가 빠질 공간이 남은 상태입니다. 빈 압출기나 정해진 충만율을 뜻하지 않습니다.",
+        "en": "Melt occupies only part of the screw channel, leaving space for gas release. It does not mean an empty extruder or a prescribed fill percentage."
+      }
+    },
+    {
+      "term": { "ko": "회전당 공급량", "en": "Feed per revolution" },
+      "meaning": {
+        "ko": "1000 × Q[kg/h] ÷ (60 × N[rpm]) = g/rev, N > 0. 같은 장비·배합의 부하 비교용이며 실제 충만율은 아닙니다.",
+        "en": "1000 × Q[kg/h] ÷ (60 × N[rpm]) = g/rev, N > 0. A loading comparison for the same machine/formulation, not a measured fill fraction."
+      }
+    },
+    {
+      "term": { "ko": "SME · 단위 질량당 기계에너지", "en": "SME · specific mechanical energy" },
+      "meaning": {
+        "ko": "Pnet[kW] ÷ Q[kg/h] = kWh/kg, Q > 0. 순축동력과 실제 투입량의 기준을 맞춥니다. 국부 최고 온도·체류·손상량을 직접 나타내지 않습니다.",
+        "en": "Pnet[kW] ÷ Q[kg/h] = kWh/kg, Q > 0. Use a consistent net-shaft-power and actual-feed basis. It does not directly measure local peak temperature, residence or damage."
+      }
+    },
+    {
+      "term": { "ko": "MI / MFR", "en": "MI / MFR" },
+      "meaning": {
+        "ko": "정해진 시험조건에서의 용융 질량유량입니다. 값이 높아지는 이유를 분해 하나로 단정하거나 시험조건이 다른 값을 바로 비교하지 않습니다.",
+        "en": "Melt mass-flow rate under specified test conditions. A higher value alone does not prove degradation, and values from different test conditions are not directly comparable."
+      }
+    }
+  ]
+}

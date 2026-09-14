@@ -8,6 +8,25 @@ PHA 가공의 **초기 시운전 참고 조건, 계산, 현장 기록**을 제�
 
 **2026-09-14 트러블슈팅 시각 가이드:** 16개 점검 항목에 25개 대표 결함 형상, 정상 비교, 확대 이미지, 3D·단면과 기존 KB의 확인·조치 흐름을 연결했습니다. **열성형 설비를 신규 제작**해 히터·플러그·시트 성형·클램프·이형을 단계별로 조작합니다. [제작·출처·검증](docs/TROUBLESHOOTING_VISUALS_20260914.md).
 
+**2026-09-14 벤트 집중 가이드:** ‘벤트 역류·스트랜드 기포’에서 **벤트 가이드·3D 보기**를 열면 앞쪽 대기 벤트와 뒤쪽 진공 벤트의 역할, 역이송 제거/벤트 전 배치 비교, 덩어리·RPM/토출량 변경 후 MI 상승의 점검 순서를 볼 수 있습니다. 제조사 원문과 완료된 GPT-6 Pro 조사를 검토해 조건부 가이드로 반영했습니다. 승온 폭이나 스크류 개수를 자동 처방하지 않습니다. 새 Blender 모형에서 두 배치, 스크류 회전·수지/가스 이동, ATM·씰·VAC 확대를 조작합니다. 첨부 슬라이드는 앱 이미지로 재사용하지 않았습니다. [조사 내용](docs/research/PHA_VENT_FLOODING_20260914.md) / [구현·검증](docs/VENT_GUIDE_20260914.md).
+
+## GitHub에서 받아 로컬로 실행
+
+[저장소 전체 ZIP](https://github.com/Yarn98/pha-process-tool-v2/archive/refs/heads/main.zip)을 받거나 [저장소](https://github.com/Yarn98/pha-process-tool-v2)의 **Code → Download ZIP**을 선택합니다. ZIP 내부의 `pha-process-tool-v2-main` 폴더 전체를 사용하세요. [GitHub 다운로드 안내](https://docs.github.com/en/repositories/working-with-files/using-files/downloading-source-code-archives).
+
+저장 위치는 자유입니다. 예를 들어 폴더 이름을 바꿔 `D:\PHA-Process\index.html`이 보이도록 압축을 풉니다. `index.html`, 루트의 JS·CSS 파일, `assets/`, `data/`, `icons/`, `vendor/`, `sw.js`, `manifest.webmanifest`의 상대 위치를 유지해야 합니다. `index.html` 하나만 받으면 3D·가이드가 완성되지 않습니다.
+
+Python 3가 설치된 PC의 PowerShell에서 실행합니다.
+
+```powershell
+Set-Location 'D:\PHA-Process'
+python -m http.server 8097 --bind 127.0.0.1
+```
+
+브라우저에서 **http://127.0.0.1:8097/** 을 여세요. 서버 창은 실행 중 유지하고 종료할 때 `Ctrl+C`를 누릅니다. `index.html` 더블클릭보다 로컬 HTTP 실행을 사용하세요. 루트에 실행용 JS·3D 파일이 포함되어 있으므로 단순 사용에는 Node.js·Blender·Unreal 설치나 재빌드가 필요하지 않습니다.
+
+현재 개발 PC의 저장소 위치는 `D:\My_PJT\Application\pha_optimizer_convertor`입니다. 이 PC에서는 해당 폴더에서 같은 서버 명령으로 실행합니다. GitHub에는 `dist/`를 올리지 않습니다. 실행 파일만 따로 전달하려면 개발 PC에서 `npm run build` 후 생성되는 **`dist/` 전체 내용**을 새 폴더로 복사하세요. 공정 기록·개인 API 설정은 브라우저에 저장되므로 저장소 ZIP에 포함되지 않습니다.
+
 ## 실행과 검증
 
 ```powershell
@@ -23,6 +42,8 @@ npm run test:study
 npm run check:kb
 npm run check:ts-visuals
 npm run test:ts-visuals
+npm run check:vent-guide
+npm run test:vent-guide
 npm run build
 # 배포용 파일을 대상으로 UI 검사
 $env:PHA_TEST_ROOT='dist'; npm run test:ui
@@ -90,6 +111,8 @@ S1000P, A1000P, CA1180P, CB0104A, CB0400A, CA1165A, CA1670P, CA1680P, CA1270P의
 | troubleshooting-data.js / scripts/sync-troubleshooting.cjs | JSON에서 생성하는 동일한 오프라인 KB와 검사 |
 | troubleshooting-visuals.js / .css / troubleshooting-viewer.js | 증상별 공유 확대창, 정상·단면·설비 관찰과 단계 조작 |
 | data/troubleshooting_visuals.json / troubleshooting-visuals-data.js | 16개 항목·25개 형상의 한영 설명, KB 내용/검토 버전과 자산 연결 |
+| data/vent_guide.json / vent-guide-data.js / vent-guide.js / .css | 출처가 연결된 두 벤트·역이송 비교·증상별 가이드, 공통 확대창의 3D 연결 |
+| scripts/create_vent_guide_model.py / tests/blender-vent-guide.py | 두 배치의 새 Blender 원본·GLB·포스터 제작과 기능별 형상 검증 |
 | assets/troubleshooting/ / art/troubleshooting/ | 웹용 GLB·WebP / 배포에서 제외되는 Blender·생성 이미지 편집 원본과 프롬프트 |
 | compounding-guide.js / straw-guide.js | 공정 참고 가이드 |
 | assets/equipment/ | 8개 공정의 GLB·편집 원본·대체 포스터, 기존 PNG 보존 |
@@ -133,7 +156,7 @@ blender --background --factory-startup --python-exit-code 1 --python scripts/cre
 
 이력·배치·템플릿·물성은 브라우저 로컬 저장소에, 일부 사진은 IndexedDB와 별도 localStorage 갤러리에 저장합니다. 기기 간 자동 동기화되지 않습니다. JSON/CSV로 백업하세요. 업데이트를 위해 웹사이트 데이터를 지우면 현장 기록도 삭제될 수 있습니다.
 
-서비스워커는 HTML network-first, 버전 자산 precache를 사용합니다. v=22 / pha-cache-v22-troubleshooting-visuals. 첫 정상 로드와 캐시 준비 후 로컬 자료·8개 기존 설비·16개 결함 모형의 3D 조작·계산을 사용할 수 있습니다. 외부 TARS API와 CDN Chart.js는 오프라인에서 제한됩니다. file://보다 로컬 HTTP 실행을 권장합니다.
+서비스워커는 HTML network-first, 버전 자산 precache를 사용합니다. v=23 / pha-cache-v23-vent-guide. 첫 정상 로드와 캐시 준비 후 로컬 자료·8개 기존 설비·16개 결함 모형 및 새 두 벤트 모형의 3D 조작·계산을 사용할 수 있습니다. 외부 TARS API와 CDN Chart.js는 오프라인에서 제한됩니다. file://보다 로컬 HTTP 실행을 권장합니다.
 
 기존 체크리스트·시험 로그는 유지합니다. 의미가 바뀐 컴파운딩 체크 두 항목은 새 키를 사용하며, 이전 완료 표시는 과거 기록으로 남깁니다.
 

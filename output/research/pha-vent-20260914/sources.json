@@ -1,0 +1,22 @@
+[
+  {
+    "id": "leistritz-melt-temperature-2019",
+    "status": "failed",
+    "error": "Remote end closed connection without response"
+  },
+  {
+    "id": "entek-2021",
+    "url": "https://entek.com/wp-content/uploads/2021/06/ExtrusionSolutions_July_2021.pdf",
+    "status": "downloaded",
+    "sha256": "9b48b3412e2e7ae59886e345d28b3952bb0265448ac4c679835ecd2328bfa347",
+    "pages": 6
+  },
+  {
+    "id": "leistritz-bioplastics-workshop-2023",
+    "url": "https://www.4spe.org/files/Chapters/D22/presentationofthemonth_springenewsletter.pdf",
+    "status": "downloaded",
+    "sha256": "a0751b5dac0ba412d26c5a7a95779e9c5ee79685fba636429e5e4802d990c70e",
+    "pages": 44,
+    "rendered_page_inspected": 35
+  }
+]

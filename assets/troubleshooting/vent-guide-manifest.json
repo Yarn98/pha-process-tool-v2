@@ -1,0 +1,46 @@
+{
+  "id": "vent-guide",
+  "blender": "5.2.1 LTS",
+  "representation": "original_educational_cutaway",
+  "physical_process_solver": false,
+  "states": [
+    "without_reverse_full",
+    "upstream_reverse_full"
+  ],
+  "motion": {
+    "frame": "Three glTF Y-up; +X feed-to-die; all flow markers direct children of identity state groups",
+    "screw": "spin_axis=x on two pivot nodes per state; rotate both in same direction",
+    "flow": "vent_flow=solid|melt|atm_gas|vac_gas; vent_from and vent_to Three parent-local vectors; t=(phase+vent_phase)%1; lerp(from,to,t)",
+    "focus": "vent_focus=atm|vac|seal on static equipment meshes and compared element; includes nearby barrel context",
+    "scope": "directional explanation only, no timing, fill fraction, energy or residence prediction"
+  },
+  "mesh_reuse": {
+    "mesh_objects": 452,
+    "unique_mesh_data": 150,
+    "reused_mesh_objects": 302,
+    "method": "byte-identical attributes, topology and materials; no simplification"
+  },
+  "assets": [
+    {
+      "file": "assets/troubleshooting/vent-guide-without_reverse_full.webp",
+      "source": "art/troubleshooting/vent-guide-without_reverse_full.png",
+      "source_sha256": "b6c820b4f73e934050cbc852d809798b5051b183e6c337aac847a3279168b5cf",
+      "sha256": "3e3be2b1034c864daff816987c9d8268a0c2557c1d62ba76e75224c7b50ad72e",
+      "bytes": 62282
+    },
+    {
+      "file": "assets/troubleshooting/vent-guide-upstream_reverse_full.webp",
+      "source": "art/troubleshooting/vent-guide-upstream_reverse_full.png",
+      "source_sha256": "af07aa38ff351229c78dc4e963eb5387be5b1e7935c7b9d4ccfbd215eb6f8088",
+      "sha256": "9344ef20895056f718ab3227f534702e2db242b4d95b9a6fa2293ce7c3759b98",
+      "bytes": 62900
+    },
+    {
+      "file": "assets/troubleshooting/vent-guide.glb",
+      "source": "scripts/create_vent_guide_model.py",
+      "source_sha256": "356404891d3afb6e6311b9d6687350c524bd6de40b55e7205fc8f1e8369f5b50",
+      "sha256": "92bda9085d35783fb2a2e8a30aab65c8b9f985e344843e17edf339a4f607f78d",
+      "bytes": 1890544
+    }
+  ]
+}

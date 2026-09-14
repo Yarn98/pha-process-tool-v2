@@ -1,0 +1,188 @@
+{
+  "status": "passed",
+  "blender": "5.2.1 LTS",
+  "states": [
+    {
+      "state": "without_reverse_full",
+      "meshes": 226,
+      "screw_pivots": 2,
+      "flow_markers": {
+        "atm_gas": 4,
+        "melt": 17,
+        "solid": 7,
+        "vac_gas": 4
+      },
+      "atmospheric_before_melting": true,
+      "vacuum_after_seal_region": true,
+      "compared_element": "forward",
+      "finite_geometry": true,
+      "focus_bounds": {
+        "atm": {
+          "three_min": [
+            -4.25,
+            0.7149999737739563,
+            -0.9950000047683716
+          ],
+          "three_max": [
+            -2.9800000190734863,
+            3.9600000381469727,
+            1.000499963760376
+          ],
+          "meshes": 14
+        },
+        "vac": {
+          "three_min": [
+            1.3700000047683716,
+            0.48499998450279236,
+            -1.6299999952316284
+          ],
+          "three_max": [
+            4.289999961853027,
+            3.9600000381469727,
+            1.000499963760376
+          ],
+          "meshes": 18
+        },
+        "seal": {
+          "three_min": [
+            -1.149999976158142,
+            0.7149999737739563,
+            -0.9950000047683716
+          ],
+          "three_max": [
+            1.3700000047683716,
+            1.7178786993026733,
+            1.000499963760376
+          ],
+          "meshes": 23
+        }
+      }
+    },
+    {
+      "state": "upstream_reverse_full",
+      "meshes": 226,
+      "screw_pivots": 2,
+      "flow_markers": {
+        "atm_gas": 4,
+        "melt": 17,
+        "solid": 7,
+        "vac_gas": 4
+      },
+      "atmospheric_before_melting": true,
+      "vacuum_after_seal_region": true,
+      "compared_element": "reverse",
+      "finite_geometry": true,
+      "focus_bounds": {
+        "atm": {
+          "three_min": [
+            -4.25,
+            0.7149999737739563,
+            -0.9950000047683716
+          ],
+          "three_max": [
+            -2.9800000190734863,
+            3.9600000381469727,
+            1.000499963760376
+          ],
+          "meshes": 14
+        },
+        "vac": {
+          "three_min": [
+            1.3700000047683716,
+            0.48499998450279236,
+            -1.6299999952316284
+          ],
+          "three_max": [
+            4.289999961853027,
+            3.9600000381469727,
+            1.000499963760376
+          ],
+          "meshes": 18
+        },
+        "seal": {
+          "three_min": [
+            -1.149999976158142,
+            0.7149999737739563,
+            -0.9950000047683716
+          ],
+          "three_max": [
+            1.3700000047683716,
+            1.7179851531982422,
+            1.000499963760376
+          ],
+          "meshes": 23
+        }
+      }
+    }
+  ],
+  "mesh_objects": 452,
+  "unique_mesh_data": 150,
+  "same_machine_except_compared_elements": true,
+  "glb_bytes": 1890544,
+  "glb_sha256": "92bda9085d35783fb2a2e8a30aab65c8b9f985e344843e17edf339a4f607f78d",
+  "glb_roots": [
+    "without_reverse_full",
+    "upstream_reverse_full"
+  ],
+  "motion_frame": "Three Y-up metadata checked against Blender Z-up positions",
+  "process_solver_validation": false,
+  "screw_clearance_validation": false,
+  "limitations": "Illustrative open cutaway and directional markers; no geometry recipe, seal success, fill, energy, residence or actual plant outcome is predicted.",
+  "deduplication_validation": {
+    "old_bytes": 4033428,
+    "new_bytes": 1890544,
+    "reduction_percent": 53.13,
+    "old_meshes": 452,
+    "new_meshes": 150,
+    "checked_nodes": 468,
+    "positions_triangles_materials_transforms_extras_preserved": true,
+    "max_derived_normal_component_difference": 7.18235969543457e-05,
+    "comparison_basis": "Exact position and oriented triangle multisets, names, hierarchy, materials, transforms and extras per node. Draw order excluded. Derived normals checked within 1e-4; unused procedural UV rounding excluded because no textures exist. No geometry simplification.",
+    "poster_comparison": [
+      {
+        "state": "without_reverse_full",
+        "size": [
+          1600,
+          960
+        ],
+        "mean_absolute_pixel_difference_0_255": [
+          0.005942708333333334,
+          0.005914713541666667,
+          0.006229166666666667
+        ],
+        "rms": [
+          0.35247081734993796,
+          0.33069627461111,
+          0.29641960686387353
+        ],
+        "max_channel_difference_0_255": [
+          135,
+          124,
+          102
+        ]
+      },
+      {
+        "state": "upstream_reverse_full",
+        "size": [
+          1600,
+          960
+        ],
+        "mean_absolute_pixel_difference_0_255": [
+          0.0060305989583333336,
+          0.0059765625,
+          0.006321614583333334
+        ],
+        "rms": [
+          0.35350643116497893,
+          0.3316507010395124,
+          0.29672693676173045
+        ],
+        "max_channel_difference_0_255": [
+          136,
+          125,
+          102
+        ]
+      }
+    ]
+  }
+}

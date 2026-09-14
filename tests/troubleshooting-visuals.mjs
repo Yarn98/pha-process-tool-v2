@@ -101,7 +101,7 @@ try{
   const oc=await browser.newContext({viewport:{width:1280,height:1000},reducedMotion:'reduce'}),op=await app(oc);
   await op.evaluate(()=>localStorage.setItem('ts-visual-retention-fixture','preserve'));
   await op.evaluate(async()=>{await navigator.serviceWorker.ready;});
-  await op.waitForFunction(async()=>{const cache=await caches.open('pha-cache-v22-troubleshooting-visuals');const keys=await cache.keys();return keys.some(k=>k.url.includes('thermoforming.glb?v=22'))&&keys.some(k=>k.url.includes('troubleshooting-viewer.js?v=22'));},{},{timeout:60000});
+  await op.waitForFunction(async()=>{const cache=await caches.open('pha-cache-v23-vent-guide');const keys=await cache.keys();return keys.some(k=>k.url.includes('thermoforming.glb?v=23'))&&keys.some(k=>k.url.includes('troubleshooting-viewer.js?v=23'));},{},{timeout:60000});
   await op.reload({waitUntil:'domcontentloaded'});await unlock(op);await op.locator('.tab[data-tab="ts"]').click();await op.waitForFunction(()=>!!navigator.serviceWorker.controller);
   await oc.setOffline(true);await op.reload({waitUntil:'domcontentloaded'});await unlock(op);await op.locator('.tab[data-tab="ts"]').click();
   for(const entry of data.entries){await open(op,entry.kb_id,'model');await ready(op);assert.ok((await state(op)).compatible);await close(op);}

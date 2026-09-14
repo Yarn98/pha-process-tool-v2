@@ -1,0 +1,50 @@
+.vent-guide{max-width:960px;margin-inline:auto;overflow-wrap:anywhere}
+.vent-guide h3{font:700 20px/1.5 var(--korean);margin:0 0 12px}
+.vent-guide h4{font:700 16px/1.5 var(--korean);margin:0 0 10px}
+.vent-guide p{margin:8px 0 12px}
+.vent-guide .vent-eyebrow{font-size:12px;color:var(--accent);margin:0 0 6px}
+.vent-lead{padding:0 0 20px;max-width:780px}
+.vent-lead>p:last-child{font-size:16px;line-height:1.85}
+.vent-lesson{border-top:1px solid var(--rule);padding:22px 0}
+.vent-layout{margin:14px 0 22px}
+.ts-visual-dialog .vent-layout>button{display:block;width:100%;padding:0;overflow:hidden;background:#ece9df;border:0;text-align:left}
+.vent-layout img{width:100%;height:auto;max-height:410px;object-fit:contain;display:block}
+.vent-layout button>span{display:block;padding:10px 14px;font-size:13px;background:var(--paper);color:var(--accent)}
+.vent-role-grid,.vent-config-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:26px}
+.vent-role-grid article{padding-bottom:8px}
+.vent-role-grid h4 span{display:inline-block;color:var(--accent);margin-right:6px}
+.vent-state{font-size:13px}
+.vent-state strong{display:block;color:var(--accent)}
+.vent-guide summary{cursor:pointer;min-height:44px;padding:10px 0;font-weight:600}
+.vent-guide details p,.vent-guide li{line-height:1.8}
+.vent-guide ul{padding-left:20px;margin:8px 0}
+.vent-guide li{margin-bottom:7px}
+.vent-key-point{padding:12px 16px;background:#edf1e7;border-left:3px solid var(--accent)}
+.vent-inline-sources{display:block;font-size:11px;line-height:1.7;margin:12px 0 0;color:var(--muted)}
+.vent-comparison-note{font-size:13px;color:var(--muted)}
+.vent-config-grid{gap:18px;margin:14px 0 16px}
+.vent-config-grid article{border-top:3px solid var(--rule);padding-top:12px}
+.vent-config-grid article.is-selected{border-top-color:var(--accent)}
+.vent-config-grid article>button{width:100%;text-align:left;font-weight:600}
+.vent-config-grid article>p{font-size:14px}
+.vent-symptom-options{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 18px}
+.vent-symptom-options button{flex:1 1 180px;text-align:left;font-size:13px}
+.vent-symptom-detail{padding:18px 20px;background:#fffcf5;border-left:3px solid var(--accent)}
+.vent-guide dl{margin:12px 0 0}
+.vent-guide dt{font-weight:700;margin-top:16px;color:var(--accent)}
+.vent-guide dd{margin:6px 0 12px}
+.vent-temperature>summary{font-size:18px;line-height:1.6}
+.vent-sequence{padding-left:23px;margin:12px 0}
+.vent-sequence li{padding-left:5px;margin-bottom:14px}
+.vent-sequence li::marker{color:var(--accent);font-weight:700}
+.vent-sequence p{margin-top:3px;font-size:14px}
+.vent-evidence{font-size:12px}
+.ts-visual-dialog.has-vent-guide .ts-visual-tabs{gap:18px;flex-wrap:wrap}
+.ts-visual-dialog.has-vent-guide .ts-visual-tabs button{white-space:normal}
+.ts-visual-dialog.has-vent-guide .ts-visual-head h2{word-break:keep-all}
+.ts-visual-dialog .vent-config-controls{display:flex;gap:6px;flex-wrap:wrap;flex-basis:100%}
+.vent-model-legend{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:12px;margin:10px 0}
+.vent-model-legend span{display:flex;align-items:center;gap:6px}
+.vent-model-legend i{width:10px;height:10px;border-radius:50%;background:var(--accent);display:inline-block}
+.vent-model-legend .vent-atm i{background:#277797}.vent-model-legend .vent-vac i{background:#8862a4}.vent-model-legend .vent-melt i{background:#bb7543}
+@media(max-width:700px){.vent-role-grid,.vent-config-grid{grid-template-columns:minmax(0,1fr);gap:14px}.vent-guide h3{font-size:18px}.vent-lead>p:last-child{font-size:15px}.vent-lesson{padding:18px 0}.vent-role-grid article+article{border-top:1px solid var(--rule);padding-top:14px}.vent-layout img{min-height:140px}.vent-symptom-options button{flex-basis:calc(50% - 8px);min-width:0}.vent-symptom-detail{padding:14px}.vent-temperature>summary{font-size:16px}.ts-visual-dialog.has-vent-guide .ts-visual-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 12px}.ts-visual-dialog.has-vent-guide .ts-visual-tabs button{font-size:12px;min-width:0}.vent-config-controls button{flex:1;min-width:0;text-align:left}}

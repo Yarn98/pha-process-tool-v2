@@ -1,0 +1,18 @@
+{
+  "provider": "ChatGPT",
+  "visible_model": "6 Pro",
+  "project": "TARS",
+  "url": "https://chatgpt.com/g/g-p-69f6491f757081918b02e3daeffa388d-tars/c/6aa7f7a9-8614-83e9-b9c3-d4b89aecb8dd",
+  "sent_once": true,
+  "status": "completed_and_locally_reviewed",
+  "review_checkpoint_at_utc": "2026-09-14T13:58:36Z",
+  "completion_time_precision": "Completion was visibly confirmed before this clock-verified review checkpoint; exact server completion timestamp was not recorded.",
+  "visible_processing_duration": "17m 18s",
+  "retrieval": "rendered main text and citation links; Markdown export unsupported and copy clipboard empty",
+  "saved_answer": "provider_answer.md (structured preservation of the retrieved answer, not a verbatim export)",
+  "completion_evidence": {"stop_button_count": 0, "response_copy_button_present": true, "complete_answer_and_sources_present": true},
+  "later_user_clarification": "Reverse elements, when used, are normally upstream of the vent. This arrived after submission and was incorporated in local validation without resending.",
+  "attachments": [],
+  "scope": "anonymized qualitative PHA vent flooding, mild screw configuration and MI increase; no plant records or numeric operating data",
+  "workflow": "GPT Pro Attachment Relay with official Chrome CUA transport"
+}

@@ -1,7 +1,7 @@
 /* Shared, local Blender GLB viewer for seven educational process lines. */
 (function(){
   'use strict';
-  const VERSION='?v=22',VENDOR='./vendor/three-0.185.1/';
+  const VERSION='?v=23',VENDOR='./vendor/three-0.185.1/';
   const reduced=matchMedia('(prefers-reduced-motion: reduce)'),saved=new Map(),cache=new Map();
   let host=null,meta=null,state=null,asset=null,engine=null,imports=null,onStage=()=>{};
   let locale='ko',token=0,raf=0,lastTick=0,resizeObserver=null,intersectionObserver=null,studyPanel=null;

@@ -14,7 +14,9 @@
     "test:kinematics": "node --test tests/equipment-kinematics.test.cjs",
     "test:study": "node tests/equipment-study.mjs",
     "test:ts-visuals": "node --test tests/troubleshooting-visuals.test.cjs && node tests/troubleshooting-visuals.mjs",
-    "check:ts-visuals": "node scripts/sync-troubleshooting-visuals.cjs --check"
+    "check:ts-visuals": "node scripts/sync-troubleshooting-visuals.cjs --check",
+    "check:vent-guide": "node scripts/sync-vent-guide.cjs --check",
+    "test:vent-guide": "node --test tests/vent-guide-data.test.cjs && node tests/vent-guide-ui.mjs"
   },
   "keywords": [
     "pha",

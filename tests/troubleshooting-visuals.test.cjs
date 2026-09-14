@@ -7,7 +7,7 @@ test('16 reviewed KB entries map to 25 bilingual visual cases and identical offl
   assert.deepEqual(new Set(data.entries.map(e=>e.kb_id)),new Set(kb.map(e=>e.id)));
   const context={window:{}};vm.runInNewContext(fs.readFileSync(path.join(root,'troubleshooting-visuals-data.js'),'utf8'),context);
   assert.deepEqual(JSON.parse(JSON.stringify(context.window.PHATroubleVisualData)),data);
-  for(const e of data.entries){const item=kb.find(x=>x.id===e.kb_id);assert.equal(item.review_version,data.kb_review_version);assert.equal(item.related_images.length,e.cases.length);for(const c of e.cases){for(const key of ['label_ko','label_en','caption_ko','caption_en'])assert.ok(c[key]?.trim(),c.id+'/'+key);}}
+  for(const e of data.entries){const item=kb.find(x=>x.id===e.kb_id);assert.equal(item.review_version,e.kb_review_version||data.kb_review_version);assert.equal(item.related_images.length,e.cases.length);for(const c of e.cases){for(const key of ['label_ko','label_en','caption_ko','caption_en'])assert.ok(c[key]?.trim(),c.id+'/'+key);}}
 });
 test('all normal, defect and cutaway selections resolve to actual Blender GLB roots',()=>{
   for(const entry of data.entries){
@@ -39,5 +39,5 @@ test('offline manifest includes every public visual asset and excludes editable 
   const assets=context.self.PHA_TS_VISUAL_ASSETS;
   for(const entry of data.entries){assert.ok(assets.includes(entry.model));assert.ok(assets.includes(entry.thumbnail));}
   for(const asset of assets){assert.ok(!/\.blend|^art\/|^output\//.test(asset));assert.ok(fs.existsSync(path.join(root,asset)));}
-  const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');assert.match(sw,/pha-cache-v22-troubleshooting-visuals/);assert.match(sw,/PHA_TS_VISUAL_ASSETS\.map/);
+  const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');assert.match(sw,/pha-cache-v23-vent-guide/);assert.match(sw,/PHA_TS_VISUAL_ASSETS\.map/);
 });

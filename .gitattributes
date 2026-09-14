@@ -4,3 +4,5 @@ output/gpt-pro-review-packs/pha-all-processing-gpt6-pro-20260906/provider_answer
 output/gpt-pro-review-packs/pha-all-processing-gpt6-pro-20260906/report.md -text -whitespace
 # Preserve vendored Three.js files exactly as distributed, including upstream whitespace.
 vendor/three-0.185.1/** -text -whitespace
+# The vent asset manifest hashes this generator; preserve LF on Windows clones.
+scripts/create_vent_guide_model.py text eol=lf

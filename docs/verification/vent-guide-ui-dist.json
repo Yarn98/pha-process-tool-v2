@@ -1,0 +1,275 @@
+{
+  "status": "passed",
+  "root": "dist",
+  "checks": [
+    "Actual KB16 card opens the two-vent guide with conditional layout comparison",
+    "Both screw configurations, four symptom branches and conditional temperature trial details",
+    "Both actual GLB layouts animate screws and all four flow types; pause, tab and Escape lifecycle",
+    "Ordinary entries retain three keyboard tabs; the full vent guide supports KO and EN",
+    "390px and 320px touch controls, both languages and four tabs fit without horizontal overflow",
+    "Unavailable WebGL or GLB retains each new layout poster and the source-linked guide",
+    "KB fingerprint and guide review mismatches separately fail closed without main guide actions",
+    "v23 service-worker offline reload covers both layouts and KO/EN guide while preserving local records"
+  ],
+  "screenshots": [
+    "output\\playwright\\vent-guide\\dist\\guide-ko.png",
+    "output\\playwright\\vent-guide\\dist\\temperature-ko.png",
+    "output\\playwright\\vent-guide\\dist\\model-without_reverse.png",
+    "output\\playwright\\vent-guide\\dist\\model-upstream_reverse.png",
+    "output\\playwright\\vent-guide\\dist\\model-focus-atm.png",
+    "output\\playwright\\vent-guide\\dist\\model-focus-seal.png",
+    "output\\playwright\\vent-guide\\dist\\model-focus-vac.png",
+    "output\\playwright\\vent-guide\\dist\\guide-en.png",
+    "output\\playwright\\vent-guide\\dist\\mobile-ko-390.png",
+    "output\\playwright\\vent-guide\\dist\\mobile-en-390.png",
+    "output\\playwright\\vent-guide\\dist\\mobile-ko-320.png",
+    "output\\playwright\\vent-guide\\dist\\mobile-en-320.png",
+    "output\\playwright\\vent-guide\\dist\\fallback-webgl.png",
+    "output\\playwright\\vent-guide\\dist\\fallback-glb.png",
+    "output\\playwright\\vent-guide\\dist\\offline-en.png"
+  ],
+  "openGeometry": [
+    {
+      "kbId": "pha-kb-16",
+      "scrollTop": 0,
+      "width": 1440,
+      "height": 1100,
+      "dialog": {
+        "left": 160,
+        "right": 1280,
+        "top": 44,
+        "bottom": 1056
+      },
+      "title": {
+        "left": 187,
+        "right": 425.109375,
+        "top": 91.390625,
+        "bottom": 124.734375
+      },
+      "close": {
+        "left": 1183.3125,
+        "right": 1253,
+        "top": 67,
+        "bottom": 111
+      }
+    },
+    {
+      "kbId": "pha-kb-9",
+      "scrollTop": 0,
+      "width": 1440,
+      "height": 1100,
+      "dialog": {
+        "left": 160,
+        "right": 1280,
+        "top": 145.421875,
+        "bottom": 954.578125
+      },
+      "title": {
+        "left": 187,
+        "right": 403.9375,
+        "top": 192.8125,
+        "bottom": 226.15625
+      },
+      "close": {
+        "left": 1183.3125,
+        "right": 1253,
+        "top": 168.421875,
+        "bottom": 212.421875
+      }
+    },
+    {
+      "kbId": "pha-kb-16",
+      "scrollTop": 0,
+      "width": 1440,
+      "height": 1100,
+      "dialog": {
+        "left": 160,
+        "right": 1280,
+        "top": 44,
+        "bottom": 1056
+      },
+      "title": {
+        "left": 187,
+        "right": 425.109375,
+        "top": 91.390625,
+        "bottom": 124.734375
+      },
+      "close": {
+        "left": 1183.3125,
+        "right": 1253,
+        "top": 67,
+        "bottom": 111
+      }
+    },
+    {
+      "kbId": "pha-kb-16",
+      "scrollTop": 0,
+      "width": 390,
+      "height": 844,
+      "dialog": {
+        "left": 7,
+        "right": 383,
+        "top": 25.3125,
+        "bottom": 818.671875
+      },
+      "title": {
+        "left": 23,
+        "right": 219.703125,
+        "top": 68.703125,
+        "bottom": 96.25
+      },
+      "close": {
+        "left": 303.546875,
+        "right": 367,
+        "top": 44.3125,
+        "bottom": 88.3125
+      }
+    },
+    {
+      "kbId": "pha-kb-16",
+      "scrollTop": 0,
+      "width": 320,
+      "height": 844,
+      "dialog": {
+        "left": 7,
+        "right": 313,
+        "top": 25.3125,
+        "bottom": 818.671875
+      },
+      "title": {
+        "left": 23,
+        "right": 221.140625,
+        "top": 68.703125,
+        "bottom": 123.796875
+      },
+      "close": {
+        "left": 237.140625,
+        "right": 297,
+        "top": 44.3125,
+        "bottom": 88.3125
+      }
+    },
+    {
+      "kbId": "pha-kb-16",
+      "scrollTop": 0,
+      "width": 1280,
+      "height": 1000,
+      "dialog": {
+        "left": 80,
+        "right": 1200,
+        "top": 40,
+        "bottom": 960
+      },
+      "title": {
+        "left": 107,
+        "right": 345.109375,
+        "top": 87.390625,
+        "bottom": 120.734375
+      },
+      "close": {
+        "left": 1103.3125,
+        "right": 1173,
+        "top": 63,
+        "bottom": 107
+      }
+    },
+    {
+      "kbId": "pha-kb-16",
+      "scrollTop": 0,
+      "width": 1280,
+      "height": 1000,
+      "dialog": {
+        "left": 80,
+        "right": 1200,
+        "top": 40,
+        "bottom": 960
+      },
+      "title": {
+        "left": 107,
+        "right": 345.109375,
+        "top": 87.390625,
+        "bottom": 120.734375
+      },
+      "close": {
+        "left": 1103.3125,
+        "right": 1173,
+        "top": 63,
+        "bottom": 107
+      }
+    },
+    {
+      "kbId": "pha-kb-16",
+      "scrollTop": 0,
+      "width": 1280,
+      "height": 1000,
+      "dialog": {
+        "left": 80,
+        "right": 1200,
+        "top": 374.328125,
+        "bottom": 625.65625
+      },
+      "title": {
+        "left": 107,
+        "right": 345.109375,
+        "top": 421.71875,
+        "bottom": 455.0625
+      },
+      "close": {
+        "left": 1103.3125,
+        "right": 1173,
+        "top": 397.328125,
+        "bottom": 441.328125
+      }
+    },
+    {
+      "kbId": "pha-kb-16",
+      "scrollTop": 0,
+      "width": 1280,
+      "height": 1000,
+      "dialog": {
+        "left": 80,
+        "right": 1200,
+        "top": 374.328125,
+        "bottom": 625.65625
+      },
+      "title": {
+        "left": 107,
+        "right": 345.109375,
+        "top": 421.71875,
+        "bottom": 455.0625
+      },
+      "close": {
+        "left": 1103.3125,
+        "right": 1173,
+        "top": 397.328125,
+        "bottom": 441.328125
+      }
+    },
+    {
+      "kbId": "pha-kb-16",
+      "scrollTop": 0,
+      "width": 1280,
+      "height": 1000,
+      "dialog": {
+        "left": 80,
+        "right": 1200,
+        "top": 40,
+        "bottom": 960
+      },
+      "title": {
+        "left": 107,
+        "right": 345.109375,
+        "top": 87.390625,
+        "bottom": 120.734375
+      },
+      "close": {
+        "left": 1103.3125,
+        "right": 1173,
+        "top": 63,
+        "bottom": 107
+      }
+    }
+  ],
+  "errors": [],
+  "productionDeployed": false
+}
