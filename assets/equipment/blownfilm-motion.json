@@ -144,7 +144,7 @@
     ]
   ],
   "heightRatio": 0.64,
-  "blender": "5.2.0 LTS",
+  "blender": "5.2.1 LTS",
   "groups": [
     "bubble",
     "flow",

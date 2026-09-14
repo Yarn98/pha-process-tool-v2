@@ -131,7 +131,7 @@ window.PHAEquipmentModels = {
         "Product & discharge"
       ]
     ],
-    "blender": "5.2.0 LTS",
+    "blender": "5.2.1 LTS",
     "groups": [
       "cutter",
       "flow",
@@ -284,7 +284,7 @@ window.PHAEquipmentModels = {
         "Die & pelletize"
       ]
     ],
-    "blender": "5.2.0 LTS",
+    "blender": "5.2.1 LTS",
     "groups": [
       "cutter",
       "flow",
@@ -424,7 +424,7 @@ window.PHAEquipmentModels = {
         "Product & discharge"
       ]
     ],
-    "blender": "5.2.0 LTS",
+    "blender": "5.2.1 LTS",
     "groups": [
       "flow",
       "roll",
@@ -563,7 +563,7 @@ window.PHAEquipmentModels = {
         "Product & discharge"
       ]
     ],
-    "blender": "5.2.0 LTS",
+    "blender": "5.2.1 LTS",
     "groups": [
       "flow",
       "roll",
@@ -717,7 +717,7 @@ window.PHAEquipmentModels = {
       ]
     ],
     "heightRatio": 0.64,
-    "blender": "5.2.0 LTS",
+    "blender": "5.2.1 LTS",
     "groups": [
       "bubble",
       "flow",
@@ -863,7 +863,7 @@ window.PHAEquipmentModels = {
       "pin": 0,
       "inflate": 0
     },
-    "blender": "5.2.0 LTS",
+    "blender": "5.2.1 LTS",
     "groups": [
       "air",
       "flow",

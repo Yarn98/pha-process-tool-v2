@@ -20,14 +20,14 @@
   ],
   "mesh_reuse": {
     "mesh_objects": 452,
-    "unique_mesh_data": 150,
-    "reused_mesh_objects": 302,
+    "unique_mesh_data": 158,
+    "reused_mesh_objects": 294,
     "method": "byte-identical attributes, topology and materials; no simplification"
   },
   "state_difference": "only highlighted element handedness/material; neither state predicts seal performance or user outcomes",
   "motion": {
     "frame": "Three glTF Y-up; +X feed-to-die; all flow markers direct children of identity state groups",
-    "screw": "spin_axis=x on two pivot nodes per state; rotate both in same direction",
+    "screw": "spin_axis=x, spin_direction=-1 on both pivots per state; forward flights convey toward +X",
     "flow": "vent_flow=solid|melt|atm_gas|vac_gas; vent_from and vent_to Three parent-local vectors; t=(phase+vent_phase)%1; lerp(from,to,t)",
     "focus": "vent_focus=atm|vac|seal on static equipment meshes and compared element; includes nearby barrel context",
     "scope": "directional explanation only, no timing, fill fraction, energy or residence prediction"
@@ -52,81 +52,24 @@
     {
       "file": "assets/troubleshooting/vent-guide-without_reverse_full.webp",
       "source": "art/troubleshooting/vent-guide-without_reverse_full.png",
-      "source_sha256": "b6c820b4f73e934050cbc852d809798b5051b183e6c337aac847a3279168b5cf",
-      "sha256": "3e3be2b1034c864daff816987c9d8268a0c2557c1d62ba76e75224c7b50ad72e",
-      "bytes": 62282
+      "source_sha256": "b65b76768492681a106bb3fe639978669ce65e5a9eb6ccb67712e186be822613",
+      "sha256": "cfe391b875143c933d5e2c95c4b8e2eb624befa2837effb5d81959aee7b6f6f0",
+      "bytes": 62260
     },
     {
       "file": "assets/troubleshooting/vent-guide-upstream_reverse_full.webp",
       "source": "art/troubleshooting/vent-guide-upstream_reverse_full.png",
-      "source_sha256": "af07aa38ff351229c78dc4e963eb5387be5b1e7935c7b9d4ccfbd215eb6f8088",
-      "sha256": "9344ef20895056f718ab3227f534702e2db242b4d95b9a6fa2293ce7c3759b98",
-      "bytes": 62900
+      "source_sha256": "ec9ef7bf24e0bad7231145a2892613d15a57e90b27b4007c26cc98558662ce61",
+      "sha256": "36e890e7cff6a92fb57baa8f145b309cc3523eb51169b2daa74fa1647f0e3019",
+      "bytes": 63028
     },
     {
       "file": "assets/troubleshooting/vent-guide.glb",
       "source": "scripts/create_vent_guide_model.py",
-      "source_sha256": "356404891d3afb6e6311b9d6687350c524bd6de40b55e7205fc8f1e8369f5b50",
-      "sha256": "92bda9085d35783fb2a2e8a30aab65c8b9f985e344843e17edf339a4f607f78d",
-      "bytes": 1890544
+      "source_sha256": "4707960973e69e49d02792f3470a92bc3a765fa87700bb01bdc941888edbeba7",
+      "sha256": "bdcc286daa7276e44facc3468484fbe5a32f5d401ede7a3db419ca23e05c1530",
+      "bytes": 1971892
     }
   ],
-  "native_sha256": "9ef21624538e9a57e3b919310b29771ef738550e6a6c14afc72ec21c298f0828",
-  "deduplication_validation": {
-    "old_bytes": 4033428,
-    "new_bytes": 1890544,
-    "reduction_percent": 53.13,
-    "old_meshes": 452,
-    "new_meshes": 150,
-    "checked_nodes": 468,
-    "positions_triangles_materials_transforms_extras_preserved": true,
-    "max_derived_normal_component_difference": 7.18235969543457e-05,
-    "comparison_basis": "Exact position and oriented triangle multisets, names, hierarchy, materials, transforms and extras per node. Draw order excluded. Derived normals checked within 1e-4; unused procedural UV rounding excluded because no textures exist. No geometry simplification.",
-    "poster_comparison": [
-      {
-        "state": "without_reverse_full",
-        "size": [
-          1600,
-          960
-        ],
-        "mean_absolute_pixel_difference_0_255": [
-          0.005942708333333334,
-          0.005914713541666667,
-          0.006229166666666667
-        ],
-        "rms": [
-          0.35247081734993796,
-          0.33069627461111,
-          0.29641960686387353
-        ],
-        "max_channel_difference_0_255": [
-          135,
-          124,
-          102
-        ]
-      },
-      {
-        "state": "upstream_reverse_full",
-        "size": [
-          1600,
-          960
-        ],
-        "mean_absolute_pixel_difference_0_255": [
-          0.0060305989583333336,
-          0.0059765625,
-          0.006321614583333334
-        ],
-        "rms": [
-          0.35350643116497893,
-          0.3316507010395124,
-          0.29672693676173045
-        ],
-        "max_channel_difference_0_255": [
-          136,
-          125,
-          102
-        ]
-      }
-    ]
-  }
+  "native_sha256": "3da8c97f65b55e9323aa3b053254d0d3eb14d83bec288f932201a2a57febb4c1"
 }

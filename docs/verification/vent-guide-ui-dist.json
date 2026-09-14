@@ -9,7 +9,7 @@
     "390px and 320px touch controls, both languages and four tabs fit without horizontal overflow",
     "Unavailable WebGL or GLB retains each new layout poster and the source-linked guide",
     "KB fingerprint and guide review mismatches separately fail closed without main guide actions",
-    "v23 service-worker offline reload covers both layouts and KO/EN guide while preserving local records"
+    "v24 service-worker offline reload covers both layouts and KO/EN guide while preserving local records"
   ],
   "screenshots": [
     "output\\playwright\\vent-guide\\dist\\guide-ko.png",
@@ -138,9 +138,9 @@
       },
       "title": {
         "left": 23,
-        "right": 221.140625,
+        "right": 219.703125,
         "top": 68.703125,
-        "bottom": 123.796875
+        "bottom": 96.25
       },
       "close": {
         "left": 237.140625,

@@ -43,6 +43,14 @@ try{
     await panel.locator('[data-eq="play"]').click();const first=data.time;
     await page.waitForFunction(first=>PHAEquipmentMotion.getState().time>first+.1,first);
     await panel.locator('[data-eq="play"]').click();
+    const afterPlay=await page.evaluate(()=>__phaEquipmentTest()),forwardSign=kind==='straw'?1:-1;
+    const signedX=q=>2*Math.atan2(q[0],q[3]);
+    const rotationStep=(a,b)=>Math.atan2(Math.sin(signedX(b)-signedX(a)),Math.cos(signedX(b)-signedX(a)));
+    assert.ok(forwardSign*rotationStep(data.nodes.screw[0].rotation,afterPlay.nodes.screw[0].rotation)>0,kind+' automatic screw rotation matches its helix and feed-to-die direction');
+    if(kind==='compounding'){
+      const screws=afterPlay.nodes.screw.filter(node=>['ScrewA','ScrewB'].includes(node.name));assert.equal(screws.length,2);
+      for(const node of screws)assert.ok(rotationStep(data.nodes.screw.find(before=>before.name===node.name).rotation,node.rotation)<0,'Both compounding screws co-rotate forward during playback');
+    }
     await panel.locator('[data-eq="manual"]').click();
     if(kind==='blowmolding'){
       assert.equal(await panel.locator('[data-eq-axis="inflate"]').isDisabled(),true);
@@ -67,6 +75,16 @@ try{
         await jog(page,panel,control.key,control.unit==='°'?91:37.5);
         const after=(await page.evaluate(()=>__phaEquipmentTest())).nodes[control.key];
         assert.notDeepEqual(after,before,kind+'/'+control.key+' changes real mesh/bone transforms');
+        if(control.key==='screw'){
+          const a=2*Math.atan2(after[0].rotation[0],after[0].rotation[3]);
+          assert.ok(Math.abs(a-forwardSign*91*Math.PI/180)<.025,kind+' manual screw angle increases in the forward direction');
+          if(kind==='compounding')for(const node of after.filter(node=>['ScrewA','ScrewB'].includes(node.name)))assert.ok(Math.abs(2*Math.atan2(node.rotation[0],node.rotation[3])+91*Math.PI/180)<.025,'Both compounding screws follow manual forward angle');
+        }
+        if(kind==='compounding'&&control.key==='side'){
+          const rotor=after.find(node=>node.name==='SideFeedRotor');assert.ok(rotor);
+          // Blender -Y rotation becomes Three +Z; this helix conveys toward the barrel.
+          assert.ok(Math.abs(2*Math.atan2(rotor.rotation[2],rotor.rotation[3])-91*Math.PI/180)<.025,'Side feeder rotates toward the main screws');
+        }
       }
       const firstAxis=panel.locator('[data-eq-axis="'+controls[0].key+'"]');
       await firstAxis.focus();await page.keyboard.press('ArrowRight');

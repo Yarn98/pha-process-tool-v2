@@ -129,7 +129,7 @@
       "Product & discharge"
     ]
   ],
-  "blender": "5.2.0 LTS",
+  "blender": "5.2.1 LTS",
   "groups": [
     "cutter",
     "flow",

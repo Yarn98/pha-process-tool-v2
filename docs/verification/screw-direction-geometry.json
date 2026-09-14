@@ -1,0 +1,754 @@
+{
+  "status": "passed",
+  "date": "2026-09-15",
+  "blender": "5.2.1 LTS",
+  "baseline_commit": "0f50d830ee1c310f29eaa30759436181bd13882b",
+  "scope": "Native rigs and actual GLB files. Teaching helix direction, not polymer velocity, throughput or screw performance.",
+  "changes": [
+    {
+      "file": "scripts/create_line_models.py",
+      "line": 181,
+      "change": "Main rotor animate_spin: direction=-1"
+    },
+    {
+      "file": "scripts/create_line_models.py",
+      "line": 294,
+      "change": "Compounding side-feed animate_spin: direction=-1"
+    }
+  ],
+  "diagnosis": {
+    "main_axis": "Blender +X equals glTF +X; feed-to-die is +X",
+    "main_helix_phase_slope_before": 18.93562584,
+    "main_angular_step_before": 0.04363323003053665,
+    "main_angular_step_after": -0.04363323003053665,
+    "main_total_after": -12.566370964050293,
+    "side_axis": "Blender -Y rotation exports as glTF +Z; feed moves toward main barrel -Y",
+    "side_helix_phase_slope_before": -24.16609684,
+    "side_angular_step_after": -0.04363323003053665,
+    "side_total_after": -12.566370964050293,
+    "straw": "Borrowed helix has opposite handedness and already moves forward with positive X rotation; retained byte-for-byte",
+    "straw_angular_step": 0.05235987901687622,
+    "straw_total": 6.2831854820251465,
+    "criterion": "For signed helix theta=k*s+phi(t), fixed-azimuth crest displacement is -dphi/k. Its sign must match feed direction. This is not a material velocity equation."
+  },
+  "comparison_method": {
+    "static_scene": "Per-node local POSITION values and oriented triangle multisets rounded to 6 decimals, material descriptors, node hierarchy/transforms/extras; vertex and triangle draw ordering excluded.",
+    "animations": "All channels except ScrewA/ScrewB/SideFeedRotor rotation compared by node/path, interpolation, sample times and values rounded to 6 decimals. Includes rolls, cutter, flow markers, mold, sheet/bubble and release channels.",
+    "target_animation": "Every corrected GLB has 289 samples, retaining 12 s at 24 fps. First advancing sample flips only intended quaternion vector sign; native test verifies total signed rotation and other-axis zero delta.",
+    "tolerance": "Geometry and non-target animation numerical values are compared to 1e-6 scene/track units; no production dimensional claim."
+  },
+  "models": [
+    {
+      "id": "extrusion",
+      "static_scene_unchanged": true,
+      "non_target_animation_unchanged": true,
+      "static_scene_sha256": "f9c957c410221c26e669f9548a1830c2fa0cd9fdc7cde2265c2db1c4accc5cb5",
+      "non_target_animation_sha256": "5b94e71ef8790acde96f32746b09ffb7d463363d0d503cb709992aa2dab65a64",
+      "rotation_samples_before": [
+        {
+          "node": "ScrewA",
+          "samples": 289,
+          "first": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "second": [
+            0.021815,
+            0,
+            0,
+            0.999762
+          ],
+          "last": [
+            0,
+            0,
+            0,
+            1
+          ]
+        }
+      ],
+      "rotation_samples_after": [
+        {
+          "node": "ScrewA",
+          "samples": 289,
+          "first": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "second": [
+            -0.021815,
+            0,
+            0,
+            0.999762
+          ],
+          "last": [
+            0,
+            0,
+            0,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compounding",
+      "static_scene_unchanged": true,
+      "non_target_animation_unchanged": true,
+      "static_scene_sha256": "0a1059d5d011c061b2b9ac2f598856fcacd3289759d6db5eeacd0ab393b029e3",
+      "non_target_animation_sha256": "590c8ee1bc97a9dd611aba211665eca0deb1cffc45d5273d4380d0d2db87d7ed",
+      "rotation_samples_before": [
+        {
+          "node": "ScrewA",
+          "samples": 289,
+          "first": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "second": [
+            0.021815,
+            0,
+            0,
+            0.999762
+          ],
+          "last": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "node": "ScrewB",
+          "samples": 289,
+          "first": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "second": [
+            0.021815,
+            0,
+            0,
+            0.999762
+          ],
+          "last": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "node": "SideFeedRotor",
+          "samples": 289,
+          "first": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "second": [
+            0,
+            0,
+            -0.021815,
+            0.999762
+          ],
+          "last": [
+            0,
+            0,
+            0,
+            1
+          ]
+        }
+      ],
+      "rotation_samples_after": [
+        {
+          "node": "ScrewA",
+          "samples": 289,
+          "first": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "second": [
+            -0.021815,
+            0,
+            0,
+            0.999762
+          ],
+          "last": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "node": "ScrewB",
+          "samples": 289,
+          "first": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "second": [
+            -0.021815,
+            0,
+            0,
+            0.999762
+          ],
+          "last": [
+            0,
+            0,
+            0,
+            1
+          ]
+        },
+        {
+          "node": "SideFeedRotor",
+          "samples": 289,
+          "first": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "second": [
+            0,
+            0,
+            0.021815,
+            0.999762
+          ],
+          "last": [
+            0,
+            0,
+            0,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sheet",
+      "static_scene_unchanged": true,
+      "non_target_animation_unchanged": true,
+      "static_scene_sha256": "7026a31c81ccbf82f52c5b557307ea3c94cffcbe8ddc4260f3aaece0872b2a01",
+      "non_target_animation_sha256": "9946326b9d84c8fd5760b853cbf0c193274ed2a388fcafc2c951c2f053bd34ec",
+      "rotation_samples_before": [
+        {
+          "node": "ScrewA",
+          "samples": 289,
+          "first": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "second": [
+            0.021815,
+            0,
+            0,
+            0.999762
+          ],
+          "last": [
+            0,
+            0,
+            0,
+            1
+          ]
+        }
+      ],
+      "rotation_samples_after": [
+        {
+          "node": "ScrewA",
+          "samples": 289,
+          "first": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "second": [
+            -0.021815,
+            0,
+            0,
+            0.999762
+          ],
+          "last": [
+            0,
+            0,
+            0,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "castfilm",
+      "static_scene_unchanged": true,
+      "non_target_animation_unchanged": true,
+      "static_scene_sha256": "d4df4130dc3a63f31b173c6f7310def0f7c7c466250f5cdd7ee321dc91a49aa2",
+      "non_target_animation_sha256": "14a5bd74f98b14350fbfe77bacd76d2577fff4f1e3abdfcface6581b57dfadd0",
+      "rotation_samples_before": [
+        {
+          "node": "ScrewA",
+          "samples": 289,
+          "first": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "second": [
+            0.021815,
+            0,
+            0,
+            0.999762
+          ],
+          "last": [
+            0,
+            0,
+            0,
+            1
+          ]
+        }
+      ],
+      "rotation_samples_after": [
+        {
+          "node": "ScrewA",
+          "samples": 289,
+          "first": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "second": [
+            -0.021815,
+            0,
+            0,
+            0.999762
+          ],
+          "last": [
+            0,
+            0,
+            0,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "blownfilm",
+      "static_scene_unchanged": true,
+      "non_target_animation_unchanged": true,
+      "static_scene_sha256": "79904fedda1659c8b572fb7d25e4d6a41d3fe7f6f783706ff4aed0779a8b4eb4",
+      "non_target_animation_sha256": "3ebb169b68a7c5aef3f35f852ffcafc9ea3fc2494ab50545bfead9578ecef04d",
+      "rotation_samples_before": [
+        {
+          "node": "ScrewA",
+          "samples": 289,
+          "first": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "second": [
+            0.021815,
+            0,
+            0,
+            0.999762
+          ],
+          "last": [
+            0,
+            0,
+            0,
+            1
+          ]
+        }
+      ],
+      "rotation_samples_after": [
+        {
+          "node": "ScrewA",
+          "samples": 289,
+          "first": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "second": [
+            -0.021815,
+            0,
+            0,
+            0.999762
+          ],
+          "last": [
+            0,
+            0,
+            0,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "blowmolding",
+      "static_scene_unchanged": true,
+      "non_target_animation_unchanged": true,
+      "static_scene_sha256": "fe6fd2208e517a32dd506512178413a5bb30ad068efcbcc1fe6d11d2eaa8a4d7",
+      "non_target_animation_sha256": "5e7d973b0683afd7b5f1585d05fc12ebd8037f11c1f5905984abb65e797e7c85",
+      "rotation_samples_before": [
+        {
+          "node": "ScrewA",
+          "samples": 289,
+          "first": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "second": [
+            0.021815,
+            0,
+            0,
+            0.999762
+          ],
+          "last": [
+            0,
+            0,
+            0,
+            1
+          ]
+        }
+      ],
+      "rotation_samples_after": [
+        {
+          "node": "ScrewA",
+          "samples": 289,
+          "first": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "second": [
+            -0.021815,
+            0,
+            0,
+            0.999762
+          ],
+          "last": [
+            0,
+            0,
+            0,
+            1
+          ]
+        }
+      ]
+    },
+    {
+      "id": "straw",
+      "static_scene_unchanged": true,
+      "non_target_animation_unchanged": true,
+      "static_scene_sha256": "073a6c62a534edccb3a3b9685ece91737e1f8507be263db1c60f8f3718a7a061",
+      "non_target_animation_sha256": "54907918cf8def55151f8cdbe21e7d10b45b8380e1243543b2e6d412cb7e8797",
+      "rotation_samples_before": [],
+      "rotation_samples_after": []
+    }
+  ],
+  "artifact_hashes": [
+    {
+      "file": "assets/equipment/extrusion-motion.blend",
+      "before_sha256": "81f127d79275843e630e17b29ae41b8faa77728ff7ccf82fdf24e3f547a386c7",
+      "after_sha256": "dbdbde339015e9a4be4732d608d3b39c7d6085adf6484a8fb65d7d0cc167181f",
+      "before_bytes": 320993,
+      "after_bytes": 320950,
+      "unchanged": false
+    },
+    {
+      "file": "assets/equipment/extrusion-motion.glb",
+      "before_sha256": "c86788e736803179a69f217a019bbf2f44e03cb65f7da9e2ff7889a1e4b9c906",
+      "after_sha256": "0b7cbf099f738a13e5e273efec234128030256c4d3ba96e7356d3a71eb6b5e83",
+      "before_bytes": 946828,
+      "after_bytes": 946828,
+      "unchanged": false
+    },
+    {
+      "file": "assets/equipment/compounding-motion.blend",
+      "before_sha256": "26b2c022ec97d5751ed84d2a22cfab238efa4cc8a710279372df046ef63ebeb6",
+      "after_sha256": "db5f8ba22a9e14cbfbcd770b5137a3c1a08edf46a1c05f6b51a87d0049226eb0",
+      "before_bytes": 391650,
+      "after_bytes": 391801,
+      "unchanged": false
+    },
+    {
+      "file": "assets/equipment/compounding-motion.glb",
+      "before_sha256": "b4b7f3ef68aa362ef3abc3747261c0ded5d694c55e4f20e75c37e466473a3eea",
+      "after_sha256": "5cf06a0193d40aed90b60dab8d522ac5b8a5dc021cfc29491c661b8c6db351ad",
+      "before_bytes": 1236560,
+      "after_bytes": 1236560,
+      "unchanged": false
+    },
+    {
+      "file": "assets/equipment/sheet-motion.blend",
+      "before_sha256": "e067f55ce4e721b7faeaf5536e24eaa9a72e5f803f042b345bb4ced9a0314707",
+      "after_sha256": "1ba355ed57b8e26b49a07078170a9b0652af33f4e18c6a1ead83610214b74a86",
+      "before_bytes": 350061,
+      "after_bytes": 350053,
+      "unchanged": false
+    },
+    {
+      "file": "assets/equipment/sheet-motion.glb",
+      "before_sha256": "f40306b466d36c45dc2aff7fca27f700ef8d62c63d6792005575e8d93b41f5f9",
+      "after_sha256": "8568b94b4ea433799f15c13ae26069b4da76580f3b590a1ba2947ab3d7e7c7f4",
+      "before_bytes": 904456,
+      "after_bytes": 904456,
+      "unchanged": false
+    },
+    {
+      "file": "assets/equipment/castfilm-motion.blend",
+      "before_sha256": "2f53b84e12bbbd3a008cc5dce757dafb00bc8dfa0f38e9570dad895c78979c2e",
+      "after_sha256": "a521374739f335af4c74123e28756f50c2309e289c5796dd938bfe1f48c8c93a",
+      "before_bytes": 346757,
+      "after_bytes": 347018,
+      "unchanged": false
+    },
+    {
+      "file": "assets/equipment/castfilm-motion.glb",
+      "before_sha256": "42538684475e8111108b3074d19ac16666be9572306b897f7e42a5d04876ffe7",
+      "after_sha256": "ddaf21dc9152316e0d1bb0fe2885a58826ac78dfb23152ccda5e740dd643f2b7",
+      "before_bytes": 807372,
+      "after_bytes": 807372,
+      "unchanged": false
+    },
+    {
+      "file": "assets/equipment/blownfilm-motion.blend",
+      "before_sha256": "4ebb6b65d5662ff2cbe21fd714ab90d10e0b500aac7e94ab063d0d962c21726f",
+      "after_sha256": "ab642ce542ed218c8054afcec3c92feb24c79c497aaeefb9fe95382264a94b4a",
+      "before_bytes": 366806,
+      "after_bytes": 367078,
+      "unchanged": false
+    },
+    {
+      "file": "assets/equipment/blownfilm-motion.glb",
+      "before_sha256": "0ef145124697bb72bbcb9a74218119b7c23fcee5f02e6a25820c21819606c37f",
+      "after_sha256": "5af8003249f79d3531f4434c95d536941ed0491aeeea2dd50e3bd03bcb1a989b",
+      "before_bytes": 891852,
+      "after_bytes": 891852,
+      "unchanged": false
+    },
+    {
+      "file": "assets/equipment/blowmolding-motion.blend",
+      "before_sha256": "cd3cd69de634e7168ccddb7537b1921a10ae3d6017fcdfa587403f63125fc07d",
+      "after_sha256": "2a110c7e00376844434444a9707f93ed45883d8469bcd651e65a8ce304c551f7",
+      "before_bytes": 313847,
+      "after_bytes": 314041,
+      "unchanged": false
+    },
+    {
+      "file": "assets/equipment/blowmolding-motion.glb",
+      "before_sha256": "0e005f4852264b59f66849f12abc7d3de387efae5d4f81aea71bbe1241c188ce",
+      "after_sha256": "76797d53903881e9d8e6ab1a579c3f2c2308f7d63da5bc758e64f5e60cdd8ce2",
+      "before_bytes": 739892,
+      "after_bytes": 739892,
+      "unchanged": false
+    },
+    {
+      "file": "assets/equipment/straw-motion.blend",
+      "before_sha256": "aca1e3d178b05c20070e24bffdea9af0cec03fd0c265fd36be2923cb2a213a86",
+      "after_sha256": "aca1e3d178b05c20070e24bffdea9af0cec03fd0c265fd36be2923cb2a213a86",
+      "before_bytes": 853112,
+      "after_bytes": 853112,
+      "unchanged": true
+    },
+    {
+      "file": "assets/equipment/straw-motion.glb",
+      "before_sha256": "4452756033b2d7be64dd49f08fc8ed9a7181c98e6fcfbb8972bad07119c06ddb",
+      "after_sha256": "4452756033b2d7be64dd49f08fc8ed9a7181c98e6fcfbb8972bad07119c06ddb",
+      "before_bytes": 3197752,
+      "after_bytes": 3197752,
+      "unchanged": true
+    },
+    {
+      "file": "scripts/create_line_models.py",
+      "before_sha256": "8dd48c48058683ae93dcc17ab52c5edaf15e8c6ca223c8822ea3594da0198524",
+      "after_sha256": "d18064681801744f0438e32bbed0db5efd203f3296f1a8b1c38c07672923de1b",
+      "before_bytes": 31668,
+      "after_bytes": 31694,
+      "unchanged": false
+    },
+    {
+      "file": "tests/blender-line-models.py",
+      "before_sha256": "8779b80950dc323010e58483084e485b8264e43670bae38e13d6a560ef6ccb73",
+      "after_sha256": "e825dee8624e622be53d9d1fd50e55ea4399593b079be9716a1e19348932f4be",
+      "before_bytes": 8183,
+      "after_bytes": 11163,
+      "unchanged": false
+    }
+  ],
+  "poster_regeneration": {
+    "frames": {
+      "extrusion": 55,
+      "compounding": 55,
+      "sheet": 55,
+      "castfilm": 55,
+      "blownfilm": 55,
+      "blowmolding": 165
+    },
+    "note": "Posters intentionally reflect the corrected rotation at the existing sampled frame. Geometry is unchanged; pixel-identical posters were not expected. Compounding final poster visually inspected.",
+    "comparisons": [
+      {
+        "file": "assets/equipment/extrusion-motion-poster.png",
+        "size": [
+          1280,
+          720
+        ],
+        "mean_pixel_difference_0_255": [
+          0.37345703125,
+          0.35364800347222225,
+          0.36728081597222223
+        ],
+        "rms": [
+          4.184417138407026,
+          3.907481194861268,
+          4.079264022501826
+        ],
+        "max_channel_difference": [
+          146,
+          138,
+          143
+        ]
+      },
+      {
+        "file": "assets/equipment/compounding-motion-poster.png",
+        "size": [
+          1280,
+          720
+        ],
+        "mean_pixel_difference_0_255": [
+          0.5491438802083334,
+          0.5409581163194445,
+          0.6261545138888889
+        ],
+        "rms": [
+          5.118766640354176,
+          4.915536041435642,
+          5.817995087680788
+        ],
+        "max_channel_difference": [
+          183,
+          181,
+          185
+        ]
+      },
+      {
+        "file": "assets/equipment/sheet-motion-poster.png",
+        "size": [
+          1280,
+          720
+        ],
+        "mean_pixel_difference_0_255": [
+          0.429580078125,
+          0.4067024739583333,
+          0.42113172743055555
+        ],
+        "rms": [
+          4.556090794162555,
+          4.249365378476139,
+          4.424490049280319
+        ],
+        "max_channel_difference": [
+          147,
+          138,
+          141
+        ]
+      },
+      {
+        "file": "assets/equipment/castfilm-motion-poster.png",
+        "size": [
+          1280,
+          720
+        ],
+        "mean_pixel_difference_0_255": [
+          0.3815505642361111,
+          0.35916015625,
+          0.37405598958333336
+        ],
+        "rms": [
+          4.14656282840747,
+          3.847574599034941,
+          4.024974119999614
+        ],
+        "max_channel_difference": [
+          139,
+          130,
+          134
+        ]
+      },
+      {
+        "file": "assets/equipment/blownfilm-motion-poster.png",
+        "size": [
+          1280,
+          720
+        ],
+        "mean_pixel_difference_0_255": [
+          0.31578993055555554,
+          0.2984624565972222,
+          0.30842881944444445
+        ],
+        "rms": [
+          3.866963833318647,
+          3.606370502752733,
+          3.7488916186061654
+        ],
+        "max_channel_difference": [
+          146,
+          139,
+          143
+        ]
+      },
+      {
+        "file": "assets/equipment/blowmolding-motion-poster.png",
+        "size": [
+          1280,
+          720
+        ],
+        "mean_pixel_difference_0_255": [
+          0.3610611979166667,
+          0.3345388454861111,
+          0.35096788194444445
+        ],
+        "rms": [
+          3.743951140024251,
+          3.419031987405613,
+          3.5987805973960745
+        ],
+        "max_channel_difference": [
+          149,
+          134,
+          139
+        ]
+      }
+    ]
+  },
+  "metadata": "Six model JSON files and equipment-models.js change only the Blender version from 5.2.0 LTS to 5.2.1 LTS. Controls, ranges, stages and source metadata are unchanged.",
+  "verification": {
+    "negative_control": "New signed-direction test rejects original extrusion rig: Wrong signed rotation, +0.04363323 rad.",
+    "native_check": "output/blender-all-equipment-check.json",
+    "native_models": 7,
+    "native_checks": 23,
+    "result": "pass",
+    "python_ast": "scripts/create_line_models.py and tests/blender-line-models.py parsed successfully"
+  },
+  "writes": "Only two generator calls, the Blender regression test, six generated rig families, generated Blender-version metadata and this audit. Straw and its borrowed source were not regenerated. No commits or pushes."
+}

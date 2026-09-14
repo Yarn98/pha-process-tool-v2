@@ -54,9 +54,15 @@ try{
       await panel.locator('[data-study-stop]').click();
       const s=await data(page,kind),angle=120*s.study.elapsed;
       const q=kind==='injection'?s.nodes.ScrewSpin.quaternion:s.nodes.screw[0].rotation;
-      const rendered=2*Math.acos(Math.min(1,Math.abs(q[3])));
-      const expected=Math.acos(Math.cos(angle*Math.PI/180));
-      assert.ok(Math.abs(rendered-expected)<.025,kind+' actual quaternion follows RPM and elapsed time');
+      // Preserve the sign: equal rotation magnitude can hide reverse conveying.
+      // The imported straw helix has the opposite hand to the six generated lines.
+      const rendered=2*Math.atan2(q[0],q[3]);
+      const expected=(kind==='straw'?1:-1)*angle*Math.PI/180;
+      assert.ok(Math.abs(Math.atan2(Math.sin(rendered-expected),Math.cos(rendered-expected)))<.025,kind+' signed quaternion follows forward rotation, RPM and elapsed time');
+      if(kind==='compounding'){
+        const screws=s.nodes.screw.filter(node=>['ScrewA','ScrewB'].includes(node.name));assert.equal(screws.length,2);
+        for(const node of screws){const a=2*Math.atan2(node.rotation[0],node.rotation[3]);assert.ok(Math.abs(Math.atan2(Math.sin(a-expected),Math.cos(a-expected)))<.025,'Both compounding screws co-rotate forward under RPM control');}
+      }
       await fields(panel,{rpm:0});await panel.locator('[data-study-run]').click();
       await page.waitForTimeout(100);await panel.locator('[data-study-stop]').click();
       const zero=await data(page,kind);

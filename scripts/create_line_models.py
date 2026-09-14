@@ -178,7 +178,7 @@ def rotor(name,y,z,twin=False,phase=0):
                 obj.rotation_euler.x=i*math.pi/4+phase
                 bpy.ops.object.transform_apply(location=False,rotation=True,scale=True)
                 parent(obj,owner)
-    animate_spin(owner,'screw')
+    animate_spin(owner,'screw',direction=-1)
     return owner
 
 
@@ -291,7 +291,7 @@ def strand_line(twin=False):
             a=math.tau*4*i/160;y=.43+1.04*i/160
             for radius in (.09,.19):flight_vertices.append((-2.76+radius*math.cos(a),y,1.75+radius*math.sin(a)))
         mesh('SideFeedHelicalFlight',flight_vertices,[(2*i,2*i+1,2*i+3,2*i+2) for i in range(160)],'bronze',side)
-        animate_spin(side,'side',2,1)
+        animate_spin(side,'side',2,1,direction=-1)
         pipe('VentStack',[(-1.65,.15,1.83),(-1.65,.15,2.55),(-1.25,.15,2.75)],.12)
         markers([(-2.76,1.45,1.75),(-2.76,.05,1.60)],6,'SideFeedMarker','side',.04)
         markers([(-1.65,.15,2.3),(-1.65,.15,2.75),(-1.3,.15,3.05)],4,'VentMarker','flow',.03,'water')

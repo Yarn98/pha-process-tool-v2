@@ -56,7 +56,7 @@ export class TroubleshootingViewer{
     if(this.context){if(this.mixer)this.mixer.setTime(this.phase*(this.duration||0));}
     else this.model.traverse(node=>{
       const data=node.userData,base=data.basePosition;
-      if(data.spin_axis){node.quaternion.copy(data.baseQuaternion);node.rotateOnAxis(new THREE.Vector3(1,0,0),Math.PI*2*this.phase);}
+      if(data.spin_axis){node.quaternion.copy(data.baseQuaternion);node.rotateOnAxis(new THREE.Vector3(1,0,0),(data.spin_direction===-1?-1:1)*Math.PI*2*this.phase);}
       if(data.vent_flow&&Array.isArray(data.vent_from)&&Array.isArray(data.vent_to)){
         const progress=(this.phase+(data.vent_phase||0))%1;
         node.position.set(...data.vent_from).lerp(new THREE.Vector3(...data.vent_to),progress);

@@ -143,7 +143,7 @@ try{
     assert.equal(await article.locator('details').getAttribute('open'),'');
     assert.ok((await article.textContent()).includes(item.interpretation.ko));
     for(const check of item.check)assert.ok((await article.textContent()).includes(check.ko));
-    assert.ok((await panel(page).locator('.vent-layout img').getAttribute('src')).includes(config+'_full.webp?v=23'));
+    assert.ok((await panel(page).locator('.vent-layout img').getAttribute('src')).includes(config+'_full.webp?v=24'));
   }
   for(const symptom of symptoms){
     await panel(page).locator(`[data-ts-vent-symptom="${symptom}"]`).click();
@@ -175,10 +175,14 @@ try{
     }
     const screws=first.nodes.filter(node=>!node.flow&&Array.isArray(node.quaternion));
     assert.ok(screws.length>=2,config+' two screw nodes');
-    assert.ok(screws.some(before=>{
+    assert.equal(screws.length,2,config+' exactly two rotating shafts');
+    for(const before of screws){
       const after=later.nodes.find(node=>node.name===before.name);
-      return after&&after.quaternion.some((value,index)=>Math.abs(value-before.quaternion[index])>1e-7);
-    }),config+' screw rotation changes');
+      assert.ok(after);
+      const delta=2*Math.atan2(after.quaternion[0],after.quaternion[3])-2*Math.atan2(before.quaternion[0],before.quaternion[3]);
+      const expected=-(.37-.10)*Math.PI*2;
+      assert.ok(Math.abs(Math.atan2(Math.sin(delta-expected),Math.cos(delta-expected)))<1e-5,config+' both shafts rotate forward along their actual helix');
+    }
     await capture(page,'model-'+config,page.locator('#tsModelViewport'));
   }
   for(const focus of ['atm','seal','vac']){
@@ -247,7 +251,7 @@ try{
     for(const config of configs){
       await configure(fp,config,'model');await ready(fp,'fallback');
       assert.equal(await fp.locator('#tsModelPoster').isVisible(),true);
-      assert.ok((await fp.locator('#tsModelPoster').getAttribute('src')).includes('vent-guide-'+config+'_full.webp?v=23'));
+      assert.ok((await fp.locator('#tsModelPoster').getAttribute('src')).includes('vent-guide-'+config+'_full.webp?v=24'));
       await imageLoaded(fp.locator('#tsModelPoster'));
     }
     await capture(fp,'fallback-'+failure);
@@ -277,8 +281,8 @@ try{
   await op.evaluate(()=>localStorage.setItem('vent-guide-retention-fixture','preserve'));
   await op.evaluate(async()=>{await navigator.serviceWorker.ready;});
   await op.waitForFunction(async()=>{
-    const cache=await caches.open('pha-cache-v23-vent-guide'),keys=await cache.keys();
-    return ['vent-guide.glb','vent-guide-without_reverse_full.webp','vent-guide-upstream_reverse_full.webp','vent-guide-data.js','vent-guide.js','vent-guide.css','data/vent_guide.json'].every(asset=>keys.some(key=>key.url.endsWith('/'+asset+'?v=23')));
+    const cache=await caches.open('pha-cache-v24-screw-direction'),keys=await cache.keys();
+    return ['vent-guide.glb','vent-guide-without_reverse_full.webp','vent-guide-upstream_reverse_full.webp','vent-guide-data.js','vent-guide.js','vent-guide.css','data/vent_guide.json'].every(asset=>keys.some(key=>key.url.endsWith('/'+asset+'?v=24')));
   },{},{timeout:60000});
   await op.reload({waitUntil:'domcontentloaded'});await unlock(op);await enterTroubleshooting(op);
   await op.waitForFunction(()=>!!navigator.serviceWorker.controller);
@@ -293,7 +297,7 @@ try{
   }
   assert.equal(await op.evaluate(()=>localStorage.getItem('vent-guide-retention-fixture')),'preserve');
   await capture(op,'offline-en');await close(op);await offline.close();
-  record('v23 service-worker offline reload covers both layouts and KO/EN guide while preserving local records');
+  record('v24 service-worker offline reload covers both layouts and KO/EN guide while preserving local records');
 
   assert.deepEqual(errors,[]);
   const report={status:'passed',root:relative(resolve('.'),root)||'.',checks,screenshots,openGeometry,errors,productionDeployed:false};

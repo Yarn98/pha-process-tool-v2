@@ -44,6 +44,45 @@ def surface_velocity(name, radius_vector):
     return obj.matrix_world @ Vector(radius_vector) - point
 
 
+def screw_direction(owner_name, flight_name, axis, feed_sign, rotation_sign, turns):
+    """Measure signed helix phase and animation, independently of mesh sample indices.
+
+    At a fixed barrel azimuth theta=k*s+phi(t), crest displacement is -dphi/k.
+    This checks teaching geometry/direction; it does not predict material velocity.
+    """
+    frame(1)
+    owner = bpy.data.objects[owner_name]
+    center = owner.matrix_world.translation.copy()
+    # Right-handed radial coordinates about +X or +Y.
+    radial = (1, 2) if axis == 0 else (2, 0)
+    points = vertices(flight_name)
+    radius = max(math.hypot(p[radial[0]]-center[radial[0]], p[radial[1]]-center[radial[1]]) for p in points)
+    outer = sorted((p[axis], math.atan2(p[radial[1]]-center[radial[1]], p[radial[0]]-center[radial[0]]))
+                   for p in points if math.hypot(p[radial[0]]-center[radial[0]], p[radial[1]]-center[radial[1]]) > .90*radius)
+    assert len(outer) > 25 and outer[-1][0]-outer[0][0] > .5
+    phase = [outer[0][1]]
+    for before, after in zip(outer, outer[1:]):
+        phase.append(phase[-1]+(after[1]-before[1]+math.pi)%math.tau-math.pi)
+    mean_s = sum(p[0] for p in outer)/len(outer)
+    mean_phase = sum(phase)/len(phase)
+    slope = sum((p[0]-mean_s)*(a-mean_phase) for p,a in zip(outer,phase))/sum((p[0]-mean_s)**2 for p in outer)
+    assert abs(slope) > .1
+    start = owner.rotation_euler.copy()
+    frame(2)
+    delta = Vector(owner.rotation_euler)-Vector(start)
+    assert delta[axis]*rotation_sign > 0, (owner_name, 'Wrong signed rotation', list(delta))
+    assert all(abs(delta[i]) < 1e-6 for i in range(3) if i != axis), (owner_name, 'Unexpected rotation axis')
+    crest_step = -delta[axis]/slope
+    assert crest_step*feed_sign > 0, (owner_name, 'Helix motion opposes feed direction', slope, crest_step)
+    frame(bpy.context.scene.frame_end)
+    total = owner.rotation_euler[axis]-start[axis]
+    close(total, rotation_sign*turns*math.tau)
+    return {'node':owner_name, 'axis':'XYZ'[axis], 'helix_phase_slope':slope,
+            'rotation_radians_per_frame':delta[axis], 'total_radians':total,
+            'fixed_azimuth_crest_step':crest_step, 'feed_axis_sign':feed_sign,
+            'scope':'geometry direction only; not material velocity'}
+
+
 def web_clearance(web, rolls):
     """The web must not cut through a solid roll at a bend or transfer segment."""
     frame(1)
@@ -76,6 +115,8 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
                 centers.append(Vector([(a+b)/2 for a, b in zip(lo, hi)]))
             assert max((center-centers[0]).length for center in centers) < .001, (kind, name)
         checks.append(kind+': screw cores remain on their bearing axes')
+        reports[kind]['screw_direction'] = [screw_direction(name.removesuffix('_core'), name.removesuffix('_core')+'_flight', 0, 1, -1, 2) for name in names]
+        checks.append(kind+': signed screw rotation matches actual helix and downstream +X feed')
 
     if kind in ('extrusion', 'compounding'):
         assert surface_velocity('PullerLower', (0, 0, .205)).x > 0
@@ -89,6 +130,8 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
             assert delta[0]*delta[1] > 0
             close(delta[0], delta[1])
             checks.append('compounding: both screws co-rotate')
+            reports[kind]['side_feeder_direction'] = screw_direction('SideFeedRotor', 'SideFeedHelicalFlight', 1, -1, -1, 2)
+            checks.append('compounding: side-feed screw conveys toward the main barrel (-Y)')
 
     elif kind == 'sheet':
         web_clearance('SheetWeb', [('BottomRoll', .46), ('MiddleRoll', .46), ('TopRoll', .46), ('SheetGuideRoll', .29), ('Winder', .60)])
@@ -145,6 +188,8 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
         checks.append('blowmolding: head-anchored parison, cavity-aligned morph, pin retraction before opening and product discharge')
 
     elif kind == 'straw':
+        reports[kind]['screw_direction'] = [screw_direction('Screw rotation — illustrative speed', 'Continuous helical screw flight', 0, 1, 1, 1)]
+        checks.append('straw: opposite-handed borrowed helix retains its correct +X rotation')
         frame(1)
         upper = objects['Upper tread 00']
         lower = min((o for o in objects if o.name.startswith('Lower tread ')), key=lambda o: abs(o.location.x-5.15)+abs(o.location.z-1.741))

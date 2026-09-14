@@ -56,7 +56,9 @@
           ],
           "meshes": 23
         }
-      }
+      },
+      "spin_direction": -1,
+      "forward_flights_advance_to_die": true
     },
     {
       "state": "upstream_reverse_full",
@@ -112,14 +114,16 @@
           ],
           "meshes": 23
         }
-      }
+      },
+      "spin_direction": -1,
+      "forward_flights_advance_to_die": true
     }
   ],
   "mesh_objects": 452,
-  "unique_mesh_data": 150,
+  "unique_mesh_data": 158,
   "same_machine_except_compared_elements": true,
-  "glb_bytes": 1890544,
-  "glb_sha256": "92bda9085d35783fb2a2e8a30aab65c8b9f985e344843e17edf339a4f607f78d",
+  "glb_bytes": 1971892,
+  "glb_sha256": "bdcc286daa7276e44facc3468484fbe5a32f5d401ede7a3db419ca23e05c1530",
   "glb_roots": [
     "without_reverse_full",
     "upstream_reverse_full"
@@ -127,62 +131,5 @@
   "motion_frame": "Three Y-up metadata checked against Blender Z-up positions",
   "process_solver_validation": false,
   "screw_clearance_validation": false,
-  "limitations": "Illustrative open cutaway and directional markers; no geometry recipe, seal success, fill, energy, residence or actual plant outcome is predicted.",
-  "deduplication_validation": {
-    "old_bytes": 4033428,
-    "new_bytes": 1890544,
-    "reduction_percent": 53.13,
-    "old_meshes": 452,
-    "new_meshes": 150,
-    "checked_nodes": 468,
-    "positions_triangles_materials_transforms_extras_preserved": true,
-    "max_derived_normal_component_difference": 7.18235969543457e-05,
-    "comparison_basis": "Exact position and oriented triangle multisets, names, hierarchy, materials, transforms and extras per node. Draw order excluded. Derived normals checked within 1e-4; unused procedural UV rounding excluded because no textures exist. No geometry simplification.",
-    "poster_comparison": [
-      {
-        "state": "without_reverse_full",
-        "size": [
-          1600,
-          960
-        ],
-        "mean_absolute_pixel_difference_0_255": [
-          0.005942708333333334,
-          0.005914713541666667,
-          0.006229166666666667
-        ],
-        "rms": [
-          0.35247081734993796,
-          0.33069627461111,
-          0.29641960686387353
-        ],
-        "max_channel_difference_0_255": [
-          135,
-          124,
-          102
-        ]
-      },
-      {
-        "state": "upstream_reverse_full",
-        "size": [
-          1600,
-          960
-        ],
-        "mean_absolute_pixel_difference_0_255": [
-          0.0060305989583333336,
-          0.0059765625,
-          0.006321614583333334
-        ],
-        "rms": [
-          0.35350643116497893,
-          0.3316507010395124,
-          0.29672693676173045
-        ],
-        "max_channel_difference_0_255": [
-          136,
-          125,
-          102
-        ]
-      }
-    ]
-  }
+  "limitations": "Illustrative open cutaway and directional markers; no geometry recipe, seal success, fill, energy, residence or actual plant outcome is predicted."
 }

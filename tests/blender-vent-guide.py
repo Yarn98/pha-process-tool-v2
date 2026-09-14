@@ -58,15 +58,25 @@ for root in roots:
     screws = [obj for obj in nodes if obj.get('spin_axis')]
     assert len(screws) == 2
     assert all(obj['spin_axis'] == 'x' and obj['rotation_sense'] == 'same_for_both_shafts' for obj in screws)
+    assert all(obj.get('spin_direction') == -1 for obj in screws)
     # A quarter-turn moves both non-axis flight witnesses. No claim about actual clearance.
     for pivot in screws:
         flight = next(obj for obj in pivot.children if obj.get('helix_direction') == 'forward')
+        a,b = flight.data.vertices[1].co,flight.data.vertices[5].co
+        delta = math.atan2(b.z,b.y)-math.atan2(a.z,a.y)
+        k = math.atan2(math.sin(delta),math.cos(delta))/(b.x-a.x)
+        assert k > 0 and -pivot['spin_direction']/k > 0, 'Forward flight must advance toward the +X die'
         witness = next(v.co.copy() for v in flight.data.vertices if math.hypot(v.co.y,v.co.z) > .3)
-        assert (Quaternion((1,0,0), math.pi/2) @ witness-witness).length > .3
+        assert (Quaternion((1,0,0), pivot['spin_direction']*math.pi/2) @ witness-witness).length > .3
     compared = [obj for obj in nodes if obj.get('vent_part') == 'compared_element']
     assert len(compared) == 2
     expected = 'reverse' if root.name == 'upstream_reverse_full' else 'forward'
     assert all(obj['helix_direction'] == expected for obj in compared)
+    for element in compared:
+        a,b = element.data.vertices[1].co,element.data.vertices[5].co
+        delta = math.atan2(b.z,b.y)-math.atan2(a.z,a.y)
+        k = math.atan2(math.sin(delta),math.cos(delta))/(b.x-a.x)
+        assert (-element.parent['spin_direction']/k > 0) == (expected == 'forward'), 'Reverse element resists under the same shaft rotation'
     markers = [obj for obj in nodes if obj.get('vent_flow')]
     assert {obj['vent_flow'] for obj in markers} == FLOW
     for obj in markers:
@@ -84,7 +94,8 @@ for root in roots:
     records.append({'state':root.name,'meshes':len(meshes),'screw_pivots':2,
                     'flow_markers':dict(collections.Counter(obj['vent_flow'] for obj in markers)),
                     'atmospheric_before_melting':True,'vacuum_after_seal_region':True,
-                    'compared_element':expected,'finite_geometry':True,'focus_bounds':focus_bounds})
+                    'compared_element':expected,'finite_geometry':True,'focus_bounds':focus_bounds,
+                    'spin_direction':-1,'forward_flights_advance_to_die':True})
 
 # State comparison must not silently encode a different process outcome.
 def stable_geometry(root):
@@ -109,6 +120,7 @@ scene_nodes = [gltf['nodes'][i] for i in gltf['scenes'][gltf.get('scene',0)]['no
 assert {node['name'] for node in scene_nodes} == set(STATES), 'Studio objects leaked into deployment'
 assert not gltf.get('animations'), 'Runtime should own explanation phase'
 assert len([node for node in gltf['nodes'] if node.get('extras',{}).get('spin_axis')]) == 4
+assert all(node['extras'].get('spin_direction') == -1 for node in gltf['nodes'] if node.get('extras',{}).get('spin_axis'))
 assert {node.get('extras',{}).get('vent_focus') for node in gltf['nodes']} >= {'atm','vac','seal'}
 mesh_nodes = [obj for root in roots for obj in root.children_recursive if obj.type == 'MESH']
 unique_mesh_data = len({obj.data.as_pointer() for obj in mesh_nodes})

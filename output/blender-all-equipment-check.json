@@ -1,20 +1,28 @@
 {
   "status": "pass",
-  "blender": "5.2.0 LTS",
+  "blender": "5.2.1 LTS",
   "checks": [
     "extrusion: screw cores remain on their bearing axes",
+    "extrusion: signed screw rotation matches actual helix and downstream +X feed",
     "extrusion: both puller contacts move downstream",
     "compounding: screw cores remain on their bearing axes",
+    "compounding: signed screw rotation matches actual helix and downstream +X feed",
     "compounding: both puller contacts move downstream",
     "compounding: both screws co-rotate",
+    "compounding: side-feed screw conveys toward the main barrel (-Y)",
     "sheet: screw cores remain on their bearing axes",
+    "sheet: signed screw rotation matches actual helix and downstream +X feed",
     "sheet: upstack web clearance and both nip contact directions",
     "castfilm: screw cores remain on their bearing axes",
+    "castfilm: signed screw rotation matches actual helix and downstream +X feed",
     "castfilm: web stays outside chill, guide and winding rolls",
     "blownfilm: screw cores remain on their bearing axes",
+    "blownfilm: signed screw rotation matches actual helix and downstream +X feed",
     "blownfilm: upward nip contacts, web clearance, flattening orientation and bubble morph",
     "blowmolding: screw cores remain on their bearing axes",
+    "blowmolding: signed screw rotation matches actual helix and downstream +X feed",
     "blowmolding: head-anchored parison, cavity-aligned morph, pin retraction before opening and product discharge",
+    "straw: opposite-handed borrowed helix retains its correct +X rotation",
     "straw: original snapshot hash, belt contact direction, visible fasteners and cut-segment discharge/regrowth",
     "All seven rigs: embedded geometry, finite transforms and all configured motion groups"
   ],
@@ -26,6 +34,18 @@
         "flow",
         "haul",
         "screw"
+      ],
+      "screw_direction": [
+        {
+          "node": "ScrewA",
+          "axis": "X",
+          "helix_phase_slope": 18.934174878344084,
+          "rotation_radians_per_frame": -0.04363323003053665,
+          "total_radians": -12.566370964050293,
+          "fixed_azimuth_crest_step": 0.002304469580052419,
+          "feed_axis_sign": 1,
+          "scope": "geometry direction only; not material velocity"
+        }
       ]
     },
     "compounding": {
@@ -36,7 +56,39 @@
         "haul",
         "screw",
         "side"
-      ]
+      ],
+      "screw_direction": [
+        {
+          "node": "ScrewA",
+          "axis": "X",
+          "helix_phase_slope": 18.917291472909167,
+          "rotation_radians_per_frame": -0.04363323003053665,
+          "total_radians": -12.566370964050293,
+          "fixed_azimuth_crest_step": 0.0023065262853840555,
+          "feed_axis_sign": 1,
+          "scope": "geometry direction only; not material velocity"
+        },
+        {
+          "node": "ScrewB",
+          "axis": "X",
+          "helix_phase_slope": 18.91748388540546,
+          "rotation_radians_per_frame": -0.04363323003053665,
+          "total_radians": -12.566370964050293,
+          "fixed_azimuth_crest_step": 0.002306502825367754,
+          "feed_axis_sign": 1,
+          "scope": "geometry direction only; not material velocity"
+        }
+      ],
+      "side_feeder_direction": {
+        "node": "SideFeedRotor",
+        "axis": "Y",
+        "helix_phase_slope": -24.166097357452003,
+        "rotation_radians_per_frame": -0.04363323003053665,
+        "total_radians": -12.566370964050293,
+        "fixed_azimuth_crest_step": -0.0018055555013760485,
+        "feed_axis_sign": -1,
+        "scope": "geometry direction only; not material velocity"
+      }
     },
     "sheet": {
       "objects": 125,
@@ -45,6 +97,18 @@
         "roll",
         "screw",
         "winder"
+      ],
+      "screw_direction": [
+        {
+          "node": "ScrewA",
+          "axis": "X",
+          "helix_phase_slope": 18.93417487100728,
+          "rotation_radians_per_frame": -0.04363323003053665,
+          "total_radians": -12.566370964050293,
+          "fixed_azimuth_crest_step": 0.002304469580945378,
+          "feed_axis_sign": 1,
+          "scope": "geometry direction only; not material velocity"
+        }
       ]
     },
     "castfilm": {
@@ -54,6 +118,18 @@
         "roll",
         "screw",
         "winder"
+      ],
+      "screw_direction": [
+        {
+          "node": "ScrewA",
+          "axis": "X",
+          "helix_phase_slope": 18.934174882829236,
+          "rotation_radians_per_frame": -0.04363323003053665,
+          "total_radians": -12.566370964050293,
+          "fixed_azimuth_crest_step": 0.002304469579506533,
+          "feed_axis_sign": 1,
+          "scope": "geometry direction only; not material velocity"
+        }
       ]
     },
     "blownfilm": {
@@ -64,6 +140,18 @@
         "haul",
         "screw",
         "winder"
+      ],
+      "screw_direction": [
+        {
+          "node": "ScrewA",
+          "axis": "X",
+          "helix_phase_slope": 18.934174868337166,
+          "rotation_radians_per_frame": -0.04363323003053665,
+          "total_radians": -12.566370964050293,
+          "fixed_azimuth_crest_step": 0.002304469581270356,
+          "feed_axis_sign": 1,
+          "scope": "geometry direction only; not material velocity"
+        }
       ]
     },
     "blowmolding": {
@@ -77,6 +165,18 @@
         "pin",
         "release",
         "screw"
+      ],
+      "screw_direction": [
+        {
+          "node": "ScrewA",
+          "axis": "X",
+          "helix_phase_slope": 18.934174874137963,
+          "rotation_radians_per_frame": -0.04363323003053665,
+          "total_radians": -12.566370964050293,
+          "fixed_azimuth_crest_step": 0.002304469580564344,
+          "feed_axis_sign": 1,
+          "scope": "geometry direction only; not material velocity"
+        }
       ]
     },
     "straw": {
@@ -86,6 +186,18 @@
         "flow",
         "haul",
         "screw"
+      ],
+      "screw_direction": [
+        {
+          "node": "Screw rotation \u2014 illustrative speed",
+          "axis": "X",
+          "helix_phase_slope": -13.189818309117797,
+          "rotation_radians_per_frame": 0.05235987901687622,
+          "total_radians": 6.2831854820251465,
+          "fixed_azimuth_crest_step": 0.003969719505588725,
+          "feed_axis_sign": 1,
+          "scope": "geometry direction only; not material velocity"
+        }
       ]
     }
   }

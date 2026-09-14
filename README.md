@@ -10,6 +10,8 @@ PHA 가공의 **초기 시운전 참고 조건, 계산, 현장 기록**을 제�
 
 **2026-09-14 벤트 집중 가이드:** ‘벤트 역류·스트랜드 기포’에서 **벤트 가이드·3D 보기**를 열면 앞쪽 대기 벤트와 뒤쪽 진공 벤트의 역할, 역이송 제거/벤트 전 배치 비교, 덩어리·RPM/토출량 변경 후 MI 상승의 점검 순서를 볼 수 있습니다. 제조사 원문과 완료된 GPT-6 Pro 조사를 검토해 조건부 가이드로 반영했습니다. 승온 폭이나 스크류 개수를 자동 처방하지 않습니다. 새 Blender 모형에서 두 배치, 스크류 회전·수지/가스 이동, ATM·씰·VAC 확대를 조작합니다. 첨부 슬라이드는 앱 이미지로 재사용하지 않았습니다. [조사 내용](docs/research/PHA_VENT_FLOODING_20260914.md) / [구현·검증](docs/VENT_GUIDE_20260914.md).
 
+**2026-09-15 스크류 회전 수정:** 컴파운딩을 포함한 6종 설비와 벤트 가이드에서 스크류 나선의 이송 방향과 회전 방향을 맞췄습니다. 자동 재생·직접 조작·RPM 연동을 같은 방향으로 검증했습니다. [수정 범위와 검증](docs/SCREW_DIRECTION_FIX_20260915.md).
+
 ## GitHub에서 받아 로컬로 실행
 
 [저장소 전체 ZIP](https://github.com/Yarn98/pha-process-tool-v2/archive/refs/heads/main.zip)을 받거나 [저장소](https://github.com/Yarn98/pha-process-tool-v2)의 **Code → Download ZIP**을 선택합니다. ZIP 내부의 `pha-process-tool-v2-main` 폴더 전체를 사용하세요. [GitHub 다운로드 안내](https://docs.github.com/en/repositories/working-with-files/using-files/downloading-source-code-archives).
@@ -156,7 +158,7 @@ blender --background --factory-startup --python-exit-code 1 --python scripts/cre
 
 이력·배치·템플릿·물성은 브라우저 로컬 저장소에, 일부 사진은 IndexedDB와 별도 localStorage 갤러리에 저장합니다. 기기 간 자동 동기화되지 않습니다. JSON/CSV로 백업하세요. 업데이트를 위해 웹사이트 데이터를 지우면 현장 기록도 삭제될 수 있습니다.
 
-서비스워커는 HTML network-first, 버전 자산 precache를 사용합니다. v=23 / pha-cache-v23-vent-guide. 첫 정상 로드와 캐시 준비 후 로컬 자료·8개 기존 설비·16개 결함 모형 및 새 두 벤트 모형의 3D 조작·계산을 사용할 수 있습니다. 외부 TARS API와 CDN Chart.js는 오프라인에서 제한됩니다. file://보다 로컬 HTTP 실행을 권장합니다.
+서비스워커는 HTML network-first, 버전 자산 precache를 사용합니다. v=24 / pha-cache-v24-screw-direction. 첫 정상 로드와 캐시 준비 후 로컬 자료·8개 기존 설비·16개 결함 모형 및 새 두 벤트 모형의 3D 조작·계산을 사용할 수 있습니다. 외부 TARS API와 CDN Chart.js는 오프라인에서 제한됩니다. file://보다 로컬 HTTP 실행을 권장합니다.
 
 기존 체크리스트·시험 로그는 유지합니다. 의미가 바뀐 컴파운딩 체크 두 항목은 새 키를 사용하며, 이전 완료 표시는 과거 기록으로 남깁니다.
 

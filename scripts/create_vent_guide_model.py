@@ -256,6 +256,7 @@ def screw(index, reverse):
     pivot.parent = OWNER
     pivot.location = (0, -.29 if index == 1 else .29, 1.34)
     pivot['spin_axis'] = 'x'
+    pivot['spin_direction'] = -1  # Positive-pitch flights advance toward +X under negative X rotation.
     pivot['rotation_sense'] = 'same_for_both_shafts'
     pivot['vent_part'] = 'screw'
     cylinder('Shaft',(0,0,0),.15,10.4,'shaft','X',pivot)
@@ -496,7 +497,7 @@ manifest={'id':'vent-guide','blender':bpy.app.version_string,
           'mesh_reuse':mesh_reuse,
           'state_difference':'only highlighted element handedness/material; neither state predicts seal performance or user outcomes',
           'motion':{'frame':'Three glTF Y-up; +X feed-to-die; all flow markers direct children of identity state groups',
-                    'screw':'spin_axis=x on two pivot nodes per state; rotate both in same direction',
+                    'screw':'spin_axis=x, spin_direction=-1 on both pivots per state; forward flights convey toward +X',
                     'flow':'vent_flow=solid|melt|atm_gas|vac_gas; vent_from and vent_to Three parent-local vectors; t=(phase+vent_phase)%1; lerp(from,to,t)',
                     'focus':'vent_focus=atm|vac|seal on static equipment meshes and compared element; includes nearby barrel context',
                     'scope':'directional explanation only, no timing, fill fraction, energy or residence prediction'},
