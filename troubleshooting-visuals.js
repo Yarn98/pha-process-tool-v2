@@ -1,7 +1,7 @@
 /* Symptom imagery and explanation, connected to the reviewed KB by stable ID. */
 (() => {
   'use strict';
-  const VERSION='?v=24',data=window.PHATroubleVisualData;
+  const VERSION='?v=25',data=window.PHATroubleVisualData;
   if(!data?.entries?.length)return;
   const entries=new Map(data.entries.map(entry=>[entry.kb_id,entry]));
   const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -155,8 +155,8 @@
       dispose();current.ventModel=true;current.context=false;current.tab='model';render();$('#tsv-tab-model').focus();loadModel();return;
     }
     if(d.tsTab){selectTab(d.tsTab,true);return;}
-    if('tsCase' in d){dispose();current.ventModel=false;current.caseIndex=Number(d.tsCase);current.normal=false;current.section=!!selected().default_section;current.zoom=undefined;render();if(current.tab==='model')loadModel();return;}
-    if(d.tsContext!==undefined){dispose();current.ventModel=false;current.context=d.tsContext==='true';render();loadModel();return;}
+    if('tsCase' in d){dispose();current.ventModel=false;current.caseIndex=Number(d.tsCase);current.normal=false;current.section=!!selected().default_section;current.zoom=undefined;render();$(`[data-ts-case="${current.caseIndex}"]`)?.focus({preventScroll:true});if(current.tab==='model')loadModel();return;}
+    if(d.tsContext!==undefined){dispose();current.ventModel=false;current.context=d.tsContext==='true';render();$(`[data-ts-context="${current.context}"]`)?.focus({preventScroll:true});loadModel();return;}
     if(d.tsCamera){viewer?.cameraAction(d.tsCamera);return;}
     if('tsPlay' in d){if(current.playing){stop();}else if(viewer){current.playing=true;button.textContent=txt('일시정지','Pause');button.setAttribute('aria-pressed','true');animation=requestAnimationFrame(tick);}return;}
     if(d.tsZoom){current.zoom=d.tsZoom;$('#tsv-panel-compare').innerHTML=comparison();bindImageFallbacks();$('[data-ts-zoom-close]').focus();return;}

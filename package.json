@@ -4,6 +4,8 @@
   "description": "PHA Process Optimizer & Convertor - Static HTML/JavaScript Application",
   "scripts": {
     "build": "node build.js",
+    "build:single": "node scripts/build-single-file.cjs",
+    "test:single": "node scripts/build-single-file.cjs --check && node tests/single-file.mjs",
     "start": "echo 'This is a static site. Open index.html in a browser.' && exit 0",
     "test:myai": "node tests/myai-regression.mjs",
     "test:process": "node --test tests/process-evidence.test.cjs tests/troubleshooting.test.cjs",
@@ -16,7 +18,8 @@
     "test:ts-visuals": "node --test tests/troubleshooting-visuals.test.cjs && node tests/troubleshooting-visuals.mjs",
     "check:ts-visuals": "node scripts/sync-troubleshooting-visuals.cjs --check",
     "check:vent-guide": "node scripts/sync-vent-guide.cjs --check",
-    "test:vent-guide": "node --test tests/vent-guide-data.test.cjs && node tests/vent-guide-ui.mjs"
+    "test:vent-guide": "node --test tests/vent-guide-data.test.cjs && node tests/vent-guide-ui.mjs",
+    "test:flash-guide": "node --test tests/flash-guide-data.test.cjs && node tests/flash-guide-ui.mjs"
   },
   "keywords": [
     "pha",

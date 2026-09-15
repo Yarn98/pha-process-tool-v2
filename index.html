@@ -301,19 +301,20 @@
     .log-header{flex-direction:column;align-items:stretch}
   }
 </style>
-<link rel="stylesheet" href="./tokens.css?v=24">
-<link rel="stylesheet" href="./overrides.css?v=24">
+<link rel="stylesheet" href="./tokens.css?v=25">
+<link rel="stylesheet" href="./overrides.css?v=25">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#2C5D3F">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+<script src="./vendor/chart-4.4.0/chart.umd.min.js?v=25" defer></script>
 <script type="importmap">{"imports":{"three":"./vendor/three-0.185.1/build/three.module.js"}}</script>
-<script src="process-evidence.js?v=24"></script>
-<link rel="stylesheet" href="process-atlas.css?v=24">
-<link rel="stylesheet" href="troubleshooting-visuals.css?v=24">
-<link rel="stylesheet" href="vent-guide.css?v=24">
+<script src="process-evidence.js?v=25"></script>
+<link rel="stylesheet" href="process-atlas.css?v=25">
+<link rel="stylesheet" href="troubleshooting-visuals.css?v=25">
+<link rel="stylesheet" href="vent-guide.css?v=25">
+<link rel="stylesheet" href="flash-guide.css?v=25">
 </head>
 <body class="app-locked">
 <a class="skip-link" href="#mainContent">본문 바로가기 / Skip to content</a>
@@ -463,13 +464,14 @@
       <div class="card" id="anaCard"><div id="anaText" class="hint">분석 데이터 로딩 중...</div></div>
       <div id="anaChartContainer" class="chart-container" style="display:none;margin-top:16px;text-align:left">
         <div class="chart-controls">
-          <h4 style="color:var(--ink);margin:0;flex:1">파라미터 트렌드</h4>
+          <h4 id="anaChartTitle" style="color:var(--ink);margin:0;flex:1">파라미터 트렌드</h4>
           <select id="anaParamSelect" style="padding:6px 10px;border:1px solid var(--rule-strong);border-radius:2px;font-size:13px;color:var(--ink);background:var(--paper)"></select>
         </div>
-        <div style="position:relative;height:300px">
+        <p id="anaChartStatus" class="hint" role="status"></p>
+        <div id="anaChartFrame" style="position:relative;height:300px">
           <canvas id="anaChart"></canvas>
         </div>
-        <p style="font-size:12px;color:var(--muted);margin-top:10px;text-align:center">저장된 이력 데이터에서 선택한 파라미터의 트렌드를 표시합니다.</p>
+        <p id="anaChartCaption" style="font-size:12px;color:var(--muted);margin-top:10px;text-align:center">저장된 이력 데이터에서 선택한 파라미터의 트렌드를 표시합니다.</p>
       </div>
     </section>
 
@@ -555,28 +557,28 @@
 
     <!-- Flash Control Tab -->
     <section id="flash" class="tabpage">
-      <h2 data-i18n="flash_title" style="color:var(--ink);margin-bottom:20px">PHA 36-캐비티 플래시 제어 현장 가이드</h2>
-      <p data-i18n="flash_desc" style="font-size:1.1em;color:var(--muted);margin-bottom:20px">압력-동기형 4단 제어 + 러너 보호 통합 솔루션 (P3HB4: S1000P/A1000P | 36-캐비티 | 플래시 ≤0.02mm)</p>
+      <h2 data-i18n="flash_title" style="color:var(--ink);margin-bottom:20px">PHA 플래시 제어</h2>
+      <p data-i18n="flash_desc" style="font-size:1.1em;color:var(--muted);margin-bottom:20px">불량 위치와 발생 단계를 확인하고, 근거와 시험 결과로 다음 조치를 정합니다.</p>
 
-      <div class="flash-tabs">
-        <button class="flash-tab active" data-i18n="flash_t0" onclick="showFlashTab(0)">전체 개요</button>
-        <button class="flash-tab" data-i18n="flash_t1" onclick="showFlashTab(1)">기계 설정</button>
-        <button class="flash-tab" data-i18n="flash_t2" onclick="showFlashTab(2)">계산기</button>
-        <button class="flash-tab" data-i18n="flash_t3" onclick="showFlashTab(3)">프로세스 플로우</button>
-        <button class="flash-tab" data-i18n="flash_t4" onclick="showFlashTab(4)">체크리스트</button>
-        <button class="flash-tab" data-i18n="flash_t5" onclick="showFlashTab(5)">문제 해결</button>
-        <button class="flash-tab" data-i18n="flash_t6" onclick="showFlashTab(6)">공정 로그</button>
-        <button class="flash-tab" data-i18n="flash_t7" onclick="showFlashTab(7)">사용 설명서</button>
+      <div class="flash-tabs" role="tablist" aria-label="Flash guide">
+        <button type="button" class="flash-tab active" id="flash-nav-0" role="tab" aria-controls="flash-tab-0" aria-selected="true" data-i18n="flash_t0" onclick="showFlashTab(0)">결함 알아보기</button>
+        <button type="button" class="flash-tab" id="flash-nav-1" role="tab" aria-controls="flash-tab-1" aria-selected="false" tabindex="-1" data-i18n="flash_t1" onclick="showFlashTab(1)">점검·조정 순서</button>
+        <button type="button" class="flash-tab" id="flash-nav-2" role="tab" aria-controls="flash-tab-2" aria-selected="false" tabindex="-1" data-i18n="flash_t2" onclick="showFlashTab(2)">계산 도구</button>
+        <button type="button" class="flash-tab" id="flash-nav-3" role="tab" aria-controls="flash-tab-3" aria-selected="false" tabindex="-1" data-i18n="flash_t3" onclick="showFlashTab(3)">사출기 동작</button>
+        <button type="button" class="flash-tab" id="flash-nav-4" role="tab" aria-controls="flash-tab-4" aria-selected="false" tabindex="-1" data-i18n="flash_t4" onclick="showFlashTab(4)">시험 체크리스트</button>
+        <button type="button" class="flash-tab" id="flash-nav-5" role="tab" aria-controls="flash-tab-5" aria-selected="false" tabindex="-1" data-i18n="flash_t5" onclick="showFlashTab(5)">원인별 해결</button>
+        <button type="button" class="flash-tab" id="flash-nav-6" role="tab" aria-controls="flash-tab-6" aria-selected="false" tabindex="-1" data-i18n="flash_t6" onclick="showFlashTab(6)">공정 로그</button>
+        <button type="button" class="flash-tab" id="flash-nav-7" role="tab" aria-controls="flash-tab-7" aria-selected="false" tabindex="-1" data-i18n="flash_t7" onclick="showFlashTab(7)">근거·사용법</button>
       </div>
 
-      <div class="flash-content active" id="flash-tab-0"></div>
-      <div class="flash-content" id="flash-tab-1"></div>
-      <div class="flash-content" id="flash-tab-2"></div>
-      <div class="flash-content" id="flash-tab-3"></div>
-      <div class="flash-content" id="flash-tab-4"></div>
-      <div class="flash-content" id="flash-tab-5"></div>
-      <div class="flash-content" id="flash-tab-6"></div>
-      <div class="flash-content" id="flash-tab-7"></div>
+      <div class="flash-content active" id="flash-tab-0" role="tabpanel" aria-labelledby="flash-nav-0"></div>
+      <div class="flash-content" id="flash-tab-1" role="tabpanel" aria-labelledby="flash-nav-1" hidden></div>
+      <div class="flash-content" id="flash-tab-2" role="tabpanel" aria-labelledby="flash-nav-2" hidden></div>
+      <div class="flash-content" id="flash-tab-3" role="tabpanel" aria-labelledby="flash-nav-3" hidden></div>
+      <div class="flash-content" id="flash-tab-4" role="tabpanel" aria-labelledby="flash-nav-4" hidden></div>
+      <div class="flash-content" id="flash-tab-5" role="tabpanel" aria-labelledby="flash-nav-5" hidden></div>
+      <div class="flash-content" id="flash-tab-6" role="tabpanel" aria-labelledby="flash-nav-6" hidden></div>
+      <div class="flash-content" id="flash-tab-7" role="tabpanel" aria-labelledby="flash-nav-7" hidden></div>
     </section>
 
     <!-- Compounding Guide -->
@@ -931,11 +933,11 @@ const I18N = {
       tpl_saved:"템플릿이 저장되었습니다.",tpl_applied:"템플릿이 적용되었습니다.",tpl_deleted:"템플릿이 삭제되었습니다.",tpl_invalid:"올바른 번호를 입력하세요.",
       add_log_first:"먼저 로그를 추가해주세요.",weight_applied:"무게 데이터가 최신 로그에 적용되었습니다!",
       photo_too_big:"파일이 너무 큽니다 (최대 5MB)",photo_added:"사진이 추가되었습니다.",
-      flash_title:"PHA 36-캐비티 플래시 제어 현장 가이드",
-      flash_desc:"재료별 근거와 현장 시험으로 점검하는 플래시 가이드 · Grade references and trial checks",
+      flash_title:"PHA 플래시 제어",
+      flash_desc:"불량 위치와 발생 단계를 확인하고, 근거와 시험 결과로 다음 조치를 정합니다.",
       flash_lang_notice:"아래 상세 내용은 현장 작업자용 한국어로 유지됩니다. 영문 전체 번역은 별도 세션에서 준비 중입니다.",
-      flash_t0:"전체 개요",flash_t1:"기계 설정",flash_t2:"계산기",flash_t3:"프로세스 플로우",
-      flash_t4:"체크리스트",flash_t5:"문제 해결",flash_t6:"공정 로그",flash_t7:"사용 설명서",
+      flash_t0:"결함 알아보기",flash_t1:"점검·조정 순서",flash_t2:"계산 도구",flash_t3:"사출기 동작",
+      flash_t4:"시험 체크리스트",flash_t5:"원인별 해결",flash_t6:"공정 로그",flash_t7:"근거·사용법",
       myai:{title:"My AI",intro:"LM Studio, Cerebras, OpenAI, Grok 또는 OpenAI-compatible API를 연결해 이 PHA 공정 앱의 계산기·데이터·가이드를 tool-calling으로 실행합니다. 설정과 대화는 이 브라우저에만 저장됩니다.",backend:"백엔드",lmUrl:"LM Studio 주소",model:"모델",test:"연결 테스트",unchecked:"미확인",lmNote:"PC에서는 localhost를 그대로 쓸 수 있습니다. 핸드폰/배포 HTTPS 페이지에서는 Cloudflare Tunnel 또는 Tailscale HTTPS 주소를 사용하세요.",apiProvider:"편집할 API 제공자",apiKey:"API 키",hybridBackends:"Hybrid 활성 백엔드",hybridChars:"이 글자 수 초과 시 클라우드/API",hybridKeywords:"복잡 요청 키워드",storageTitle:"개인 키와 기기 저장",storageNote:"API 키는 각 사용자가 직접 발급·관리합니다. 이 앱은 서버에 키를 저장하지 않으며, 아래 토글이 켜진 경우에만 현재 브라우저/기기의 localStorage에 저장합니다. 공용 기기에서는 끄고 사용 후 삭제하세요.",storeKeys:"API 키를 이 기기에 저장",storeKeysOn:"API 키 저장 켜짐 — 현재 브라우저/기기 localStorage에 저장됩니다.",storeKeysOff:"API 키 저장 꺼짐 — 입력한 키는 현재 페이지 세션에서만 사용되고 새로고침 후 사라질 수 있습니다.",deleteKeys:"저장된 API 키 삭제",deleteChat:"대화 기록 삭제",resetData:"My AI 데이터 초기화",deleteKeysOk:"API 키를 삭제했습니다.",deleteChatOk:"대화 기록을 삭제했습니다.",resetDataOk:"My AI 설정과 대화 기록을 초기화했습니다.",confirmDeleteKeys:"저장된 API 키를 삭제할까요?",confirmDeleteChat:"이 브라우저의 My AI 대화 기록을 삭제할까요?",confirmResetData:"이 브라우저의 My AI 설정, API 키, 동기화 코드, 대화 기록을 모두 초기화할까요?",allowControl:"앱 기능 제어 허용",personality:"어시스턴트 성격",advanced:"고급 · 검색 보강 · 커스텀 tool",searchUrl:"web_search 엔드포인트",customTools:"커스텀 tool",addTool:"tool 추가",sync:"기기 동기화 코드",syncNote:"내보내기 코드는 API 키 저장 토글이 켜진 경우에만 키를 포함합니다. 타인에게 공유하지 마세요.",export:"내보내기",copy:"복사",import:"가져오기",quickTab:"현재 탭 설명",quickResidence:"체류시간 계산",quickMaterial:"소재 정보",clearChat:"대화 초기화",send:"보내기",stop:"중지",idle:"대기 중",ready:"설정됨",incomplete:"미완성",testing:"테스트 중...",connected:"연결됨",failed:"실패",requesting:"요청 중...",toolRunning:"tool 실행: ",busy:"응답 대기 중입니다.",error:"오류",emptyResponse:"(빈 응답)",copyMsg:"복사",copiedMsg:"복사됨",startPrompt:"백엔드를 설정하고 대화를 시작하세요. 예: S1000P 물성과 권장 온도 알려줘.",inputPlaceholder:"구어체로 입력하세요. 예: 홀드업 2.5 L, 밀도 1100, 처리량 15 kg/h 체류시간은?",chatCleared:"대화 기록을 지웠습니다.",importOk:"설정을 가져왔습니다.",syncExported:"설정 코드를 만들었습니다.",syncParseFailed:"동기화 코드 해석 실패: ",syncStaged:"링크에 동기화 코드가 있습니다. 설정에서 확인 후 Import를 눌러 적용하세요 — API 키·앱 제어·커스텀 백엔드가 포함될 수 있습니다.",stopped:"중지됨.",toolLimit:"tool 호출 한도({max}) 초과",fallback:"실패 → {next} 폴백",singleBackendHint:"연결 실패 — endpoint/API 키를 확인하거나 Hybrid로 바꾸면 다른 백엔드로 폴백할 수 있습니다.",modelHint:"모델 (비우면 서버 첫 모델 자동)",cbUrl:"Cerebras API base URL",cbNote:"Cerebras 또는 Cloudflare AI Gateway의 OpenAI-호환 endpoint를 입력합니다. 키는 이 브라우저에만 저장됩니다.",subTitle:"구독형/API AI",hybridNote:"간단한 tool 호출·짧은 질문은 선택된 LM Studio를 우선 사용하고, 길거나 복잡한 요청은 준비된 클라우드/API 백엔드로 자동 분배합니다. 실패 시 다음 백엔드로 폴백합니다.",loadModels:"모델 불러오기",modelList:"모델 목록",loadingModels:"모델 불러오는 중…",models:"개 모델",modelsFallback:"추천 목록을 불러왔습니다",currentModel:"현재 입력값"}
   },
   en:{title:"PHA <em>Process</em> Tool",tab_proc:"Process Conditions",tab_ts:"Troubleshooting",tab_hist:"History",tab_ana:"Data Analysis",tab_calc:"Calculators",tab_props:"Materials DB",tab_photos:"Photos",tab_flash:"Flash Control",tab_comp:"Compounding Guide",tab_straw:"Straw Guide",tab_myai:"My AI",
@@ -951,11 +953,11 @@ const I18N = {
       tpl_saved:"Template saved.",tpl_applied:"Template applied.",tpl_deleted:"Template deleted.",tpl_invalid:"Please enter a valid number.",
       add_log_first:"Please add a log entry first.",weight_applied:"Weight data applied to latest log!",
       photo_too_big:"File too large (max 5MB)",photo_added:"Photo added.",
-      flash_title:"PHA 36-Cavity Flash Control Field Guide",
-      flash_desc:"재료별 근거와 현장 시험으로 점검하는 플래시 가이드 · Grade references and trial checks",
+      flash_title:"PHA Flash Control",
+      flash_desc:"Identify the defect location and onset, then choose the next action from evidence and trial results.",
       flash_lang_notice:"Detailed content below is maintained in Korean for field operators. A full English translation is scheduled; contact the TARS team for a narrated walk-through until then.",
-      flash_t0:"Overview",flash_t1:"Machine Setup",flash_t2:"Calculator",flash_t3:"Process Flow",
-      flash_t4:"Checklist",flash_t5:"Troubleshooting",flash_t6:"Process Log",flash_t7:"User Manual",
+      flash_t0:"Identify the defect",flash_t1:"Checks & adjustments",flash_t2:"Calculation tools",flash_t3:"Injection motion",
+      flash_t4:"Trial checklist",flash_t5:"Cause-specific actions",flash_t6:"Process log",flash_t7:"Sources & use",
       myai:{title:"My AI",intro:"Connect LM Studio, Cerebras, OpenAI, Grok, or any OpenAI-compatible API and let the model call this PHA process app's calculators, data, and guide tools. Settings and chat stay in this browser only.",backend:"Backend",lmUrl:"LM Studio URL",model:"Model",test:"Test connection",unchecked:"Unchecked",lmNote:"On desktop you can use localhost. From a phone or deployed HTTPS page, use a Cloudflare Tunnel or Tailscale HTTPS URL.",apiProvider:"API provider to edit",apiKey:"API key",hybridBackends:"Hybrid enabled backends",hybridChars:"Use cloud/API over this length",hybridKeywords:"Complex-request keywords",storageTitle:"Personal keys and device storage",storageNote:"Each user creates and manages their own API key. This app does not store keys on a server; keys are saved only to this browser/device localStorage when the toggle below is on. Keep it off on shared devices and delete data after use.",storeKeys:"Save API keys on this device",storeKeysOn:"API key saving is on. Keys are stored in this browser/device localStorage.",storeKeysOff:"API key saving is off. Entered keys are used for this page session only and may disappear after reload.",deleteKeys:"Delete saved API keys",deleteChat:"Delete chat history",resetData:"Reset My AI data",deleteKeysOk:"API keys deleted.",deleteChatOk:"Chat history deleted.",resetDataOk:"My AI settings and chat history reset.",confirmDeleteKeys:"Delete saved API keys?",confirmDeleteChat:"Delete this browser's My AI chat history?",confirmResetData:"Reset this browser's My AI settings, API keys, sync code, and chat history?",allowControl:"Allow app control",personality:"Assistant personality",advanced:"Advanced · search and custom tools",searchUrl:"web_search endpoint",customTools:"Custom tools",addTool:"Add tool",sync:"Device sync code",syncNote:"Exported codes include API keys only when Save API keys is on. Do not share them.",export:"Export",copy:"Copy",import:"Import",quickTab:"Current tab",quickResidence:"Residence time",quickMaterial:"Material info",clearChat:"Clear chat",send:"Send",stop:"Stop",idle:"Idle",ready:"Ready",incomplete:"Incomplete",testing:"Testing...",connected:"Connected",failed:"Failed",requesting:"Requesting...",toolRunning:"Running tool: ",busy:"Waiting for response.",error:"Error",emptyResponse:"(empty response)",copyMsg:"Copy",copiedMsg:"Copied",startPrompt:"Configure a backend and start chatting. Example: explain S1000P material data and recommended temperatures.",inputPlaceholder:"Ask naturally. Example: residence time for hold-up 2.5 L, density 1100, throughput 15 kg/h?",chatCleared:"Chat history cleared.",importOk:"Settings imported.",syncExported:"Settings code created.",syncParseFailed:"Could not parse sync code: ",syncStaged:"A sync code was found in the link. Review it in Settings and press Import to apply — it may include API keys, app control, and a custom backend.",stopped:"Stopped.",toolLimit:"Tool round limit ({max}) exceeded",fallback:"failed -> fallback to {next}",singleBackendHint:"Connection failed. Check endpoint/API key, or switch to Hybrid to allow fallback.",modelHint:"Model (blank = server's first model)",cbUrl:"Cerebras API base URL",cbNote:"Use Cerebras directly or a Cloudflare AI Gateway OpenAI-compatible endpoint. The key is stored only in this browser.",subTitle:"Subscription / API AI",hybridNote:"Short tool calls and questions prefer the selected LM Studio; long or complex requests route to a ready cloud/API backend, falling back automatically on failure.",loadModels:"Load models",modelList:"Model list",loadingModels:"Loading models…",models:"models",modelsFallback:"Loaded suggested list",currentModel:"current"}
   }
 };
@@ -1067,6 +1069,7 @@ const FLASH_EVENT_LOGGER_PANEL = {
               <div class="batch-event-field"><label for="eventStateCylinder">실린더 온도 (°C)</label><input id="eventStateCylinder" type="number" step="0.1"></div>
               <div class="batch-event-field"><label for="eventStateMold">금형 온도 (°C)</label><input id="eventStateMold" type="number" step="0.1"></div>
               <div class="batch-event-field"><label for="eventStateSpeed">사출 속도 (mm/s)</label><input id="eventStateSpeed" type="number" step="0.1"></div>
+              <div class="batch-event-field"><label for="eventStateScrewRpm">실제 스크류 회전수 (rpm)</label><input id="eventStateScrewRpm" type="number" min="0" step="any" aria-describedby="eventStateScrewRpmNote"><p id="eventStateScrewRpmNote" class="hint">상태 이벤트 저장에 필요. 사출 전진속도(mm/s)와 다릅니다. 메모만 저장할 때는 불필요.</p></div>
               <div class="batch-event-field"><label for="eventStatePressure">사출압력 (bar)</label><input id="eventStatePressure" type="number" step="0.1"></div>
               <div class="batch-event-field"><label for="eventStatePacking">보압 (bar)</label><input id="eventStatePacking" type="number" step="0.1"></div>
               <div class="batch-event-field"><label for="eventStateCooling">냉각 시간 (s)</label><input id="eventStateCooling" type="number" step="0.1"></div>
@@ -1141,6 +1144,7 @@ const FLASH_EVENT_LOGGER_PANEL = {
               <div class="batch-event-field"><label for="eventStateCylinder">Barrel temp (°C)</label><input id="eventStateCylinder" type="number" step="0.1"></div>
               <div class="batch-event-field"><label for="eventStateMold">Mold temp (°C)</label><input id="eventStateMold" type="number" step="0.1"></div>
               <div class="batch-event-field"><label for="eventStateSpeed">Injection speed (mm/s)</label><input id="eventStateSpeed" type="number" step="0.1"></div>
+              <div class="batch-event-field"><label for="eventStateScrewRpm">Actual screw speed (rpm)</label><input id="eventStateScrewRpm" type="number" min="0" step="any" aria-describedby="eventStateScrewRpmNote"><p id="eventStateScrewRpmNote" class="hint">Required for state events; not injection travel speed (mm/s). Not needed for note-only events.</p></div>
               <div class="batch-event-field"><label for="eventStatePressure">Injection pressure (bar)</label><input id="eventStatePressure" type="number" step="0.1"></div>
               <div class="batch-event-field"><label for="eventStatePacking">Packing pressure (bar)</label><input id="eventStatePacking" type="number" step="0.1"></div>
               <div class="batch-event-field"><label for="eventStateCooling">Cooling time (s)</label><input id="eventStateCooling" type="number" step="0.1"></div>
@@ -1170,36 +1174,36 @@ const FLASH_TAB_HTML = {
       <h3>설비에 옮기기 전에</h3><div class="success-box"><p><strong>배럴 설정온도와 측정 용융온도를 구분하세요.</strong></p><p>사출속도 %는 장비 상대값입니다. mm/s·유량·충전시간으로 대응을 확인하고, 수지압·유압·캐비티 압력을 구분합니다.</p></div><p>PHA 전체에 적용할 수 있는 V0/V1 고정속도·압력비는 확인되지 않았습니다. V/P 위치는 충전 형상·중량·쿠션과 압력 응답으로 정합니다.</p>
     `,
     t2: `
-      <h3 style="color:var(--ink);margin-bottom:20px">설정값 계산기 (4개 · 입력하면 자동 권장값 산출)</h3>
+      <h3 style="color:var(--ink);margin-bottom:20px">입력값 환산·참고 계산 (4가지)</h3>
       <div class="calculator">
         <h3 style="color:var(--ink);margin-bottom:20px">1. 클램프 톤수 계산기 (Clamp Tonnage)</h3>
-        <div class="calc-input-group"><label>캐비티 평균 압력 P_avg (bar) — 충전·보압 중 최대 형개력 시점의 면적 평균압력</label><input type="number" id="flash-p-avg" placeholder="예: 500" value="500"></div>
-        <div class="calc-input-group"><label>총 투영 면적 A_proj (cm²) — 모든 캐비티 + 러너</label><input type="number" id="flash-a-proj" placeholder="예: 2000" value="2000"></div>
+        <div class="calc-input-group"><label for="flash-p-avg">캐비티 평균 압력 P_avg (bar) — 충전·보압 중 최대 형개력 시점의 면적 평균압력</label><input type="number" id="flash-p-avg" placeholder="예: 500" value="500"></div>
+        <div class="calc-input-group"><label for="flash-a-proj">총 투영 면적 A_proj (cm²) — 모든 캐비티 + 러너</label><input type="number" id="flash-a-proj" placeholder="예: 2000" value="2000"></div>
         <p style="font-size:13px;color:var(--muted);margin:8px 0 14px">※ 형체력(tf) = 총 투영 면적(cm²) × 캐비티 평균압력(bar) / 980.665. 금형 벌어짐 힘의 계산값이며, 최종 설정에는 금형·장비 한도와 현장 확인이 필요합니다.</p>
         <button class="calc-button" onclick="calculateFlashClampTonnage()">계산하기</button>
         <button class="calc-button" onclick="clearFlashInputs('clamp')">초기화</button>
         <div class="calc-result" id="flash-clamp-result" style="display:none;"><h4>계산 결과</h4><div class="calc-result-value" id="flash-clamp-value"></div><p id="flash-clamp-recommendation"></p></div>
       </div>
       <div class="calculator">
-        <h3 style="color:var(--ink);margin-bottom:20px">2. 캐비티 압력 역산 계산기 (Runner Protection Cap)</h3>
-        <div class="calc-input-group"><label>클램프 한계 (ton-force) — 기계 스펙에 적힌 최대 클램프 힘</label><input type="number" id="flash-f-clamp" placeholder="예: 1200" value="1200"></div>
-        <div class="calc-input-group"><label>제품 투영 면적 A_proj (cm²)</label><input type="number" id="flash-a-proj-2" placeholder="예: 2000" value="2000"></div>
-        <div class="calc-input-group"><label>사용할 형체력의 비율 (0 초과–1 이하)</label><input type="number" id="flash-safety-factor" placeholder="0 < x ≤ 1" step="0.05"></div>
+        <h3 style="color:var(--ink);margin-bottom:20px">2. 캐비티 평균압력 역산</h3>
+        <div class="calc-input-group"><label for="flash-f-clamp">검토할 형체력 F_clamp (tf) — 금형·장비 한도 이내</label><input type="number" id="flash-f-clamp" placeholder="예: 1200" value="1200"></div>
+        <div class="calc-input-group"><label for="flash-a-proj-2">총 투영 면적 A_proj (cm²) — 모든 캐비티 + 러너</label><input type="number" id="flash-a-proj-2" placeholder="예: 2000" value="2000"></div>
+        <div class="calc-input-group"><label for="flash-safety-factor">사용할 형체력의 비율 (0 초과–1 이하)</label><input type="number" id="flash-safety-factor" placeholder="0 < x ≤ 1" step="0.05"></div>
         <button class="calc-button" onclick="calculateFlashPressureLimit()">계산하기</button>
         <button class="calc-button" onclick="clearFlashInputs('pressure')">초기화</button>
         <div class="calc-result" id="flash-pressure-result" style="display:none;"><h4>캐비티 평균압력 역산값</h4><div class="calc-result-value" id="flash-pressure-value"></div><p id="flash-pressure-recommendation"></p></div>
       </div>
       <div class="calculator">
-        <h3 style="color:var(--ink);margin-bottom:20px">3. 러너 전단률 계산기 (Runner Shear Rate)</h3>
-        <div class="calc-input-group"><label>체적 유량 Q (cm³/s) — 단위 시간당 러너를 통과하는 수지 부피</label><input type="number" id="flash-flow-rate" placeholder="예: 50" value="50"></div>
-        <div class="calc-input-group"><label>러너 반경 R (cm) — 원통형 러너 기준</label><input type="number" id="flash-runner-radius" placeholder="예: 0.4" value="0.4" step="0.1"></div>
+        <h3 style="color:var(--ink);margin-bottom:20px">3. 원형 러너의 겉보기 전단률</h3>
+        <div class="calc-input-group"><label for="flash-flow-rate">체적 유량 Q (cm³/s) — 단위 시간당 러너를 통과하는 수지 부피</label><input type="number" id="flash-flow-rate" placeholder="예: 50" value="50"></div>
+        <div class="calc-input-group"><label for="flash-runner-radius">러너 반경 R (cm) — 원통형 러너 기준</label><input type="number" id="flash-runner-radius" placeholder="예: 0.4" value="0.4" step="0.1"></div>
         <button class="calc-button" onclick="calculateFlashShearRate()">계산하기</button>
         <button class="calc-button" onclick="clearFlashInputs('shear')">초기화</button>
-        <div class="calc-result" id="flash-shear-result" style="display:none;"><h4>러너 벽면 전단률 (γ̇ at wall)</h4><div class="calc-result-value" id="flash-shear-value"></div><p id="flash-shear-recommendation"></p></div>
+        <div class="calc-result" id="flash-shear-result" style="display:none;"><h4>원형 러너의 겉보기 전단률</h4><div class="calc-result-value" id="flash-shear-value"></div><p id="flash-shear-recommendation"></p></div>
       </div>
       <div class="calculator">
-        <h3 style="color:var(--ink);margin-bottom:20px">4. 보압 설정값 계산기 (P1 · P2 Auto-Split)</h3>
-        <div class="calc-input-group"><label>최대 사출압 P_inj_peak (bar) — 이번 샷에서 관측된 피크값</label><input type="number" id="flash-p-inj-peak" placeholder="예: 1500" value="1500"></div><div class="calc-input-group"><label for="flash-pack-r1">P1 — 사용자가 정한 피크 대비 비율 (%)</label><input type="number" id="flash-pack-r1" min="0" max="100" step="any"></div><div class="calc-input-group"><label for="flash-pack-r2">P2 — 사용자가 정한 피크 대비 비율 (%)</label><input type="number" id="flash-pack-r2" min="0" max="100" step="any"></div>
+        <h3 style="color:var(--ink);margin-bottom:20px">4. 입력한 보압비 환산 (P1 · P2)</h3>
+        <div class="calc-input-group"><label for="flash-p-inj-peak">최대 사출압 P_inj_peak (bar) — 이번 샷에서 관측된 피크값</label><input type="number" id="flash-p-inj-peak" placeholder="예: 1500" value="1500"></div><div class="calc-input-group"><label for="flash-pack-r1">P1 — 사용자가 정한 피크 대비 비율 (%)</label><input type="number" id="flash-pack-r1" min="0" max="100" step="any"></div><div class="calc-input-group"><label for="flash-pack-r2">P2 — 사용자가 정한 피크 대비 비율 (%)</label><input type="number" id="flash-pack-r2" min="0" max="100" step="any"></div>
         <button class="calc-button" onclick="calculateFlashPackingPressure()">계산하기</button>
         <button class="calc-button" onclick="clearFlashInputs('packing')">초기화</button>
         <div class="calc-result" id="flash-packing-result" style="display:none;"><h4>입력한 보압비의 환산값 (P1 · P2)</h4><div class="calc-result-value" id="flash-packing-value"></div><p id="flash-packing-recommendation"></p></div>
@@ -1244,7 +1248,7 @@ const FLASH_TAB_HTML = {
       </div>
       <div class="calc-recommendation">
         <h4>무게 측정 · 샷 계량 계산기</h4>
-        <p style="font-size:14px;margin-bottom:15px">제품 · 러너 무게를 입력하면 ① <strong>샷 계량</strong> ② <strong>플래시 저감 조건 추천</strong>이 자동으로 계산됩니다.</p>
+        <p style="font-size:14px;margin-bottom:15px">제품·러너 무게와 캐비티 수로 <strong>총 샷 중량</strong>을 계산합니다. 밀도를 입력하면 해당 밀도 기준의 부피도 표시합니다.</p>
         <div class="weight-calc-grid">
           <div class="weight-input-box"><label>제품 1개 무게 (g)</label><input type="number" id="partWeight" step="0.01" placeholder="0.00" onchange="calculateShotWeight()"></div>
           <div class="weight-input-box"><label>러너 무게 (g)</label><input type="number" id="runnerWeight" step="0.01" placeholder="0.00" onchange="calculateShotWeight()"></div>
@@ -1259,8 +1263,8 @@ const FLASH_TAB_HTML = {
       </div>
       <div id="flashRecommendations" style="display:none">
         <div class="calc-recommendation">
-          <h4>플래시 저감 조건 — 자동 분석</h4>
-          <p style="font-size:14px;margin-bottom:15px">최신 로그 1건의 공정 조건을 기준으로 플래시를 줄일 방향을 제안합니다. 추천치는 단일 로그 기준이므로 3-5샷 평균을 별도 확인하세요.</p>
+          <h4>최신 기록에서 확인할 점</h4>
+          <p style="font-size:14px;margin-bottom:15px">최신 로그의 입력값을 다시 보여줍니다. 원인이나 조정값을 자동 판단하지 않으므로, 결함 위치·발생 단계·제품 결과와 함께 검토하세요.</p>
           <div id="recommendationContent"></div>
         </div>
       </div>
@@ -1315,7 +1319,7 @@ const FLASH_TAB_HTML = {
         <ul style="margin-left:20px;margin-top:10px">
           <li><strong>로그 추가</strong> · "새 행 추가" 버튼 → 빈 행 1개 추가</li>
           <li><strong>값 입력</strong> · 숫자 직접 타이핑 또는 +/- 버튼</li>
-          <li><strong>무게 측정</strong> · 제품·러너 무게 입력 → 샷 계량 + 플래시 추천 자동 산출</li>
+          <li><strong>무게 측정</strong> · 제품·러너 무게 입력 → 총 샷 중량과 입력 밀도 기준 부피 확인</li>
           <li><strong>검색 · 필터</strong> · 날짜 범위 + 키워드로 빠른 검색</li>
           <li><strong>템플릿</strong> · 자주 쓰는 조건을 저장해 재사용</li>
           <li><strong>사진 첨부</strong> · 각 로그에 제품 · 불량 사진 첨부</li>
@@ -1336,194 +1340,7 @@ const FLASH_TAB_HTML = {
       </div>
     `,
     t7: `
-      <h3 style="color:var(--ink);margin-bottom:20px">PHA Process Optimizer — 사용 설명서 (전체 기능 · FAQ · 호환성)</h3>
-      <div class="success-box">
-        <h3>이 앱은 무엇인가</h3>
-        <p><strong>PHA Process Optimizer & Convertor</strong> — PHA (Polyhydroxyalkanoate · 바이오플라스틱)의 <strong>사출 성형 공정</strong>을 담당하는 현장 엔지니어 · 품질 관리자 대상 종합 도구.</p>
-        <p style="margin-top:10px"><strong>버전</strong> 1.x · <strong>유형</strong> 정적 웹앱 (서버 불필요) · <strong>저장</strong> 브라우저 localStorage · IndexedDB</p>
-      </div>
-      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">주요 기능 한눈에 보기</h4>
-      <table>
-        <thead><tr><th style="min-width:150px">기능</th><th>설명</th><th style="min-width:120px">위치</th></tr></thead>
-        <tbody>
-          <tr><td><strong>단위 변환기</strong></td><td>압력 · 온도 · 길이 · 속도 단위 실시간 변환</td><td>메인 탭 1</td></tr>
-          <tr><td><strong>클램프 톤수 계산</strong></td><td>총 투영면적·평균 캐비티압에서 벌어짐 힘 계산</td><td>메인 탭 2</td></tr>
-          <tr><td><strong>플래시 저감 가이드</strong></td><td>사출속도 · 압력 · 온도 최적화 방법론 (8 서브탭)</td><td>메인 탭 3</td></tr>
-          <tr><td><strong>공정 조건 로그</strong></td><td>실시간 공정 기록 · 차트 · 검색 · 템플릿 · 사진 첨부</td><td>플래시 탭 6</td></tr>
-          <tr><td><strong>플래시 저감 추천</strong></td><td>현재 조건을 자동 분석해 최적화 방안 제시</td><td>플래시 탭 6</td></tr>
-          <tr><td><strong>무게 계산기</strong></td><td>제품·러너 무게 기반 샷 계량 · 용적 계산</td><td>플래시 탭 6</td></tr>
-        </tbody>
-      </table>
-      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">플래시 저감 추천 엔진 — 판단 기준</h4>
-      <div class="info-box">
-        <h3>분석 로직 · 권장 조치</h3>
-        <p>최신 로그를 실시간 분석해 <strong>5개 핵심 파라미터</strong>에 대한 플래시 저감 권장값을 자동 제시합니다.</p>
-      </div>
-      <table style="margin-top:15px">
-        <thead><tr><th>파라미터</th><th>트리거 기준</th><th>권장 조치</th><th>기술적 근거</th></tr></thead>
-        <tbody>
-          <tr><td><strong>사출압력</strong></td><td>&gt; 900 bar</td><td>-50 bar 감소</td><td>과도한 압력 → 파팅라인 벌어짐 → 플래시 발생</td></tr>
-          <tr><td><strong>실린더 온도</strong></td><td>&gt; 185 °C</td><td>-5 °C 감소</td><td>고온 → 점도 감소 → 미세 틈새 침투 증가</td></tr>
-          <tr><td><strong>사출속도</strong></td><td>&gt; 180 mm/s</td><td>-20 mm/s 감소</td><td>고속 → 압력 스파이크 → 플래시 위험 증가</td></tr>
-          <tr><td><strong>보압</strong></td><td>&gt; 700 bar</td><td>-50 bar 감소</td><td>과도한 보압 → 지속적 압력 → 플래시 악화</td></tr>
-          <tr><td><strong>냉각시간</strong></td><td>&lt; 12 s</td><td>+2 s 증가</td><td>불충분한 냉각 → 취출 시 변형 → 치수 불안정</td></tr>
-        </tbody>
-      </table>
-      <div class="warning-box" style="margin-top:15px">
-        <h3>🔴 권장 심각도 등급 (색상)</h3>
-        <ul style="margin-left:20px;margin-top:10px">
-          <li><strong>🔴 warning</strong> — 즉시 조치 필요 (사출압력 과다)</li>
-          <li><strong>🟡 caution</strong> — 주의 · 개선 권장 (온도 · 속도 · 보압 과다)</li>
-          <li><strong>🟢 suggestion</strong> — 품질 향상 제안 (냉각 시간 증가)</li>
-        </ul>
-      </div>
-      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">차트 시각화</h4>
-      <div class="info-box">
-        <h3>4가지 차트 유형 (Chart.js 4.4.0)</h3>
-        <table style="margin-top:10px">
-          <thead><tr><th>차트 유형</th><th>표시 항목</th><th>주 용도</th></tr></thead>
-          <tbody>
-            <tr><td><strong>온도</strong></td><td>실린더 온도 + 금형 온도</td><td>온도 트렌드 · 열 관리</td></tr>
-            <tr><td><strong>압력</strong></td><td>사출압 + 보압</td><td>압력 프로파일 · 플래시 상관</td></tr>
-            <tr><td><strong>무게</strong></td><td>제품 · 러너 · 총 무게</td><td>샷 변동성 · 안정성</td></tr>
-            <tr><td><strong>시간</strong></td><td>보압시간 + 냉각시간</td><td>사이클 타임 최적화</td></tr>
-          </tbody>
-        </table>
-        <p style="margin-top:10px"><strong>특징</strong> · 최근 20개 표시 · 실시간 업데이트 · 줌/팬 · 반응형</p>
-      </div>
-      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">무게 측정 계산기 사용 절차</h4>
-      <div class="success-box">
-        <h3>6 단계 · 계산 절차</h3>
-        <ol style="margin-left:20px;margin-top:10px">
-          <li><strong>1</strong> 제품 1개 무게 (g) 측정 — 저울 사용</li>
-          <li><strong>2</strong> 러너 전체 무게 (g) 측정</li>
-          <li><strong>3</strong> 캐비티 수 확인 (기본 36 · 필요 시 수정)</li>
-          <li><strong>4</strong> 재료 밀도 입력 — "Grade에서 자동 조회" 또는 수동</li>
-          <li><strong>5</strong> 총 샷 계량 (g) · 용적 (cm³) 자동 산출</li>
-          <li><strong>6</strong> "최신 로그에 이 값 적용" 버튼으로 로그에 반영</li>
-        </ol>
-      </div>
-      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">밀도 자료와 부피 해석</h4><p>선택한 그레이드의 물성 DB 값을 조회합니다. 미확인 밀도를 기본값으로 대체하지 않습니다. 입력 밀도로 환산한 부피는 가소화 중의 용융 계량 체적·스크류 스트로크가 아닙니다.</p>
-      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">검색 · 필터 기능</h4>
-      <div class="info-box">
-        <h3>3가지 필터링 모드</h3>
-        <table style="margin-top:10px">
-          <thead><tr><th>방식</th><th>설명</th><th>사용 예시</th></tr></thead>
-          <tbody>
-            <tr><td><strong>키워드 검색</strong></td><td>비고란 텍스트 실시간 검색</td><td>"플래시", "불량", "정상"</td></tr>
-            <tr><td><strong>날짜 범위</strong></td><td>시작일 ~ 종료일 범위 선택</td><td>2025-10-01 ~ 2025-10-31</td></tr>
-            <tr><td><strong>복합 필터</strong></td><td>키워드 + 날짜 동시 적용</td><td>"플래시" + 10월 데이터</td></tr>
-          </tbody>
-        </table>
-        <p style="margin-top:10px"><strong>특징</strong> · 클라이언트 처리 (빠름) · 실시간 · "필터 초기화"로 전체 복원</p>
-      </div>
-      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">사진 첨부 기능 (IndexedDB 기반)</h4>
-      <div class="info-box">
-        <h3>IndexedDB에 사진 저장 (서버 업로드 없음)</h3>
-        <p><strong>지원 형식</strong> JPEG · PNG · GIF · WebP · <strong>최대</strong> 5 MB/파일 · <strong>다중 업로드</strong> 가능</p>
-        <p style="margin-top:10px"><strong>사용 절차</strong></p>
-        <ol style="margin-left:20px;margin-top:5px">
-          <li><strong>1</strong> 로그 테이블 "사진" 열 → "첨부" 버튼</li>
-          <li><strong>2</strong> 파일 선택 다이얼로그 · Ctrl+클릭으로 다중 선택</li>
-          <li><strong>3</strong> 업로드 완료 후 "사진 (N개)" 표시</li>
-          <li><strong>4</strong> 클릭하면 첨부 사진 뷰어 오픈</li>
-        </ol>
-      </div>
-      <div class="warning-box" style="margin-top:15px">
-        <h3>사진 저장 · 유의사항</h3>
-        <ul style="margin-left:20px;margin-top:10px">
-          <li>IndexedDB 용량은 브라우저별 제한 있음 (보통 50 MB+)</li>
-          <li><strong>브라우저 캐시 삭제 시 사진도 함께 사라짐</strong></li>
-          <li>중요 사진은 별도 백업 권장</li>
-          <li>5 MB 초과 파일은 사전 리사이즈 (TinyPNG · ImageOptim 등)</li>
-        </ul>
-      </div>
-      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">템플릿 시스템</h4>
-      <div class="success-box">
-        <h3>자주 쓰는 조건을 저장 · 재사용</h3>
-        <p><strong>저장 항목</strong> · 실린더 온도 · 금형 온도 · 사출속도 · 사출압 · 보압 · 보압시간 · 냉각시간 · 저장 일시</p>
-        <p style="margin-top:10px"><strong>활용 예시</strong></p>
-        <ul style="margin-left:20px;margin-top:5px">
-          <li>표준 조건 · 예 "표준_CA1180P"</li>
-          <li>계절별 조건 · 예 "여름용_저온", "겨울용_고온"</li>
-          <li>제품별 조건 · 예 "제품A_최적조건"</li>
-        </ul>
-        <p style="margin-top:10px"><strong>기능</strong></p>
-        <ul style="margin-left:20px;margin-top:5px">
-          <li><strong>저장</strong> · 최신 로그 조건을 템플릿으로 저장</li>
-          <li><strong>불러오기</strong> · 저장된 템플릿 선택 → 신규 로그에 적용</li>
-          <li><strong>관리</strong> · 템플릿 목록 확인 · 삭제</li>
-        </ul>
-      </div>
-      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">자주 묻는 질문 (FAQ)</h4>
-      <div class="warning-box">
-        <h3>Q1 · 로그 데이터가 사라졌습니다</h3>
-        <p><strong>원인</strong> · 브라우저 캐시·쿠키 삭제, 시크릿 모드, 설정의 "사이트 데이터 삭제" 실행</p>
-        <p><strong>해결</strong></p>
-        <ul style="margin-left:20px;margin-top:5px">
-          <li>정기적으로 CSV 다운로드로 백업</li>
-          <li>중요 데이터는 외부 저장소(파일 · 클라우드)에 보관</li>
-          <li>시크릿 모드에서 장기 사용 지양</li>
-        </ul>
-        <p><strong>예방</strong> · 주 1회 CSV 백업 · 브라우저 설정에서 localStorage 보존</p>
-      </div>
-      <div class="warning-box" style="margin-top:15px">
-        <h3>Q2 · 차트가 표시되지 않습니다</h3>
-        <p><strong>원인</strong> · Chart.js CDN 로딩 실패 · 인터넷 연결 문제 · 브라우저 Canvas 미지원</p>
-        <ul style="margin-left:20px;margin-top:5px">
-          <li>네트워크 연결 확인</li>
-          <li>DevTools (F12) → Network 탭 → Chart.js CDN 로드 상태 확인</li>
-          <li>Ctrl+Shift+R 강제 새로고침</li>
-        </ul>
-      </div>
-      <div class="warning-box" style="margin-top:15px">
-        <h3>Q3 · CSV 다운로드 시 한글이 깨집니다</h3>
-        <p><strong>원인</strong> · 엑셀 기본 인코딩(ANSI)과 CSV 인코딩(UTF-8) 불일치</p>
-        <p><strong>해결</strong> · 이 앱은 UTF-8 BOM을 자동 추가 → 엑셀에서 정상 표시</p>
-        <ol style="margin-left:20px;margin-top:5px">
-          <li>메모장에서 CSV 열기</li>
-          <li>"다른 이름으로 저장" → 인코딩을 UTF-8로</li>
-          <li>엑셀에서 "데이터 → 텍스트 파일 가져오기"로 열기</li>
-        </ol>
-      </div>
-      <div class="warning-box" style="margin-top:15px">
-        <h3>Q4 · 오프라인에서 사용 가능한가요?</h3>
-        <p><strong>부분 가능</strong> · 페이지가 한 번 로드되면 대부분 기능 사용 가능</p>
-        <p><strong>제약</strong> · Chart.js CDN은 오프라인 불가 → 차트만 제한</p>
-        <p><strong>완전 오프라인</strong> · Chart.js를 로컬로 복사 + <code>&lt;script src="./chart.min.js"&gt;</code> 로 변경하면 해결</p>
-      </div>
-      <div class="warning-box" style="margin-top:15px">
-        <h3>Q5 · 여러 사람이 동시에 쓸 수 있나요?</h3>
-        <p><strong>불가능</strong> · localStorage는 브라우저 · 기기별로 독립</p>
-        <ul style="margin-left:20px;margin-top:5px">
-          <li>각 사용자가 CSV 내보내기 → 공유 폴더에 저장</li>
-          <li>Google Sheets 등 클라우드 도구 병행</li>
-          <li>서버 백엔드 추가 (향후 로드맵)</li>
-        </ul>
-      </div>
-      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">브라우저 호환성</h4>
-      <table>
-        <thead><tr><th>플랫폼 · Platform</th><th>지원 브라우저 · Supported browsers</th><th>최소 버전 · Minimum version</th></tr></thead>
-        <tbody>
-          <tr><td><strong>데스크톱 · Desktop</strong></td><td>Chrome, Edge, Firefox, Safari</td><td>Chrome 90+, Edge 90+, Firefox 88+, Safari 14+</td></tr>
-          <tr><td><strong>모바일 · Mobile</strong></td><td>Chrome Android, Safari iOS, Samsung Internet</td><td>Chrome 90+, Safari iOS 14+, Samsung 14+</td></tr>
-          <tr><td><strong>미지원 · Unsupported</strong></td><td>Internet Explorer 11</td><td>ES6 미지원으로 호환 불가</td></tr>
-        </tbody>
-      </table>
-      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">기술 스택</h4>
-      <div class="info-box">
-        <h3>핵심 기술</h3>
-        <p><strong>프론트엔드</strong> · HTML5 · CSS3 (Flexbox · Grid) · JavaScript ES6+</p>
-        <p><strong>라이브러리</strong> · Chart.js 4.4.0 (CDN)</p>
-        <p><strong>브라우저 API</strong> · localStorage (영구) · IndexedDB (사진) · FileReader · Blob</p>
-        <p><strong>배포</strong> · Cloudflare Pages 자동 배포 · <strong>빌드</strong> · Node + build.js</p>
-        <p><strong>특징</strong> · 완전 정적 (서버 불필요) · 반응형 디자인</p>
-      </div>
-      <div class="success-box" style="margin-top:30px">
-        <h3>추가 지원 · 상세 문서</h3>
-        <p>이 애플리케이션의 전체 기술 문서, API 레퍼런스, 트러블슈팅 가이드는 프로젝트 루트의 <strong>README.md</strong> 파일을 참조하세요.</p>
-        <p style="margin-top:10px"><strong>버전</strong> 1.4.0 · <strong>최종 업데이트</strong> 2026-04-19 · <strong>빌드</strong> production</p>
-      </div>
+      <h3>근거와 사용 범위</h3><p>정확한 그레이드의 제조사 자료와 현장 시험으로 적용 범위를 확인하세요. 이 가이드는 원인 후보와 점검 순서를 설명하며 생산 설정값을 보장하지 않습니다.</p><button type="button" class="btn" onclick="switchTab('proc')">공정 조건에서 그레이드 원문 보기</button><p>계산 도구는 입력값의 환산 결과입니다. 예시 값을 실제 측정값으로 바꾸고, 제품 중량·치수·외관을 함께 비교하세요.</p><p>공정 로그·템플릿·사진은 현재 브라우저에 저장됩니다. 중요한 기록은 CSV와 원본 사진으로 따로 보관하세요. 외부 자료와 차트는 오프라인에서 제한될 수 있습니다.</p>
     `
   },
   en: {
@@ -1535,10 +1352,10 @@ const FLASH_TAB_HTML = {
     `,
     t2: `
       <h3 style="color:var(--ink);margin-bottom:20px">Process calculations (4 — results from your inputs)</h3>
-      <div class="calculator"><h3 style="color:var(--ink);margin-bottom:20px">1. Clamp Tonnage Calculator</h3><div class="calc-input-group"><label>Cavity average pressure P_avg (bar)</label><input type="number" id="flash-p-avg" placeholder="e.g. 500" value="500"></div><div class="calc-input-group"><label>Total projected area A_proj (cm²) — all cavities and runners</label><input type="number" id="flash-a-proj" placeholder="e.g. 2000" value="2000"></div><p style="font-size:13px;color:var(--muted);margin:8px 0 14px">※ Clamping force (tf) = area (cm²) × mean cavity pressure (bar) / 980.665. This first estimate is formula-based with a +20 % margin — verify under actual hold pressure before committing.</p><button class="calc-button" onclick="calculateFlashClampTonnage()">Calculate</button><button class="calc-button" onclick="clearFlashInputs('clamp')">Reset</button><div class="calc-result" id="flash-clamp-result" style="display:none;"><h4>Result</h4><div class="calc-result-value" id="flash-clamp-value"></div><p id="flash-clamp-recommendation"></p></div></div>
-      <div class="calculator"><h3 style="color:var(--ink);margin-bottom:20px">2. Mean Cavity-Pressure Capacity</h3><div class="calc-input-group"><label>Clamp limit (ton-force) — machine nameplate</label><input type="number" id="flash-f-clamp" placeholder="e.g. 1200" value="1200"></div><div class="calc-input-group"><label>Projected area A_proj (cm²)</label><input type="number" id="flash-a-proj-2" placeholder="e.g. 2000" value="2000"></div><div class="calc-input-group"><label>Fraction of clamp force used (0 < fraction ≤ 1)</label><input type="number" id="flash-safety-factor" placeholder="0 < x ≤ 1" step="0.05"></div><button class="calc-button" onclick="calculateFlashPressureLimit()">Calculate</button><button class="calc-button" onclick="clearFlashInputs('pressure')">Reset</button><div class="calc-result" id="flash-pressure-result" style="display:none;"><h4>Calculated mean cavity-pressure capacity</h4><div class="calc-result-value" id="flash-pressure-value"></div><p id="flash-pressure-recommendation"></p></div></div>
-      <div class="calculator"><h3 style="color:var(--ink);margin-bottom:20px">3. Runner Shear Rate Calculator</h3><div class="calc-input-group"><label>Volumetric flow rate Q (cm³/s)</label><input type="number" id="flash-flow-rate" placeholder="e.g. 50" value="50"></div><div class="calc-input-group"><label>Runner radius R (cm) — assumes cylindrical runner</label><input type="number" id="flash-runner-radius" placeholder="e.g. 0.4" value="0.4" step="0.1"></div><button class="calc-button" onclick="calculateFlashShearRate()">Calculate</button><button class="calc-button" onclick="clearFlashInputs('shear')">Reset</button><div class="calc-result" id="flash-shear-result" style="display:none;"><h4>Runner wall shear rate (γ̇ at wall)</h4><div class="calc-result-value" id="flash-shear-value"></div><p id="flash-shear-recommendation"></p></div></div>
-      <div class="calculator"><h3 style="color:var(--ink);margin-bottom:20px">4. Packing Pressure Calculator (P1 / P2 split)</h3><div class="calc-input-group"><label>Peak injection pressure P_inj_peak (bar) — observed peak on this shot</label><input type="number" id="flash-p-inj-peak" placeholder="e.g. 1500" value="1500"></div><div class="calc-input-group"><label for="flash-pack-r1">P1 — user-selected fraction of peak (%)</label><input type="number" id="flash-pack-r1" min="0" max="100" step="any"></div><div class="calc-input-group"><label for="flash-pack-r2">P2 — user-selected fraction of peak (%)</label><input type="number" id="flash-pack-r2" min="0" max="100" step="any"></div><button class="calc-button" onclick="calculateFlashPackingPressure()">Calculate</button><button class="calc-button" onclick="clearFlashInputs('packing')">Reset</button><div class="calc-result" id="flash-packing-result" style="display:none;"><h4>Entered pressure-ratio conversion — P1 / P2</h4><div class="calc-result-value" id="flash-packing-value"></div><p id="flash-packing-recommendation"></p></div></div>
+      <div class="calculator"><h3 style="color:var(--ink);margin-bottom:20px">1. Clamp Tonnage Calculator</h3><div class="calc-input-group"><label for="flash-p-avg">Cavity average pressure P_avg (bar)</label><input type="number" id="flash-p-avg" placeholder="e.g. 500" value="500"></div><div class="calc-input-group"><label for="flash-a-proj">Total projected area A_proj (cm²) — all cavities and runners</label><input type="number" id="flash-a-proj" placeholder="e.g. 2000" value="2000"></div><p style="font-size:13px;color:var(--muted);margin:8px 0 14px">※ Clamping force (tf) = area (cm²) × mean cavity pressure (bar) / 980.665. This is the calculated separating force without an added margin. Review mold and machine limits and verify it in a trial.</p><button class="calc-button" onclick="calculateFlashClampTonnage()">Calculate</button><button class="calc-button" onclick="clearFlashInputs('clamp')">Reset</button><div class="calc-result" id="flash-clamp-result" style="display:none;"><h4>Result</h4><div class="calc-result-value" id="flash-clamp-value"></div><p id="flash-clamp-recommendation"></p></div></div>
+      <div class="calculator"><h3 style="color:var(--ink);margin-bottom:20px">2. Mean Cavity-Pressure Capacity</h3><div class="calc-input-group"><label for="flash-f-clamp">Clamp force under review (tf) — within mold and machine limits</label><input type="number" id="flash-f-clamp" placeholder="e.g. 1200" value="1200"></div><div class="calc-input-group"><label for="flash-a-proj-2">Total projected area A_proj (cm²) — all cavities and runners</label><input type="number" id="flash-a-proj-2" placeholder="e.g. 2000" value="2000"></div><div class="calc-input-group"><label for="flash-safety-factor">Fraction of clamp force used (0 < fraction ≤ 1)</label><input type="number" id="flash-safety-factor" placeholder="0 < x ≤ 1" step="0.05"></div><button class="calc-button" onclick="calculateFlashPressureLimit()">Calculate</button><button class="calc-button" onclick="clearFlashInputs('pressure')">Reset</button><div class="calc-result" id="flash-pressure-result" style="display:none;"><h4>Calculated mean cavity-pressure capacity</h4><div class="calc-result-value" id="flash-pressure-value"></div><p id="flash-pressure-recommendation"></p></div></div>
+      <div class="calculator"><h3 style="color:var(--ink);margin-bottom:20px">3. Apparent Shear Rate in a Round Runner</h3><div class="calc-input-group"><label for="flash-flow-rate">Volumetric flow rate Q (cm³/s)</label><input type="number" id="flash-flow-rate" placeholder="e.g. 50" value="50"></div><div class="calc-input-group"><label for="flash-runner-radius">Runner radius R (cm) — assumes cylindrical runner</label><input type="number" id="flash-runner-radius" placeholder="e.g. 0.4" value="0.4" step="0.1"></div><button class="calc-button" onclick="calculateFlashShearRate()">Calculate</button><button class="calc-button" onclick="clearFlashInputs('shear')">Reset</button><div class="calc-result" id="flash-shear-result" style="display:none;"><h4>Apparent shear rate in a round runner</h4><div class="calc-result-value" id="flash-shear-value"></div><p id="flash-shear-recommendation"></p></div></div>
+      <div class="calculator"><h3 style="color:var(--ink);margin-bottom:20px">4. Entered Packing-Ratio Conversion (P1 / P2)</h3><div class="calc-input-group"><label for="flash-p-inj-peak">Peak injection pressure P_inj_peak (bar) — observed peak on this shot</label><input type="number" id="flash-p-inj-peak" placeholder="e.g. 1500" value="1500"></div><div class="calc-input-group"><label for="flash-pack-r1">P1 — user-selected fraction of peak (%)</label><input type="number" id="flash-pack-r1" min="0" max="100" step="any"></div><div class="calc-input-group"><label for="flash-pack-r2">P2 — user-selected fraction of peak (%)</label><input type="number" id="flash-pack-r2" min="0" max="100" step="any"></div><button class="calc-button" onclick="calculateFlashPackingPressure()">Calculate</button><button class="calc-button" onclick="clearFlashInputs('packing')">Reset</button><div class="calc-result" id="flash-packing-result" style="display:none;"><h4>Entered pressure-ratio conversion — P1 / P2</h4><div class="calc-result-value" id="flash-packing-value"></div><p id="flash-packing-recommendation"></p></div></div>
     `,
     t3: `
       <h3>Injection process flow</h3><p>Follow screw rotation/retraction → axial filling → packing/cooling → mold opening and ejection.</p><div id="flashInjectionMotion" class="injection-motion"></div><p class="atlas-caption">Explanatory cutaway model. Metering and cooling can overlap on a real machine. Playback timing and polymer flow are not production settings or flow-simulation results.</p>
@@ -1556,46 +1373,15 @@ const FLASH_TAB_HTML = {
       ${FLASH_EVENT_LOGGER_PANEL.en}
       <div class="filter-container"><h4 style="color:var(--ink);margin-bottom:10px">Search &amp; filter</h4><div class="filter-row"><input type="text" id="filterKeyword" class="filter-input" placeholder="Keyword search in notes..." onkeyup="filterProcessLog()"><input type="date" id="filterDateFrom" class="filter-input" style="max-width:180px" onchange="filterProcessLog()"><span style="white-space:nowrap">~</span><input type="date" id="filterDateTo" class="filter-input" style="max-width:180px" onchange="filterProcessLog()"><button class="btn-filter" onclick="clearFilter()">Clear filters</button></div></div>
       <div class="template-container"><h4 style="color:var(--ink);margin-bottom:5px">Template management (save frequent setups)</h4><p style="font-size:13px;color:var(--muted);margin-bottom:10px">Save a frequently-used configuration as a template to recall it fast next time.</p><div class="template-buttons"><button class="btn-template" onclick="saveTemplate()">Save current as template</button><button class="btn-template load" onclick="loadTemplate()">Load template</button><button class="btn-template delete" onclick="manageTemplates()">Manage templates</button></div></div>
-      <div class="calc-recommendation"><h4>Weight &amp; shot-size calculator</h4><p style="font-size:14px;margin-bottom:15px">Enter part and runner weights. The tool auto-calculates (1) shot size and (2) flash-reduction recommendations.</p><div class="weight-calc-grid"><div class="weight-input-box"><label>Part weight (g)</label><input type="number" id="partWeight" step="0.01" placeholder="0.00" onchange="calculateShotWeight()"></div><div class="weight-input-box"><label>Runner weight (g)</label><input type="number" id="runnerWeight" step="0.01" placeholder="0.00" onchange="calculateShotWeight()"></div><div class="weight-input-box"><label>Cavity count</label><input type="number" id="cavityCount" value="36" step="1" onchange="calculateShotWeight()"></div><div class="weight-input-box"><label>Material density (g/cm³)</label><input type="number" id="materialDensity" value="" step="0.01" placeholder="1.25" onchange="calculateShotWeight()"><button class="btn-filter" style="margin-top:8px;width:100%;padding:6px" onclick="loadDensityFromGrade()" title="Pulls density from the Materials DB for the selected grade.">Look up density by grade</button></div></div><p style="font-size:13px;color:var(--muted);margin:10px 0 0">※ Total shot = part weight × cavities + runner weight. Once density is entered, the tool also computes shot volume.</p><div id="shotWeightResult" style="display:none;margin-top:15px"><div class="density-display">Total shot: <span id="totalShotWeight">0.00</span> g (<span id="shotVolume">0.00</span> cm³)</div><button class="btn-log-action btn-add-log" style="width:100%;margin-top:10px" onclick="applyWeightToLog()">Apply to latest log</button></div></div>
-      <div id="flashRecommendations" style="display:none"><div class="calc-recommendation"><h4>Flash-reduction recommendations — auto-analysis</h4><p style="font-size:14px;margin-bottom:15px">Based on the latest single log row, suggests directions to reduce flash. Numbers come from one log — cross-check against a 3-5 shot average before committing.</p><div id="recommendationContent"></div></div></div>
+      <div class="calc-recommendation"><h4>Weight &amp; shot-size calculator</h4><p style="font-size:14px;margin-bottom:15px">Enter part and runner weights and the cavity count to calculate total shot mass. Enter density to also see volume at that density.</p><div class="weight-calc-grid"><div class="weight-input-box"><label>Part weight (g)</label><input type="number" id="partWeight" step="0.01" placeholder="0.00" onchange="calculateShotWeight()"></div><div class="weight-input-box"><label>Runner weight (g)</label><input type="number" id="runnerWeight" step="0.01" placeholder="0.00" onchange="calculateShotWeight()"></div><div class="weight-input-box"><label>Cavity count</label><input type="number" id="cavityCount" value="36" step="1" onchange="calculateShotWeight()"></div><div class="weight-input-box"><label>Material density (g/cm³)</label><input type="number" id="materialDensity" value="" step="0.01" placeholder="1.25" onchange="calculateShotWeight()"><button class="btn-filter" style="margin-top:8px;width:100%;padding:6px" onclick="loadDensityFromGrade()" title="Pulls density from the Materials DB for the selected grade.">Look up density by grade</button></div></div><p style="font-size:13px;color:var(--muted);margin:10px 0 0">※ Total shot = part weight × cavities + runner weight. Once density is entered, the tool also computes shot volume.</p><div id="shotWeightResult" style="display:none;margin-top:15px"><div class="density-display">Total shot: <span id="totalShotWeight">0.00</span> g (<span id="shotVolume">0.00</span> cm³)</div><button class="btn-log-action btn-add-log" style="width:100%;margin-top:10px" onclick="applyWeightToLog()">Apply to latest log</button></div></div>
+      <div id="flashRecommendations" style="display:none"><div class="calc-recommendation"><h4>Checks for the latest record</h4><p style="font-size:14px;margin-bottom:15px">These are the entered values from the latest log. They do not automatically determine a cause or adjustment; review them alongside defect location, onset and part results.</p><div id="recommendationContent"></div></div></div>
       <div class="chart-container"><div class="chart-controls"><h4 style="color:var(--ink);margin:0;flex:1">Process-condition trend chart (last 20)</h4><button class="chart-toggle-btn active" onclick="showChart('temp')" id="chartBtnTemp">Temperature</button><button class="chart-toggle-btn" onclick="showChart('pressure')" id="chartBtnPressure">Pressure</button><button class="chart-toggle-btn" onclick="showChart('weight')" id="chartBtnWeight">Weight</button><button class="chart-toggle-btn" onclick="showChart('time')" id="chartBtnTime">Time</button></div><div style="position:relative;height:300px"><canvas id="processChart"></canvas></div><p style="font-size:12px;color:var(--muted);margin-top:10px;text-align:center">Shows the last 20 log rows. Updates automatically as you add entries.</p></div>
       <div class="log-container"><div class="log-header"><h4 style="color:var(--ink);margin:0">Process-condition log</h4><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn-log-action btn-add-log" onclick="addProcessLogEntry()">Add row</button><button class="btn-log-action btn-export-log" onclick="exportProcessLog()">Export CSV</button><button class="btn-log-action btn-clear-log" onclick="clearProcessLog()">Clear all</button></div></div><div style="overflow-x:auto"><table class="log-table" id="processLogTable"><thead><tr><th style="min-width:140px">일시 · Time</th><th style="min-width:120px">배치 · Batch</th><th style="min-width:160px">조성 · Composition</th><th style="min-width:120px">실린더 온도 · Barrel (°C)</th><th style="min-width:120px">금형 온도 · Mold (°C)</th><th style="min-width:130px">사출속도 · Inj. speed (mm/s)</th><th style="min-width:120px">사출압력 · Inj. pressure (bar)</th><th style="min-width:120px">보압 · Packing (bar)</th><th style="min-width:130px">보압시간 · Packing time (s)</th><th style="min-width:130px">냉각시간 · Cooling (s)</th><th style="min-width:120px">제품 무게 · Part (g)</th><th style="min-width:120px">러너 무게 · Runner (g)</th><th style="min-width:130px">총 무게 · Total (g)</th><th style="min-width:200px">비고 · Notes</th><th style="min-width:100px">사진 · Photo</th><th style="min-width:80px">동작 · Actions</th></tr></thead><tbody id="processLogBody"><tr><td colspan="16" class="log-empty">No log entries yet. Click <strong>"Add row"</strong> to start your first record.</td></tr></tbody></table></div></div>
       <div class="info-box" style="margin-top:30px"><h3>Quick reference</h3><ul style="margin-left:20px;margin-top:10px"><li><strong>Add row</strong> — click "Add row" to insert a blank record</li><li><strong>Value entry</strong> — type numbers or use +/- buttons</li><li><strong>Weight</strong> — enter part and runner weight; shot size and flash recommendations auto-compute</li><li><strong>Search / filter</strong> — narrow by date range and keyword</li><li><strong>Templates</strong> — save common setups for one-click recall</li><li><strong>Photos</strong> — attach product or defect photos to each log row</li><li><strong>Chart view</strong> — live trend charts for temperature, pressure, weight, and time</li><li><strong>Mobile-friendly</strong> — works on both desktop and phone</li><li><strong>Auto-save</strong> — every input is immediately persisted to the browser</li><li><strong>CSV export</strong> — download your records as a CSV file</li><li><strong>Notes</strong> — free-form text for observations, defect types, and anomalies</li></ul></div>
       <div class="warning-box" style="margin-top:20px"><h3>Caution — data persistence limits</h3><ul style="margin-left:20px;margin-top:10px"><li>Data lives in browser storage only — <strong>clearing browser site-data wipes it</strong></li><li>Back up critical records by <strong>exporting to CSV weekly</strong></li><li>Data is <strong>per-browser, per-device</strong> — not synced across them</li></ul></div>
     `,
     t7: `
-      <h3 style="color:var(--ink);margin-bottom:20px">PHA Process Optimizer — User Manual (full features, FAQ, compatibility)</h3>
-      <div class="success-box"><h3>What this app is</h3><p>The <strong>PHA Process Optimizer &amp; Convertor</strong> is an all-in-one toolkit for field engineers and QA staff who run PHA (Polyhydroxyalkanoate bioplastic) injection molding.</p><p style="margin-top:10px"><strong>Version</strong> 1.x · <strong>Type</strong> static web app (no server) · <strong>Storage</strong> browser localStorage + IndexedDB</p></div>
-      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">Feature overview</h4>
-      <table><thead><tr><th style="min-width:150px">Feature</th><th>Description</th><th style="min-width:120px">Location</th></tr></thead><tbody><tr><td><strong>Unit Converter</strong></td><td>Real-time conversion for pressure, temperature, length, and speed</td><td>Main tab 1</td></tr><tr><td><strong>Clamp Tonnage</strong></td><td>Calculates separating force from total projected area and mean cavity pressure</td><td>Main tab 2</td></tr><tr><td><strong>Flash Control Guide</strong></td><td>Systematic methodology for injection speed, pressure, and temperature (8 sub-tabs)</td><td>Main tab 3</td></tr><tr><td><strong>Process Log</strong></td><td>Real-time logging with charts, search, templates, and photo attachments</td><td>Flash sub-tab 6</td></tr><tr><td><strong>Flash Recommendations</strong></td><td>Auto-analyzes the current setup and suggests optimizations</td><td>Flash sub-tab 6</td></tr><tr><td><strong>Weight Calculator</strong></td><td>Shot size and volume from part + runner weights</td><td>Flash sub-tab 6</td></tr></tbody></table>
-      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">Flash recommendation engine — decision rules</h4>
-      <div class="info-box"><h3>Analysis rules and actions</h3><p>We analyze the latest log row in real time and suggest flash-reduction actions on 5 core parameters.</p></div>
-      <table style="margin-top:15px"><thead><tr><th>Parameter</th><th>Trigger threshold</th><th>Recommended action</th><th>Technical basis</th></tr></thead><tbody><tr><td><strong>Injection pressure</strong></td><td>&gt; 900 bar</td><td>−50 bar</td><td>Excess pressure splits the parting line → flash</td></tr><tr><td><strong>Barrel temperature</strong></td><td>&gt; 185 °C</td><td>−5 °C</td><td>Higher temp lowers viscosity → flash seeps into tiny gaps</td></tr><tr><td><strong>Injection speed</strong></td><td>&gt; 180 mm/s</td><td>−20 mm/s</td><td>High speed causes pressure spikes → higher flash risk</td></tr><tr><td><strong>Packing pressure</strong></td><td>&gt; 700 bar</td><td>−50 bar</td><td>Excess packing holds pressure too long → flash worsens</td></tr><tr><td><strong>Cooling time</strong></td><td>&lt; 12 s</td><td>+2 s</td><td>Insufficient cooling causes ejection deformation and dimension drift</td></tr></tbody></table>
-      <div class="warning-box" style="margin-top:15px"><h3>🔴 Recommendation severity (by color)</h3><ul style="margin-left:20px;margin-top:10px"><li><strong>🔴 warning</strong> — review on site</li><li><strong>🟡 caution</strong> — improvement recommended (temperature, speed, or packing pressure too high)</li><li><strong>🟢 suggestion</strong> — quality-improvement tip (increase cooling time)</li></ul></div>
-      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">Chart visualization</h4>
-      <div class="info-box"><h3>4 chart types (Chart.js 4.4.0)</h3><table style="margin-top:10px"><thead><tr><th>Chart type</th><th>What it shows</th><th>Typical use</th></tr></thead><tbody><tr><td><strong>Temperature</strong></td><td>Barrel + mold</td><td>Temperature trends, thermal management</td></tr><tr><td><strong>Pressure</strong></td><td>Injection + packing</td><td>Pressure profile, flash correlation</td></tr><tr><td><strong>Weight</strong></td><td>Part + runner + total</td><td>Shot variability, process stability</td></tr><tr><td><strong>Time</strong></td><td>Packing + cooling</td><td>Cycle-time optimization</td></tr></tbody></table><p style="margin-top:10px"><strong>Features:</strong> last 20 entries · live update · interactive zoom/pan · responsive</p></div>
-      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">Weight calculator — step by step</h4>
-      <div class="success-box"><h3>6-step procedure</h3><ol style="margin-left:20px;margin-top:10px"><li><strong>1</strong> Weigh one part (g) on a scale</li><li><strong>2</strong> Weigh the full runner system (g)</li><li><strong>3</strong> Confirm cavity count (default 36)</li><li><strong>4</strong> Enter material density via "Lookup by grade" or manually</li><li><strong>5</strong> Total shot weight (g) and volume (cm³) compute automatically</li><li><strong>6</strong> Click "Apply to latest log" to fill the latest row</li></ol></div>
-      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">Built-in PHA density database</h4>
-      <p>Read density from the selected grade’s Materials DB. Unknown density is not replaced by a generic default. Volume at this density is not plasticizing melt volume or screw stroke.</p>
-      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">Search &amp; filter capabilities</h4>
-      <div class="info-box"><h3>Three filtering modes</h3><table style="margin-top:10px"><thead><tr><th>Mode</th><th>Description</th><th>Example</th></tr></thead><tbody><tr><td><strong>Keyword</strong></td><td>Real-time text search in Notes</td><td>"flash", "defect", "ok"</td></tr><tr><td><strong>Date range</strong></td><td>From-to date range</td><td>2025-10-01 to 2025-10-31</td></tr><tr><td><strong>Combined</strong></td><td>Keyword + date range simultaneously</td><td>"flash" + October data</td></tr></tbody></table><p style="margin-top:10px"><strong>Features:</strong> client-side processing (fast) · real-time · "Clear filters" restores everything</p></div>
-      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">Photo attachments (backed by IndexedDB)</h4>
-      <div class="info-box"><h3>Photos stored in IndexedDB — no server upload</h3><p><strong>Formats:</strong> JPEG · PNG · GIF · WebP · <strong>Max:</strong> 5 MB per file · <strong>Multi-upload:</strong> supported</p><ol style="margin-left:20px;margin-top:5px"><li><strong>1</strong> In the Photo column, click the "Attach" button</li><li><strong>2</strong> Select one or more images</li><li><strong>3</strong> After upload the cell shows the photo count</li><li><strong>4</strong> Click to open the attached-photo viewer</li></ol></div>
-      <div class="warning-box" style="margin-top:15px"><h3>Photo storage — caveats</h3><ul style="margin-left:20px;margin-top:10px"><li>IndexedDB capacity varies by browser (usually 50 MB+)</li><li><strong>Clearing browser cache also wipes the photos</strong></li><li>Back up critical photos separately</li><li>For files over 5 MB, resize first (TinyPNG, ImageOptim, etc.)</li></ul></div>
-      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">Template system</h4>
-      <div class="success-box"><h3>Save and replay frequently-used setups</h3><p><strong>Captured fields:</strong> barrel temp · mold temp · injection speed · injection pressure · packing pressure · packing time · cooling time · timestamp</p><ul style="margin-left:20px;margin-top:5px"><li>Standard setup — e.g. "Standard_CA1180P"</li><li>Seasonal setup — e.g. "Summer_low_temp", "Winter_high_temp"</li><li>Per-product setup — e.g. "ProductA_optimum"</li></ul><p style="margin-top:10px"><strong>Functions</strong></p><ul style="margin-left:20px;margin-top:5px"><li><strong>Save</strong> — persist the latest log's conditions as a template</li><li><strong>Load</strong> — pick from saved templates and apply to a new log row</li><li><strong>Manage</strong> — list and delete templates</li></ul></div>
-      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">FAQ</h4>
-      <div class="warning-box"><h3>Q1. My log data disappeared</h3><p><strong>Cause:</strong> cache/cookies were cleared, incognito mode, or "Clear site data" was triggered.</p><ul style="margin-left:20px;margin-top:5px"><li>Back up to CSV regularly</li><li>Store critical data externally</li><li>Avoid using incognito for long-lived workflows</li></ul><p><strong>Prevention:</strong> weekly CSV backups; keep localStorage enabled.</p></div>
-      <div class="warning-box" style="margin-top:15px"><h3>Q2. The charts aren't showing</h3><p><strong>Cause:</strong> Chart.js CDN failed to load, network problem, or browser lacks Canvas support.</p><ul style="margin-left:20px;margin-top:5px"><li>Check network connectivity</li><li>Open DevTools (F12) → Network tab → verify the Chart.js CDN request</li><li>Force-reload with Ctrl+Shift+R</li></ul></div>
-      <div class="warning-box" style="margin-top:15px"><h3>Q3. Korean characters are garbled in the CSV export</h3><p><strong>Cause:</strong> Excel's default ANSI encoding mismatched against the CSV's UTF-8.</p><p><strong>Solution:</strong> this app prepends a UTF-8 BOM automatically.</p><ol style="margin-left:20px;margin-top:5px"><li>Open the CSV in Notepad</li><li>Save As → choose UTF-8 encoding</li><li>In Excel, use Data → Import Text File</li></ol></div>
-      <div class="warning-box" style="margin-top:15px"><h3>Q4. Can I use this offline?</h3><p><strong>Mostly yes</strong> — once the page has loaded, most features work offline.</p><p><strong>Limitation:</strong> Chart.js CDN will not load offline, so only charting is affected.</p><p><strong>Full offline:</strong> copy Chart.js locally and replace the CDN script with <code>&lt;script src="./chart.min.js"&gt;</code>.</p></div>
-      <div class="warning-box" style="margin-top:15px"><h3>Q5. Can multiple people use it simultaneously?</h3><p><strong>No</strong> — localStorage is isolated per browser and per device.</p><ul style="margin-left:20px;margin-top:5px"><li>Each user exports CSV to a shared folder</li><li>Use alongside Google Sheets or similar cloud tools</li><li>Add a server backend later as roadmap work</li></ul></div>
-      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">Browser compatibility</h4>
-      <table><thead><tr><th>Platform</th><th>Supported browsers</th><th>Minimum version</th></tr></thead><tbody><tr><td><strong>Desktop</strong></td><td>Chrome, Edge, Firefox, Safari</td><td>Chrome 90+, Edge 90+, Firefox 88+, Safari 14+</td></tr><tr><td><strong>Mobile</strong></td><td>Chrome Android, Safari iOS, Samsung Internet</td><td>Chrome 90+, Safari iOS 14+, Samsung 14+</td></tr><tr><td><strong>Unsupported</strong></td><td>Internet Explorer 11</td><td>Not ES6-compatible</td></tr></tbody></table>
-      <h4 style="color:var(--ink);margin-top:30px;margin-bottom:15px">Technical stack</h4>
-      <div class="info-box"><h3>Core tech</h3><p><strong>Frontend:</strong> HTML5, CSS3 (Flexbox, Grid), JavaScript ES6+</p><p><strong>Libraries:</strong> Chart.js 4.4.0 (CDN)</p><p><strong>Browser APIs:</strong> localStorage, IndexedDB, FileReader, Blob</p><p><strong>Deploy:</strong> Cloudflare Pages auto-deploy · <strong>Build:</strong> Node.js + build.js</p><p><strong>Traits:</strong> fully static (no server) · responsive</p></div>
-      <div class="success-box" style="margin-top:30px"><h3>Further support &amp; full docs</h3><p>See the project-root <strong>README.md</strong> for the full technical notes, references, and troubleshooting guidance.</p><p style="margin-top:10px"><strong>Version</strong> 1.x · <strong>Last updated</strong> 2026-04-19 · <strong>Build</strong> production</p></div>
+      <h3>Sources and scope</h3><p>Confirm applicability with the exact grade's manufacturer documents and site trials. This guide explains possible causes and checks; it does not establish production settings.</p><button type="button" class="btn" onclick="switchTab('proc')">Open grade sources in Process Conditions</button><p>Calculation tools convert your inputs. Replace examples with measured values and compare part mass, dimensions and appearance.</p><p>Process logs, templates and photos are stored in this browser. Keep separate CSV records and original photos. External sources and charts may be limited offline.</p>
     `
   }
 };
@@ -1834,20 +1620,68 @@ function refreshParamTable(){
 }
 
 /* ========= Save/History/Import/Export ========= */
+function readHistoryForDisplay(){try{const rows=JSON.parse(localStorage.getItem('pha_hist')||'[]');return Array.isArray(rows)?rows:null;}catch(_){return null;}}
+function historyRecoveryText(){return LANG==='ko'?'저장된 이력 형식을 확인하세요. 원본은 이 브라우저에 그대로 보존되어 있습니다.':'Review the stored history format. The original data remains preserved in this browser.';}
+function historyCellText(value){return value==null?'-':typeof value==='object'?JSON.stringify(value):String(value);}
+function historyDateText(value){return (typeof value==='string'||typeof value==='number')&&Number.isFinite(new Date(value).getTime())?new Date(value).toLocaleString(LANG==='ko'?'ko-KR':'en-US'):'-';}
 function collectEntry(){const proc=$('process').value, grade=$('grade').value, schema=SCHEMAS[proc]; const data={ts:new Date().toISOString(),proc,grade,params:{},notes:$('notes').value};
   schema.forEach(f=> data.params[f.id]=$('f_'+f.id)?.value||''); return data;}
-function saveEntry(){const data=collectEntry(); const hist=JSON.parse(localStorage.getItem('pha_hist')||'[]'); hist.push(data); localStorage.setItem('pha_hist',JSON.stringify(hist)); alert(I18N[LANG].saved); renderHistory(); analyze();}
-function exportHistory(){const hist=JSON.parse(localStorage.getItem('pha_hist')||'[]'); const blob=new Blob([JSON.stringify(hist,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`pha_history_${new Date().toISOString().slice(0,10)}.json`; a.click();}
-function renderHistory(){const hist=JSON.parse(localStorage.getItem('pha_hist')||'[]').slice().reverse(); const tb=$('histBody'); tb.innerHTML='';
-  hist.slice(0,200).forEach(r=>{const k=Object.entries(r.params).filter(([,v])=>v).slice(0,4).map(([k,v])=>k+':'+v).join(', ');
-    const tr=document.createElement('tr'); tr.innerHTML=`<td>${new Date(r.ts).toLocaleString(LANG==='ko'?'ko-KR':'en-US')}</td><td>${r.grade}</td><td>${r.proc}</td><td>${k}</td><td><span class="badge ok">${LANG==='ko'?'완료':'Complete'}</span></td><td>${r.notes||'-'}</td>`; tb.appendChild(tr);});}
+function saveEntry(){const data=collectEntry(); const hist=readHistoryForDisplay();if(!hist){alert(historyRecoveryText());return;}hist.push(data); localStorage.setItem('pha_hist',JSON.stringify(hist)); alert(I18N[LANG].saved); renderHistory(); analyze();}
+function exportHistory(){const hist=readHistoryForDisplay(); const blob=new Blob([hist?JSON.stringify(hist,null,2):localStorage.getItem('pha_hist')||''],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`pha_history_${new Date().toISOString().slice(0,10)}.json`; a.click();}
+function renderHistory(){const saved=readHistoryForDisplay();const tb=$('histBody');tb.innerHTML='';
+  if(!saved){const row=tb.insertRow(),cell=row.insertCell();cell.colSpan=6;cell.textContent=historyRecoveryText();return;}
+  saved.slice(-200).reverse().forEach(row=>{const r=row&&typeof row==='object'?row:{}; const k=Object.entries(r.params&&typeof r.params==='object'?r.params:{}).filter(([,v])=>v!==''&&v!=null).slice(0,4).map(([key,v])=>key+':'+historyCellText(v)).join(', ');
+    const tr=document.createElement('tr');
+    const cells=[historyDateText(r.ts),r.grade??'-',r.proc??'-',k,'',r.notes??'-'];
+    cells.forEach(value=>{const td=document.createElement('td');td.textContent=historyCellText(value);tr.appendChild(td);});
+    const badge=document.createElement('span');badge.className='badge '+(validHistoryImportRow(r)?'ok':'warn');badge.textContent=validHistoryImportRow(r)?(LANG==='ko'?'완료':'Complete'):(LANG==='ko'?'기록 확인 필요':'Review record');tr.children[4].appendChild(badge);tb.appendChild(tr);});}
 function triggerImport(type){(type==='csv'?$('importCSV'):$('importJSON')).click();}
 $('importCSV').addEventListener('change', e=>{const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>importCSV(r.result); r.readAsText(f,'utf-8'); e.target.value='';});
-$('importJSON').addEventListener('change', e=>{const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{try{const arr=JSON.parse(r.result); if(Array.isArray(arr)){ const hist=JSON.parse(localStorage.getItem('pha_hist')||'[]'); hist.push(...arr); localStorage.setItem('pha_hist',JSON.stringify(hist)); renderHistory(); alert(_t('json_import_ok')); } else alert(_t('json_format_err')); }catch(err){alert(_t('json_parse_err'))}}; r.readAsText(f,'utf-8'); e.target.value='';});
-function importCSV(text){const lines=text.trim().split(/\r?\n/); const head=lines[0].split(',').map(s=>s.trim()); const hist=JSON.parse(localStorage.getItem('pha_hist')||'[]');
-  for(let i=1;i<lines.length;i++){const cols=lines[i].split(','); if(cols.length<3) continue; const obj={ts:cols[head.indexOf('ts')]||new Date().toISOString(),grade:cols[head.indexOf('grade')]||'S1000P',proc:cols[head.indexOf('proc')]||'extrusion',params:{},notes:cols[head.indexOf('notes')]||''};
-    head.forEach((h,idx)=>{if(!['ts','grade','proc','notes'].includes(h)) obj.params[h]=cols[idx]}); hist.push(obj);}
-  localStorage.setItem('pha_hist',JSON.stringify(hist)); renderHistory(); alert(_t('csv_import_ok'))}
+function validHistoryImportRow(row){
+  return !!row&&typeof row==='object'&&!Array.isArray(row)
+    &&(typeof row.ts==='string'||typeof row.ts==='number')&&row.ts!==''&&Number.isFinite(new Date(row.ts).getTime())
+    &&typeof row.grade==='string'&&row.grade.trim()!==''&&typeof row.proc==='string'&&row.proc.trim()!==''
+    &&!!row.params&&typeof row.params==='object'&&!Array.isArray(row.params)
+    &&(row.notes==null||typeof row.notes==='string');
+}
+function appendHistoryImport(rows){
+  if(!Array.isArray(rows))throw new Error(_t('json_format_err'));
+  const invalid=rows.findIndex(row=>!validHistoryImportRow(row));
+  if(invalid>=0)throw new Error(LANG==='ko'?`${invalid+1}번째 기록의 날짜·그레이드·공정·params 형식을 확인하세요. 기존 이력은 유지됩니다.`:`Check date, grade, process and params in record ${invalid+1}. Existing history is unchanged.`);
+  const existing=JSON.parse(localStorage.getItem('pha_hist')||'[]');
+  if(!Array.isArray(existing))throw new Error(LANG==='ko'?'기존 이력 형식을 먼저 확인하세요.':'Review the existing history format first.');
+  // Keep all existing rows and imported metadata. Validate the entire batch before writing.
+  localStorage.setItem('pha_hist',JSON.stringify(existing.concat(rows)));
+  renderHistory();analyze();
+}
+$('importJSON').addEventListener('change', e=>{const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{try{appendHistoryImport(JSON.parse(String(r.result).replace(/^\uFEFF/,'')));alert(_t('json_import_ok'));}catch(err){alert(err instanceof SyntaxError?_t('json_parse_err'):err.message)}}; r.readAsText(f,'utf-8'); e.target.value='';});
+function parseHistoryCSV(text){
+  const rows=[];let row=[],field='',quoted=false,closedQuote=false;
+  const input=String(text).replace(/^\uFEFF/,'');
+  const invalid=()=>new Error(LANG==='ko'?'CSV의 따옴표와 열 수를 확인하세요. 기존 이력은 유지됩니다.':'Check CSV quotes and column counts. Existing history is unchanged.');
+  const finishField=()=>{row.push(field);field='';closedQuote=false;};
+  const finishRow=()=>{finishField();if(row.some(value=>value.trim()!==''))rows.push(row);row=[];};
+  for(let i=0;i<input.length;i++){
+    const char=input[i];
+    if(quoted){if(char==='"'){if(input[i+1]==='"'){field+='"';i++;}else{quoted=false;closedQuote=true;}}else field+=char;continue;}
+    if(char===','){finishField();continue;}
+    if(char==='\n'||char==='\r'){finishRow();if(char==='\r'&&input[i+1]==='\n')i++;continue;}
+    if(closedQuote){if(char===' '||char==='\t')continue;throw invalid();}
+    if(char==='"'){if(field!=='')throw invalid();quoted=true;}else field+=char;
+  }
+  if(quoted)throw invalid();
+  if(field!==''||closedQuote||row.length)finishRow();
+  if(!rows.length)throw invalid();
+  const head=rows.shift().map(value=>value.trim());
+  if(head.some(value=>!value)||new Set(head).size!==head.length||head.length<3)throw invalid();
+  return rows.map(cols=>{
+    if(cols.length>head.length||cols.length<3)throw invalid();
+    const obj={ts:cols[head.indexOf('ts')]||new Date().toISOString(),grade:cols[head.indexOf('grade')]||'S1000P',proc:cols[head.indexOf('proc')]||'extrusion',params:{},notes:cols[head.indexOf('notes')]||''};
+    head.forEach((key,index)=>{if(!['ts','grade','proc','notes'].includes(key))Object.defineProperty(obj.params,key,{value:cols[index]??'',enumerable:true,writable:true,configurable:true});});
+    return obj;
+  });
+}
+function importCSV(text){try{appendHistoryImport(parseHistoryCSV(text));alert(_t('csv_import_ok'));}catch(err){alert(err.message);}}
 
 /* ========= Reco editor (overrides) ========= */
 let modalRestoreFns = null;
@@ -1877,9 +1711,9 @@ function openRecoEditor(){const proc=$('process').value, grade=$('grade').value,
 function closeModal(){if(typeof modalRestoreFns==='function') modalRestoreFns(); $('modal').style.display='none'; setModalChrome(recoModalCopy())}
 function saveRecoOverrides(){const proc=$('process').value, schema=SCHEMAS[proc]; const key=PHAEvidence.overrideKey($('grade').value,proc,$('moldMode')?.value);
   const next={}; for(const f of schema){const a=$('ov_'+f.id+'_min').value,b=$('ov_'+f.id+'_max').value;if(a===''&&b==='')continue;const min=Number(a),max=Number(b);if(a===''||b===''||!Number.isFinite(min)||!Number.isFinite(max)||min>max){alert(LANG==='ko'?'최솟값 ≤ 최댓값으로 입력하세요.':'Enter finite values with minimum ≤ maximum.');return;}next[f.id]=[min,max];}
-  const ov=JSON.parse(localStorage.getItem('reco_overrides')||'{}');ov[key]=next;localStorage.setItem('reco_overrides',JSON.stringify(ov)); closeModal(); rebuildForm();}
-function resetOverridesCurrent(){const proc=$('process').value; const key=PHAEvidence.overrideKey($('grade').value,proc,$('moldMode')?.value); const ov=JSON.parse(localStorage.getItem('reco_overrides')||'{}'); delete ov[key]; localStorage.setItem('reco_overrides',JSON.stringify(ov)); rebuildForm(); alert(_t('reco_reset_cur'))}
-function resetOverridesAll(){localStorage.removeItem('reco_overrides'); rebuildForm(); alert(_t('reco_reset_all'))}
+  const ov=JSON.parse(localStorage.getItem('reco_overrides')||'{}');ov[key]=next;localStorage.setItem('reco_overrides',JSON.stringify(ov)); closeModal(); rebuildForm(true);}
+function resetOverridesCurrent(){const proc=$('process').value; const key=PHAEvidence.overrideKey($('grade').value,proc,$('moldMode')?.value); const ov=JSON.parse(localStorage.getItem('reco_overrides')||'{}'); delete ov[key]; localStorage.setItem('reco_overrides',JSON.stringify(ov)); rebuildForm(true); alert(_t('reco_reset_cur'))}
+function resetOverridesAll(){localStorage.removeItem('reco_overrides'); rebuildForm(true); alert(_t('reco_reset_all'))}
 
 /* ========= Calculators ========= */
 function calcResidence(){
@@ -1900,12 +1734,18 @@ function calcBlownFilm(){
 /* ========= Materials DB ========= */
 function getMatDB(){const raw=localStorage.getItem('mat_db'); if(raw) return JSON.parse(raw); return JSON.parse(JSON.stringify(MAT_DEFAULT));}
 function setMatDB(db){localStorage.setItem('mat_db',JSON.stringify(db))}
-function renderMat(){const db=getMatDB(); const g=$('mat_grade').value||'S1000P'; const rec=db[g]||{}; const tb=$('mat_tbody'); tb.innerHTML='';
-  MAT_KEY_ORDER.forEach(([k,nm,unit])=>{const tr=document.createElement('tr'); tr.innerHTML=`<td>${nm}</td><td>${rec[k]??''}</td><td class="muted">${unit}</td>`; tb.appendChild(tr);});if(typeof renderPhaMaterialReference==='function')renderPhaMaterialReference();}
+function renderMat(){const db=getMatDB(); const select=$('mat_grade'),selected=select.value;
+  const grades=[...new Set([...GRADES.map(grade=>grade.value),...Object.keys(db)])];
+  if(JSON.stringify(Array.from(select.options,option=>option.value))!==JSON.stringify(grades)){
+    select.replaceChildren();grades.forEach(grade=>{const option=document.createElement('option');option.value=grade;option.textContent=grade;select.appendChild(option);});
+    if(grades.includes(selected))select.value=selected;
+  }
+  const g=select.value||'S1000P'; const rec=db[g]||{}; const tb=$('mat_tbody'); tb.innerHTML='';
+  MAT_KEY_ORDER.forEach(([k,nm,unit])=>{const tr=document.createElement('tr');[nm,rec[k]??'',unit].forEach((value,index)=>{const td=document.createElement('td');td.textContent=String(value);if(index===2)td.className='muted';tr.appendChild(td);});tb.appendChild(tr);});if(typeof renderPhaMaterialReference==='function')renderPhaMaterialReference();}
 $('mat_grade').addEventListener('change',renderMat);
 function importMatJSON(){const inp=$('mat_file'); inp.onchange=(e)=>{const f=e.target.files[0]; if(!f) return; const r=new FileReader(); r.onload=()=>{try{const obj=JSON.parse(r.result); const db=getMatDB(); Object.assign(db,obj); setMatDB(db); renderMat(); alert(_t('mat_import_ok'));}catch(err){alert(_t('json_parse_err'))}}; r.readAsText(f,'utf-8'); inp.value='';}; inp.click();}
 function exportMatJSON(){const blob=new Blob([JSON.stringify(getMatDB(),null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='materials_db.json'; a.click();}
-function editMat(){const db=getMatDB(); const g=$('mat_grade').value||'S1000P'; const rec=Object.assign({},db[g]||{}); let html='<div class="grid">';
+function editMat(){let db=getMatDB(); const g=$('mat_grade').value||'S1000P'; const rec=Object.assign({},db[g]||{}); let html='<div class="grid">';
   setModalChrome(materialModalCopy());
   MAT_KEY_ORDER.forEach(([k,nm,unit])=>{const v=rec[k]??''; const densityHint=k==='density_g_cm3'?(LANG==='ko'?' title=\"밀도 범위: 0.5 – 5.0 g/cm³\" placeholder=\"0.5 – 5.0\"':' title=\"Density range: 0.5–5.0 g/cm³\" placeholder=\"0.5–5.0\"'):''; html+=`<div class="group"><label>${nm}${unit?` (${unit})`:''}</label><input id="mat_${k}" type="number" step="any" value="${v}"${densityHint}></div>`}); html+='</div>';
   const body=$('modalBody'); body.innerHTML=html; $('modal').style.display='flex';
@@ -1913,8 +1753,9 @@ function editMat(){const db=getMatDB(); const g=$('mat_grade').value||'S1000P'; 
   const save=window.saveRecoOverrides; const resetC=window.resetOverridesCurrent; const resetA=window.resetOverridesAll;
   modalRestoreFns = function(){window.saveRecoOverrides=save; window.resetOverridesCurrent=resetC; window.resetOverridesAll=resetA; modalRestoreFns=null;};
   window.saveRecoOverrides=function(){const rec2={}; MAT_KEY_ORDER.forEach(([k])=>{const v=$('mat_'+k).value; if(v!=='') rec2[k]=parseFloat(v)}); db[g]=rec2; setMatDB(db); renderMat(); alert(_t('save_ok')); closeModal(); window.saveRecoOverrides=save; window.resetOverridesCurrent=resetC; window.resetOverridesAll=resetA;};
-  window.resetOverridesCurrent=function(){db[g]={}; setMatDB(db); renderMat(); alert(_t('reset_ok'))};
-  window.resetOverridesAll=function(){localStorage.removeItem('mat_db'); renderMat(); alert(_t('reset_all_ok'))};
+  const refreshEditor=()=>MAT_KEY_ORDER.forEach(([key])=>{$('mat_'+key).value=db[g]?.[key]??'';});
+  window.resetOverridesCurrent=function(){db[g]={};setMatDB(db);renderMat();refreshEditor();alert(_t('reset_ok'))};
+  window.resetOverridesAll=function(){localStorage.removeItem('mat_db');db=getMatDB();renderMat();refreshEditor();alert(_t('reset_all_ok'))};
 }
 
 function getFlashStateSnapshot(){
@@ -1923,6 +1764,7 @@ function getFlashStateSnapshot(){
   const active = allSel('#flash .flash-tab').findIndex(btn => btn.classList.contains('active'));
   return {
     activeTab: active >= 0 ? active : 0,
+    eventDraft: window.snapshotBatchEventDraft?.() ?? null,
     calc: {
       pAvg: read('flash-p-avg'),
       aProj: read('flash-a-proj'),
@@ -1967,7 +1809,7 @@ function renderFlashContent(){
   }
   ['t0','t1','t2','t3','t4','t5','t6','t7'].forEach((key, idx) => {
     const target = $(`flash-tab-${idx}`);
-    if (target) target.innerHTML = FLASH_TAB_HTML[LANG][key];
+    if (target) target.innerHTML = window.PHAFlashGuide?.template?.(LANG,key) ?? FLASH_TAB_HTML[LANG][key];
   });
   restoreFlashInput('flash-p-avg', snapshot.calc.pAvg);
   restoreFlashInput('flash-a-proj', snapshot.calc.aProj);
@@ -1993,6 +1835,7 @@ function renderFlashContent(){
   else if (typeof renderProcessLog === 'function') renderProcessLog();
   if (typeof window.bindBatchEventControls === 'function') window.bindBatchEventControls();
   if (typeof window.renderBatchEventPanel === 'function') window.renderBatchEventPanel();
+  window.restoreBatchEventDraft?.(snapshot.eventDraft);
   if (typeof initChecklist === 'function') initChecklist();
   if (typeof calculateShotWeight === 'function' && (snapshot.weights.part || snapshot.weights.runner)) calculateShotWeight();
   if (typeof currentChartType !== 'undefined') currentChartType = snapshot.chartType;
@@ -2002,7 +1845,8 @@ function renderFlashContent(){
   if (snapshot.results.pressure === 'block' && typeof calculateFlashPressureLimit === 'function') calculateFlashPressureLimit();
   if (snapshot.results.shear === 'block' && typeof calculateFlashShearRate === 'function') calculateFlashShearRate();
   if (snapshot.results.packing === 'block' && typeof calculateFlashPackingPressure === 'function') calculateFlashPackingPressure();
-  if (typeof generateFlashRecommendations === 'function' && typeof processLogData !== 'undefined' && processLogData.length > 0) generateFlashRecommendations();
+  if (typeof generateFlashRecommendations === 'function' && typeof processLogData !== 'undefined') generateFlashRecommendations();
+  window.PHAFlashGuide?.mount?.(LANG);
   showFlashTab(snapshot.activeTab);
 }
 
@@ -2025,11 +1869,13 @@ function setLanguage(lang){
   if(typeof renderMyAITranslations==='function') renderMyAITranslations();
   const current=Object.fromEntries(SCHEMAS[$('process').value].map(f=>[f.id,$('f_'+f.id)?.value]));
   rebuildForm();Object.entries(current).forEach(([key,value])=>{if($('f_'+key)&&value!=null)$('f_'+key).value=value;});refreshParamTable();
+  analyze();
   window.dispatchEvent(new Event('pha-language-change'));
 }
 allSel('.tars-lang-btn').forEach(btn=>btn.addEventListener('click',()=>setLanguage(btn.dataset.langChoice)));
 
 /* ========= Init ========= */
+let anaChartInstance=null;
 (function init(){
   buildGradeOptions();
   $('grade').value='S1000P'; $('process').value='extrusion'; rebuildForm();
@@ -2044,32 +1890,35 @@ allSel('.tars-lang-btn').forEach(btn=>btn.addEventListener('click',()=>setLangua
   const savedView=localStorage.getItem('pha_view_pref');
   if(savedView) setView(savedView);
 })();
-let anaChartInstance=null;
+function analysisNumber(value){return (typeof value==='number'||typeof value==='string'&&value.trim()!=='')&&Number.isFinite(Number(value))?Number(value):null;}
 function analyze(){
-  const hist=JSON.parse(localStorage.getItem('pha_hist')||'[]'); const n=hist.length;
-  const t=(n? (LANG==='ko'?'최근 저장: ':'Last: ')+new Date(hist[n-1].ts).toLocaleString(LANG==='ko'?'ko-KR':'en-US')+' · '+hist[n-1].grade+' · '+hist[n-1].proc+` (${n}${LANG==='ko'?'건':'entries'})` : (LANG==='ko'?'데이터가 없습니다.':'No data yet.'));
-  $('anaText').textContent=t;
-  /* Render analysis chart if 2+ entries */
+  const saved=readHistoryForDisplay(),hist=saved||[];const n=hist.length;
+  const last=hist[n-1]||{};
+  const t=(n? (LANG==='ko'?'최근 저장: ':'Last: ')+historyDateText(last.ts)+' · '+historyCellText(last.grade)+' · '+historyCellText(last.proc)+` (${n}${LANG==='ko'?'건':' entries'})` : (LANG==='ko'?'데이터가 없습니다.':'No data yet.'));
+  $('anaText').textContent=saved?t:historyRecoveryText();
   const container=$('anaChartContainer');
   if(!container)return;
-  if(n<2){container.style.display='none';return;}
-  container.style.display='block';
-  /* Build param selector */
-  const paramKeys={}; hist.forEach(h=>{if(h.params)Object.keys(h.params).forEach(k=>{const v=h.params[k];if(v!==''&&v!=null&&!isNaN(v))paramKeys[k]=(paramKeys[k]||0)+1;});});
+  container.style.display=n?'block':'none';
+  $('anaChartTitle').textContent=LANG==='ko'?'파라미터 트렌드':'Parameter trend';
+  $('anaChartCaption').textContent=LANG==='ko'?'저장된 이력 데이터에서 선택한 파라미터의 트렌드를 표시합니다.':'Shows the selected parameter from saved history.';
+  const paramKeys=new Map();hist.forEach(h=>{if(h?.params)Object.entries(h.params).forEach(([key,value])=>{if(analysisNumber(value)!==null)paramKeys.set(key,(paramKeys.get(key)||0)+1);});});
   const sel=$('anaParamSelect'); const prevVal=sel.value;
-  sel.innerHTML=''; Object.keys(paramKeys).sort((a,b)=>paramKeys[b]-paramKeys[a]).forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=k;sel.appendChild(o);});
-  if(prevVal&&paramKeys[prevVal])sel.value=prevVal;
+  sel.innerHTML='';[...paramKeys].sort((a,b)=>b[1]-a[1]).forEach(([key])=>{const option=document.createElement('option');option.value=key;option.textContent=key;sel.appendChild(option);});
+  if(prevVal&&paramKeys.has(prevVal))sel.value=prevVal;
+  sel.disabled=paramKeys.size===0;
   sel.onchange=function(){renderAnaChart(hist,sel.value);};
   renderAnaChart(hist,sel.value);
 }
 function renderAnaChart(hist,paramKey){
-  if(!paramKey||typeof Chart==='undefined')return;
-  const data=hist.filter(h=>h.params&&h.params[paramKey]!==''&&h.params[paramKey]!=null&&!isNaN(h.params[paramKey])).slice(-30);
-  if(data.length<2){$('anaChartContainer').style.display='none';return;}
+  if(anaChartInstance){anaChartInstance.destroy();anaChartInstance=null;}
+  const frame=$('anaChartFrame'),status=$('anaChartStatus');frame.style.display='none';
+  const data=paramKey?hist.filter(h=>h?.params&&analysisNumber(h.params[paramKey])!==null).slice(-30):[];
+  if(data.length<2){status.textContent=LANG==='ko'?'이 항목은 숫자 기록이 2건 이상 필요합니다. 다른 항목을 선택하거나 이력을 추가하세요.':'This parameter needs at least two numeric records. Select another parameter or add history.';status.hidden=false;return;}
+  if(typeof Chart==='undefined'){status.textContent=LANG==='ko'?'그래프를 준비 중입니다. 잠시 후 탭을 다시 열어주세요.':'The chart is loading. Reopen this tab shortly.';status.hidden=false;return;}
+  status.textContent='';status.hidden=true;frame.style.display='';
   const labels=data.map(h=>new Date(h.ts).toLocaleDateString(LANG==='ko'?'ko-KR':'en-US',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}));
-  const values=data.map(h=>parseFloat(h.params[paramKey]));
+  const values=data.map(h=>analysisNumber(h.params[paramKey]));
   const ctx=document.getElementById('anaChart');
-  if(anaChartInstance){anaChartInstance.destroy();}
   anaChartInstance=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:paramKey,data:values,borderColor:'#2C5D3F',backgroundColor:'rgba(44,93,63,.08)',tension:.3,fill:true,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top'}},scales:{x:{display:true,title:{display:true,text:LANG==='ko'?'시간':'Time'}},y:{display:true,title:{display:true,text:paramKey}}}}});
 }
 function resetForm(){if(!confirm(I18N[LANG].resetQ)) return; $('notes').value=''; rebuildForm();}
@@ -2078,7 +1927,10 @@ function resetForm(){if(!confirm(I18N[LANG].resetQ)) return; $('notes').value=''
 function showFlashTab(index) {
   const tabs = document.querySelectorAll('#flash .flash-tab');
   const contents = document.querySelectorAll('#flash .flash-content');
+  if (!Number.isInteger(index) || index < 0 || index >= tabs.length) return;
   tabs.forEach((tab, i) => {
+    tab.setAttribute('aria-selected',String(i===index));
+    tab.tabIndex=i===index?0:-1;
     if (i === index) {
       tab.classList.add('active');
     } else {
@@ -2086,6 +1938,7 @@ function showFlashTab(index) {
     }
   });
   contents.forEach((content, i) => {
+    content.hidden=i!==index;
     if (i === index) {
       content.classList.add('active');
     } else {
@@ -2094,7 +1947,19 @@ function showFlashTab(index) {
   });
   window.PHAInjectionMotion?.syncSurface();
   window.PHAEquipmentMotion?.syncSurface();
+  window.PHAFlashGuide?.syncSurface?.();
 }
+
+document.querySelector('#flash .flash-tabs').addEventListener('keydown',event=>{
+  const current=event.target.closest('.flash-tab');if(!current)return;
+  const tabs=[...document.querySelectorAll('#flash .flash-tab')];let index=tabs.indexOf(current);
+  if(event.key==='ArrowRight')index=(index+1)%tabs.length;
+  else if(event.key==='ArrowLeft')index=(index+tabs.length-1)%tabs.length;
+  else if(event.key==='Home')index=0;
+  else if(event.key==='End')index=tabs.length-1;
+  else return;
+  event.preventDefault();showFlashTab(index);tabs[index].focus();
+});
 
 function calculateFlashClampTonnage() {
   $('flash-clamp-result').style.display='none';
@@ -2727,10 +2592,13 @@ function updateProcessLogNote(index, value) {
 }
 
 function deleteProcessLogEntry(index) {
+  if (!Number.isInteger(index) || index < 0 || index >= processLogData.length) return;
   if (confirm(LANG === 'ko' ? '이 로그 항목을 삭제하시겠습니까?' : 'Delete this log entry?')) {
     processLogData.splice(index, 1);
     saveProcessLog();
     renderProcessLog();
+    generateFlashRecommendations();
+    updateCharts();
   }
 }
 
@@ -2740,6 +2608,8 @@ function clearProcessLog() {
       processLogData = [];
       saveProcessLog();
       renderProcessLog();
+      generateFlashRecommendations();
+      updateCharts();
     }
   }
 }
@@ -2846,21 +2716,30 @@ function renderProcessLog() {
   const tbody = document.getElementById('processLogBody');
   if (!tbody) return;
 
-  let displayData = filteredLogData.length > 0 ? filteredLogData : processLogData;
+  const filterActive=!!($('filterKeyword')?.value||$('filterDateFrom')?.value||$('filterDateTo')?.value);
+  if(filterActive)filterProcessLog(false);
+  else filteredLogData=[];
+  const displayData=filterActive?filteredLogData:processLogData;
 
   if (displayData.length === 0) {
+    if(filterActive&&processLogData.length){
+      tbody.innerHTML=LANG==='ko'
+        ? '<tr><td colspan="16" class="log-empty">검색 조건에 맞는 로그가 없습니다. 검색어나 날짜 범위를 확인하세요.</td></tr>'
+        : '<tr><td colspan="16" class="log-empty">No logs match these filters. Check the keyword or date range.</td></tr>';
+      return;
+    }
     tbody.innerHTML = LANG === 'ko'
       ? '<tr><td colspan="16" class="log-empty">아직 로그가 없습니다. <strong>"새 행 추가"</strong> 버튼으로 첫 기록을 시작하세요.</td></tr>'
       : '<tr><td colspan="16" class="log-empty">No log entries yet. Click <strong>"Add row"</strong> to start your first record.</td></tr>';
     return;
   }
 
-  const esc = s => String(s == null ? '' : s).replace(/[<>&]/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
+  const esc = s => String(s == null ? '' : s).replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c]));
   tbody.innerHTML = displayData.map((entry, index) => {
     const realIndex = processLogData.indexOf(entry);
     return `
     <tr>
-      <td><div class="log-timestamp">${entry.timestamp}</div></td>
+      <td><div class="log-timestamp">${esc(entry.timestamp)}</div></td>
       <td><div class="log-timestamp" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${entry.batch_id ? '#2C5D3F' : 'var(--muted)'};">${entry.batch_id ? esc(entry.batch_id) : '&mdash;'}</div></td>
       <td><div class="log-timestamp" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${entry.composition_code ? '#2C5D3F' : 'var(--muted)'};" title="${esc(entry.composition_id || '')}">${entry.composition_code ? esc(entry.composition_code) : '&mdash;'}</div></td>
       <td>${createNumberInput(realIndex, 'cylinderTemp', entry.cylinderTemp, 1)}</td>
@@ -2876,7 +2755,7 @@ function renderProcessLog() {
       <td>
         <textarea class="log-note-input"
                   onchange="updateProcessLogNote(${realIndex}, this.value)"
-                  placeholder="${LANG === 'ko' ? '현상, 불량, 특이사항 기록...' : 'Record observations, defects, and anomalies...'}">${entry.note || ''}</textarea>
+                  placeholder="${LANG === 'ko' ? '현상, 불량, 특이사항 기록...' : 'Record observations, defects, and anomalies...'}">${esc(entry.note || '')}</textarea>
       </td>
       <td>
         <button class="btn-template" style="font-size:11px;padding:4px 8px" onclick="attachPhoto(${realIndex})">${LANG === 'ko' ? '추가' : 'Attach'}</button>
@@ -2892,20 +2771,22 @@ function renderProcessLog() {
 // Search and Filter Functions
 let filteredLogData = [];
 
-function filterProcessLog() {
+function filterProcessLog(render = true) {
   const keyword = document.getElementById('filterKeyword').value.toLowerCase();
   const dateFrom = document.getElementById('filterDateFrom').value;
   const dateTo = document.getElementById('filterDateTo').value;
 
   filteredLogData = processLogData.filter(entry => {
     // Keyword filter
-    if (keyword && !entry.note.toLowerCase().includes(keyword)) {
+    if (keyword && !String(entry.note || '').toLowerCase().includes(keyword)) {
       return false;
     }
 
     // Date filter
     if (dateFrom || dateTo) {
-      const entryDate = new Date(entry.timestamp).toISOString().slice(0, 10);
+      const parsedDate=new Date(entry.timestamp);
+      if(!Number.isFinite(parsedDate.getTime()))return false;
+      const entryDate = parsedDate.toISOString().slice(0, 10);
       if (dateFrom && entryDate < dateFrom) return false;
       if (dateTo && entryDate > dateTo) return false;
     }
@@ -2913,7 +2794,7 @@ function filterProcessLog() {
     return true;
   });
 
-  renderProcessLog();
+  if(render)renderProcessLog();
 }
 
 function clearFilter() {
@@ -3109,9 +2990,14 @@ function flashRecommendationCopy(rule, value) {
 }
 
 function generateFlashRecommendations() {
+  const panel=document.getElementById('flashRecommendations');
+  const content=document.getElementById('recommendationContent');
+  if(!panel||!content)return;
+  panel.style.display='none';content.textContent='';
   if (processLogData.length === 0) return;
 
   const latest = processLogData[0];
+  if(!latest||typeof latest!=='object')return;
   const recommendations = FLASH_RECOMMENDATION_RULES
     .map(rule => flashRecommendationCopy(rule, Number(latest[rule.key])))
     .filter(Boolean);
@@ -3126,8 +3012,8 @@ function generateFlashRecommendations() {
     </div>
   `).join('');
 
-  document.getElementById('recommendationContent').innerHTML = html;
-  document.getElementById('flashRecommendations').style.display = 'block';
+  content.innerHTML = html;
+  panel.style.display = 'block';
 }
 
 // Photo Attachment (using IndexedDB)
@@ -3439,6 +3325,7 @@ function switchTab(tabId){
   if(topTab) topTab.classList.add('active');
   const page=$(tabId);
   if(page) page.classList.add('active');
+  window.dispatchEvent(new CustomEvent('pha-tab-change',{detail:tabId}));
   /* sync mobile tab bar */
   document.querySelectorAll('.mtb-item').forEach(b=>{
     b.classList.toggle('active',b.dataset.tab===tabId);
@@ -3584,7 +3471,7 @@ window.addEventListener('load', () => {
     calc:{ label:{ko:'계산기',en:'Calculators'}, purpose:'체류시간, 냉각시간, 블로운필름 두께/DDR 계산을 수행한다.', outputSchema:{envelope:'sectioned',sections:['계산값','입력','해석']}, reading:'계산은 tool 결과를 기준으로 답한다.' },
     props:{ label:{ko:'물성 DB',en:'Materials DB'}, purpose:'S1000P/A1000P/CA1180P/CB0104A 등 material DB의 물성을 조회한다.', outputSchema:{envelope:'property',properties:['density_g_cm3','MFR_g_10min_190_2_16','Tm_C','tensile_MPa','elongation_%','HDT_C']}, reading:'get_material_info 또는 get_material_db를 사용한다.' },
     photos:{ label:{ko:'사진',en:'Photos'}, purpose:'현장 사진 목록/메타를 읽어 기록 맥락을 보강한다.', outputSchema:{envelope:'sectioned',sections:['사진','관찰','다음조치']}, reading:'photoGrid의 렌더 텍스트와 이미지 개수를 확인한다.' },
-    flash:{ label:{ko:'플래시 제어',en:'Flash Control'}, purpose:'36-cavity 플래시 제어용 형체력, 압력 리밋, 전단률, 보압 분리값을 계산한다.', outputSchema:{envelope:'sectioned',sections:['계산값','권장','조치']}, reading:'flash 계산 tool 결과와 렌더된 recommendation을 함께 사용한다.' },
+    flash:{ label:{ko:'플래시 제어',en:'Flash Control'}, purpose:'플래시 점검을 위한 금형 벌어짐 힘, 캐비티 평균압력 역산, 겉보기 전단률, 사용자가 입력한 보압비 환산값을 계산한다.', outputSchema:{envelope:'sectioned',sections:['계산값','권장','조치']}, reading:'flash 계산 tool 결과와 렌더된 recommendation을 함께 사용한다.' },
     compounding:{ label:{ko:'컴파운딩 가이드',en:'Compounding Guide'}, purpose:'grade별 H/S/F 분류, 배합 가이드, 경고를 설명한다.', outputSchema:{envelope:'sectioned',sections:['분류','가이드','주의']}, reading:'PHA_DATA_BRIDGE.classifyForCompounding을 우선 사용한다.' },
     straw:{ label:{ko:'스트로 가이드',en:'Straw Guide'}, purpose:'스트로 압출/성형 guide 컨텍스트를 읽고 공정 조치를 제안한다.', outputSchema:{envelope:'sectioned',sections:['조건','가이드','주의']}, reading:'strawGuideContainer 렌더 내용을 사용한다.' }
   };
@@ -4373,6 +4260,8 @@ window.addEventListener('load', () => {
       try{ sessionStorage.setItem('pha.myai.lastWorkTab', tab); }catch(e){}
     }
   }
+  // Track the shared desktop/mobile navigation before My AI is first opened.
+  window.addEventListener('pha-tab-change',event=>myaiSetLastWorkTab(event.detail));
   function myaiDefaultContextTab(){
     const active = myaiActiveTab();
     if(active && active !== 'myai' && MYAI_TAB_KNOWLEDGE[active]) return active;
@@ -4751,10 +4640,6 @@ window.addEventListener('load', () => {
     });
     document.querySelectorAll('#myai [data-myai-quick]').forEach(btn=>btn.addEventListener('click', ()=>myaiSendUser(btn.getAttribute('data-myai-quick'))));
     on('myaiClearChat','click', ()=>myaiClearChatHistory(myaiT('chatCleared','Chat history cleared.')));
-    document.addEventListener('click', ev=>{
-      const btn = ev.target && ev.target.closest ? ev.target.closest('[data-tab]') : null;
-      if(btn) myaiSetLastWorkTab(btn.getAttribute('data-tab'));
-    }, true);
   }
   function myaiExposeTestHooks(){
     try{
@@ -4812,26 +4697,28 @@ window.addEventListener('load', () => {
 <!-- See custom.js for implementation -->
 
   <!-- Phase 4a shared batch-session contract -->
-<script src="anomaly-codes.js?v=24"></script>
-<script src="tars-batch-schema.js?v=24"></script>
-<script src="glossary.js?v=24"></script>
+<script src="anomaly-codes.js?v=25"></script>
+<script src="tars-batch-schema.js?v=25"></script>
+<script src="glossary.js?v=25"></script>
   <!-- Load external script containing material/troubleshooting/photo logic -->
-  <script src="troubleshooting-data.js?v=24"></script>
-  <script src="troubleshooting-visuals-data.js?v=24"></script>
-  <script src="vent-guide-data.js?v=24"></script>
-  <script src="vent-guide.js?v=24"></script>
-  <script src="troubleshooting-visuals.js?v=24"></script>
-  <script src="custom.js?v=24"></script>
+  <script src="troubleshooting-data.js?v=25"></script>
+  <script src="troubleshooting-visuals-data.js?v=25"></script>
+  <script src="vent-guide-data.js?v=25"></script>
+  <script src="vent-guide.js?v=25"></script>
+  <script src="flash-guide-data.js?v=25"></script>
+  <script src="flash-guide.js?v=25"></script>
+  <script src="troubleshooting-visuals.js?v=25"></script>
+  <script src="custom.js?v=25"></script>
   <!-- Compounding & Straw guide modules -->
-  <script src="compounding-guide.js?v=24"></script>
-  <script src="straw-guide.js?v=24"></script>
-  <script src="pha-integration.js?v=24"></script>
-  <script src="equipment-kinematics.js?v=24"></script>
-  <script src="equipment-study.js?v=24"></script>
-  <script src="equipment-models.js?v=24"></script>
-<script src="equipment-motion.js?v=24"></script>
-<script src="injection-motion.js?v=24"></script>
-  <script src="process-atlas.js?v=24"></script>
+  <script src="compounding-guide.js?v=25"></script>
+  <script src="straw-guide.js?v=25"></script>
+  <script src="pha-integration.js?v=25"></script>
+  <script src="equipment-kinematics.js?v=25"></script>
+  <script src="equipment-study.js?v=25"></script>
+  <script src="equipment-models.js?v=25"></script>
+<script src="equipment-motion.js?v=25"></script>
+<script src="injection-motion.js?v=25"></script>
+  <script src="process-atlas.js?v=25"></script>
   <script>
     // Initialize guide tabs and integration after all scripts loaded
     window.addEventListener('load', function(){

@@ -1,0 +1,20 @@
+{
+  "package": "chart.js",
+  "version": "4.4.0",
+  "license": "MIT",
+  "purpose": "Exact existing CDN dependency vendored for offline and standalone chart rendering",
+  "files": [
+    {
+      "name": "chart.umd.min.js",
+      "url": "https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js",
+      "bytes": 205222,
+      "sha256": "0e2326c6868072bec1592760c6729043caeea2960a2b46cee6a2192aac6abff0"
+    },
+    {
+      "name": "LICENSE",
+      "url": "https://raw.githubusercontent.com/chartjs/Chart.js/v4.4.0/LICENSE.md",
+      "bytes": 1093,
+      "sha256": "5a0877ad6d818529be4f33009d0942cdf7e2ed7656156f4aba7308459a546030"
+    }
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "status": "passed",
+  "root": ".",
+  "checks": [
+    {
+      "name": "Previously untested roll, haul and winder selections affect real GLB nodes only",
+      "status": "passed",
+      "evidence": [
+        {
+          "kind": "extrusion",
+          "drive": "haul",
+          "rpm": 9.54929658551372,
+          "elapsed": 0.1833340000000003
+        },
+        {
+          "kind": "extrusion",
+          "drive": "cutter",
+          "rpm": 30,
+          "elapsed": 0.19993399999999978
+        },
+        {
+          "kind": "compounding",
+          "drive": "haul",
+          "rpm": 9.54929658551372,
+          "elapsed": 0.1833000000000002
+        },
+        {
+          "kind": "compounding",
+          "drive": "cutter",
+          "rpm": 30,
+          "elapsed": 0.1832340000000004
+        },
+        {
+          "kind": "sheet",
+          "drive": "roll",
+          "rpm": 9.54929658551372,
+          "elapsed": 0.19993400000000022
+        },
+        {
+          "kind": "sheet",
+          "drive": "winder",
+          "rpm": 9.54929658551372,
+          "elapsed": 0.18333399999999986
+        },
+        {
+          "kind": "castfilm",
+          "drive": "winder",
+          "rpm": 9.54929658551372,
+          "elapsed": 0.1833000000000002
+        },
+        {
+          "kind": "blownfilm",
+          "drive": "haul",
+          "rpm": 9.54929658551372,
+          "elapsed": 0.1833000000000002
+        },
+        {
+          "kind": "blownfilm",
+          "drive": "winder",
+          "rpm": 9.54929658551372,
+          "elapsed": 0.1833000000000002
+        }
+      ]
+    },
+    {
+      "name": "Invalid active study input clears output, stops nodes and remains invalid after locale remount",
+      "status": "passed",
+      "evidence": {
+        "invalidOutputCleared": true,
+        "motionStopped": true,
+        "blankInputRetained": true
+      }
+    },
+    {
+      "name": "Injection and blow-molding travel reject invalid velocity without retaining completed output",
+      "status": "passed"
+    },
+    {
+      "name": "Calculated motion suspends when the main tab becomes inactive",
+      "status": "passed",
+      "evidence": {
+        "framesHeld": true,
+        "studyPlaying": false
+      }
+    },
+    {
+      "name": "Straw residence calculator clears stale results on edits and preserves inputs across locale",
+      "status": "passed",
+      "evidence": {
+        "invalidEditClears": true,
+        "validEditClears": true,
+        "localeKeepsInputs": true
+      }
+    },
+    {
+      "name": "Compounding and straw sub-tabs remain scoped to their own guides",
+      "status": "passed",
+      "evidence": {
+        "compoundingTab": 2,
+        "strawTab": 1
+      }
+    },
+    {
+      "name": "Keyboard focus remains on the selected troubleshooting case after rerender",
+      "status": "passed",
+      "evidence": {
+        "tag": "BUTTON",
+        "id": "",
+        "selected": "1"
+      }
+    },
+    {
+      "name": "Keyboard focus remains on equipment scope after switching from defect geometry",
+      "status": "passed",
+      "evidence": {
+        "tag": "BUTTON",
+        "id": "",
+        "selected": "true"
+      }
+    },
+    {
+      "name": "Troubleshooting animation pauses and closes when leaving its main tab",
+      "status": "passed",
+      "evidence": {
+        "dialogDisposed": true
+      }
+    },
+    {
+      "name": "No uncaught browser errors",
+      "status": "passed",
+      "errors": []
+    }
+  ],
+  "source_sha256": {
+    "equipment-study.js": "fd487726537d41394e366590d36df122f3240bc3baf5bec7cc06d1ba3cfefba6",
+    "equipment-motion.js": "e64e8439c4e084130466c931397e749e99f654dd1722d6d82c5e0d66bb95bf49",
+    "injection-motion.js": "71672d4b5ee4fc06a2347423d935bbfd1d6ff64f7c8e9a68c1d7837e41e4582f",
+    "troubleshooting-visuals.js": "66fc7e35a7a20a3ee1b32a54393df671937eff25453c4d0588a7efda0d72e9c7",
+    "straw-guide.js": "1f69a2a32a1fd6577b1c3057984ff6339632e0fdaf9c3e8f016bca6d58a5e747"
+  },
+  "scope": "Supplementary local-browser connection audit. Existing signed-screw/full-equipment suites were not rerun. No process solver acceptance or production claim. Browser storage is isolated."
+}

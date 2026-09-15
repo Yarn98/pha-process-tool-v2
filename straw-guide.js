@@ -69,7 +69,12 @@
       const out=wrap.querySelector('#sg-result');
       if(r.error){out.innerHTML=`<p role="alert" class="atlas-note">${t('양의 유한값과 정수 가닥 수를 입력하세요. 최소 체류시간은 시험 결과가 필요합니다.','Enter finite positive values and an integer lane count. A trial-established minimum residence time is required.')}</p>`;return;}
       out.innerHTML=`<div class="calc-result"><h4>${t('입력한 체류시간 기준의 기하학적 한계','Geometric limit for the entered residence time')}</h4><p>${t('전체 생산량','Total output')}: <strong>${r.total_per_min.toFixed(1)}</strong> ${t('개/min','pieces/min')} · ${r.perLane_per_min.toFixed(1)} / ${t('가닥','lane')}</p><p>${r.lineSpeed_m_min.toFixed(2)} m/min · ${r.mass_kg_h.toFixed(2)} kg/h</p>${v[5]!==''?`<p>${t('목표 생산량에서 체류시간','Residence at target output')}: ${r.targetResidence_s.toFixed(2)} s · ${t('필요 유효 길이','Required effective length')}: ${r.requiredBath_m.toFixed(2)} m</p><p>${r.meetsEnteredResidence?t('입력한 체류시간 이상입니다. 제품 품질은 별도 확인하세요.','Meets the entered residence time; check product quality separately.'):t('입력한 체류시간에 못 미칩니다. 생산량과 유효 길이를 다시 검토하세요.','Below the entered residence time; review output and effective bath length.')}</p>`:''}</div>`;
-    }); return wrap;
+    });
+    wrap.querySelectorAll('input').forEach(input=>input.addEventListener('input',()=>{
+      const out=wrap.querySelector('#sg-result');
+      if(out.textContent)out.textContent=t('입력값이 바뀌었습니다. 계산을 다시 실행하세요.','Inputs changed. Calculate again to update the result.');
+    }));
+    return wrap;
   }
 
   function buildST2() {

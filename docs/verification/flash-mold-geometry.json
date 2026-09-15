@@ -1,0 +1,716 @@
+{
+  "status": "passed",
+  "blender": "5.2.1 LTS",
+  "native_sha256": "f5219ec4da01b8b9c77e1f8c1d9ec8bcb9c49ed8f888d8806911487878575680",
+  "glb_sha256": "81f2d9bea29af5314be532409a9ce7753d97131ffa84da782856e8f6a8693c45",
+  "glb_bytes": 479520,
+  "states": [
+    {
+      "state": "normal",
+      "mesh_objects": 24,
+      "flash_volume_scene_units": 0,
+      "resin_path_connected": true,
+      "flash_attached": false
+    },
+    {
+      "state": "parting",
+      "mesh_objects": 25,
+      "flash_volume_scene_units": 0.02260635,
+      "resin_path_connected": true,
+      "flash_attached": true
+    },
+    {
+      "state": "vent",
+      "mesh_objects": 25,
+      "flash_volume_scene_units": 0.01203987,
+      "resin_path_connected": true,
+      "flash_attached": true
+    },
+    {
+      "state": "ejector",
+      "mesh_objects": 25,
+      "flash_volume_scene_units": 0.02341703,
+      "resin_path_connected": true,
+      "flash_attached": true
+    }
+  ],
+  "opening": [
+    {
+      "state": "normal",
+      "native_upper_delta_xyz": [
+        0.0,
+        0.0,
+        2.25
+      ],
+      "three_upper_delta_xyz": [
+        0,
+        2.25,
+        0
+      ],
+      "lower_fixed": true
+    },
+    {
+      "state": "parting",
+      "native_upper_delta_xyz": [
+        0.0,
+        0.0,
+        2.25
+      ],
+      "three_upper_delta_xyz": [
+        0,
+        2.25,
+        0
+      ],
+      "lower_fixed": true
+    },
+    {
+      "state": "vent",
+      "native_upper_delta_xyz": [
+        0.0,
+        0.0,
+        2.25
+      ],
+      "three_upper_delta_xyz": [
+        0,
+        2.25,
+        0
+      ],
+      "lower_fixed": true
+    },
+    {
+      "state": "ejector",
+      "native_upper_delta_xyz": [
+        0.0,
+        0.0,
+        2.25
+      ],
+      "three_upper_delta_xyz": [
+        0,
+        2.25,
+        0
+      ],
+      "lower_fixed": true
+    }
+  ],
+  "native_fill_samples": [
+    {
+      "progress": 0,
+      "runner": 0.00010001659393310547,
+      "gate": 9.998679161071777e-05,
+      "cavity": 9.989738464355469e-05
+    },
+    {
+      "progress": 0.08,
+      "runner": 0.7300000190734863,
+      "gate": 9.998679161071777e-05,
+      "cavity": 9.989738464355469e-05
+    },
+    {
+      "progress": 0.16,
+      "runner": 1.4600000381469727,
+      "gate": 9.998679161071777e-05,
+      "cavity": 9.989738464355469e-05
+    },
+    {
+      "progress": 0.205,
+      "runner": 1.4600000381469727,
+      "gate": 0.27000001072883606,
+      "cavity": 9.989738464355469e-05
+    },
+    {
+      "progress": 0.25,
+      "runner": 1.4600000381469727,
+      "gate": 0.5400000512599945,
+      "cavity": 9.989738464355469e-05
+    },
+    {
+      "progress": 0.35,
+      "runner": 1.4600000381469727,
+      "gate": 0.5400000512599945,
+      "cavity": 1.0999999046325684
+    },
+    {
+      "progress": 0.45,
+      "runner": 1.4600000381469727,
+      "gate": 0.5400000512599945,
+      "cavity": 2.200000047683716
+    },
+    {
+      "progress": 0.55,
+      "runner": 1.4600000381469727,
+      "gate": 0.5400000512599945,
+      "cavity": 3.3000001907348633
+    },
+    {
+      "progress": 0.65,
+      "runner": 1.4600000381469727,
+      "gate": 0.5400000512599945,
+      "cavity": 4.400000333786011
+    },
+    {
+      "progress": 1,
+      "runner": 1.4600000381469727,
+      "gate": 0.5400000512599945,
+      "cavity": 4.400000333786011
+    }
+  ],
+  "native_flash_samples": [
+    {
+      "onset": "pack",
+      "progress": 0.6,
+      "weight": 0.0
+    },
+    {
+      "onset": "fill",
+      "progress": 0.6,
+      "weight": 0.5
+    },
+    {
+      "onset": "pack",
+      "progress": 0.7,
+      "weight": 0.0
+    },
+    {
+      "onset": "pack",
+      "progress": 0.825,
+      "weight": 0.5
+    },
+    {
+      "onset": "pack",
+      "progress": 1,
+      "weight": 1.0
+    }
+  ],
+  "exported_meshes": 27,
+  "exported_nodes": 107,
+  "exported_deformation": [
+    {
+      "node": "ejector__CavityResin",
+      "targets": [
+        "Fill1",
+        "Fill2",
+        "Fill3",
+        "Fill4",
+        "Fill5",
+        "Fill6"
+      ],
+      "collapsed_bounds": [
+        [
+          -2.200000047683716,
+          -0.30000001192092896,
+          -2.4000000953674316
+        ],
+        [
+          -2.1999001502990723,
+          0.019999999552965164,
+          -0.0
+        ]
+      ],
+      "full_bounds": [
+        [
+          -2.200000047683716,
+          -0.30000001192092896,
+          -2.4000000953674316
+        ],
+        [
+          2.200000286102295,
+          0.019999999552965164,
+          -0.0
+        ]
+      ],
+      "matches_native_full_geometry": true
+    },
+    {
+      "node": "ejector__EjectorRingFlash",
+      "targets": [
+        "FlashGrow"
+      ],
+      "collapsed_bounds": [
+        [
+          0.3236600160598755,
+          -0.2963240146636963,
+          -0.326339989900589
+        ],
+        [
+          0.9763399958610535,
+          -0.2959910035133362,
+          -0.0
+        ]
+      ],
+      "full_bounds": [
+        [
+          0.31700000166893005,
+          -0.6200000047683716,
+          -0.3330000042915344
+        ],
+        [
+          0.9829999804496765,
+          -0.28700000047683716,
+          -0.0
+        ]
+      ],
+      "matches_native_full_geometry": true
+    },
+    {
+      "node": "ejector__GateResin",
+      "targets": [
+        "Fill1",
+        "Fill2",
+        "Fill3",
+        "Fill4",
+        "Fill5",
+        "Fill6"
+      ],
+      "collapsed_bounds": [
+        [
+          -0.27000001072883606,
+          -0.08500000089406967,
+          -0.12999999523162842
+        ],
+        [
+          -0.26990002393722534,
+          0.08500000089406967,
+          0.12999999523162842
+        ]
+      ],
+      "full_bounds": [
+        [
+          -0.27000001072883606,
+          -0.08500000089406967,
+          -0.12999999523162842
+        ],
+        [
+          0.27000004053115845,
+          0.08500000089406967,
+          0.12999999523162842
+        ]
+      ],
+      "matches_native_full_geometry": true
+    },
+    {
+      "node": "ejector__RunnerResin",
+      "targets": [
+        "Fill1",
+        "Fill2",
+        "Fill3",
+        "Fill4",
+        "Fill5",
+        "Fill6"
+      ],
+      "collapsed_bounds": [
+        [
+          -0.7300000190734863,
+          -0.13300003111362457,
+          -0.13300000131130219
+        ],
+        [
+          -0.7299000024795532,
+          0.13300003111362457,
+          0.13300000131130219
+        ]
+      ],
+      "full_bounds": [
+        [
+          -0.7300000190734863,
+          -0.13300003111362457,
+          -0.13300000131130219
+        ],
+        [
+          0.7300000190734863,
+          0.13300003111362457,
+          0.13300000131130219
+        ]
+      ],
+      "matches_native_full_geometry": true
+    },
+    {
+      "node": "normal__CavityResin",
+      "targets": [
+        "Fill1",
+        "Fill2",
+        "Fill3",
+        "Fill4",
+        "Fill5",
+        "Fill6"
+      ],
+      "collapsed_bounds": [
+        [
+          -2.200000047683716,
+          -0.30000001192092896,
+          -2.4000000953674316
+        ],
+        [
+          -2.1999001502990723,
+          0.019999999552965164,
+          -0.0
+        ]
+      ],
+      "full_bounds": [
+        [
+          -2.200000047683716,
+          -0.30000001192092896,
+          -2.4000000953674316
+        ],
+        [
+          2.200000286102295,
+          0.019999999552965164,
+          -0.0
+        ]
+      ],
+      "matches_native_full_geometry": true
+    },
+    {
+      "node": "normal__GateResin",
+      "targets": [
+        "Fill1",
+        "Fill2",
+        "Fill3",
+        "Fill4",
+        "Fill5",
+        "Fill6"
+      ],
+      "collapsed_bounds": [
+        [
+          -0.27000001072883606,
+          -0.08500000089406967,
+          -0.12999999523162842
+        ],
+        [
+          -0.26990002393722534,
+          0.08500000089406967,
+          0.12999999523162842
+        ]
+      ],
+      "full_bounds": [
+        [
+          -0.27000001072883606,
+          -0.08500000089406967,
+          -0.12999999523162842
+        ],
+        [
+          0.27000004053115845,
+          0.08500000089406967,
+          0.12999999523162842
+        ]
+      ],
+      "matches_native_full_geometry": true
+    },
+    {
+      "node": "normal__RunnerResin",
+      "targets": [
+        "Fill1",
+        "Fill2",
+        "Fill3",
+        "Fill4",
+        "Fill5",
+        "Fill6"
+      ],
+      "collapsed_bounds": [
+        [
+          -0.7300000190734863,
+          -0.13300003111362457,
+          -0.13300000131130219
+        ],
+        [
+          -0.7299000024795532,
+          0.13300003111362457,
+          0.13300000131130219
+        ]
+      ],
+      "full_bounds": [
+        [
+          -0.7300000190734863,
+          -0.13300003111362457,
+          -0.13300000131130219
+        ],
+        [
+          0.7300000190734863,
+          0.13300003111362457,
+          0.13300000131130219
+        ]
+      ],
+      "matches_native_full_geometry": true
+    },
+    {
+      "node": "parting__CavityResin",
+      "targets": [
+        "Fill1",
+        "Fill2",
+        "Fill3",
+        "Fill4",
+        "Fill5",
+        "Fill6"
+      ],
+      "collapsed_bounds": [
+        [
+          -2.200000047683716,
+          -0.30000001192092896,
+          -2.4000000953674316
+        ],
+        [
+          -2.1999001502990723,
+          0.019999999552965164,
+          -0.0
+        ]
+      ],
+      "full_bounds": [
+        [
+          -2.200000047683716,
+          -0.30000001192092896,
+          -2.4000000953674316
+        ],
+        [
+          2.200000286102295,
+          0.019999999552965164,
+          -0.0
+        ]
+      ],
+      "matches_native_full_geometry": true
+    },
+    {
+      "node": "parting__GateResin",
+      "targets": [
+        "Fill1",
+        "Fill2",
+        "Fill3",
+        "Fill4",
+        "Fill5",
+        "Fill6"
+      ],
+      "collapsed_bounds": [
+        [
+          -0.27000001072883606,
+          -0.08500000089406967,
+          -0.12999999523162842
+        ],
+        [
+          -0.26990002393722534,
+          0.08500000089406967,
+          0.12999999523162842
+        ]
+      ],
+      "full_bounds": [
+        [
+          -0.27000001072883606,
+          -0.08500000089406967,
+          -0.12999999523162842
+        ],
+        [
+          0.27000004053115845,
+          0.08500000089406967,
+          0.12999999523162842
+        ]
+      ],
+      "matches_native_full_geometry": true
+    },
+    {
+      "node": "parting__PartingFlash",
+      "targets": [
+        "FlashGrow"
+      ],
+      "collapsed_bounds": [
+        [
+          -2.180116891860962,
+          0.014987999573349953,
+          -2.319999933242798
+        ],
+        [
+          -2.180000066757202,
+          0.01502699963748455,
+          -1.6799999475479126
+        ]
+      ],
+      "full_bounds": [
+        [
+          -3.3499999046325684,
+          0.0030000004917383194,
+          -2.319999933242798
+        ],
+        [
+          -2.180000066757202,
+          0.041999999433755875,
+          -1.6799999475479126
+        ]
+      ],
+      "matches_native_full_geometry": true
+    },
+    {
+      "node": "parting__RunnerResin",
+      "targets": [
+        "Fill1",
+        "Fill2",
+        "Fill3",
+        "Fill4",
+        "Fill5",
+        "Fill6"
+      ],
+      "collapsed_bounds": [
+        [
+          -0.7300000190734863,
+          -0.13300003111362457,
+          -0.13300000131130219
+        ],
+        [
+          -0.7299000024795532,
+          0.13300003111362457,
+          0.13300000131130219
+        ]
+      ],
+      "full_bounds": [
+        [
+          -0.7300000190734863,
+          -0.13300003111362457,
+          -0.13300000131130219
+        ],
+        [
+          0.7300000190734863,
+          0.13300003111362457,
+          0.13300000131130219
+        ]
+      ],
+      "matches_native_full_geometry": true
+    },
+    {
+      "node": "vent__CavityResin",
+      "targets": [
+        "Fill1",
+        "Fill2",
+        "Fill3",
+        "Fill4",
+        "Fill5",
+        "Fill6"
+      ],
+      "collapsed_bounds": [
+        [
+          -2.200000047683716,
+          -0.30000001192092896,
+          -2.4000000953674316
+        ],
+        [
+          -2.1999001502990723,
+          0.019999999552965164,
+          -0.0
+        ]
+      ],
+      "full_bounds": [
+        [
+          -2.200000047683716,
+          -0.30000001192092896,
+          -2.4000000953674316
+        ],
+        [
+          2.200000286102295,
+          0.019999999552965164,
+          -0.0
+        ]
+      ],
+      "matches_native_full_geometry": true
+    },
+    {
+      "node": "vent__GateResin",
+      "targets": [
+        "Fill1",
+        "Fill2",
+        "Fill3",
+        "Fill4",
+        "Fill5",
+        "Fill6"
+      ],
+      "collapsed_bounds": [
+        [
+          -0.27000001072883606,
+          -0.08500000089406967,
+          -0.12999999523162842
+        ],
+        [
+          -0.26990002393722534,
+          0.08500000089406967,
+          0.12999999523162842
+        ]
+      ],
+      "full_bounds": [
+        [
+          -0.27000001072883606,
+          -0.08500000089406967,
+          -0.12999999523162842
+        ],
+        [
+          0.27000004053115845,
+          0.08500000089406967,
+          0.12999999523162842
+        ]
+      ],
+      "matches_native_full_geometry": true
+    },
+    {
+      "node": "vent__RunnerResin",
+      "targets": [
+        "Fill1",
+        "Fill2",
+        "Fill3",
+        "Fill4",
+        "Fill5",
+        "Fill6"
+      ],
+      "collapsed_bounds": [
+        [
+          -0.7300000190734863,
+          -0.13300003111362457,
+          -0.13300000131130219
+        ],
+        [
+          -0.7299000024795532,
+          0.13300003111362457,
+          0.13300000131130219
+        ]
+      ],
+      "full_bounds": [
+        [
+          -0.7300000190734863,
+          -0.13300003111362457,
+          -0.13300000131130219
+        ],
+        [
+          0.7300000190734863,
+          0.13300003111362457,
+          0.13300000131130219
+        ]
+      ],
+      "matches_native_full_geometry": true
+    },
+    {
+      "node": "vent__VentFlash",
+      "targets": [
+        "FlashGrow"
+      ],
+      "collapsed_bounds": [
+        [
+          -0.8549999594688416,
+          0.014984999783337116,
+          -2.395064115524292
+        ],
+        [
+          -0.4449999928474426,
+          0.015029000118374825,
+          -2.3949968814849854
+        ]
+      ],
+      "full_bounds": [
+        [
+          -0.8549999594688416,
+          0.0,
+          -3.0350000858306885
+        ],
+        [
+          -0.4449999928474426,
+          0.04399999976158142,
+          -2.365000009536743
+        ]
+      ],
+      "matches_native_full_geometry": true
+    }
+  ],
+  "manifest_hashes_match": true,
+  "actual_process_validation": false,
+  "scope": "Original half-section teaching model. Arbitrary scene units. Exaggerated clearance, flash thickness, opening and phase fractions. No pressure, cooling, real flow or defect probability prediction."
+}

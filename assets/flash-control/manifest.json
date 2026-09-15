@@ -1,0 +1,75 @@
+{
+  "id": "flash-mold-detail",
+  "blender": "5.2.1 LTS",
+  "states": [
+    "normal",
+    "parting",
+    "vent",
+    "ejector"
+  ],
+  "model": "assets/flash-control/mold-detail.glb",
+  "representation": "Original half-section teaching mold; not a manufacturer design or measured defect image.",
+  "physical_process_solver": false,
+  "units": "arbitrary scene units; openings, clearance and flash thickness are exaggerated",
+  "geometry": "Continuous left runner to narrow gate to half-section plaque cavity. Shared tool/resin mesh data across four separate state groups.",
+  "native_controls": "InspectionControls custom properties progress/opening/during_fill drive fill keys, flash keys and upper mold position.",
+  "viewer_contract": {
+    "class": "FlashMoldViewer",
+    "module": "flash-mold-viewer.js",
+    "state": [
+      "progress",
+      "opening",
+      "onset"
+    ],
+    "onset": [
+      "fill",
+      "pack"
+    ],
+    "frame": "glTF Y-up; upper mold flash_open_vector=[0,2.25,0]",
+    "fill": "runner 0-.16; gate .16-.25; cavity .25-.65; Fill1..Fill6; these are illustrative phase fractions, not fill times",
+    "flash": "FlashGrow; fill onset .55-.65 or packing onset .70-.95; normal case has no flash mesh"
+  },
+  "colors": {
+    "steel": "blue-gray",
+    "resin": "green",
+    "unwanted_flash": "orange",
+    "air_vent": "blue"
+  },
+  "assets": [
+    {
+      "file": "assets/flash-control/normal.webp",
+      "source": "art/flash-control/normal.png",
+      "bytes": 36214,
+      "sha256": "3e57037b142f9e621b0957c2cc35590fa626ce6e38d237e5832945ce3e040cab",
+      "source_sha256": "20f465304cf56e2095814b7984c437f9a58e9d925d512b14fc9004a46f2e379f"
+    },
+    {
+      "file": "assets/flash-control/parting.webp",
+      "source": "art/flash-control/parting.png",
+      "bytes": 37072,
+      "sha256": "38f054939da37ea270b75e7cb46540bf918810fd1fa3be81f606579141878e65",
+      "source_sha256": "367222c48aacf6c69d3dc1a2a32956b7d0761f4126654374ce097c342d5ae06d"
+    },
+    {
+      "file": "assets/flash-control/vent.webp",
+      "source": "art/flash-control/vent.png",
+      "bytes": 36504,
+      "sha256": "b66f32255f3763f5821ad9fa93ec4312b487ec18cc04e370e30e5bf2ef17f0ef",
+      "source_sha256": "52653ab152694cd7fc0f37b9e693850a6d5db8ec4e0b838e144a8b59b6af0fd8"
+    },
+    {
+      "file": "assets/flash-control/ejector.webp",
+      "source": "art/flash-control/ejector.png",
+      "bytes": 36324,
+      "sha256": "2246e715b0d1cd28581a36c81dcb3b62854fb83a58341f1bf1114cf1635e1631",
+      "source_sha256": "629673f1468102d7be994db924cbdffffb2e9eb5f5dfcb79bef2efb0631726fe"
+    },
+    {
+      "file": "assets/flash-control/mold-detail.glb",
+      "source": "scripts/create_flash_mold_model.py",
+      "bytes": 479520,
+      "sha256": "81f2d9bea29af5314be532409a9ce7753d97131ffa84da782856e8f6a8693c45",
+      "source_sha256": "aae7165622111b227fe2333f7e4be1bab16d021c34086d98375a13648ba81a90"
+    }
+  ]
+}

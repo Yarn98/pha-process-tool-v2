@@ -12,11 +12,17 @@ PHA 가공의 **초기 시운전 참고 조건, 계산, 현장 기록**을 제�
 
 **2026-09-15 스크류 회전 수정:** 컴파운딩을 포함한 6종 설비와 벤트 가이드에서 스크류 나선의 이송 방향과 회전 방향을 맞췄습니다. 자동 재생·직접 조작·RPM 연동을 같은 방향으로 검증했습니다. [수정 범위와 검증](docs/SCREW_DIRECTION_FIX_20260915.md).
 
+**2026-09-15 플래시 제어·탭 연결 개선:** 불량 위치·발생 시점에 따라 8개 점검 경로를 연결하고, 원문 근거·PHA 그레이드별 주의점·시험 체크리스트를 보강했습니다. 새 생성 이미지와 Blender 금형 4상태에서 충전·보압·플래시·금형 펼침을 조작합니다. Claude의 쉬운 용어·문장 검수 25건을 기술적 의미에 맞춰 반영했습니다. 이력 가져오기, 입력 보존, 분석·물성·스트로의 오래된 결과, My AI 탭 연결도 수정했습니다. [구현·검증 보고서](docs/FLASH_CONTROL_AND_TAB_REVIEW_20260915.md) / [조사 근거](docs/research/flash-control-evidence-20260915.md) / [Claude 검수와 반영](docs/research/claude-flash-readability-20260915.md).
+
 ## GitHub에서 받아 로컬로 실행
+
+**한 파일로 사용:** [PHA-Process-Single.html 다운로드](https://github.com/Yarn98/pha-process-tool-v2/raw/refs/heads/main/single-file/PHA-Process-Single.html)를 받아 원하는 폴더에 저장한 뒤 Chrome 또는 Edge로 엽니다. 저장소의 `single-file/PHA-Process-Single.html`이며 약 51 MiB입니다. 이미지·26개 3D 파일·계산·가이드를 포함하므로 옆에 별도 폴더나 서버가 필요하지 않습니다. TARS/My AI의 외부 서비스와 출처 링크는 인터넷이 필요합니다. 파일 경로·기기·브라우저가 바뀌면 저장 기록이 이어지지 않을 수 있으므로 이동 전 기록을 내보내세요. 개인 기록·API 키는 다운로드 파일에 포함되지 않습니다.
+
+**소스 폴더로 사용:** 아래 방법은 코드 편집 또는 로컬 HTTP 실행용입니다.
 
 [저장소 전체 ZIP](https://github.com/Yarn98/pha-process-tool-v2/archive/refs/heads/main.zip)을 받거나 [저장소](https://github.com/Yarn98/pha-process-tool-v2)의 **Code → Download ZIP**을 선택합니다. ZIP 내부의 `pha-process-tool-v2-main` 폴더 전체를 사용하세요. [GitHub 다운로드 안내](https://docs.github.com/en/repositories/working-with-files/using-files/downloading-source-code-archives).
 
-저장 위치는 자유입니다. 예를 들어 폴더 이름을 바꿔 `D:\PHA-Process\index.html`이 보이도록 압축을 풉니다. `index.html`, 루트의 JS·CSS 파일, `assets/`, `data/`, `icons/`, `vendor/`, `sw.js`, `manifest.webmanifest`의 상대 위치를 유지해야 합니다. `index.html` 하나만 받으면 3D·가이드가 완성되지 않습니다.
+저장 위치는 자유입니다. 예를 들어 폴더 이름을 바꿔 `D:\PHA-Process\index.html`이 보이도록 압축을 풉니다. `index.html`, 루트의 JS·CSS 파일, `assets/`, `data/`, `icons/`, `vendor/`, `sw.js`, `manifest.webmanifest`의 상대 위치를 유지해야 합니다. 루트의 `index.html` 하나만 받으면 3D·가이드가 완성되지 않습니다. 위의 전용 싱글 파일과 구분하세요.
 
 Python 3가 설치된 PC의 PowerShell에서 실행합니다.
 
@@ -46,12 +52,18 @@ npm run check:ts-visuals
 npm run test:ts-visuals
 npm run check:vent-guide
 npm run test:vent-guide
+npm run test:flash-guide
+node tests/tab-connections.mjs
+node tests/equipment-connections.mjs
 npm run build
 # 배포용 파일을 대상으로 UI 검사
 $env:PHA_TEST_ROOT='dist'; npm run test:ui
+# 소스 수정 뒤 싱글 파일 동기화 및 실제 file:// 검사
+npm run build:single
+npm run test:single
 ```
 
-계산 검사는 Node.js, 브라우저 검사는 기존 Playwright/Chromium을 사용합니다. 검사는 독립 브라우저·임시 서버에서 실행하며 사용자 브라우저 기록·API 키를 사용하지 않습니다. build.js는 정적 파일을 dist/에 모읍니다. Blender 편집 원본은 배포에서 제외합니다.
+계산 검사는 Node.js, 브라우저 검사는 기존 Playwright/Chromium을 사용합니다. 검사는 독립 브라우저·임시 서버에서 실행하며 사용자 브라우저 기록·API 키를 사용하지 않습니다. build.js는 정적 파일을 dist/에 모읍니다. Blender 편집 원본은 배포에서 제외합니다. 타입 검사기와 ESLint는 구성되어 있지 않으며 JavaScript 문법·계산·브라우저 검사를 사용합니다. `test:single`은 소스 해시가 다른 오래된 싱글 파일을 거부합니다. 텍스트는 LF로 정규화하고 바이너리는 그대로 보존합니다.
 
 ## 화면 사용
 

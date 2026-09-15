@@ -1,0 +1,12 @@
+{
+  "created": "2026-09-15",
+  "tool": "Built-in image_gen.imagegen",
+  "asset": "assets/flash-control/flash-comparison.png",
+  "sha256": "4e516d1b2cefe220dbb3c0593ee749e297c5fe21c1bfb0d5c6322d1546b197cf",
+  "dimensions": [1536, 1024],
+  "bytes": 1704173,
+  "origin": "New original image generated for this project; no reference photograph or manufacturer slide used.",
+  "prompt_summary": "Scientific educational comparison for a Korean/English PHA injection troubleshooting guide. No words. Photorealistic macro view of two identical pale sage shallow rounded rectangular trays. Left: clean crisp edge. Right: a thin ragged translucent green fringe extending outward horizontally along the near and right parting perimeter. Same body dimensions. No cracks, drips, ribs or whiskers. Low three-quarter studio close-up with separated neutral space and no equipment. Warm ivory #F5F1E8, dark olive shadows, subtle translucency and surface texture, professional industrial defect atlas. No brand, logo, watermark, text, measurements, arrows or people. Landscape 3:2; nearest edge sharp. Illustrative, not production evidence; no fabricated measurements.",
+  "integration": "Bilingual HTML labels and source-linked conditional guidance accompany the image. Click to enlarge; Escape closes the viewer.",
+  "limits": "Illustrative comparison only. Defect size and cause are not measurements or diagnostic evidence. Interactive mold geometry is independently authored in Blender."
+}

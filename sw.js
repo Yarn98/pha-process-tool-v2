@@ -2,15 +2,16 @@
    The activate handler deletes any cache whose name !== CACHE, so bumping the
    version string is how we force a full refresh of cached assets. Keep a short
    trailing token describing the change so the log is auditable. */
-const CACHE = 'pha-cache-v24-screw-direction';
+const CACHE = 'pha-cache-v25-flash-guide';
 /* Keep the ?v= token in sync with the asset links in index.html.
    netlify.toml serves css/js with a 1-year immutable cache, so the
    query token is what actually invalidates browser HTTP caches. */
-const ASSET_V = '?v=24';
+const ASSET_V = '?v=25';
 importScripts('./troubleshooting-visuals-sw.js' + ASSET_V);
 const PRECACHE_URLS = [
   './',
   './index.html',
+  './vendor/chart-4.4.0/chart.umd.min.js' + ASSET_V,
   './tokens.css' + ASSET_V,
   './overrides.css' + ASSET_V,
   './custom.js' + ASSET_V,
@@ -24,6 +25,16 @@ const PRECACHE_URLS = [
   './assets/troubleshooting/vent-guide.glb' + ASSET_V,
   './assets/troubleshooting/vent-guide-without_reverse_full.webp' + ASSET_V,
   './assets/troubleshooting/vent-guide-upstream_reverse_full.webp' + ASSET_V,
+  './flash-guide-data.js' + ASSET_V,
+  './flash-guide.js' + ASSET_V,
+  './flash-guide.css' + ASSET_V,
+  './flash-mold-viewer.js' + ASSET_V,
+  './assets/flash-control/mold-detail.glb' + ASSET_V,
+  './assets/flash-control/normal.webp' + ASSET_V,
+  './assets/flash-control/parting.webp' + ASSET_V,
+  './assets/flash-control/vent.webp' + ASSET_V,
+  './assets/flash-control/ejector.webp' + ASSET_V,
+  './assets/flash-control/flash-comparison.png' + ASSET_V,
   './troubleshooting-visuals.js' + ASSET_V,
   './troubleshooting-viewer.js' + ASSET_V,
   './troubleshooting-visuals.css' + ASSET_V,

@@ -432,11 +432,8 @@ function readBatchEventSnapshot() {
   return {
     process_snapshot: processSnapshot,
     state_snapshot: {
-      zones_c: [processSnapshot.cylinderTemp, processSnapshot.moldTemp],
-      rpm: processSnapshot.injectionSpeed,
-      torque_pct: processSnapshot.injectionPressure,
-      melt_temp_c: processSnapshot.cylinderTemp,
-      die_pressure_bar: processSnapshot.holdingPressure,
+      zones_c: [processSnapshot.cylinderTemp],
+      rpm: parseFloat(document.getElementById('eventStateScrewRpm')?.value),
     },
   };
 }
@@ -502,6 +499,40 @@ function updateBatchEventComposerVisibility() {
   }
 }
 
+// Preserve an unsaved draft across language/template redraws, within this batch only.
+// No draft values or photo references are written to storage by these helpers.
+function snapshotBatchEventDraft() {
+  if (!document.getElementById('eventCommonNote')) return null;
+  const values = {};
+  document.querySelectorAll('#flash .batch-event-field input:not([type="file"]), #flash .batch-event-field select, #flash .batch-event-field textarea')
+    .forEach(el => { if (el.id) values[el.id] = el.value; });
+  return {
+    batchId: batchEventSession()?.batch_id || '',
+    kind: currentBatchEventKind,
+    photoRef: currentBatchEventPhotoRef,
+    severityEdited: document.getElementById('eventAnomalySeverity')?.dataset.userEdited === '1',
+    values,
+  };
+}
+
+function restoreBatchEventDraft(draft) {
+  if (!draft || draft.batchId !== (batchEventSession()?.batch_id || '')) return;
+  if (!['temp_reading', 'addition', 'anomaly', 'scrap', 'note'].includes(draft.kind)) return;
+  currentBatchEventKind = draft.kind;
+  currentBatchEventPhotoRef = draft.photoRef || '';
+  Object.entries(draft.values || {}).forEach(([id, value]) => {
+    const el = document.getElementById(id);
+    if (el?.matches('#flash .batch-event-field input:not([type="file"]), #flash .batch-event-field select, #flash .batch-event-field textarea')) el.value = value;
+  });
+  const severity = document.getElementById('eventAnomalySeverity');
+  if (severity) {
+    if (draft.severityEdited) severity.dataset.userEdited = '1';
+    else delete severity.dataset.userEdited;
+  }
+  updateBatchEventComposerVisibility();
+  renderBatchEventPhotoStatus();
+}
+
 function resetBatchEventComposer(options = {}) {
   if (!options.preserveKind) currentBatchEventKind = 'temp_reading';
   currentBatchEventPhotoRef = '';
@@ -513,6 +544,7 @@ function resetBatchEventComposer(options = {}) {
     'eventScrapCount',
     'eventScrapMass',
     'eventCommonNote',
+    'eventStateScrewRpm',
   ].forEach((id) => {
     const el = document.getElementById(id);
     if (el) el.value = '';
@@ -688,6 +720,12 @@ function buildBatchEventPayload() {
   }
 
   const snapshot = readBatchEventSnapshot();
+  if (!Number.isFinite(snapshot.state_snapshot.rpm) || snapshot.state_snapshot.rpm < 0) {
+    alert(LANG === 'ko'
+      ? '실제 스크류 회전수(rpm)를 입력하세요. 사출 전진속도(mm/s)와 다릅니다. 회전수를 모르면 현장 메모로 기록할 수 있습니다.'
+      : 'Enter actual screw speed in rpm, not injection travel speed in mm/s. Use a floor note if screw speed is unknown.');
+    return null;
+  }
   if (currentBatchEventKind === 'addition') {
     const material = (document.getElementById('eventAdditionMaterial')?.value || '').trim();
     const qty = Number(document.getElementById('eventAdditionQty')?.value || 0);
@@ -908,6 +946,8 @@ function endBatchSession() {
 window.bindBatchSessionControls = bindBatchSessionControls;
 window.bindBatchEventControls = bindBatchEventControls;
 window.renderBatchEventPanel = renderBatchEventPanel;
+window.snapshotBatchEventDraft = snapshotBatchEventDraft;
+window.restoreBatchEventDraft = restoreBatchEventDraft;
 
 // Immediately initialize photo uploader, material cards, and troubleshooting data.
 // Because this script is loaded at the end of the body, DOM elements are available.

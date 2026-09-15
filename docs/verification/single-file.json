@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "artifact": "single-file/PHA-Process-Single.html",
+  "bytes": 53086037,
+  "sha256": "b4080d8158bc46a93416a4302d16fb427f4c4214540b58c4986e46b83126b7c5",
+  "sourceHash": "ca9b0e842fcb4006153898f9a364e411f3636542ea9fc651cc6bbde32f0558e9",
+  "hashBasis": "SHA-256 of UTF-8 text normalized to LF; binary bytes unchanged. Artifact bytes and hash use LF.",
+  "checks": [
+    "Canonical LF and CRLF checkouts generate byte-identical HTML and manifest without changing source files",
+    "Moved and renamed file:// HTML preserves source tabs, KO/EN, grades, knowledge and calculation results with the server stopped",
+    "Embedded injection and compounding controls alter actual rendered geometry and manual-axis state",
+    "Flash images, enlargement, three defect groups and mold-opening geometry remain interactive offline",
+    "Vent guide retains both screw layouts, four symptom cards, bilingual explanations and moving screw/flow geometry",
+    "Real log editing, reload, language changes, Chart.js graph and CSV export preserve isolated records",
+    "System-font portable layout fits 320/390 px Flash and vent panels in Korean and English",
+    "Every embedded image decodes; 26 GLBs, JSON and licenses match canonical source hashes without external asset requests",
+    "Unavailable WebGL keeps Flash/vent posters and guidance; new profiles contain no saved fixture records",
+    "No uncaught browser errors, sibling-file requests or external API calls"
+  ],
+  "screenshots": [
+    "output\\playwright\\single-file\\injection-file.png",
+    "output\\playwright\\single-file\\compounding-file.png",
+    "output\\playwright\\single-file\\flash-file.png",
+    "output\\playwright\\single-file\\vent-file.png",
+    "output\\playwright\\single-file\\vent-mobile-file.png",
+    "output\\playwright\\single-file\\webgl-fallback-file.png"
+  ],
+  "errors": [],
+  "unexpectedRequests": []
+}

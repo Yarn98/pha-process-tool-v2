@@ -19,6 +19,11 @@ output/troubleshooting-build/
 output/troubleshooting-visual-review/
 output/playwright/troubleshooting-visuals/
 output/playwright/vent-guide/
+output/playwright/flash-guide/
+output/playwright/tab-connections/
+output/playwright/equipment-connections/
+output/playwright/single-file/
+art/flash-control/*.blend1
 art/troubleshooting/*.blend1
 npm-debug.log*
 

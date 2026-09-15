@@ -1,0 +1,202 @@
+[
+  {
+    "target": "routes.pack.when.ko",
+    "old": "충전만 한 제품에는 없던 버가 보압을 적용한 뒤 생길 때입니다.",
+    "replacement": "충전만 한 제품에는 없던 버가, 보압까지 적용한 제품에서 보일 때입니다.",
+    "reason": "'적용한 뒤'가 보압 종료 후로 오독될 수 있어 비교 대상(충전만 vs 보압까지)을 명시",
+    "file": "flash-guide-data.js",
+    "decision": "accepted"
+  },
+  {
+    "target": "routes.pack.when.en",
+    "old": "Use this when flash appears after packing but is absent from the fill-only comparison.",
+    "replacement": "Use this when flash appears on packed parts but not on the fill-only comparison parts.",
+    "reason": "'after packing'의 시점 모호성 제거, KO 수정과 일치",
+    "file": "flash-guide-data.js",
+    "decision": "accepted"
+  },
+  {
+    "target": "routes.fill.when.ko",
+    "old": "충전만 한 제품에도 버가 있거나 충전 말기·V/P 전환에 압력 피크가 보일 때입니다.",
+    "replacement": "충전만 한 제품에도 버가 있거나, 충전 말기나 V/P 전환(속도 제어에서 압력 제어로 바꾸는 시점)에서 압력이 급히 오를 때입니다.",
+    "reason": "V/P 첫 등장에 짧은 풀이, '압력 피크'를 쉬운 말로",
+    "file": "flash-guide-data.js",
+    "decision": "accepted"
+  },
+  {
+    "target": "routes.fill.when.en",
+    "old": "Use this if flash is present on fill-only parts or pressure peaks occur near end of fill or V/P transfer.",
+    "replacement": "Use this if flash is present on fill-only parts, or pressure spikes near the end of fill or at V/P transfer (the switch from speed control to pressure control).",
+    "reason": "V/P 첫 등장 풀이, KO와 대응",
+    "file": "flash-guide-data.js",
+    "decision": "accepted"
+  },
+  {
+    "target": "routes.inspect.check.ko",
+    "old": "버의 위치·캐비티 번호를 표시합니다. 충전 형상, 쿠션과 압력 기록을 확인하고 핀 자국·취출 찢김과 구분합니다.",
+    "replacement": "버의 위치와 캐비티(제품이 만들어지는 금형 공간) 번호를 표시합니다. 충전 형상, 쿠션(스크류의 전진 한계까지 남은 거리)과 압력 기록을 확인하고 핀 자국·취출 찢김과 구분합니다.",
+    "reason": "캐비티·쿠션 첫 등장에 짧은 풀이(용어집은 화면 하단이라 첫 독자가 놓치기 쉬움)",
+    "file": "flash-guide-data.js",
+    "decision": "adapted to preserve technical meaning"
+  },
+  {
+    "target": "routes.inspect.verify.ko",
+    "old": "각 캐비티의 버·충전과 중량을 비교합니다. 냉각 후 중량 비율을 전환 순간 체적 충전율로 읽지 않습니다.",
+    "replacement": "각 캐비티의 버·충전 상태·중량을 비교합니다. 식은 제품의 중량 비율을, 전환 순간에 캐비티가 얼마나 찼었는지로 그대로 읽지 않습니다.",
+    "reason": "'체적 충전율' 압축 표현이 처음 읽는 작업자에게 난해",
+    "file": "flash-guide-data.js",
+    "decision": "accepted"
+  },
+  {
+    "target": "routes.inspect.verify.en",
+    "old": "Compare flash, fill and mass for each cavity. Cooled-part mass percentage is not the volume fill percentage at transfer.",
+    "replacement": "Compare flash, fill and mass for each cavity. The mass percentage of a cooled part does not show how full the cavity was at the moment of transfer.",
+    "reason": "KO 수정과 동일한 취지의 평이화",
+    "file": "flash-guide-data.js",
+    "decision": "accepted"
+  },
+  {
+    "target": "routes.fill.stop.ko",
+    "old": "조기 전환으로 말단이 얼거나 쇼트·가스 탄 자국이 늘면 복귀합니다. 버가 계속되는 국부 접촉면은 정비를 확인합니다.",
+    "replacement": "조기 전환으로 흐름 끝이 굳거나 미충전(쇼트)·가스 탄 자국이 늘면 이전 조건으로 복귀합니다. 같은 자리에 버가 계속되면 금형 접촉면 정비를 확인합니다.",
+    "reason": "'쇼트' 첫 등장 풀이, '국부 접촉면' 명확화, 복귀 대상 명시",
+    "file": "flash-guide-data.js",
+    "decision": "accepted"
+  },
+  {
+    "target": "routes.fill.stop.en",
+    "old": "Revert if earlier transfer freezes the flow front or increases shorts/burns. Persistent local flash calls for a tool-contact check.",
+    "replacement": "Revert if earlier transfer freezes the flow front or increases short shots (incomplete parts) or burn marks. Persistent flash at the same spot calls for a tool-contact check.",
+    "reason": "'shorts/burns' 약칭을 첫 독자용으로 풀어 표기",
+    "file": "flash-guide-data.js",
+    "decision": "accepted"
+  },
+  {
+    "target": "routes.pack.check.ko",
+    "old": "전환 전 과충전, 전환 압력 응답과 보압 전달을 확인합니다. 열 게이트 고화와 밸브 게이트 닫힘은 구분합니다.",
+    "replacement": "전환 전 과충전, 전환 시 압력 응답과 보압 전달(보압이 캐비티 안까지 미치는지)을 확인합니다. 열 게이트의 고화(수지가 굳어 막힘)와 밸브 게이트의 기계적 닫힘은 구분합니다.",
+    "reason": "'보압 전달'·'고화' 첫 등장에 짧은 풀이",
+    "file": "flash-guide-data.js",
+    "decision": "accepted"
+  },
+  {
+    "target": "routes.pack.action.ko",
+    "old": "과도한 보압이 확인되면 보압을 낮추는 비교부터 진행합니다. 시간은 필요한 게이트 씰에 맞춰 검토하며 P1/P2 비율을 고정 처방하지 않습니다.",
+    "replacement": "과도한 보압이 확인되면 보압을 낮추는 비교부터 진행합니다. 보압 시간은 게이트의 고화나 밸브 닫힘 방식, 중량·치수 결과를 함께 보며 정합니다. P1/P2(두 보압 구간의 압력) 비율을 일률적으로 정하지 않습니다.",
+    "reason": "'시간'의 대상 명시, 게이트 씰·P1/P2 짧은 풀이",
+    "file": "flash-guide-data.js",
+    "decision": "adapted to preserve technical meaning"
+  },
+  {
+    "target": "routes.pack.verify.ko",
+    "old": "시간별 중량 안정화와 함께 캐비티별 버·치수·싱크·내부 공극을 확인합니다.",
+    "replacement": "보압 시간에 따른 중량 안정화와 함께 캐비티별 버·치수·싱크(표면 꺼짐)·공극(제품 내부의 빈 공간)을 확인합니다.",
+    "reason": "싱크·공극 첫 등장 풀이, '시간별'의 기준 명시",
+    "file": "flash-guide-data.js",
+    "decision": "adapted to preserve technical meaning"
+  },
+  {
+    "target": "routes.pack.verify.en",
+    "old": "Check mass stabilization versus hold time together with cavity-specific flash, dimensions, sinks and internal voids.",
+    "replacement": "Check mass stabilization versus hold time together with cavity-specific flash, dimensions, sink marks (surface depressions) and internal voids (empty spaces inside the part).",
+    "reason": "sinks/voids 첫 독자용 풀이",
+    "file": "flash-guide-data.js",
+    "decision": "adapted to preserve technical meaning"
+  },
+  {
+    "target": "routes.parting.check.ko",
+    "old": "이물·마모·손상·접촉 상태, 금형 지지·정렬과 실제 형체력을 확인합니다. 분해 점검은 정지·격리 후 진행합니다.",
+    "replacement": "이물·마모·손상·접촉 상태, 금형 지지·정렬과 실제 형체력(금형을 닫아 누르는 힘)을 확인합니다. 분해 점검은 설비 정지·격리 후 진행합니다.",
+    "reason": "형체력 첫 등장 풀이, 정지 대상(설비) 명시",
+    "file": "flash-guide-data.js",
+    "decision": "accepted"
+  },
+  {
+    "target": "routes.parting.verify.en",
+    "old": "Check flash and mold breathing together with venting, burns and tool load. Maximum tonnage is not the goal.",
+    "replacement": "Check flash and slight mold opening (mold breathing) together with venting, burn marks and tool load. Maximum tonnage is not the goal.",
+    "reason": "'mold breathing'을 풀이와 병기(KO는 이미 '미세 벌어짐'으로 평이함)",
+    "file": "flash-guide-data.js",
+    "decision": "accepted"
+  },
+  {
+    "target": "routes.vent.check.ko",
+    "old": "벤트 랜드·깊이·마모·오염과 수리 이력을 원래 승인된 형상과 비교합니다. 말단 쇼트·탄 자국도 함께 봅니다.",
+    "replacement": "벤트 랜드(배기 홈이 얕고 평평하게 이어지는 구간)·깊이·마모·오염과 수리 이력을 원래 승인된 형상과 비교합니다. 흐름 끝의 미충전(쇼트)·탄 자국도 함께 봅니다.",
+    "reason": "벤트 랜드는 용어집에도 없는 전문용어라 첫 등장 풀이 필수",
+    "file": "flash-guide-data.js",
+    "decision": "accepted"
+  },
+  {
+    "target": "routes.vent.check.en",
+    "old": "Compare vent land/depth, wear, contamination and repair history with the approved geometry. Also check end-of-fill shorts and burns.",
+    "replacement": "Compare the vent land (the shallow flat section of the vent) and its depth, wear, contamination and repair history with the approved geometry. Also check end-of-fill short shots and burn marks.",
+    "reason": "vent land 풀이, shorts/burns 풀어 표기",
+    "file": "flash-guide-data.js",
+    "decision": "accepted"
+  },
+  {
+    "target": "routes.heat.when.ko",
+    "old": "가열·대기 후 버가 늘거나 실제 수지온도·MI 변화가 함께 보일 때 확인할 가설입니다.",
+    "replacement": "가열·대기 후 버가 늘거나 실제 수지온도·MI(용융지수: 정해진 시험 조건에서 수지가 얼마나 흐르는지 보는 값) 변화가 함께 보일 때 확인할 가설입니다.",
+    "reason": "MI 첫 등장 풀이(용어집에도 없음)",
+    "file": "flash-guide-data.js",
+    "decision": "adapted to preserve technical meaning"
+  },
+  {
+    "target": "routes.heat.when.en",
+    "old": "Consider this hypothesis if flash grows after heating/idle time or accompanies changes in actual melt temperature or MI.",
+    "replacement": "Consider this hypothesis if flash grows after heating/idle time or accompanies changes in actual melt temperature or MI (melt flow index, measured under defined test conditions).",
+    "reason": "MI 첫 등장 풀이",
+    "file": "flash-guide-data.js",
+    "decision": "adapted to preserve technical meaning"
+  },
+  {
+    "target": "routes.resistance.check.ko",
+    "old": "실제 온도·히터/온조기, 러너·게이트 제한·배기·캐비티 균형을 확인합니다. 손상된 틈새와 과열 저점도 문제를 먼저 구분합니다.",
+    "replacement": "실제 온도와 히터·온조기, 러너(수지가 지나가는 금형 통로)·게이트의 막힘, 배기, 캐비티 균형을 확인합니다. 금형 틈새 손상 문제와 과열로 점도가 낮아진 문제를 먼저 구분합니다.",
+    "reason": "러너 첫 등장 풀이, '과열 저점도' 압축 표현 평이화",
+    "file": "flash-guide-data.js",
+    "decision": "accepted"
+  },
+  {
+    "target": "glossary[쿠션].definition.ko",
+    "old": "스크류가 가장 전진했을 때 전진 한계까지 남는 거리 또는 그에 대응하는 수지 체적입니다. 측정 영점·단위와 변동을 확인합니다.",
+    "replacement": "스크류가 한 사이클 동안 가장 앞으로 갔을 때, 전진 한계까지 남은 거리입니다. 이 공간의 수지 체적으로 표현하기도 합니다. 거리·체적 단위와 측정 기준점, 샷마다의 차이를 확인합니다.",
+    "reason": "이중 한정('전진했을 때 전진 한계까지')이 첫 독자에게 난해",
+    "file": "flash-guide-data.js",
+    "decision": "adapted to preserve technical meaning"
+  },
+  {
+    "target": "glossary[쿠션].definition.en",
+    "old": "The remaining screw travel to its forward limit at the furthest-forward position, or the corresponding melt volume. Check measurement zero, units and variation.",
+    "replacement": "The remaining distance to the screw's forward limit when it reaches its furthest-forward position in the cycle. It can also be expressed as the corresponding melt volume. Check distance or volume units, measurement zero and shot-to-shot variation.",
+    "reason": "KO 수정과 동일한 취지의 평이화",
+    "file": "flash-guide-data.js",
+    "decision": "adapted to preserve technical meaning"
+  },
+  {
+    "target": "ui['관찰부터 해결까지'].en",
+    "old": "OBSERVE → VERIFY",
+    "replacement": "From observation to resolution",
+    "reason": "KO '관찰부터 해결까지'와 의미 불일치(VERIFY≠해결), 기호식 표기 제거",
+    "file": "flash-guide.js",
+    "decision": "accepted"
+  },
+  {
+    "target": "ui['충전만 비교'].en",
+    "old": "Separate filling",
+    "replacement": "Compare fill-only parts",
+    "reason": "'Separate filling'만으로는 단계의 실제 행동(충전만 한 제품 비교)을 예측할 수 없음",
+    "file": "flash-guide.js",
+    "decision": "accepted"
+  },
+  {
+    "target": "ui['틈 확대'].ko",
+    "old": "틈 확대",
+    "replacement": "틈 확대해 보기",
+    "reason": "'틈 확대'가 물리적으로 틈을 키우는 조작으로 오독될 수 있음(EN 'Inspect gap'과 정합)",
+    "file": "flash-guide.js",
+    "decision": "accepted"
+  }
+]

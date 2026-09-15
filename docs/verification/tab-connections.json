@@ -1,0 +1,1447 @@
+{
+  "reviewed": "2026-09-15T01:17:49.685Z",
+  "scope": [
+    "proc",
+    "hist",
+    "ana",
+    "calc",
+    "props",
+    "photos",
+    "myai-local"
+  ],
+  "excluded": [
+    "flash",
+    "equipment/3D",
+    "single-file bundle",
+    "external AI/API behavior"
+  ],
+  "isolation": "Fresh browser contexts and synthetic localStorage/files. All browser external requests blocked or fulfilled with fixtures. Vendored Chart.js is served locally; no external network, provider request or credential used.",
+  "testOnlyInstrumentation": "Expose unchanged myaiExecTool in the existing localhost-only test hook; no production file altered.",
+  "chartVersion": "4.4.0",
+  "sourceSha256": {
+    "index.html": "4c74cdbf2395b950caa641a7705c666c6b54aebfb4166865e1276c9176ee4a98",
+    "custom.js": "5168214ac7e1e9943265dd0f4b107dc6c00c51c97af4c743f4dc2c647d7e5be3"
+  },
+  "baseline": {
+    "reviewed": "2026-09-14T16:06:20.730Z",
+    "sourceSha256": {
+      "index.html": "bdf6f4e8e2d2b42d50ab9e2ea729fd2b0cc42bbd773b04dda2784f844c826e40",
+      "custom.js": "f05ad3a764e4e594722fa6eeb61faebff96bf6c8a010cb03b58d758c5e685501"
+    },
+    "failed": 9,
+    "failures": [
+      {
+        "id": "process-reference-preserves-draft",
+        "description": "Editing reference ranges preserves entered process values and notes",
+        "status": "failed",
+        "observations": {
+          "nozzle": "",
+          "notes": "unsaved process draft"
+        },
+        "pageErrors": [],
+        "blockedExternalRequests": [
+          "https://fonts.googleapis.com",
+          "https://tars-api.sorisem98.workers.dev"
+        ],
+        "error": "Reference Save discarded entered nozzle temperature\n\n'' !== '171'\n"
+      },
+      {
+        "id": "history-literal-notes",
+        "description": "Saved and exported history retains literal operator notes",
+        "status": "failed",
+        "observations": {
+          "saved": {
+            "ts": "2026-09-14T16:06:09.587Z",
+            "proc": "extrusion",
+            "grade": "CA1180P",
+            "params": {
+              "zone1": "",
+              "zone2": "",
+              "zone3": "",
+              "zone4": "",
+              "die": "161",
+              "screwRPM": "",
+              "meltPressBar": "",
+              "coolingRoll": "",
+              "lineSpeed": ""
+            },
+            "notes": "trial, 2 mm \"hold\" <sample>"
+          },
+          "displayedNotes": "trial, 2 mm \"hold\""
+        },
+        "pageErrors": [],
+        "blockedExternalRequests": [
+          "https://fonts.googleapis.com",
+          "https://tars-api.sorisem98.workers.dev"
+        ],
+        "error": "History treated operator notes as HTML\n+ actual - expected\n\n+ 'trial, 2 mm \"hold\"'\n- 'trial, 2 mm \"hold\" <sample>'\n                     ^\n"
+      },
+      {
+        "id": "history-csv-quoted-fields",
+        "description": "CSV import preserves commas, escaped quotes, and newlines in notes",
+        "status": "failed",
+        "observations": {
+          "rows": [
+            {
+              "ts": "2026-09-01T00:00:00Z",
+              "grade": "CA1180P",
+              "proc": "extrusion",
+              "params": {
+                "die": " 2 mm \"\"hold\"\""
+              },
+              "notes": "\"trial"
+            }
+          ]
+        },
+        "pageErrors": [],
+        "blockedExternalRequests": [
+          "https://fonts.googleapis.com",
+          "https://tars-api.sorisem98.workers.dev"
+        ],
+        "error": "CSV quoted notes were split into columns\n+ actual - expected\n\n+ '\"trial'\n- 'trial, 2 mm \"hold\"\\nsecond line'\n"
+      },
+      {
+        "id": "history-invalid-import-atomic",
+        "description": "Malformed history rows cannot overwrite or poison usable saved history",
+        "status": "failed",
+        "observations": {
+          "storagePreserved": false,
+          "dialogs": [
+            "JSON 파싱 실패"
+          ],
+          "storedRows": [
+            {
+              "ts": "2026-09-01T00:00:00Z",
+              "grade": "CA1180P",
+              "proc": "injection",
+              "params": {
+                "mold": "40",
+                "nozzle": "171"
+              },
+              "notes": "fixture A"
+            },
+            {
+              "ts": "2026-09-03T00:00:00Z",
+              "grade": "CA1180P",
+              "proc": "injection"
+            }
+          ]
+        },
+        "pageErrors": [],
+        "blockedExternalRequests": [
+          "https://fonts.googleapis.com",
+          "https://tars-api.sorisem98.workers.dev"
+        ],
+        "error": "Invalid row was persisted before validation\n\nfalse !== true\n"
+      },
+      {
+        "id": "analysis-single-observation-filter",
+        "description": "Selecting a one-record parameter leaves the selector usable and does not show an old curve",
+        "status": "failed",
+        "observations": {
+          "initial": {
+            "parameter": "mold",
+            "values": [
+              40,
+              42
+            ]
+          },
+          "selectorVisible": false,
+          "values": [
+            40,
+            42
+          ]
+        },
+        "pageErrors": [],
+        "blockedExternalRequests": [
+          "https://fonts.googleapis.com",
+          "https://tars-api.sorisem98.workers.dev"
+        ],
+        "error": "Single-record selection hid the selector itself\n\nfalse !== true\n"
+      },
+      {
+        "id": "analysis-language-current",
+        "description": "Changing language refreshes the active analysis summary and axes",
+        "status": "failed",
+        "observations": {
+          "summary": "최근 저장: 2026. 9. 2. 오전 9:00:00 · CA1180P · injection (2건)",
+          "xTitle": "시간",
+          "parameter": "mold"
+        },
+        "pageErrors": [],
+        "blockedExternalRequests": [
+          "https://fonts.googleapis.com",
+          "https://tars-api.sorisem98.workers.dev"
+        ],
+        "error": "Active analysis summary stayed in the previous language"
+      },
+      {
+        "id": "materials-import-selectable",
+        "description": "Imported local material grades are selectable without inventing manufacturer references",
+        "status": "failed",
+        "observations": {
+          "stored": {
+            "density_g_cm3": 1.29,
+            "tensile_MPa": 33
+          },
+          "selectable": 0
+        },
+        "pageErrors": [],
+        "blockedExternalRequests": [
+          "https://fonts.googleapis.com",
+          "https://tars-api.sorisem98.workers.dev"
+        ],
+        "error": "Imported material was stored but cannot be selected\n\n0 !== 1\n"
+      },
+      {
+        "id": "materials-clear-current-editor",
+        "description": "Clear current grade updates the open editor so Save does not resurrect cleared values",
+        "status": "failed",
+        "observations": {
+          "editorDensityAfterReset": "1.31",
+          "dbAfterReset": {},
+          "dbAfterSave": {
+            "density_g_cm3": 1.31,
+            "MFR_g_10min_190_2_16": 7,
+            "Tm_C": 162,
+            "tensile_MPa": 54,
+            "elongation_%": 23,
+            "izod_kJ_m2": 63,
+            "HDT_C": 51
+          }
+        },
+        "pageErrors": [],
+        "blockedExternalRequests": [
+          "https://fonts.googleapis.com",
+          "https://tars-api.sorisem98.workers.dev"
+        ],
+        "error": "Save restored values that Clear current grade had removed\n+ actual - expected\n\n+ {\n+   'elongation_%': 23,\n+   HDT_C: 51,\n+   MFR_g_10min_190_2_16: 7,\n+   Tm_C: 162,\n+   density_g_cm3: 1.31,\n+   izod_kJ_m2: 63,\n+   tensile_MPa: 54\n+ }\n- {}\n"
+      },
+      {
+        "id": "myai-local-tab-context-and-control",
+        "description": "My AI local tools read current inputs, preserve the work tab, and honor control permission",
+        "status": "failed",
+        "observations": {
+          "initial": {
+            "schema_version": "pha-tab-context-v1",
+            "tab": "proc",
+            "탭": "공정 조건",
+            "source": "browser_dom",
+            "tab_purpose": "선택 grade/process의 입력값과 출처 있는 참고범위 또는 사용자 기록을 비교한다. 범위 일치는 양품/안전 판정이 아니며 근거 없는 값은 추정하지 않는다.",
+            "output_contract": {
+              "envelope": "sectioned",
+              "sections": [
+                "공정조건",
+                "상태판정",
+                "가이드"
+              ]
+            },
+            "reading": "paramTable의 현재값/참고범위/출처를 읽고 제조사 조건과 현장 수정값을 구분한다.",
+            "입력": [
+              {
+                "id": "grade",
+                "label": "샘플 시리즈",
+                "value": "CA1180P"
+              },
+              {
+                "id": "process",
+                "label": "가공 유형",
+                "value": "injection"
+              },
+              {
+                "id": "moldMode",
+                "label": "CA1180P 금형 모드 · Mold mode",
+                "value": "general"
+              },
+              {
+                "id": "f_barrel1",
+                "label": "배럴 1 (°C)",
+                "value": ""
+              },
+              {
+                "id": "f_barrel2",
+                "label": "배럴 2 (°C)",
+                "value": ""
+              },
+              {
+                "id": "f_barrel3",
+                "label": "배럴 3 (°C)",
+                "value": ""
+              },
+              {
+                "id": "f_nozzle",
+                "label": "노즐 (°C)",
+                "value": ""
+              },
+              {
+                "id": "f_mold",
+                "label": "금형 온도 (°C)",
+                "value": ""
+              },
+              {
+                "id": "f_injSpeed",
+                "label": "사출 속도 (mm/s)",
+                "value": ""
+              },
+              {
+                "id": "f_injPressMPa",
+                "label": "사출 압력 (MPa)",
+                "value": ""
+              },
+              {
+                "id": "f_packPressMPa",
+                "label": "보압 (MPa)",
+                "value": ""
+              },
+              {
+                "id": "f_packTime",
+                "label": "보압 시간 (s)",
+                "value": ""
+              },
+              {
+                "id": "f_coolTime",
+                "label": "냉각 시간 (s)",
+                "value": ""
+              },
+              {
+                "id": "f_backPressBar",
+                "label": "백프레셔 (bar)",
+                "value": ""
+              },
+              {
+                "id": "f_screwRPM",
+                "label": "스크류 회전수 (RPM)",
+                "value": ""
+              },
+              {
+                "id": "f_hold1P",
+                "label": "보압1 압력 (MPa)",
+                "value": ""
+              },
+              {
+                "id": "f_hold1T",
+                "label": "보압1 시간 (s)",
+                "value": ""
+              },
+              {
+                "id": "f_hold2P",
+                "label": "보압2 압력 (MPa)",
+                "value": ""
+              },
+              {
+                "id": "f_hold2T",
+                "label": "보압2 시간 (s)",
+                "value": ""
+              },
+              {
+                "id": "notes",
+                "label": "특이사항 메모",
+                "value": ""
+              }
+            ],
+            "결과": [
+              {
+                "id": "paramTable",
+                "text": "배럴 1 (°C)----미입력배럴 2 (°C)----미입력배럴 3 (°C)----미입력노즐 (°C)-175-190미입력금형 온도 (°C)-40-40미입력사출 속도 (mm/s)----미입력사출 압력 (MPa)----미입력보압 (MPa)----미입력보압 시간 (s)-5-25미입력냉각 시간 (s)----미입력백프레셔 (bar)----미입력스크류 회전수 (RPM)----미입력보압1 압력 (MPa)----미입력보압1 시간 (s)----미입력보압2 압력 (MPa)----미입력보압2 시간 (s)----미입력"
+              },
+              {
+                "id": "guideLinks",
+                "text": "관련 가이드컴파운딩 가이드PLA 블렌드 주의사항: CA1180P → 원료 혼합물과 제조된 컴파운드는 건조 근거가 다릅니다."
+              },
+              {
+                "id": "tsHint",
+                "text": "마지막 업데이트: 2026. 9. 15. 오전 1:06:19"
+              },
+              {
+                "id": "result_0",
+                "text": "고온 운전 가능한 금형·온조기인지 확인하세요. 내열 성능은 별도 시험이 필요합니다. / Verify mold and controller capability; confirm heat performance separately."
+              },
+              {
+                "id": "result_1",
+                "text": "수정값은 이 재료·공정에만 저장됩니다. / Overrides apply only to this grade and process."
+              },
+              {
+                "id": "result_3",
+                "text": "파라미터현재값 참고 범위상태 배럴 1 (°C)----미입력배럴 2 (°C)----미입력배럴 3 (°C)----미입력노즐 (°C)-175-190미입력금형 온도 (°C)-40-40미입력사출 속도 (mm/s)----미입력사출 압력 (MPa)----미입력보압 (MPa)----미입력보압 시간 (s)-5-25미입력냉각 시간 (s)----미입력백프레셔 (bar)----미입력스크류 회전수 (RPM)----미입력보압1 압력 (MPa)----미입력보압1 시간 (s)----미입력보압2 압력 (MPa)----미입력보압2 시간 (s)----미입력"
+              }
+            ],
+            "tables": [
+              {
+                "id": "table_0",
+                "rows": [
+                  [
+                    "파라미터",
+                    "현재값",
+                    "참고 범위",
+                    "상태"
+                  ],
+                  [
+                    "배럴 1 (°C)",
+                    "-",
+                    "---",
+                    "미입력"
+                  ],
+                  [
+                    "배럴 2 (°C)",
+                    "-",
+                    "---",
+                    "미입력"
+                  ],
+                  [
+                    "배럴 3 (°C)",
+                    "-",
+                    "---",
+                    "미입력"
+                  ],
+                  [
+                    "노즐 (°C)",
+                    "-",
+                    "175-190",
+                    "미입력"
+                  ],
+                  [
+                    "금형 온도 (°C)",
+                    "-",
+                    "40-40",
+                    "미입력"
+                  ],
+                  [
+                    "사출 속도 (mm/s)",
+                    "-",
+                    "---",
+                    "미입력"
+                  ],
+                  [
+                    "사출 압력 (MPa)",
+                    "-",
+                    "---",
+                    "미입력"
+                  ],
+                  [
+                    "보압 (MPa)",
+                    "-",
+                    "---",
+                    "미입력"
+                  ],
+                  [
+                    "보압 시간 (s)",
+                    "-",
+                    "5-25",
+                    "미입력"
+                  ],
+                  [
+                    "냉각 시간 (s)",
+                    "-",
+                    "---",
+                    "미입력"
+                  ],
+                  [
+                    "백프레셔 (bar)",
+                    "-",
+                    "---",
+                    "미입력"
+                  ],
+                  [
+                    "스크류 회전수 (RPM)",
+                    "-",
+                    "---",
+                    "미입력"
+                  ],
+                  [
+                    "보압1 압력 (MPa)",
+                    "-",
+                    "---",
+                    "미입력"
+                  ],
+                  [
+                    "보압1 시간 (s)",
+                    "-",
+                    "---",
+                    "미입력"
+                  ],
+                  [
+                    "보압2 압력 (MPa)",
+                    "-",
+                    "---",
+                    "미입력"
+                  ],
+                  [
+                    "보압2 시간 (s)",
+                    "-",
+                    "---",
+                    "미입력"
+                  ]
+                ]
+              }
+            ],
+            "주의": [
+              {
+                "항목": "hidden_tab_read",
+                "내용": "My AI에서 DOM에 남아 있는 값을 읽었습니다. 최신 계산이 필요하면 control 허용 후 switch_tab=true로 다시 읽으세요."
+              }
+            ],
+            "설명": "공정 조건 tab context collected from the browser DOM."
+          },
+          "blocked": {
+            "error": "app control is disabled"
+          },
+          "changed": {
+            "schema_version": "pha-set-tab-inputs-v1",
+            "ok": true,
+            "tab": "calc",
+            "changed": [
+              {
+                "id": "kpi_rate",
+                "label": "스루풋 (kg/h)",
+                "before": "17",
+                "after": "20"
+              }
+            ],
+            "skipped": [],
+            "context": {
+              "schema_version": "pha-tab-context-v1",
+              "tab": "calc",
+              "탭": "계산기",
+              "source": "browser_dom",
+              "tab_purpose": "체류시간, 냉각시간, 블로운필름 두께/DDR 계산을 수행한다.",
+              "output_contract": {
+                "envelope": "sectioned",
+                "sections": [
+                  "계산값",
+                  "입력",
+                  "해석"
+                ]
+              },
+              "reading": "계산은 tool 결과를 기준으로 답한다.",
+              "입력": [
+                {
+                  "id": "kpi_rho",
+                  "label": "재료 밀도 (용융, kg/m³)",
+                  "value": ""
+                },
+                {
+                  "id": "kpi_holdVol",
+                  "label": "홀드업 용적 (L)",
+                  "value": ""
+                },
+                {
+                  "id": "kpi_holdMass",
+                  "label": "홀드업 질량 (kg)",
+                  "value": ""
+                },
+                {
+                  "id": "kpi_rate",
+                  "label": "스루풋 (kg/h)",
+                  "value": "20"
+                },
+                {
+                  "id": "cool_t",
+                  "label": "두께 t (mm)",
+                  "value": ""
+                },
+                {
+                  "id": "cool_alpha",
+                  "label": "열확산율 α (mm²/s)",
+                  "value": ""
+                },
+                {
+                  "id": "cool_Tm",
+                  "label": "초기 수지온도 · Initial polymer temperature (°C)",
+                  "value": ""
+                },
+                {
+                  "id": "cool_Tmold",
+                  "label": "금형온도 Tmold (°C)",
+                  "value": ""
+                },
+                {
+                  "id": "cool_Te",
+                  "label": "탈형 기준온도 T_eject (°C)",
+                  "value": ""
+                },
+                {
+                  "id": "bf_Q",
+                  "label": "토출량 Q (kg/h)",
+                  "value": ""
+                },
+                {
+                  "id": "bf_rho",
+                  "label": "최종 필름 밀도 ρ (kg/m³) · Final film density",
+                  "value": ""
+                },
+                {
+                  "id": "bf_D",
+                  "label": "환형 다이 평균 직경 D_die (mm)",
+                  "value": ""
+                },
+                {
+                  "id": "bf_BUR",
+                  "label": "BUR",
+                  "value": ""
+                },
+                {
+                  "id": "bf_v",
+                  "label": "테이크업 속도 v (m/min)",
+                  "value": ""
+                },
+                {
+                  "id": "bf_gap",
+                  "label": "다이 갭 g (mm, 선택)",
+                  "value": ""
+                }
+              ],
+              "결과": [
+                {
+                  "id": "kpi_res_out",
+                  "text": "결과: -"
+                },
+                {
+                  "id": "cool_out",
+                  "text": "결과: -"
+                },
+                {
+                  "id": "bf_out",
+                  "text": "결과: -"
+                },
+                {
+                  "id": "result_0",
+                  "text": "① 체류시간 (Residence Time) 재료 밀도 (용융, kg/m³) 홀드업 용적 (L) 홀드업 질량 (kg) 스루풋 (kg/h) ※ 홀드업 질량 미입력 시 질량 = 밀도×용적/1000로 추정. 계산 결과: -"
+                },
+                {
+                  "id": "result_1",
+                  "text": "※ 홀드업 질량 미입력 시 질량 = 밀도×용적/1000로 추정."
+                },
+                {
+                  "id": "result_2",
+                  "text": "② 사출품 냉각시간 예측 두께 t (mm) 열확산율 α (mm²/s) 초기 수지온도 · Initial polymer temperature (°C) 금형온도 Tmold (°C) 탈형 기준온도 T_eject (°C) 모델: 전체 두께 t인 평판 중심부의 1차 근사. 금형 표면온도 일정, 결정화 잠열·접촉저항 미반영. 생산 냉각시간과 별도 검증. / First-term slab centreline estimate; excludes latent heat and contact resistance. t_c ≈ (t²/(π²α))·ln[(4/π)·(T_melt−T_mold)/(T_eject−T_mold)] 계산 결과: -"
+                },
+                {
+                  "id": "result_3",
+                  "text": "모델: 전체 두께 t인 평판 중심부의 1차 근사. 금형 표면온도 일정, 결정화 잠열·접촉저항 미반영. 생산 냉각시간과 별도 검증. / First-term slab centreline estimate; excludes latent heat and contact resistance. t_c ≈ (t²/(π²α))·ln[(4/π)·(T_melt−T_mold)/(T_eject−T_mold)]"
+                },
+                {
+                  "id": "result_4",
+                  "text": "③ 블로운 필름 두께 토출량 Q (kg/h) 최종 필름 밀도 ρ (kg/m³) · Final film density 환형 다이 평균 직경 D_die (mm) BUR 테이크업 속도 v (m/min) 다이 갭 g (mm, 선택) 기본식: t ≈ (Q/ρ) / (π·D_die·BUR·v) (µm 변환 포함). 선택적으로 갭 기반 t0=g, DDR=v / v_exit 사용. 갭식은 다이 출구와 최종 필름의 밀도가 같다는 박막 근사이며 독립 예측이 아닙니다. 계산 결과: -"
+                },
+                {
+                  "id": "result_5",
+                  "text": "기본식: t ≈ (Q/ρ) / (π·D_die·BUR·v) (µm 변환 포함). 선택적으로 갭 기반 t0=g, DDR=v / v_exit 사용. 갭식은 다이 출구와 최종 필름의 밀도가 같다는 박막 근사이며 독립 예측이 아닙니다."
+                }
+              ],
+              "tables": [],
+              "주의": [],
+              "설명": "계산기 tab context collected from the browser DOM."
+            }
+          },
+          "history": {
+            "schema_version": "pha-history-v1",
+            "count": 1,
+            "rows": [
+              {
+                "ts": "2026-09-01T00:00:00Z",
+                "grade": "CA1180P",
+                "proc": "injection",
+                "params": {
+                  "mold": "40",
+                  "nozzle": "171"
+                },
+                "notes": "fixture A"
+              }
+            ]
+          }
+        },
+        "pageErrors": [],
+        "blockedExternalRequests": [
+          "https://fonts.googleapis.com",
+          "https://tars-api.sorisem98.workers.dev"
+        ],
+        "error": "First My AI visit lost the previous work tab\n\n'proc' !== 'calc'\n"
+      }
+    ]
+  },
+  "passed": 16,
+  "failed": 0,
+  "cases": [
+    {
+      "id": "process-reference-preserves-draft",
+      "description": "Editing reference ranges preserves entered process values and notes",
+      "status": "passed",
+      "observations": {
+        "nozzle": "171",
+        "notes": "unsaved process draft"
+      },
+      "pageErrors": [],
+      "blockedExternalRequests": [
+        "https://fonts.googleapis.com",
+        "https://tars-api.sorisem98.workers.dev"
+      ]
+    },
+    {
+      "id": "history-literal-notes",
+      "description": "Saved and exported history retains literal operator notes",
+      "status": "passed",
+      "observations": {
+        "saved": {
+          "ts": "2026-09-15T01:17:30.125Z",
+          "proc": "extrusion",
+          "grade": "CA1180P",
+          "params": {
+            "zone1": "",
+            "zone2": "",
+            "zone3": "",
+            "zone4": "",
+            "die": "161",
+            "screwRPM": "",
+            "meltPressBar": "",
+            "coolingRoll": "",
+            "lineSpeed": ""
+          },
+          "notes": "trial, 2 mm \"hold\" <sample>"
+        },
+        "displayedNotes": "trial, 2 mm \"hold\" <sample>"
+      },
+      "pageErrors": [],
+      "blockedExternalRequests": [
+        "https://fonts.googleapis.com",
+        "https://tars-api.sorisem98.workers.dev"
+      ]
+    },
+    {
+      "id": "history-csv-quoted-fields",
+      "description": "CSV import preserves commas, escaped quotes, and newlines in notes",
+      "status": "passed",
+      "observations": {
+        "rows": [
+          {
+            "ts": "2026-09-01T00:00:00Z",
+            "grade": "CA1180P",
+            "proc": "extrusion",
+            "params": {
+              "die": "161"
+            },
+            "notes": "trial, 2 mm \"hold\"\nsecond line"
+          }
+        ]
+      },
+      "pageErrors": [],
+      "blockedExternalRequests": [
+        "https://fonts.googleapis.com",
+        "https://tars-api.sorisem98.workers.dev"
+      ]
+    },
+    {
+      "id": "history-invalid-import-atomic",
+      "description": "Malformed history rows cannot overwrite or poison usable saved history",
+      "status": "passed",
+      "observations": {
+        "storagePreserved": true,
+        "dialogs": [
+          "2번째 기록의 날짜·그레이드·공정·params 형식을 확인하세요. 기존 이력은 유지됩니다."
+        ],
+        "storedRows": [
+          {
+            "ts": "2026-09-01T00:00:00Z",
+            "grade": "CA1180P",
+            "proc": "injection",
+            "params": {
+              "mold": "40",
+              "nozzle": "171"
+            },
+            "notes": "fixture A"
+          }
+        ]
+      },
+      "pageErrors": [],
+      "blockedExternalRequests": [
+        "https://fonts.googleapis.com",
+        "https://tars-api.sorisem98.workers.dev"
+      ]
+    },
+    {
+      "id": "history-valid-import-metadata",
+      "description": "Valid imported records retain optional metadata, custom identifiers, zero values and existing rows",
+      "status": "passed",
+      "observations": {
+        "rows": [
+          {
+            "ts": "2026-09-01T00:00:00Z",
+            "grade": "CA1180P",
+            "proc": "injection",
+            "params": {
+              "mold": "40",
+              "nozzle": "171"
+            },
+            "notes": "fixture A"
+          },
+          {
+            "ts": 0,
+            "grade": "LOCAL_FIXTURE",
+            "proc": "legacy_process",
+            "params": {
+              "measured": 0,
+              "blank": "",
+              "unset": null
+            },
+            "notes": null,
+            "metadata": {
+              "batch": "audit",
+              "tags": [
+                "original"
+              ]
+            }
+          }
+        ]
+      },
+      "pageErrors": [],
+      "blockedExternalRequests": [
+        "https://fonts.googleapis.com",
+        "https://tars-api.sorisem98.workers.dev"
+      ]
+    },
+    {
+      "id": "history-existing-malformed-preserved",
+      "description": "Already stored malformed rows do not break navigation or get silently removed",
+      "status": "passed",
+      "observations": {
+        "rows": 3
+      },
+      "pageErrors": [],
+      "blockedExternalRequests": [
+        "https://fonts.googleapis.com",
+        "https://tars-api.sorisem98.workers.dev"
+      ]
+    },
+    {
+      "id": "history-malformed-container-recoverable",
+      "description": "A malformed stored history container remains recoverable through export",
+      "status": "passed",
+      "observations": {
+        "message": "저장된 이력 형식을 확인하세요. 원본은 이 브라우저에 그대로 보존되어 있습니다."
+      },
+      "pageErrors": [],
+      "blockedExternalRequests": [
+        "https://fonts.googleapis.com",
+        "https://tars-api.sorisem98.workers.dev"
+      ]
+    },
+    {
+      "id": "analysis-single-observation-filter",
+      "description": "Selecting a one-record parameter leaves the selector usable and does not show an old curve",
+      "status": "passed",
+      "observations": {
+        "initial": {
+          "parameter": "mold",
+          "values": [
+            40,
+            42
+          ]
+        },
+        "selectorVisible": true,
+        "values": []
+      },
+      "pageErrors": [],
+      "blockedExternalRequests": [
+        "https://fonts.googleapis.com",
+        "https://tars-api.sorisem98.workers.dev"
+      ]
+    },
+    {
+      "id": "analysis-language-current",
+      "description": "Changing language refreshes the active analysis summary and axes",
+      "status": "passed",
+      "observations": {
+        "summary": "Last: 9/2/2026, 9:00:00 AM · CA1180P · injection (2 entries)",
+        "xTitle": "Time",
+        "parameter": "mold"
+      },
+      "pageErrors": [],
+      "blockedExternalRequests": [
+        "https://fonts.googleapis.com",
+        "https://tars-api.sorisem98.workers.dev"
+      ]
+    },
+    {
+      "id": "analysis-zero-is-data-and-empty-clears",
+      "description": "Measured zero remains data; empty and nonnumeric fields are excluded; empty history clears the previous chart",
+      "status": "passed",
+      "observations": {
+        "values": [
+          0,
+          0
+        ],
+        "options": [
+          "measured"
+        ]
+      },
+      "pageErrors": [],
+      "blockedExternalRequests": [
+        "https://fonts.googleapis.com",
+        "https://tars-api.sorisem98.workers.dev"
+      ]
+    },
+    {
+      "id": "materials-import-selectable",
+      "description": "Imported local material grades are selectable without inventing manufacturer references",
+      "status": "passed",
+      "observations": {
+        "stored": {
+          "density_g_cm3": 1.29,
+          "tensile_MPa": 33
+        },
+        "selectable": 1
+      },
+      "pageErrors": [],
+      "blockedExternalRequests": [
+        "https://fonts.googleapis.com",
+        "https://tars-api.sorisem98.workers.dev"
+      ]
+    },
+    {
+      "id": "materials-clear-current-editor",
+      "description": "Clear current grade updates the open editor so Save does not resurrect cleared values",
+      "status": "passed",
+      "observations": {
+        "editorDensityAfterReset": "",
+        "dbAfterReset": {},
+        "dbAfterSave": {}
+      },
+      "pageErrors": [],
+      "blockedExternalRequests": [
+        "https://fonts.googleapis.com",
+        "https://tars-api.sorisem98.workers.dev"
+      ]
+    },
+    {
+      "id": "main-calculators-invalid-replaces-result",
+      "description": "Main calculators reject invalid inputs and local My AI returns the same valid results",
+      "status": "passed",
+      "observations": {
+        "valid": {
+          "residence": "평균 체류시간 ≈ 11.00 min",
+          "cooling": "중심부 냉각 근사 ≈ 6.0 s · 1항 근사는 짧은 시간 영역에서 오차가 큽니다.",
+          "film": "단층 두께 ≈ 18.6 µm / 갭식 교차확인 ≈ 18.6 µm (DDR=21.49)",
+          "local": {
+            "schema_version": "pha-calc-residence-v1",
+            "inputs": {
+              "density_kg_m3": 1100,
+              "holdup_l": 2.5,
+              "holdup_kg": 2.75,
+              "rate_kg_h": 15
+            },
+            "results": {
+              "residence_min": 11
+            },
+            "섹션": [
+              {
+                "제목": "계산값",
+                "rows": [
+                  {
+                    "항목": "Residence time",
+                    "값": 11,
+                    "단위": "min"
+                  }
+                ]
+              }
+            ],
+            "설명": "Residence time = 60 * hold-up mass / throughput."
+          }
+        },
+        "invalid": {
+          "residence": "양의 질량(또는 밀도·용적)과 토출량을 입력하세요.",
+          "cooling": "두께·열확산율 > 0, 용융 > 탈형 > 금형 온도를 확인하세요.",
+          "film": "입력한 값은 모두 양수여야 합니다."
+        }
+      },
+      "pageErrors": [],
+      "blockedExternalRequests": [
+        "https://fonts.googleapis.com",
+        "https://tars-api.sorisem98.workers.dev"
+      ]
+    },
+    {
+      "id": "photos-upload-preview-delete-persist",
+      "description": "Photo gallery uploads, previews, deletes and reloads isolated images",
+      "status": "passed",
+      "observations": {
+        "remaining": 1,
+        "persisted": [
+          "fixture-b.png"
+        ]
+      },
+      "pageErrors": [],
+      "blockedExternalRequests": [
+        "https://fonts.googleapis.com",
+        "https://tars-api.sorisem98.workers.dev"
+      ]
+    },
+    {
+      "id": "myai-local-tab-context-and-control",
+      "description": "My AI local tools read current inputs, preserve the work tab, and honor control permission",
+      "status": "passed",
+      "observations": {
+        "initial": {
+          "schema_version": "pha-tab-context-v1",
+          "tab": "calc",
+          "탭": "계산기",
+          "source": "browser_dom",
+          "tab_purpose": "체류시간, 냉각시간, 블로운필름 두께/DDR 계산을 수행한다.",
+          "output_contract": {
+            "envelope": "sectioned",
+            "sections": [
+              "계산값",
+              "입력",
+              "해석"
+            ]
+          },
+          "reading": "계산은 tool 결과를 기준으로 답한다.",
+          "입력": [
+            {
+              "id": "kpi_rho",
+              "label": "재료 밀도 (용융, kg/m³)",
+              "value": ""
+            },
+            {
+              "id": "kpi_holdVol",
+              "label": "홀드업 용적 (L)",
+              "value": ""
+            },
+            {
+              "id": "kpi_holdMass",
+              "label": "홀드업 질량 (kg)",
+              "value": ""
+            },
+            {
+              "id": "kpi_rate",
+              "label": "스루풋 (kg/h)",
+              "value": "17"
+            },
+            {
+              "id": "cool_t",
+              "label": "두께 t (mm)",
+              "value": ""
+            },
+            {
+              "id": "cool_alpha",
+              "label": "열확산율 α (mm²/s)",
+              "value": ""
+            },
+            {
+              "id": "cool_Tm",
+              "label": "초기 수지온도 · Initial polymer temperature (°C)",
+              "value": ""
+            },
+            {
+              "id": "cool_Tmold",
+              "label": "금형온도 Tmold (°C)",
+              "value": ""
+            },
+            {
+              "id": "cool_Te",
+              "label": "탈형 기준온도 T_eject (°C)",
+              "value": ""
+            },
+            {
+              "id": "bf_Q",
+              "label": "토출량 Q (kg/h)",
+              "value": ""
+            },
+            {
+              "id": "bf_rho",
+              "label": "최종 필름 밀도 ρ (kg/m³) · Final film density",
+              "value": ""
+            },
+            {
+              "id": "bf_D",
+              "label": "환형 다이 평균 직경 D_die (mm)",
+              "value": ""
+            },
+            {
+              "id": "bf_BUR",
+              "label": "BUR",
+              "value": ""
+            },
+            {
+              "id": "bf_v",
+              "label": "테이크업 속도 v (m/min)",
+              "value": ""
+            },
+            {
+              "id": "bf_gap",
+              "label": "다이 갭 g (mm, 선택)",
+              "value": ""
+            }
+          ],
+          "결과": [
+            {
+              "id": "kpi_res_out",
+              "text": "결과: -"
+            },
+            {
+              "id": "cool_out",
+              "text": "결과: -"
+            },
+            {
+              "id": "bf_out",
+              "text": "결과: -"
+            },
+            {
+              "id": "result_0",
+              "text": "① 체류시간 (Residence Time) 재료 밀도 (용융, kg/m³) 홀드업 용적 (L) 홀드업 질량 (kg) 스루풋 (kg/h) ※ 홀드업 질량 미입력 시 질량 = 밀도×용적/1000로 추정. 계산결과: -"
+            },
+            {
+              "id": "result_1",
+              "text": "※ 홀드업 질량 미입력 시 질량 = 밀도×용적/1000로 추정."
+            },
+            {
+              "id": "result_2",
+              "text": "② 사출품 냉각시간 예측 두께 t (mm) 열확산율 α (mm²/s) 초기 수지온도 · Initial polymer temperature (°C) 금형온도 Tmold (°C) 탈형 기준온도 T_eject (°C) 모델: 전체 두께 t인 평판 중심부의 1차 근사. 금형 표면온도 일정, 결정화 잠열·접촉저항 미반영. 생산 냉각시간과 별도 검증. / First-term slab centreline estimate; excludes latent heat and contact resistance. t_c ≈ (t²/(π²α))·ln[(4/π)·(T_melt−T_mold)/(T_eject−T_mold)] 계산결과: -"
+            },
+            {
+              "id": "result_3",
+              "text": "모델: 전체 두께 t인 평판 중심부의 1차 근사. 금형 표면온도 일정, 결정화 잠열·접촉저항 미반영. 생산 냉각시간과 별도 검증. / First-term slab centreline estimate; excludes latent heat and contact resistance. t_c ≈ (t²/(π²α))·ln[(4/π)·(T_melt−T_mold)/(T_eject−T_mold)]"
+            },
+            {
+              "id": "result_4",
+              "text": "③ 블로운 필름 두께 토출량 Q (kg/h) 최종 필름 밀도 ρ (kg/m³) · Final film density 환형 다이 평균 직경 D_die (mm) BUR 테이크업 속도 v (m/min) 다이 갭 g (mm, 선택) 기본식: t ≈ (Q/ρ) / (π·D_die·BUR·v) (µm 변환 포함). 선택적으로 갭 기반 t0=g, DDR=v / v_exit 사용. 갭식은 다이 출구와 최종 필름의 밀도가 같다는 박막 근사이며 독립 예측이 아닙니다. 계산결과: -"
+            },
+            {
+              "id": "result_5",
+              "text": "기본식: t ≈ (Q/ρ) / (π·D_die·BUR·v) (µm 변환 포함). 선택적으로 갭 기반 t0=g, DDR=v / v_exit 사용. 갭식은 다이 출구와 최종 필름의 밀도가 같다는 박막 근사이며 독립 예측이 아닙니다."
+            }
+          ],
+          "tables": [],
+          "주의": [
+            {
+              "항목": "hidden_tab_read",
+              "내용": "My AI에서 DOM에 남아 있는 값을 읽었습니다. 최신 계산이 필요하면 control 허용 후 switch_tab=true로 다시 읽으세요."
+            }
+          ],
+          "설명": "계산기 tab context collected from the browser DOM."
+        },
+        "blocked": {
+          "error": "app control is disabled"
+        },
+        "changed": {
+          "schema_version": "pha-set-tab-inputs-v1",
+          "ok": true,
+          "tab": "calc",
+          "changed": [
+            {
+              "id": "kpi_rate",
+              "label": "스루풋 (kg/h)",
+              "before": "17",
+              "after": "20"
+            }
+          ],
+          "skipped": [],
+          "context": {
+            "schema_version": "pha-tab-context-v1",
+            "tab": "calc",
+            "탭": "계산기",
+            "source": "browser_dom",
+            "tab_purpose": "체류시간, 냉각시간, 블로운필름 두께/DDR 계산을 수행한다.",
+            "output_contract": {
+              "envelope": "sectioned",
+              "sections": [
+                "계산값",
+                "입력",
+                "해석"
+              ]
+            },
+            "reading": "계산은 tool 결과를 기준으로 답한다.",
+            "입력": [
+              {
+                "id": "kpi_rho",
+                "label": "재료 밀도 (용융, kg/m³)",
+                "value": ""
+              },
+              {
+                "id": "kpi_holdVol",
+                "label": "홀드업 용적 (L)",
+                "value": ""
+              },
+              {
+                "id": "kpi_holdMass",
+                "label": "홀드업 질량 (kg)",
+                "value": ""
+              },
+              {
+                "id": "kpi_rate",
+                "label": "스루풋 (kg/h)",
+                "value": "20"
+              },
+              {
+                "id": "cool_t",
+                "label": "두께 t (mm)",
+                "value": ""
+              },
+              {
+                "id": "cool_alpha",
+                "label": "열확산율 α (mm²/s)",
+                "value": ""
+              },
+              {
+                "id": "cool_Tm",
+                "label": "초기 수지온도 · Initial polymer temperature (°C)",
+                "value": ""
+              },
+              {
+                "id": "cool_Tmold",
+                "label": "금형온도 Tmold (°C)",
+                "value": ""
+              },
+              {
+                "id": "cool_Te",
+                "label": "탈형 기준온도 T_eject (°C)",
+                "value": ""
+              },
+              {
+                "id": "bf_Q",
+                "label": "토출량 Q (kg/h)",
+                "value": ""
+              },
+              {
+                "id": "bf_rho",
+                "label": "최종 필름 밀도 ρ (kg/m³) · Final film density",
+                "value": ""
+              },
+              {
+                "id": "bf_D",
+                "label": "환형 다이 평균 직경 D_die (mm)",
+                "value": ""
+              },
+              {
+                "id": "bf_BUR",
+                "label": "BUR",
+                "value": ""
+              },
+              {
+                "id": "bf_v",
+                "label": "테이크업 속도 v (m/min)",
+                "value": ""
+              },
+              {
+                "id": "bf_gap",
+                "label": "다이 갭 g (mm, 선택)",
+                "value": ""
+              }
+            ],
+            "결과": [
+              {
+                "id": "kpi_res_out",
+                "text": "결과: -"
+              },
+              {
+                "id": "cool_out",
+                "text": "결과: -"
+              },
+              {
+                "id": "bf_out",
+                "text": "결과: -"
+              },
+              {
+                "id": "result_0",
+                "text": "① 체류시간 (Residence Time) 재료 밀도 (용융, kg/m³) 홀드업 용적 (L) 홀드업 질량 (kg) 스루풋 (kg/h) ※ 홀드업 질량 미입력 시 질량 = 밀도×용적/1000로 추정. 계산 결과: -"
+              },
+              {
+                "id": "result_1",
+                "text": "※ 홀드업 질량 미입력 시 질량 = 밀도×용적/1000로 추정."
+              },
+              {
+                "id": "result_2",
+                "text": "② 사출품 냉각시간 예측 두께 t (mm) 열확산율 α (mm²/s) 초기 수지온도 · Initial polymer temperature (°C) 금형온도 Tmold (°C) 탈형 기준온도 T_eject (°C) 모델: 전체 두께 t인 평판 중심부의 1차 근사. 금형 표면온도 일정, 결정화 잠열·접촉저항 미반영. 생산 냉각시간과 별도 검증. / First-term slab centreline estimate; excludes latent heat and contact resistance. t_c ≈ (t²/(π²α))·ln[(4/π)·(T_melt−T_mold)/(T_eject−T_mold)] 계산 결과: -"
+              },
+              {
+                "id": "result_3",
+                "text": "모델: 전체 두께 t인 평판 중심부의 1차 근사. 금형 표면온도 일정, 결정화 잠열·접촉저항 미반영. 생산 냉각시간과 별도 검증. / First-term slab centreline estimate; excludes latent heat and contact resistance. t_c ≈ (t²/(π²α))·ln[(4/π)·(T_melt−T_mold)/(T_eject−T_mold)]"
+              },
+              {
+                "id": "result_4",
+                "text": "③ 블로운 필름 두께 토출량 Q (kg/h) 최종 필름 밀도 ρ (kg/m³) · Final film density 환형 다이 평균 직경 D_die (mm) BUR 테이크업 속도 v (m/min) 다이 갭 g (mm, 선택) 기본식: t ≈ (Q/ρ) / (π·D_die·BUR·v) (µm 변환 포함). 선택적으로 갭 기반 t0=g, DDR=v / v_exit 사용. 갭식은 다이 출구와 최종 필름의 밀도가 같다는 박막 근사이며 독립 예측이 아닙니다. 계산 결과: -"
+              },
+              {
+                "id": "result_5",
+                "text": "기본식: t ≈ (Q/ρ) / (π·D_die·BUR·v) (µm 변환 포함). 선택적으로 갭 기반 t0=g, DDR=v / v_exit 사용. 갭식은 다이 출구와 최종 필름의 밀도가 같다는 박막 근사이며 독립 예측이 아닙니다."
+              }
+            ],
+            "tables": [],
+            "주의": [],
+            "설명": "계산기 tab context collected from the browser DOM."
+          }
+        },
+        "history": {
+          "schema_version": "pha-history-v1",
+          "count": 1,
+          "rows": [
+            {
+              "ts": "2026-09-01T00:00:00Z",
+              "grade": "CA1180P",
+              "proc": "injection",
+              "params": {
+                "mold": "40",
+                "nozzle": "171"
+              },
+              "notes": "fixture A"
+            }
+          ]
+        }
+      },
+      "pageErrors": [],
+      "blockedExternalRequests": [
+        "https://fonts.googleapis.com",
+        "https://tars-api.sorisem98.workers.dev"
+      ]
+    },
+    {
+      "id": "myai-first-visit-mobile-context",
+      "description": "First mobile My AI visit remembers the calculator tab from actual navigation buttons",
+      "status": "passed",
+      "observations": {
+        "context": {
+          "schema_version": "pha-tab-context-v1",
+          "tab": "calc",
+          "탭": "계산기",
+          "source": "browser_dom",
+          "tab_purpose": "체류시간, 냉각시간, 블로운필름 두께/DDR 계산을 수행한다.",
+          "output_contract": {
+            "envelope": "sectioned",
+            "sections": [
+              "계산값",
+              "입력",
+              "해석"
+            ]
+          },
+          "reading": "계산은 tool 결과를 기준으로 답한다.",
+          "입력": [
+            {
+              "id": "kpi_rho",
+              "label": "재료 밀도 (용융, kg/m³)",
+              "value": ""
+            },
+            {
+              "id": "kpi_holdVol",
+              "label": "홀드업 용적 (L)",
+              "value": ""
+            },
+            {
+              "id": "kpi_holdMass",
+              "label": "홀드업 질량 (kg)",
+              "value": ""
+            },
+            {
+              "id": "kpi_rate",
+              "label": "스루풋 (kg/h)",
+              "value": "19"
+            },
+            {
+              "id": "cool_t",
+              "label": "두께 t (mm)",
+              "value": ""
+            },
+            {
+              "id": "cool_alpha",
+              "label": "열확산율 α (mm²/s)",
+              "value": ""
+            },
+            {
+              "id": "cool_Tm",
+              "label": "초기 수지온도 · Initial polymer temperature (°C)",
+              "value": ""
+            },
+            {
+              "id": "cool_Tmold",
+              "label": "금형온도 Tmold (°C)",
+              "value": ""
+            },
+            {
+              "id": "cool_Te",
+              "label": "탈형 기준온도 T_eject (°C)",
+              "value": ""
+            },
+            {
+              "id": "bf_Q",
+              "label": "토출량 Q (kg/h)",
+              "value": ""
+            },
+            {
+              "id": "bf_rho",
+              "label": "최종 필름 밀도 ρ (kg/m³) · Final film density",
+              "value": ""
+            },
+            {
+              "id": "bf_D",
+              "label": "환형 다이 평균 직경 D_die (mm)",
+              "value": ""
+            },
+            {
+              "id": "bf_BUR",
+              "label": "BUR",
+              "value": ""
+            },
+            {
+              "id": "bf_v",
+              "label": "테이크업 속도 v (m/min)",
+              "value": ""
+            },
+            {
+              "id": "bf_gap",
+              "label": "다이 갭 g (mm, 선택)",
+              "value": ""
+            }
+          ],
+          "결과": [
+            {
+              "id": "kpi_res_out",
+              "text": "결과: -"
+            },
+            {
+              "id": "cool_out",
+              "text": "결과: -"
+            },
+            {
+              "id": "bf_out",
+              "text": "결과: -"
+            },
+            {
+              "id": "result_0",
+              "text": "① 체류시간 (Residence Time) 재료 밀도 (용융, kg/m³) 홀드업 용적 (L) 홀드업 질량 (kg) 스루풋 (kg/h) ※ 홀드업 질량 미입력 시 질량 = 밀도×용적/1000로 추정. 계산결과: -"
+            },
+            {
+              "id": "result_1",
+              "text": "※ 홀드업 질량 미입력 시 질량 = 밀도×용적/1000로 추정."
+            },
+            {
+              "id": "result_2",
+              "text": "② 사출품 냉각시간 예측 두께 t (mm) 열확산율 α (mm²/s) 초기 수지온도 · Initial polymer temperature (°C) 금형온도 Tmold (°C) 탈형 기준온도 T_eject (°C) 모델: 전체 두께 t인 평판 중심부의 1차 근사. 금형 표면온도 일정, 결정화 잠열·접촉저항 미반영. 생산 냉각시간과 별도 검증. / First-term slab centreline estimate; excludes latent heat and contact resistance. t_c ≈ (t²/(π²α))·ln[(4/π)·(T_melt−T_mold)/(T_eject−T_mold)] 계산결과: -"
+            },
+            {
+              "id": "result_3",
+              "text": "모델: 전체 두께 t인 평판 중심부의 1차 근사. 금형 표면온도 일정, 결정화 잠열·접촉저항 미반영. 생산 냉각시간과 별도 검증. / First-term slab centreline estimate; excludes latent heat and contact resistance. t_c ≈ (t²/(π²α))·ln[(4/π)·(T_melt−T_mold)/(T_eject−T_mold)]"
+            },
+            {
+              "id": "result_4",
+              "text": "③ 블로운 필름 두께 토출량 Q (kg/h) 최종 필름 밀도 ρ (kg/m³) · Final film density 환형 다이 평균 직경 D_die (mm) BUR 테이크업 속도 v (m/min) 다이 갭 g (mm, 선택) 기본식: t ≈ (Q/ρ) / (π·D_die·BUR·v) (µm 변환 포함). 선택적으로 갭 기반 t0=g, DDR=v / v_exit 사용. 갭식은 다이 출구와 최종 필름의 밀도가 같다는 박막 근사이며 독립 예측이 아닙니다. 계산결과: -"
+            },
+            {
+              "id": "result_5",
+              "text": "기본식: t ≈ (Q/ρ) / (π·D_die·BUR·v) (µm 변환 포함). 선택적으로 갭 기반 t0=g, DDR=v / v_exit 사용. 갭식은 다이 출구와 최종 필름의 밀도가 같다는 박막 근사이며 독립 예측이 아닙니다."
+            }
+          ],
+          "tables": [],
+          "주의": [
+            {
+              "항목": "hidden_tab_read",
+              "내용": "My AI에서 DOM에 남아 있는 값을 읽었습니다. 최신 계산이 필요하면 control 허용 후 switch_tab=true로 다시 읽으세요."
+            }
+          ],
+          "설명": "계산기 tab context collected from the browser DOM."
+        }
+      },
+      "pageErrors": [],
+      "blockedExternalRequests": [
+        "https://fonts.googleapis.com",
+        "https://tars-api.sorisem98.workers.dev"
+      ]
+    }
+  ]
+}

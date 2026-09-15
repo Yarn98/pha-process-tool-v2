@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "root": "source",
+  "checks": [
+    "12 location/onset combinations, separate heat branches, source links and keyboard image enlargement",
+    "Actual GLB opening, fill morphs, onset-dependent flash, three defect groups, clean comparison, orbit retention and playback lifecycle",
+    "New checklist and trial drafts survive language changes; downloads and labeled calculations retain correct units",
+    "Unsaved batch event survives KO/EN; zero-valued/deleted logs clear stale guidance and charts; zero-result filters stay empty",
+    "All eight Flash subtabs fit 320/390px in Korean/English with usable 3D controls",
+    "Unavailable WebGL and failed GLB retain all three Blender posters and source-linked solutions",
+    "v25 service worker reloads guide, original image and GLB offline while preserving local records",
+    "No uncaught browser errors"
+  ],
+  "errors": []
+}

@@ -1,0 +1,1345 @@
+{
+  "format": 1,
+  "artifact": "single-file/PHA-Process-Single.html",
+  "bytes": 53086037,
+  "sha256": "b4080d8158bc46a93416a4302d16fb427f4c4214540b58c4986e46b83126b7c5",
+  "source_sha256": "ca9b0e842fcb4006153898f9a364e411f3636542ea9fc651cc6bbde32f0558e9",
+  "hash_basis": "SHA-256 of UTF-8 text normalized to LF; binary bytes unchanged. Artifact bytes and hash use LF.",
+  "embedded_assets": 155,
+  "embedded_glbs": 26,
+  "transformations": {
+    "service_worker_blocks_removed": 1,
+    "remote_font_imports_removed": 1
+  },
+  "limitations": [
+    "Remote TARS, MyAI provider requests and source links still require their configured network services.",
+    "Existing system font fallbacks replace Google Fonts; layout is checked separately on the portable file.",
+    "Browser file-origin storage is device/browser/path dependent. Export records before moving or renaming; no browser records or credentials are included.",
+    "Interactive 3D requires browser WebGL. Embedded posters and guidance remain available when WebGL is unavailable."
+  ],
+  "sources": [
+    {
+      "path": "anomaly-codes.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 1649,
+      "sha256": "67ba21d7300c3959b517cc9794002d09b99beaca4ade41fe76a81a42cdd13ea9"
+    },
+    {
+      "path": "assets/equipment/blowmolding-motion-poster.png",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 860823,
+      "sha256": "fe6c7d8f77ead88ea5efd2517214841a79646183e34f3116b06b30a0a15f6e31"
+    },
+    {
+      "path": "assets/equipment/blowmolding-motion.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 739892,
+      "sha256": "76797d53903881e9d8e6ab1a579c3f2c2308f7d63da5bc758e64f5e60cdd8ce2"
+    },
+    {
+      "path": "assets/equipment/blowmolding.png",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 847421,
+      "sha256": "a6fcf2138a8774a29804d6d986bad62944a8acaf61a29b99f78a3624f742f0f1"
+    },
+    {
+      "path": "assets/equipment/blownfilm-motion-poster.png",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 888375,
+      "sha256": "d5033687f8d3239763d09708b5c394e755ee6982f86e01ca4dd6d62f5b2ee603"
+    },
+    {
+      "path": "assets/equipment/blownfilm-motion.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 891852,
+      "sha256": "5af8003249f79d3531f4434c95d536941ed0491aeeea2dd50e3bd03bcb1a989b"
+    },
+    {
+      "path": "assets/equipment/blownfilm.png",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 868824,
+      "sha256": "1a5bd473afa3ed370dc0ea754aa853d06da360dc6fe348b4adbabcb13b4074b0"
+    },
+    {
+      "path": "assets/equipment/castfilm-motion-poster.png",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 865743,
+      "sha256": "f5f5d0d445004d06d6a5a29b0945d3e5e09a47c111f4ee5a52a0441d2f7b1657"
+    },
+    {
+      "path": "assets/equipment/castfilm-motion.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 807372,
+      "sha256": "ddaf21dc9152316e0d1bb0fe2885a58826ac78dfb23152ccda5e740dd643f2b7"
+    },
+    {
+      "path": "assets/equipment/castfilm.png",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 856175,
+      "sha256": "2545d1e930ee9ad54ece0e8a0e9cf01ecc817a2b786bcac2934d0901d666d2b7"
+    },
+    {
+      "path": "assets/equipment/compounding-motion-poster.png",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 880399,
+      "sha256": "59afe26c5ab33fadbe10ba7ba978f2f884a481f4ca34558cd55b0544324fe6c0"
+    },
+    {
+      "path": "assets/equipment/compounding-motion.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 1236560,
+      "sha256": "5cf06a0193d40aed90b60dab8d522ac5b8a5dc021cfc29491c661b8c6db351ad"
+    },
+    {
+      "path": "assets/equipment/compounding.png",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 877956,
+      "sha256": "ba01fcf857a5bd55e37dc3d17c04440deea7bbbfb96a6f6a78cdbe2e3f52e069"
+    },
+    {
+      "path": "assets/equipment/extrusion-motion-poster.png",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 859590,
+      "sha256": "ca58d3015f9e3a2c3ce647b3e32a1fd1a3c4f32d70c95eb1927da5c8f90f5b06"
+    },
+    {
+      "path": "assets/equipment/extrusion-motion.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 946828,
+      "sha256": "0b7cbf099f738a13e5e273efec234128030256c4d3ba96e7356d3a71eb6b5e83"
+    },
+    {
+      "path": "assets/equipment/extrusion.png",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 849752,
+      "sha256": "f5717cf090042ce0880d093218270b3a1b9d146b7641b4994d8c6617db4b9d44"
+    },
+    {
+      "path": "assets/equipment/injection-motion-poster.png",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 904152,
+      "sha256": "802a9fdd97b750dd9c7e0e365e53e5bfecb53bafb02b66d48ed942cc112271b0"
+    },
+    {
+      "path": "assets/equipment/injection-motion.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 1430372,
+      "sha256": "2db39dd3846a08833ab8edd6d53b085fb4610f385e871d25523f0865ad381b11"
+    },
+    {
+      "path": "assets/equipment/injection.png",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 858287,
+      "sha256": "af6a62a3b0db62f08c1d69ccbb7ba6fe266c69e747b8aa7b66dd316b87164c1c"
+    },
+    {
+      "path": "assets/equipment/sheet-motion-poster.png",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 875131,
+      "sha256": "ab33fb38be69c794f6a14837749d6dab651d17619185902172d5126adffe83f8"
+    },
+    {
+      "path": "assets/equipment/sheet-motion.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 904456,
+      "sha256": "8568b94b4ea433799f15c13ae26069b4da76580f3b590a1ba2947ab3d7e7c7f4"
+    },
+    {
+      "path": "assets/equipment/sheet.png",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 843439,
+      "sha256": "7759eb01ab25814fb310736033d3a5d228652ef81d7557fd7e4d6117967e4342"
+    },
+    {
+      "path": "assets/equipment/straw-motion-poster.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 47220,
+      "sha256": "ed75aadd7fef88e90a2c2afb85ad113a67932c6162eedbb8ceedb58c1c614ac5"
+    },
+    {
+      "path": "assets/equipment/straw-motion.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 3197752,
+      "sha256": "4452756033b2d7be64dd49f08fc8ed9a7181c98e6fcfbb8972bad07119c06ddb"
+    },
+    {
+      "path": "assets/equipment/straw.png",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 852108,
+      "sha256": "3f10686d767544f01b901eb3ade0db617f792870ca8db98979df4b9b77e5433a"
+    },
+    {
+      "path": "assets/equipment/unreal/blowmolding.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 46776,
+      "sha256": "ed39e5ad4ddfcd8ab4cac1e79b4a5fbe0a68b070ab968bf6f70e0698883bf88b"
+    },
+    {
+      "path": "assets/equipment/unreal/blownfilm.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 50076,
+      "sha256": "a75e644525f8f0e995301cd2d5ac408cd57af567ba88d42614367de291a2fa42"
+    },
+    {
+      "path": "assets/equipment/unreal/castfilm.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 48158,
+      "sha256": "a951ef71a805bc1425c1383dfa969ba9688f1c46184657679e4b6ad487b1624b"
+    },
+    {
+      "path": "assets/equipment/unreal/compounding.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 52754,
+      "sha256": "3e6ea026c7fafd340266af553ac614ef9b733c6468c61ca8709d6b4a3805f207"
+    },
+    {
+      "path": "assets/equipment/unreal/extrusion.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 48026,
+      "sha256": "2e965dfd3acb7978804ad200f5ba99fdc272cf7a2bb55fa73db600a22bac5325"
+    },
+    {
+      "path": "assets/equipment/unreal/injection.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 56662,
+      "sha256": "e9b78ee7650ca92b64e9e659469ca14d727a873a69e761ea7201f867c3e699fd"
+    },
+    {
+      "path": "assets/equipment/unreal/sheet.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 51896,
+      "sha256": "267e6243132a24651487c7677af47d05cbeaed68212e613ada4b87ea3865330f"
+    },
+    {
+      "path": "assets/equipment/unreal/straw.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 55114,
+      "sha256": "bc68fe188017959360c3521d688c9152bfa6d9d8561225057e4e50ee185efbf9"
+    },
+    {
+      "path": "assets/flash-control/ejector.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 36324,
+      "sha256": "2246e715b0d1cd28581a36c81dcb3b62854fb83a58341f1bf1114cf1635e1631"
+    },
+    {
+      "path": "assets/flash-control/flash-comparison.png",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 1704173,
+      "sha256": "4e516d1b2cefe220dbb3c0593ee749e297c5fe21c1bfb0d5c6322d1546b197cf"
+    },
+    {
+      "path": "assets/flash-control/mold-detail.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 479520,
+      "sha256": "81f2d9bea29af5314be532409a9ce7753d97131ffa84da782856e8f6a8693c45"
+    },
+    {
+      "path": "assets/flash-control/normal.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 36214,
+      "sha256": "3e57037b142f9e621b0957c2cc35590fa626ce6e38d237e5832945ce3e040cab"
+    },
+    {
+      "path": "assets/flash-control/parting.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 37072,
+      "sha256": "38f054939da37ea270b75e7cb46540bf918810fd1fa3be81f606579141878e65"
+    },
+    {
+      "path": "assets/flash-control/vent.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 36504,
+      "sha256": "b66f32255f3763f5821ad9fa93ec4312b487ec18cc04e370e30e5bf2ef17f0ef"
+    },
+    {
+      "path": "assets/flash-example.png",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 1735943,
+      "sha256": "e02896caef68762b508757c869f6fcec50d2ea69fe013355cebf0f21c3856ad3"
+    },
+    {
+      "path": "assets/troubleshooting/blowmolding-normal_bottle_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 5744,
+      "sha256": "f4607451abb9b11cbce74031dabb4b19e9f02fb812bd40275c3321673c9303e4"
+    },
+    {
+      "path": "assets/troubleshooting/blowmolding-normal_bottle_section.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 6904,
+      "sha256": "16f9e1ffc004a1c4dcb7c8100b339b4054aa55390520c2b2db6db425adfb148f"
+    },
+    {
+      "path": "assets/troubleshooting/blowmolding-normal_parison_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 5088,
+      "sha256": "a02b3a5606faa24eae54c864d27110f51132c521a611ce3e1770a37734c0870c"
+    },
+    {
+      "path": "assets/troubleshooting/blowmolding-sag_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 5332,
+      "sha256": "97be883cf7990cb6d2c25c9ddfc94cd4ea060b8358e77dbed48ab0bf08182186"
+    },
+    {
+      "path": "assets/troubleshooting/blowmolding-wall_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 5766,
+      "sha256": "459a8e1f73fc896fc855d6fbe48d4e8db1dfc7c0d321905b941a5368fb2b85c2"
+    },
+    {
+      "path": "assets/troubleshooting/blowmolding-wall_section.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 7152,
+      "sha256": "7ccc3825ba1cf1b2d74b6b778ebf39082508c36fbde6b25504ae16be2554ffa3"
+    },
+    {
+      "path": "assets/troubleshooting/blowmolding.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 501220,
+      "sha256": "87bc45301369f966662a3da2f09f400689856f4ba1ffc8bb9ca5789510c81fad"
+    },
+    {
+      "path": "assets/troubleshooting/bubble-broken_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 9062,
+      "sha256": "84e97f5d070628480c366ecffdd66a4c0c542770e4b1089e6af762be0a6e1b02"
+    },
+    {
+      "path": "assets/troubleshooting/bubble-normal_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 8634,
+      "sha256": "2bcedb9a4d7f6297aa2c86ccfeec4d98f1f578b3fc99ee8fbf309347dda362b7"
+    },
+    {
+      "path": "assets/troubleshooting/bubble-wobble_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 8958,
+      "sha256": "a5b33a2f2e6765d49dfb40d0db2dc30b42dc3d8a36efc2a4e8844731675c40e0"
+    },
+    {
+      "path": "assets/troubleshooting/bubble.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 737608,
+      "sha256": "2bb93eb0dfbe0a41835fb11c456ecb2ef8ea55e660ac70384fc1ff550fe72816"
+    },
+    {
+      "path": "assets/troubleshooting/castfilm-neckin_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 10898,
+      "sha256": "3bc4dcd64fa1d83afca2f662ac8580e0e306277286add55c800f366dcf82cf57"
+    },
+    {
+      "path": "assets/troubleshooting/castfilm-normal_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 10896,
+      "sha256": "0938cee30e790e9b84203a9276c9edde9ef4ab1c634f09fb8f227483920c48c7"
+    },
+    {
+      "path": "assets/troubleshooting/castfilm-release_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 10590,
+      "sha256": "1f6c4a1c54984ea9477aacd5c2b735ecb22e8fa4c8d2a788d2fcb0caf5e91f0b"
+    },
+    {
+      "path": "assets/troubleshooting/castfilm-resonance_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 11168,
+      "sha256": "1c7aea25832b81f73e9782e03b5e32416aa68f47491ba4df454cab2d78fa154a"
+    },
+    {
+      "path": "assets/troubleshooting/castfilm.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 236012,
+      "sha256": "ed9f7c95653d2335045a31ff8fad6318f63959a8172d7cf82c7c706fb2332eee"
+    },
+    {
+      "path": "assets/troubleshooting/die-drool_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 11012,
+      "sha256": "7a188e77f5995fd5692edb1f683c3eb5f52cd0aa51f70ad060a862ba903a432d"
+    },
+    {
+      "path": "assets/troubleshooting/die-normal_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 9698,
+      "sha256": "47723fb95b413fcb291c8e1997740f8db563baaff22b48f3f334c49e64f32325"
+    },
+    {
+      "path": "assets/troubleshooting/die.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 441400,
+      "sha256": "aa493f75cbb938691e28795d97f04bf7e67228af7b497f44468f9fe23d670a94"
+    },
+    {
+      "path": "assets/troubleshooting/feed-inspection_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 15082,
+      "sha256": "8c8d56ee1914db1d2317d2334c131938c85a939c73b4d750861f47856a708a8e"
+    },
+    {
+      "path": "assets/troubleshooting/feed-normal_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 13966,
+      "sha256": "4a8ebbb2a19f1379aab593a9d5fb5ddfa40610bd9d91ef77aaba12f0d028b576"
+    },
+    {
+      "path": "assets/troubleshooting/feed.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 261908,
+      "sha256": "9aa61dda9634be2ff0a32564908394f2ca3bed6aed615e7b320018573f08d96c"
+    },
+    {
+      "path": "assets/troubleshooting/film-speck-normal_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 6882,
+      "sha256": "093f1a0da998e1abd7e27772531810c3e9fac4bc072a33b6d71f38f2d31923b1"
+    },
+    {
+      "path": "assets/troubleshooting/film-speck-normal_section.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 6958,
+      "sha256": "120eb267bc26a851efe3e4e3f7f629389a29d50d2e6deaca8b9c7ac960d9bda3"
+    },
+    {
+      "path": "assets/troubleshooting/film-speck-speck_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 7536,
+      "sha256": "1cfbb362eda87b816e5008d97d4148a6b06b6eebdd4efb9983ad730ea00ee588"
+    },
+    {
+      "path": "assets/troubleshooting/film-speck-speck_section.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 8102,
+      "sha256": "e3a170673d61c89aa1d1df1b9a4d722a696647c3a352573b90ce70dc07d0e1aa"
+    },
+    {
+      "path": "assets/troubleshooting/film-speck.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 512148,
+      "sha256": "d81b712b5f3c872abc8ea393e7df9dec370d6cdff1de901737896f0e87266f50"
+    },
+    {
+      "path": "assets/troubleshooting/flash-example.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 19252,
+      "sha256": "9660a1c0d9cb70e83f223eb9dd759a4c6f6134fa5bb1e14a46e7d5fe3a8a39ef"
+    },
+    {
+      "path": "assets/troubleshooting/flash-flash_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 11212,
+      "sha256": "a7f55f9e0df1b7602f8044dbffce486647da8ee3a8fa3eeecd2d4afe4b43240f"
+    },
+    {
+      "path": "assets/troubleshooting/flash-normal_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 10890,
+      "sha256": "12089d9621f22aa52ba683fa6fdb2007ef3e15ce69a8bc28641b9156162e0072"
+    },
+    {
+      "path": "assets/troubleshooting/flash.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 113596,
+      "sha256": "3a7a8a0552ab7652eadfdce6dd37f4a911afec0f89e6286b7d5a6c9c8db8bc95"
+    },
+    {
+      "path": "assets/troubleshooting/gel-fisheye-example.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 39902,
+      "sha256": "4492be7a7ef0dfd3a423059e634c74a41a04c47355840ff3e6d95a7279b324c8"
+    },
+    {
+      "path": "assets/troubleshooting/pha-kb-1-thumb.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 4164,
+      "sha256": "df558fc8b84d26953ec70aa5099859a9572e0ceaabc339994770b28b7bce7a20"
+    },
+    {
+      "path": "assets/troubleshooting/pha-kb-10-thumb.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 2522,
+      "sha256": "bca45e30e01533aac07577979008bc57a2e3ecfee9840fe12ea17cad87d94e52"
+    },
+    {
+      "path": "assets/troubleshooting/pha-kb-11-thumb.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 3172,
+      "sha256": "0a818350dc592f79c906493b369ac12175621b77e5bbd052eb65fb89c6e9b0e2"
+    },
+    {
+      "path": "assets/troubleshooting/pha-kb-12-thumb.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 2272,
+      "sha256": "09fdebf1f1a1f6ad52d113aa16820fccc2f70662e7c1ae35f9b2347ba0c991dc"
+    },
+    {
+      "path": "assets/troubleshooting/pha-kb-13-thumb.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 1176,
+      "sha256": "24c7dbb642bd943674faf40e43e053f28176693c3e10dde3fb4e87b4dce90825"
+    },
+    {
+      "path": "assets/troubleshooting/pha-kb-14-thumb.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 2666,
+      "sha256": "03e375b9b1d07675e55d208f4800190375c203fd9be289381c78c59167527753"
+    },
+    {
+      "path": "assets/troubleshooting/pha-kb-15-thumb.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 1954,
+      "sha256": "05c981a2a0037923d5f6a8a7faea61ae6d74a07a674f4a39423dd3b56403ea25"
+    },
+    {
+      "path": "assets/troubleshooting/pha-kb-16-thumb.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 3076,
+      "sha256": "4d7574e146b36f8e8ec1e8707868c5b9ce58f40ea620d4bcaecc511828620848"
+    },
+    {
+      "path": "assets/troubleshooting/pha-kb-2-thumb.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 3676,
+      "sha256": "3bdeb08c38d7b3da3f6769bfdecc68e41e23d48b3e3a63451c03ee253f21268c"
+    },
+    {
+      "path": "assets/troubleshooting/pha-kb-3-thumb.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 2850,
+      "sha256": "1705ba98d172e6ff18731042349e1b67d0aa4ec8391b70829509ec4dbdc6bcde"
+    },
+    {
+      "path": "assets/troubleshooting/pha-kb-4-thumb.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 2596,
+      "sha256": "76aab24d09e29ec0aca241fbe27f7eca286c2f9ee5ca539b204dfac361a9a297"
+    },
+    {
+      "path": "assets/troubleshooting/pha-kb-5-thumb.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 1894,
+      "sha256": "e2fb01bd36a7275d86ecc0588f99167e010ecc7184d416aa2dc0d1be4568600d"
+    },
+    {
+      "path": "assets/troubleshooting/pha-kb-6-thumb.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 3384,
+      "sha256": "9d6c2f65f47157a0f272c0882efa9fa4760b4bc6a51206fa236b22e191f6ba0d"
+    },
+    {
+      "path": "assets/troubleshooting/pha-kb-7-thumb.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 3974,
+      "sha256": "9ce120564aa0084dbffb772746289c9f6d6851dc9dca9dff7214dbe22158a27e"
+    },
+    {
+      "path": "assets/troubleshooting/pha-kb-8-thumb.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 2718,
+      "sha256": "9a9a9fcde7bba946be44fd4420f651eeb570d965b47e1c1e1a4cf69f3e3c6e07"
+    },
+    {
+      "path": "assets/troubleshooting/pha-kb-9-thumb.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 2876,
+      "sha256": "ab1a96d6ed7f396c6c3afd9ce8497bf8dfd99eb2e4a47ed60c1bb116c91f405c"
+    },
+    {
+      "path": "assets/troubleshooting/roll-release-normal_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 10594,
+      "sha256": "721b8658946329c7d0057f33b596d7fa2e6142ba7b8f028ab62e6cbf3dca0cc2"
+    },
+    {
+      "path": "assets/troubleshooting/roll-release-sticking_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 10050,
+      "sha256": "6760f31beb1743b1f3088b764be8626e2959fd2697e8df1527b89af36a53aaeb"
+    },
+    {
+      "path": "assets/troubleshooting/roll-release.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 87552,
+      "sha256": "4f4a7de5654fdda2338739913d46f3537ee091f00157de5978886601060ae54d"
+    },
+    {
+      "path": "assets/troubleshooting/sheet-gauge-normal_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 6914,
+      "sha256": "908a8afc802dca9a39e336d32840a055dc888bdecdcf9afbc033cdba0646ad3d"
+    },
+    {
+      "path": "assets/troubleshooting/sheet-gauge-normal_section.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 7168,
+      "sha256": "5d0519006dfa218e33209965029a0fedc809ce87fde4bdb36b4671dcbb7937f7"
+    },
+    {
+      "path": "assets/troubleshooting/sheet-gauge-uneven_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 7662,
+      "sha256": "67986afef9d37578946fb53ac6e2b6451e338e18fe1a29fdf9b767b1111656f1"
+    },
+    {
+      "path": "assets/troubleshooting/sheet-gauge-uneven_section.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 7878,
+      "sha256": "3a7e42073fd9562879632dc86b81b1d7c0c715c1d161ad6791e665be043fe793"
+    },
+    {
+      "path": "assets/troubleshooting/sheet-gauge.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 370320,
+      "sha256": "f99fd34b92565c5ff95a5a6530fd184e586a1c25531b2f20471bd82d9a511418"
+    },
+    {
+      "path": "assets/troubleshooting/short-shot-example.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 30878,
+      "sha256": "c574a7553309c55ee4917da07e9595720333acb6d0d41cc997acdf69d2607dd8"
+    },
+    {
+      "path": "assets/troubleshooting/short-shot-normal_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 10890,
+      "sha256": "12089d9621f22aa52ba683fa6fdb2007ef3e15ce69a8bc28641b9156162e0072"
+    },
+    {
+      "path": "assets/troubleshooting/short-shot-short_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 10126,
+      "sha256": "9d8821a5d8e1ac362c267455b405e4db0c6c9f73b1bc2c75e683ba53c5a0260e"
+    },
+    {
+      "path": "assets/troubleshooting/short-shot.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 108120,
+      "sha256": "bc6517b36d516192b39d89490c395b973a1c867b3fa7728c01fe0a3230a6c458"
+    },
+    {
+      "path": "assets/troubleshooting/silver-normal_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 7260,
+      "sha256": "b17405dd4d4202c49c73bf25e1cc2deff6dda247d5cbbde49d3d2aa6707df1ff"
+    },
+    {
+      "path": "assets/troubleshooting/silver-streak-example.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 52110,
+      "sha256": "b9b866c3a3cee9b4ee75de69ddc9a365a30e5d2be453a742e972b4f355fe07e4"
+    },
+    {
+      "path": "assets/troubleshooting/silver-streak_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 10622,
+      "sha256": "d1ac2c36c94438490b040cd3d3993b014a77be54e4828fbd57cc6a48d45c0945"
+    },
+    {
+      "path": "assets/troubleshooting/silver.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 261164,
+      "sha256": "5a6e269ade003eaa2783730b351641e43006b3c8488f0c7b2fda06e6104a9d65"
+    },
+    {
+      "path": "assets/troubleshooting/sink-example.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 46488,
+      "sha256": "dec5af5fc6602c7d0d7a2c1e296c37e6affed510a45d7963625d74e332671de4"
+    },
+    {
+      "path": "assets/troubleshooting/sink-void-normal_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 8444,
+      "sha256": "1ed3dd932113fad69d70d3468ea5676979dd5ccf842c30479aefa0b9c03359be"
+    },
+    {
+      "path": "assets/troubleshooting/sink-void-normal_section.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 8248,
+      "sha256": "638c36a6102f9dcae486b5947dd135942a5346018ecc53fd0576aa662d388288"
+    },
+    {
+      "path": "assets/troubleshooting/sink-void-sink_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 8480,
+      "sha256": "4b408b432197a74d9a623880c59604c030411dcd772c5012add51ee218af2bf5"
+    },
+    {
+      "path": "assets/troubleshooting/sink-void-sink_section.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 8464,
+      "sha256": "b3b6b42d236aa7727b991b78bbf2a16db41265e2c865152805f4b55dcded6b24"
+    },
+    {
+      "path": "assets/troubleshooting/sink-void-void_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 8444,
+      "sha256": "9d7829620885d1a9fb8bee8371e28514845c3c9b2439556ecfc8022fbe933b99"
+    },
+    {
+      "path": "assets/troubleshooting/sink-void-void_section.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 9686,
+      "sha256": "5f6e2169f012161a49ac272b0627d7b824a02e1b9405d3bdfb103bb876d333ce"
+    },
+    {
+      "path": "assets/troubleshooting/sink-void.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 648604,
+      "sha256": "5073abc361b2a413696f13c230b32edcf8e5f3b9be12c86f34d12bf08c789db9"
+    },
+    {
+      "path": "assets/troubleshooting/straw-crack-example.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 18190,
+      "sha256": "ad7c239e601e01c4fd5915d719132340222607421bcfdcd2affb7c66bc800929"
+    },
+    {
+      "path": "assets/troubleshooting/straw-crack_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 7668,
+      "sha256": "eef7902fd644929b03b0938613708921ae2e637051475abcd22c11251f6de0c9"
+    },
+    {
+      "path": "assets/troubleshooting/straw-dimension_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 11398,
+      "sha256": "02b32e2db45353bf5636c28c4c86b9f7a2530fd95cec9eaf3f4e9954fdfb9948"
+    },
+    {
+      "path": "assets/troubleshooting/straw-normal_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 7234,
+      "sha256": "28cadfd3c3b09356304dda60e85e968a9545921d8e6a6a3a89824f0f62edc70c"
+    },
+    {
+      "path": "assets/troubleshooting/straw-normal_section.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 10674,
+      "sha256": "4a8552d23d56e4081ba31e4fdbd95b61c0e0a415f449bbad5c773c4221680279"
+    },
+    {
+      "path": "assets/troubleshooting/straw-oval_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 7244,
+      "sha256": "5ffff13e77e948a81f6eafbe82bca894d0cdc6ea39ad1ed22ff311f6322e852e"
+    },
+    {
+      "path": "assets/troubleshooting/straw-oval_section.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 11056,
+      "sha256": "d99f456a26e44a0025f77ae9eeebe724fba4ce12a84fd423e2b2651460eb5ca3"
+    },
+    {
+      "path": "assets/troubleshooting/straw.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 99444,
+      "sha256": "bfbdbdbf7147b08525709bae62c1e67b71b9e46acf5adc13ae24a130a242e683"
+    },
+    {
+      "path": "assets/troubleshooting/thermo-crack-example.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 21288,
+      "sha256": "c3b255d3e6a49ee853c1939cfe376b8df5893e6b853e7a3ad84b6dd974903742"
+    },
+    {
+      "path": "assets/troubleshooting/thermo-whitening-example.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 30372,
+      "sha256": "7207bf504e49d3e6387482da73e802cdd50d38c8ff924125dc6083227b0fb5da"
+    },
+    {
+      "path": "assets/troubleshooting/thermoforming-crack_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 20196,
+      "sha256": "71548db91ee40d4a9584b3e69e865d209df31b27d04ca793f6d6bc0a78e6fb65"
+    },
+    {
+      "path": "assets/troubleshooting/thermoforming-normal_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 20204,
+      "sha256": "23eb3f5cbf8522efe65c7ae3cde16529e2beebf1e5cfa3c5c06d488538e69025"
+    },
+    {
+      "path": "assets/troubleshooting/thermoforming-whitening_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 20286,
+      "sha256": "b134b1de933cddd8aa86136c55a9190abf1a3f8a82a4cd3389d095569fb6c369"
+    },
+    {
+      "path": "assets/troubleshooting/thermoforming.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 1038612,
+      "sha256": "910ee74ec73dd1859de4d5f3c5676ddb8a0dca30cb0bfb7414b6c65699271411"
+    },
+    {
+      "path": "assets/troubleshooting/vent-bubbles_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 7338,
+      "sha256": "a345862d9e12ed7aa6e8c89d4fb99fe49d54467d98daa78365f04b6ddcd1fdc6"
+    },
+    {
+      "path": "assets/troubleshooting/vent-bubbles_section.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 9484,
+      "sha256": "2cc1cd980cfd3936f923bd8b3df4d997422261fbe62558c941ae56d96d333a2a"
+    },
+    {
+      "path": "assets/troubleshooting/vent-flooding_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 11640,
+      "sha256": "52d5ea869f165212577d73d7fad26ec96cf627f5d657385d56e7d91ee5c9af1e"
+    },
+    {
+      "path": "assets/troubleshooting/vent-guide-upstream_reverse_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 63028,
+      "sha256": "36e890e7cff6a92fb57baa8f145b309cc3523eb51169b2daa74fa1647f0e3019"
+    },
+    {
+      "path": "assets/troubleshooting/vent-guide-without_reverse_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 62260,
+      "sha256": "cfe391b875143c933d5e2c95c4b8e2eb624befa2837effb5d81959aee7b6f6f0"
+    },
+    {
+      "path": "assets/troubleshooting/vent-guide.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 1971892,
+      "sha256": "bdcc286daa7276e44facc3468484fbe5a32f5d401ede7a3db419ca23e05c1530"
+    },
+    {
+      "path": "assets/troubleshooting/vent-normal_strand_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 7342,
+      "sha256": "15b24d978eacd29ba97d0e4ab40f3894b92ed964ddbcbd3f9ffa07525081393e"
+    },
+    {
+      "path": "assets/troubleshooting/vent-normal_strand_section.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 7208,
+      "sha256": "d4ba3bdbd399ac99c7eaadf513f645101fa3ce79dc61f68ba0ae107cf5c51775"
+    },
+    {
+      "path": "assets/troubleshooting/vent-normal_vent_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 13012,
+      "sha256": "f986af10c1fd36a9221c5631772006a74d8d95a2f8f9bb974e5f9ebfb161373b"
+    },
+    {
+      "path": "assets/troubleshooting/vent.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 338672,
+      "sha256": "0dc162a64fd3a67fa4fd1af7f06a4e8624dd1869078997078e2a6891e81caa22"
+    },
+    {
+      "path": "assets/troubleshooting/warp-normal_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 7130,
+      "sha256": "011f01d5bc41c8b2b616292d025a28f1ae86d71bbea855c27b3e79904486565f"
+    },
+    {
+      "path": "assets/troubleshooting/warp-warped_full.webp",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 10570,
+      "sha256": "26311cac962e52459b71a78831a24bf1917c30f7d0479d176b8f943c8c6db513"
+    },
+    {
+      "path": "assets/troubleshooting/warp.glb",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 226944,
+      "sha256": "bdf490b55f0065c82253f52ac5fbaa6d9cd87029a9d320da0dbebd96592f2450"
+    },
+    {
+      "path": "compounding-guide.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 42545,
+      "sha256": "c9edeb1e4ad274169769c521a704ece5a26124209fe2c2107dc186095aad3b1b"
+    },
+    {
+      "path": "custom.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 37579,
+      "sha256": "5168214ac7e1e9943265dd0f4b107dc6c00c51c97af4c743f4dc2c647d7e5be3"
+    },
+    {
+      "path": "data/grades/CA1180P_talc10_wax0p3.json",
+      "role": "embedded-asset",
+      "encoding": "utf8-lf",
+      "bytes": 1795,
+      "sha256": "71e6ef77839316e3f23a60d192f9fd8e02775a80c6560eca69f4cad7caab4280"
+    },
+    {
+      "path": "data/material_cards.json",
+      "role": "embedded-asset",
+      "encoding": "utf8-lf",
+      "bytes": 663,
+      "sha256": "39a292403f8d6ff1cb4fa0c8d5f02c9a8254ed744a350766b8e8bc347477a736"
+    },
+    {
+      "path": "data/troubleshooting_kb.json",
+      "role": "embedded-asset",
+      "encoding": "utf8-lf",
+      "bytes": 58061,
+      "sha256": "ed33fbb0bf1434444ce1dc574594ef16bd6c74d4b2495db75db54847f75c05f9"
+    },
+    {
+      "path": "data/troubleshooting_visuals.json",
+      "role": "embedded-asset",
+      "encoding": "utf8-lf",
+      "bytes": 20661,
+      "sha256": "b194aff02c4af1e895dc0081a063d7fca6bd804a05287244fcd891fc2519de10"
+    },
+    {
+      "path": "data/vent_guide.json",
+      "role": "embedded-asset",
+      "encoding": "utf8-lf",
+      "bytes": 27142,
+      "sha256": "f38ec6424944dba0095ee3091cf7b4b82eea2a6a0b9c7d3c1c8d96ea74d8b6d6"
+    },
+    {
+      "path": "equipment-kinematics.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 992,
+      "sha256": "797d8ab0ccf708cf164667d1b81709eb69219ed32c09b2361f7710bfa63f7967"
+    },
+    {
+      "path": "equipment-models.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 18146,
+      "sha256": "e58b0194648a26518b09afa8bb15c984f9f51ff24889fdea80102bd5c183958c"
+    },
+    {
+      "path": "equipment-motion.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 25601,
+      "sha256": "e64e8439c4e084130466c931397e749e99f654dd1722d6d82c5e0d66bb95bf49"
+    },
+    {
+      "path": "equipment-study.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 11028,
+      "sha256": "fd487726537d41394e366590d36df122f3240bc3baf5bec7cc06d1ba3cfefba6"
+    },
+    {
+      "path": "flash-guide-data.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 28254,
+      "sha256": "a637dc5b729a2c577de24178ebdccf04ff6e405154384bf586cbb7c835684f01"
+    },
+    {
+      "path": "flash-guide.css",
+      "role": "stylesheet",
+      "encoding": "utf8-lf",
+      "bytes": 7513,
+      "sha256": "6cfc38e2f9e7d524a96dd56a2838e726e61f75d88db422a0785d6f56cfade9e8"
+    },
+    {
+      "path": "flash-guide.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 26424,
+      "sha256": "49aca3344a6bb56b30819a36267fed741991400b8d36ff97f05808971edd85dd"
+    },
+    {
+      "path": "flash-mold-viewer.js",
+      "role": "module",
+      "encoding": "utf8-lf",
+      "bytes": 3913,
+      "sha256": "3e57a1f70d2262c1f0dc19e317a0829e06eeb3097e0578057acd57e88306441f"
+    },
+    {
+      "path": "glossary.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 21161,
+      "sha256": "888b02801afe3b8b6a5188647b694f43c7eb7fc5f65fac29166dabce4ff50529"
+    },
+    {
+      "path": "icons/icon-192.png",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 450,
+      "sha256": "989b713d586b779fbeb36a147b0abf8a042ae127b7e1f8f58a554fb5aafc40ff"
+    },
+    {
+      "path": "icons/icon-512.png",
+      "role": "embedded-asset",
+      "encoding": "binary",
+      "bytes": 1820,
+      "sha256": "8a56e65e24eba4558eeae74517ada5f432c31f8702cd837bc9ca65349705c014"
+    },
+    {
+      "path": "index.html",
+      "role": "entry",
+      "encoding": "utf8-lf",
+      "bytes": 326093,
+      "sha256": "4c74cdbf2395b950caa641a7705c666c6b54aebfb4166865e1276c9176ee4a98"
+    },
+    {
+      "path": "injection-motion.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 22342,
+      "sha256": "71672d4b5ee4fc06a2347423d935bbfd1d6ff64f7c8e9a68c1d7837e41e4582f"
+    },
+    {
+      "path": "overrides.css",
+      "role": "stylesheet",
+      "encoding": "utf8-lf",
+      "bytes": 26685,
+      "sha256": "98deba7d23a44d1e96ee5fcfe9b97ff9f2ab8f6627c24df4574ffd9c0da35eb2"
+    },
+    {
+      "path": "package.json",
+      "role": "build-contract",
+      "encoding": "utf8-lf",
+      "bytes": 1573,
+      "sha256": "a6649242343f4767a483df4b07070b93d8b8752919006b55a4394e92b2d1b92c"
+    },
+    {
+      "path": "pha-integration.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 19153,
+      "sha256": "27ab3ae905495d9f9a7f5175c6c53014eeaffd09675f12e314a1a211d04c4518"
+    },
+    {
+      "path": "process-atlas.css",
+      "role": "stylesheet",
+      "encoding": "utf8-lf",
+      "bytes": 14356,
+      "sha256": "6a9ea3fa7e272c4a00d402c40555b7d5b1162755cc275badd191818caa2c2ad5"
+    },
+    {
+      "path": "process-atlas.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 16434,
+      "sha256": "1d1f89e7234b0283b2dbf8fadd2df62beb6c7d3a62a3cfab33f76ddd17dfb9af"
+    },
+    {
+      "path": "process-evidence.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 14902,
+      "sha256": "4246bdf17a1ae9cb3e60260c7cb4fd997b958c4882fbe8951325e22f550e5e92"
+    },
+    {
+      "path": "scripts/build-single-file.cjs",
+      "role": "generator",
+      "encoding": "utf8-lf",
+      "bytes": 9937,
+      "sha256": "74f9247f9cd06eae023632d8bb20ae784884c87a4047010cc0e9c5464e490779"
+    },
+    {
+      "path": "scripts/single-file-runtime.js",
+      "role": "runtime",
+      "encoding": "utf8-lf",
+      "bytes": 5055,
+      "sha256": "d931461d122799d4431b703b76a9a277be51cc91d78549b5113ce4f4a15f18dd"
+    },
+    {
+      "path": "straw-guide.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 22388,
+      "sha256": "1f69a2a32a1fd6577b1c3057984ff6339632e0fdaf9c3e8f016bca6d58a5e747"
+    },
+    {
+      "path": "tars-batch-schema.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 7011,
+      "sha256": "1b0151ec9c54d5f2c7e3803117447edccbdd05b0fe2d6caaa1a38a1b931b2269"
+    },
+    {
+      "path": "tokens.css",
+      "role": "stylesheet",
+      "encoding": "utf8-lf",
+      "bytes": 8037,
+      "sha256": "f2e05b95bf94c93517770e803adf8c999df593f628083e5d4ecfd955b6ae0b1e"
+    },
+    {
+      "path": "troubleshooting-data.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 58183,
+      "sha256": "5c6ba5f94ef9bd65b73a371cc98698c652946ce1b783d815ab226cfd378ed70e"
+    },
+    {
+      "path": "troubleshooting-viewer.js",
+      "role": "module",
+      "encoding": "utf8-lf",
+      "bytes": 10320,
+      "sha256": "350cd64eb16e48df921b2e50011970dbefb2a3fe2da4459ab3cbb7fa00841b91"
+    },
+    {
+      "path": "troubleshooting-visuals-data.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 20753,
+      "sha256": "889c1a642426ccf192927d3fd098a95c1bddae653e99f363eefad787c9f41c30"
+    },
+    {
+      "path": "troubleshooting-visuals.css",
+      "role": "stylesheet",
+      "encoding": "utf8-lf",
+      "bytes": 7135,
+      "sha256": "22ce13358fafa11621dbddbc1d20f1e94e41cfaa9b10129db1dcd4773be33c54"
+    },
+    {
+      "path": "troubleshooting-visuals.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 25655,
+      "sha256": "b58bddbc052e566f455e99fe296411234874eb0fbbfff1463229e8b5f2f12abd"
+    },
+    {
+      "path": "vendor/chart-4.4.0/LICENSE",
+      "role": "license",
+      "encoding": "utf8-lf",
+      "bytes": 1093,
+      "sha256": "5a0877ad6d818529be4f33009d0942cdf7e2ed7656156f4aba7308459a546030"
+    },
+    {
+      "path": "vendor/chart-4.4.0/chart.umd.min.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 205222,
+      "sha256": "0e2326c6868072bec1592760c6729043caeea2960a2b46cee6a2192aac6abff0"
+    },
+    {
+      "path": "vendor/chart-4.4.0/provenance.json",
+      "role": "provenance",
+      "encoding": "utf8-lf",
+      "bytes": 647,
+      "sha256": "4e4fa0cad2ef01e557e7e5b3800e2be142cfdbeed2bf4ee081cc55128111b638"
+    },
+    {
+      "path": "vendor/three-0.185.1/LICENSE",
+      "role": "license",
+      "encoding": "utf8-lf",
+      "bytes": 1081,
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
+    },
+    {
+      "path": "vendor/three-0.185.1/build/three.core.js",
+      "role": "module",
+      "encoding": "utf8-lf",
+      "bytes": 1443056,
+      "sha256": "3718df126d69c125362a03340913204470d8c50238605150e57f808840fb7759"
+    },
+    {
+      "path": "vendor/three-0.185.1/build/three.module.js",
+      "role": "module",
+      "encoding": "utf8-lf",
+      "bytes": 650153,
+      "sha256": "bbf5ed13fe4373f5bd38b14ea8e62e9f157327da5638edc6d3863e08b167c9c7"
+    },
+    {
+      "path": "vendor/three-0.185.1/examples/jsm/controls/OrbitControls.js",
+      "role": "module",
+      "encoding": "utf8-lf",
+      "bytes": 40504,
+      "sha256": "faabb4e8dfd9235ee4a9fd7c9a3d75f90f1689dbd4944bd6fd32117dacec5f93"
+    },
+    {
+      "path": "vendor/three-0.185.1/examples/jsm/loaders/GLTFLoader.js",
+      "role": "module",
+      "encoding": "utf8-lf",
+      "bytes": 114959,
+      "sha256": "97642d720f16cc9a0c9844934198e4d0c023bea8e89576d0f7545d03b2d103d2"
+    },
+    {
+      "path": "vendor/three-0.185.1/examples/jsm/utils/BufferGeometryUtils.js",
+      "role": "module",
+      "encoding": "utf8-lf",
+      "bytes": 37621,
+      "sha256": "5c552223a9309883743b80538d6e9cdb45e3227f30d3ec56fb2c39b46e78d595"
+    },
+    {
+      "path": "vendor/three-0.185.1/examples/jsm/utils/SkeletonUtils.js",
+      "role": "module",
+      "encoding": "utf8-lf",
+      "bytes": 11535,
+      "sha256": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f"
+    },
+    {
+      "path": "vendor/three-0.185.1/provenance.json",
+      "role": "provenance",
+      "encoding": "utf8-lf",
+      "bytes": 499,
+      "sha256": "ec94425d25fa18417eb7c92f7b80ba35a069cd5dc85d4ae4e5e2923d881e3b69"
+    },
+    {
+      "path": "vent-guide-data.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 28109,
+      "sha256": "b44ee82313a51cf6f1353564472dd967a7925488bdeada54d43ffd0906fd3ffb"
+    },
+    {
+      "path": "vent-guide.css",
+      "role": "stylesheet",
+      "encoding": "utf8-lf",
+      "bytes": 4093,
+      "sha256": "41fad5722a1b45ac7a9c2e011d3b46845d14e2b4f6a193a43853699f746526ad"
+    },
+    {
+      "path": "vent-guide.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 6811,
+      "sha256": "f265ab0b68daa672a480913cdd23c836ca8386b5e32a9326d9386cb3208e304e"
+    }
+  ]
+}
