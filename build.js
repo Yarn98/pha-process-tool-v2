@@ -2,7 +2,7 @@
 
 /**
  * Build script for PHA Process Optimizer
- * Copies all static files to dist directory for Netlify deployment
+ * Copies runtime assets to dist for Cloudflare Pages and Netlify deployment.
  */
 
 const fs = require('fs');
@@ -11,6 +11,7 @@ const path = require('path');
 // Files to copy to dist
 const FILES_TO_COPY = [
   'index.html',
+  '_headers',
   'tokens.css',
   'overrides.css',
   'custom.js',
@@ -128,6 +129,19 @@ function build() {
       console.warn(`  ⚠️  ${dir}/ not found, skipping`);
     }
   }
+
+  // Pages limits each asset to 25 MiB. Fail locally before an invalid deployment.
+  // The portable HTML and editable art are intentionally outside this output.
+  function validateAssets(directory) {
+    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+      const asset = path.join(directory, entry.name);
+      if (entry.isDirectory()) validateAssets(asset);
+      else if (fs.statSync(asset).size > 25 * 1024 * 1024) {
+        throw new Error(`Cloudflare Pages asset exceeds 25 MiB: ${path.relative(DIST_DIR, asset)}`);
+      }
+    }
+  }
+  validateAssets(DIST_DIR);
 
   console.log('\n✅ Build completed successfully!');
   console.log(`📦 Output directory: ${DIST_DIR}/\n`);

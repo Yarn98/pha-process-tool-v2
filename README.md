@@ -14,6 +14,8 @@ PHA 가공의 **초기 시운전 참고 조건, 계산, 현장 기록**을 제�
 
 **2026-09-15 플래시 제어·탭 연결 개선:** 불량 위치·발생 시점에 따라 8개 점검 경로를 연결하고, 원문 근거·PHA 그레이드별 주의점·시험 체크리스트를 보강했습니다. 새 생성 이미지와 Blender 금형 4상태에서 충전·보압·플래시·금형 펼침을 조작합니다. Claude의 쉬운 용어·문장 검수 25건을 기술적 의미에 맞춰 반영했습니다. 이력 가져오기, 입력 보존, 분석·물성·스트로의 오래된 결과, My AI 탭 연결도 수정했습니다. [구현·검증 보고서](docs/FLASH_CONTROL_AND_TAB_REVIEW_20260915.md) / [조사 근거](docs/research/flash-control-evidence-20260915.md) / [Claude 검수와 반영](docs/research/claude-flash-readability-20260915.md).
 
+**웹 배포:** Cloudflare Pages는 `npm ci && npm run build`로 만든 `dist/`만 배포합니다. 저장소 루트와 50.63 MiB 싱글 HTML을 배포 대상으로 지정하면 Pages의 파일당 25 MiB 제한으로 실패합니다. `build.js`는 파일 크기를 검사하고 기존 `_headers`를 보존합니다. 싱글 파일은 아래 GitHub 링크로 배포합니다. Git 푸시 후에는 Cloudflare 체크와 운영 배포의 커밋도 확인하세요. [실패 원인·수정 기록](docs/PAGES_DEPLOY_FIX_20260915.md).
+
 ## GitHub에서 받아 로컬로 실행
 
 **한 파일로 사용:** [PHA-Process-Single.html 다운로드](https://github.com/Yarn98/pha-process-tool-v2/raw/refs/heads/main/single-file/PHA-Process-Single.html)를 받아 원하는 폴더에 저장한 뒤 Chrome 또는 Edge로 엽니다. 저장소의 `single-file/PHA-Process-Single.html`이며 약 51 MiB입니다. 이미지·26개 3D 파일·계산·가이드를 포함하므로 옆에 별도 폴더나 서버가 필요하지 않습니다. TARS/My AI의 외부 서비스와 출처 링크는 인터넷이 필요합니다. 파일 경로·기기·브라우저가 바뀌면 저장 기록이 이어지지 않을 수 있으므로 이동 전 기록을 내보내세요. 개인 기록·API 키는 다운로드 파일에 포함되지 않습니다.
