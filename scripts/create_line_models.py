@@ -432,16 +432,6 @@ def config(kind):
                    {'key':'screw','label':['스크류·공급','Screw & feed'],'center':[-3.1,1.65,0],'zoom':2.1},
                    {'key':'finish','label':['성형·후단','Forming & downstream'],'center':[2.4,1.6,0],'zoom':2.0}],
           'stages':[['공급·용융','Feed & melt'],['다이·성형','Die & forming'],['냉각·인취','Cool & haul off'],['제품·배출','Product & discharge']]}
-    if kind=='blowmolding':
-        base.update(center=[-.7,2.35,0],span=[11.6,6.1])
-        base['views'][0]['center']=base['center']
-        base['views'][2].update(label=['금형·블로우 핀','Mold & blow pin'],center=[.7,2.3,0],zoom=1.9)
-        base['controls']=[control('parison','패리슨 토출 진행','Parison extrusion progress',100,'%',[0,3]),
-                          control('mold','금형 개방량','Mold opening',100,'%',[4,3]),
-                          control('pin','블로우 핀 삽입량','Blow pin insertion',100,'%',[4,4.6]),
-                          control('inflate','팽창 진행','Inflation progress',100,'%',[4.6,6])]
-        base['initial']={'parison':0,'mold':100,'pin':0,'inflate':0}
-        base['stages']=[['패리슨 토출','Extrude parison'],['금형 닫힘·팽창','Close & inflate'],['냉각','Cool'],['핀 복귀·제품 배출','Retract & discharge']]
     return base
 
 
@@ -561,8 +551,8 @@ def straw_model():
     export(meta,False)
 
 
-builders={'blowmolding':blow_line}
-# Compounding, extrusion, sheet, cast-film and blown-film lines are built at real scale by scripts/create_<kind>_motion.py.
+builders={}
+# The six generated lines are built at real scale by scripts/create_<kind>_motion.py; this script adapts the straw rig.
 KINDS=['extrusion','compounding','sheet','castfilm','blownfilm','blowmolding','straw']
 
 

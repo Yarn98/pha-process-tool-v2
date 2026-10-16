@@ -62,14 +62,15 @@ try{
       await jog(page,panel,'inflate',50);data=await page.evaluate(()=>__phaEquipmentTest());
       const expanding=data.nodes.inflate.find(node=>node.name==='FormedBottle');
       assert.ok(expanding.morph[0]>.45&&expanding.morph[0]<.55,'Real bottle mesh morphs from the parison profile');
-      assert.ok(Math.abs(expanding.world[0]-.7)<.001&&Math.abs(expanding.world[1]-1.37)<.001,'Bottle remains inside the mold, in world coordinates');
+      const blow=await page.evaluate(()=>PHAEquipmentModels.blowmolding.blow);
+      assert.ok(expanding.world.every((value,i)=>Math.abs(value-blow.bottle[i])<.001),'Bottle stays in the mould at the blow station, in world coordinates');
       await jog(page,panel,'inflate',100);data=await page.evaluate(()=>__phaEquipmentTest());
       assert.ok(data.nodes.inflate.find(node=>node.name==='FormedBottle').morph[0]>.999);
       assert.ok(data.nodes.inflate.some(node=>node.scale[0]>.99&&node.visible));
       await panel.screenshot({path:resolve(out,'blowmolding-expanded.png')});
       await jog(page,panel,'pin',0);await jog(page,panel,'mold',100);
       data=await page.evaluate(()=>__phaEquipmentTest());assert.equal(data.released,true);assert.ok(data.drop>.99);
-      assert.ok(data.nodes.release.some(node=>node.visible&&Math.abs(node.position[1]-.71)<.01));
+      assert.ok(data.nodes.release.some(node=>node.visible&&Math.abs(node.position[1]-blow.release.to[1])<.01),'Released bottle lands on the take-out conveyor');
       checks.push('Blow molding: parison, clamp, pin, inflation and product release interlocks affect real nodes');
     }else{
       for(const control of controls){

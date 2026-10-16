@@ -160,7 +160,7 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
     assert bpy.context.scene.frame_end-bpy.context.scene.frame_start == round(meta['duration']*24)
     reports[kind] = {'objects': len(objects), 'motion_groups': sorted(groups)}
 
-    if kind not in ('straw', 'compounding', 'extrusion', 'sheet', 'castfilm', 'blownfilm'):
+    if kind not in ('straw', 'compounding', 'extrusion', 'sheet', 'castfilm', 'blownfilm', 'blowmolding'):
         # The core center must stay on its bearing axis, rather than orbit in space.
         names = ['ScrewA_core']
         for name in names:
@@ -335,29 +335,53 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
         checks.append('blownfilm: upward nip contacts, one surface speed, BUR 2 bubble inside the cage, lay-flat = pi D / 2, steady bubble')
 
     elif kind == 'blowmolding':
-        frame(25)
-        short = bounds('HollowParison')
-        frame(73)
-        full = bounds('HollowParison')
-        close(short[1][2], full[1][2])
-        assert short[0][2] > full[0][2]+1
-        frame(112)
-        narrow = bounds('FormedBottle')
-        frame(165)
-        expanded = bounds('FormedBottle')
-        close(expanded[0][2], 1.37)
-        close(expanded[1][2], 3.20)
-        close((expanded[0][0]+expanded[1][0])/2, .7)
-        assert expanded[1][0]-expanded[0][0] > 2*(narrow[1][0]-narrow[0][0])
+        T, teaching, blow = meta['timeline'], meta['teaching'], meta['blow']
+        reports[kind]['screw_direction'] = [screw_direction('Extruder screw', 'Extruder screw flight', 0, 1, -1, meta['turns']['screw'])]
+
+        def at(seconds):
+            frame(round(seconds*24))
+        to_blender = lambda v: Vector((v[0], -v[2], v[1]))
+        parison, carriage, pin = objects['ParisonLength'], objects['ShuttleCarriage'], objects['BlowPin']
+        axis_x = parison.matrix_world.translation.x
+        # Continuous parison: one length per cycle, cut at t = 0; the mould captures it at 11.5-12 s.
+        at(.5)
+        short = parison.scale.z
+        at(T['capture'][0])
+        assert short < .06 and parison.scale.z > .95
+        length = bounds('HollowParison')
+        close(length[1][2]-length[0][2], teaching['parison_mm']['length']/1000*parison.scale.z, 2e-3)
+        # Shuttle: head station while the parison grows, blow station from the cut until the return.
+        at(T['hold_cool'][0]+1)
+        station = carriage.matrix_world.translation.y
+        close(station, -teaching['shuttle_mm']/1000)
         close(objects['MoldLeft'].location.x, 0)
         close(objects['MoldRight'].location.x, 0)
-        frame(229)
-        close(objects['BlowPin'].location.z, 0)
-        assert objects['MoldRight'].location.x > .5
-        frame(261)
-        dropped = bounds('ReleasedBottleMesh')
-        close(dropped[0][2], .71)
-        checks.append('blowmolding: head-anchored parison, cavity-aligned morph, pin retraction before opening and product discharge')
+        close(pin.location.z, -teaching['pin_stroke_mm']/1000)
+        close(objects['FormedBottle'].data.shape_keys.key_blocks['Inflated'].value, 1)
+        body = bounds('FormedBottle')
+        close(body[1][2]-body[0][2], teaching['bottle_mm']['height']/1000, 1e-3)
+        close(body[1][0]-body[0][0], teaching['bottle_mm']['body_d']/1000, 1e-3)
+        close((body[0][1]+body[1][1])/2, station, 1e-3)
+        close(objects['InflatedBody'].matrix_world.translation.y, station)
+        at(T['inflate'][0]-.1)
+        narrow = bounds('FormedBottle')
+        close(narrow[1][0]-narrow[0][0], teaching['parison_mm']['od']/1000, 1e-3)
+        at(T['parison'][0]+.5)
+        close(carriage.matrix_world.translation.y, 0)
+        close(objects['MoldRight'].location.x-objects['MoldLeft'].location.x, teaching['opening_mm']/1000)
+        close(pin.location.z, 0)
+        # Knife crosses the parison axis right after the cut.
+        at(.15)
+        knife = bounds('ParisonKnife_body')
+        assert knife[0][0] < axis_x < knife[1][0]
+        # Take-out lands the bottle on the conveyor; the air window covers inflation and hold.
+        at(T['take_out'][1])
+        released = objects['ReleasedBottle']
+        assert (released.matrix_world.translation-to_blender(blow['release']['to'])).length < 5e-3 and released.scale.x > .99   # nearest frame
+        at(T['exhaust'][0])
+        assert released.scale.x < .01
+        assert blow['air'][0] == T['inflate'][0] and blow['air'][1] == T['exhaust'][1]
+        checks.append('blowmolding: continuous parison, capture, knife, 300 mm shuttle, 50 mm pin, 160 mm opening, bottle morph from the parison and conveyor take-out')
 
     elif kind == 'straw':
         reports[kind]['screw_direction'] = [screw_direction('Screw rotation — illustrative speed', 'Continuous helical screw flight', 0, 1, 1, 1)]

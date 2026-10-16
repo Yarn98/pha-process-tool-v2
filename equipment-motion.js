@@ -54,20 +54,23 @@
       group.mixer.setTime(clamp(second,0,group.duration-.00001));
     }
     if(meta.id==='blowmolding'){
-      const nodes=asset.nodes,a=state.actual;
+      // Shuttle positions, take-out drop and blow-air window come from the rig metadata (meta.blow).
+      const nodes=asset.nodes,a=state.actual,blow=meta.blow;
       for(const name of ['ParisonLength','InflatedBody','ReleasedBottle'])if(nodes[name])nodes[name].visible=true;
       if(state.mode==='manual'||state.mode==='study'){
-        const bodyReady=a.inflate>.01||(a.pin>99&&a.parison>99&&a.mold<.1);
-        nodes.ParisonLength.visible=!bodyReady&&!state.released;
+        // Once the closed mould holds a full parison it is cut and shuttled to the blow station.
+        const captured=(a.mold<.1&&a.parison>99.99)||a.pin>.01||a.inflate>.01||state.released;
+        asset.groups.get('shuttle')?.mixer.setTime(captured?blow.shuttle.station:blow.shuttle.head);
+        nodes.ParisonLength.visible=!captured;
         nodes.ParisonLength.scale.set(1,Math.max(.001,a.parison/100),1);
-        nodes.InflatedBody.visible=bodyReady&&!state.released;
+        nodes.InflatedBody.visible=captured&&!state.released;
         nodes.InflatedBody.scale.set(1,1,1);
         nodes.ReleasedBottle.visible=state.released;
         nodes.ReleasedBottle.scale.set(1,1,1);
-        const f=state.drop*state.drop*(3-2*state.drop);
-        nodes.ReleasedBottle.position.set(.7+.3*f,1.37-.66*f,0);
+        const f=state.drop*state.drop*(3-2*state.drop),[x0,y0,z0]=blow.release.from,[x1,y1,z1]=blow.release.to;
+        nodes.ReleasedBottle.position.set(x0+(x1-x0)*f,y0+(y1-y0)*f,z0+(z1-z0)*f);
         asset.members.air?.forEach(node=>{node.visible=a.inflate>0&&a.pin>99;});
-      }else asset.members.air?.forEach(node=>{node.visible=state.time>=4.6&&state.time<6.5;});
+      }else asset.members.air?.forEach(node=>{node.visible=state.time>=blow.air[0]&&state.time<blow.air[1];});
     }
   }
   // frameTime marks a playback frame; its following tick measures the frame cost.

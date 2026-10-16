@@ -1,14 +1,14 @@
 [
   {
-    "kind": "blownfilm",
+    "kind": "blowmolding",
     "blender": "5.2.1 LTS",
-    "source": "assets/equipment/blownfilm-motion.blend",
-    "frame": 55,
-    "source_sha256": "a2b06029e370a0401322a8d6626149b5719173b25fbe70e0c1698dd68332fef4",
-    "fbx": "output/unreal/fbx/blownfilm.fbx",
-    "fbx_sha256": "0717e870ae9a37cc585d79d1a9f61128d6b982f6bd4d42a6f21b1b47a841183e",
-    "objects": 77,
-    "vertices": 25926,
+    "source": "assets/equipment/blowmolding-motion.blend",
+    "frame": 165,
+    "source_sha256": "6b41d8ca3f42e5a1d1a5eef573daaeff1f06ee2f67a818ff640604eced4a8c96",
+    "fbx": "output/unreal/fbx/blowmolding.fbx",
+    "fbx_sha256": "70dfad6db5f5ab2a93798d65e421706bf4b108f6ce0ab0af01ade97c2cea52cd",
+    "objects": 36,
+    "vertices": 20272,
     "materials": {
       "Paint / anthracite base": {
         "color": [
@@ -170,24 +170,64 @@
         "roughness": 0.07,
         "alpha": 1.0
       },
-      "Polymer / film (translucent)": {
+      "Polymer / sage green": {
         "color": [
           0.04817,
           0.26225,
           0.10224
         ],
         "metallic": 0.0,
-        "roughness": 0.15,
-        "alpha": 0.42
+        "roughness": 0.35,
+        "alpha": 1.0
       },
-      "Paper / winder core": {
+      "Cast iron / painted grey": {
         "color": [
-          0.47932,
-          0.32314,
-          0.14413
+          0.19462,
+          0.21223,
+          0.21586
+        ],
+        "metallic": 0.2,
+        "roughness": 0.62,
+        "alpha": 1.0
+      },
+      "Hose / cooling supply blue": {
+        "color": [
+          0.02624,
+          0.11444,
+          0.34191
         ],
         "metallic": 0.0,
-        "roughness": 0.85,
+        "roughness": 0.6,
+        "alpha": 1.0
+      },
+      "Hose / cooling return red": {
+        "color": [
+          0.39157,
+          0.04231,
+          0.0319
+        ],
+        "metallic": 0.0,
+        "roughness": 0.6,
+        "alpha": 1.0
+      },
+      "Polymer / bottle (translucent)": {
+        "color": [
+          0.04817,
+          0.26225,
+          0.10224
+        ],
+        "metallic": 0.0,
+        "roughness": 0.18,
+        "alpha": 0.6
+      },
+      "Polymer / flash": {
+        "color": [
+          0.02843,
+          0.14703,
+          0.05951
+        ],
+        "metallic": 0.0,
+        "roughness": 0.4,
         "alpha": 1.0
       },
       "Lamp / red": {
@@ -260,6 +300,16 @@
         "roughness": 0.35,
         "alpha": 1.0
       },
+      "Air / blow marker": {
+        "color": [
+          0.27468,
+          0.57758,
+          0.80695
+        ],
+        "metallic": 0.0,
+        "roughness": 0.2,
+        "alpha": 0.7
+      },
       "Polymer / natural pellet": {
         "color": [
           0.58408,
@@ -269,22 +319,12 @@
         "metallic": 0.0,
         "roughness": 0.45,
         "alpha": 1.0
-      },
-      "Polymer / bright marker": {
-        "color": [
-          0.21223,
-          0.65141,
-          0.32314
-        ],
-        "metallic": 0.0,
-        "roughness": 0.3,
-        "alpha": 1.0
       }
     },
     "engine": "5.8.2-56702186+++UE5+Release-5.8",
     "renderer": "Unreal DX12 / Lumen",
-    "png": "output/unreal/blownfilm-unreal.png",
-    "png_sha256": "1bba298405772a369b2ab01caafe0078d371e20c4369cf09612d19387ceaa594",
+    "png": "output/unreal/blowmolding-unreal.png",
+    "png_sha256": "e2c73c26a104298fd3de0ebe2145fe71c49099a07c811de3e3be62df1ac63395",
     "scope": "Illustrative equipment; no measured dimensions or CFD"
   }
 ]
