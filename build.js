@@ -38,6 +38,7 @@ const FILES_TO_COPY = [
   'process-atlas.js',
   'process-atlas.css',
   'hmi-panel.js',
+  'troubleshooting-tree.js',
   'machine-viewer.js',
   'injection-motion.js',
   'equipment-models.js',

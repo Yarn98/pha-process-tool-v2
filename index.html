@@ -443,6 +443,7 @@
         <div class="group"><label id="tsSearchLabel" for="tsSearch">증상 검색</label><input id="tsSearch" type="search" oninput="renderTS()"></div>
       </div>
       <p id="tsResultCount" class="muted" aria-live="polite"></p>
+      <div id="tsTree" class="ts-tree-panel" hidden></div>
       <div id="tsContainer"></div>
     </section>
 
@@ -4710,6 +4711,7 @@ window.addEventListener('load', () => {
   <script src="flash-guide.js?v=25"></script>
   <script src="troubleshooting-visuals.js?v=25"></script>
   <script src="custom.js?v=25"></script>
+  <script src="troubleshooting-tree.js?v=25"></script>
   <!-- Compounding & Straw guide modules -->
   <script src="compounding-guide.js?v=25"></script>
   <script src="straw-guide.js?v=25"></script>

@@ -1,5 +1,5 @@
 {
-  "reviewed": "2026-10-16T18:13:33.546Z",
+  "reviewed": "2026-10-16T18:45:56.113Z",
   "scope": [
     "proc",
     "hist",
@@ -19,7 +19,7 @@
   "testOnlyInstrumentation": "Expose unchanged myaiExecTool in the existing localhost-only test hook; no production file altered.",
   "chartVersion": "4.4.0",
   "sourceSha256": {
-    "index.html": "da708fe7547ab7ad3c25fde30f76efe46da118a8fac7dfaf932a8a4bc93624f0",
+    "index.html": "44c3fdf5aa47a6d06a39a1270ce9ec73eba06131982bda75683718e83d09883e",
     "custom.js": "5168214ac7e1e9943265dd0f4b107dc6c00c51c97af4c743f4dc2c647d7e5be3"
   },
   "baseline": {
@@ -682,7 +682,7 @@
       "status": "passed",
       "observations": {
         "saved": {
-          "ts": "2026-10-16T18:12:31.461Z",
+          "ts": "2026-10-16T18:44:52.666Z",
           "proc": "extrusion",
           "grade": "CA1180P",
           "params": {

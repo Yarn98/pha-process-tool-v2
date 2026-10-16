@@ -49,6 +49,7 @@ const PRECACHE_URLS = [
   './process-atlas.js' + ASSET_V,
   './process-atlas.css' + ASSET_V,
   './hmi-panel.js' + ASSET_V,
+  './troubleshooting-tree.js' + ASSET_V,
   './machine-viewer.js' + ASSET_V,
   './injection-motion.js' + ASSET_V,
   './equipment-models.js' + ASSET_V,
