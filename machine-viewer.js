@@ -217,5 +217,73 @@
       dispose(){items.forEach(item=>{item.mesh.removeFromParent();item.mesh.geometry.dispose();item.mesh.material.dispose();item.edges.geometry.dispose();item.edges.material.dispose();});hatch.dispose();}
     };
   }
-  window.PHAMachineViewer={createStage,prepareModel,fitShadows,groupClips,frameOrtho,watch,disposeModel,createGovernor,warm,createHeatOverlay,heatGradient};
+  /* Swimlane chart of a teaching cycle: one row per actuator (meta.lanes), one bar per sub-step
+     (meta.steps rows [start, end, ko, en, lane]) and the app stages (meta.stage_segments) on top.
+     Neutral greys; the bars active at the playhead turn dark, so colour stays free for abnormal states
+     (ISA-101). Pointer down/drag calls onSeek(time); keyboard users keep the player's range input. */
+  const SVG_NS='http://www.w3.org/2000/svg';
+  function createCycleChart(container,meta,{locale='ko',stageNames=[],onSeek}={}){
+    const en=locale==='en',lanes=meta.lanes||[],steps=(meta.steps||[]).filter(row=>lanes.some(lane=>lane.key===row[4]));
+    const duration=meta.cycle_seconds,labelW=en?104:84,right=12,stripH=18,laneH=24,axisH=20,plotBottom=stripH+lanes.length*laneH;
+    const height=plotBottom+axisH;
+    const name=(ko,english)=>en?english:ko;
+    const node=(tag,attrs,parent,text)=>{const el=document.createElementNS(SVG_NS,tag);for(const key in attrs)el.setAttribute(key,attrs[key]);if(text!=null)el.textContent=text;parent?.appendChild(el);return el;};
+    // Monospace estimate (Hangul a full em, Latin/digits about 0.6 em) to keep labels inside their bars.
+    const fits=(text,width,size)=>[...text].reduce((sum,ch)=>sum+(ch.charCodeAt(0)>0x1100?size:size*.6),0)+8<=width;
+    const span=(a,b)=>a.toFixed(2)+'–'+b.toFixed(2)+' s';
+    let svg=null,heads=[],bars=[],stages=[],toX=()=>0,toTime=()=>0,dragging=false,last=null;
+    function render(width){
+      width=Math.max(280,Math.round(width||container.clientWidth||600));
+      const plot=width-labelW-right;
+      toX=time=>labelW+time/duration*plot;
+      toTime=px=>Math.min(duration-.001,Math.max(0,(px-labelW)/plot*duration));
+      container.textContent='';bars=[];stages=[];last=null;
+      svg=node('svg',{class:'cycle-chart',width,height,viewBox:'0 0 '+width+' '+height,role:'img','aria-label':name('장비별 사이클 단계: ','Cycle by actuator: ')+lanes.map(lane=>name(lane.ko,lane.en)).join(', ')},container);
+      node('desc',{},svg,steps.map(row=>name(row[2],row[3])+' '+span(row[0],row[1])).join('; '));
+      // Labels sit in their own layer above the playhead so it never hides the active step's name.
+      const labels=node('g',{class:'cycle-labels'});
+      for(const [a,b,stage] of meta.stage_segments||[]){
+        const w=toX(b)-toX(a),rect=node('rect',{class:'cycle-stage',x:toX(a),y:0,width:Math.max(1,w-1),height:stripH-4},svg);
+        node('title',{},rect,String(stage+1).padStart(2,'0')+' · '+(stageNames[stage]||'')+' '+span(a,b));
+        const label=String(stage+1).padStart(2,'0');
+        const text=fits(label,w,10)?node('text',{class:'cycle-stage-label',x:toX(a)+w/2,y:stripH-8,'text-anchor':'middle'},labels,label):null;
+        stages.push({a,b,rect,text});
+      }
+      node('text',{class:'cycle-lane',x:labelW-8,y:stripH-8,'text-anchor':'end'},svg,name('단계','Stage'));
+      lanes.forEach((lane,i)=>{
+        const y=stripH+i*laneH;
+        node('line',{class:'cycle-grid',x1:0,x2:width,y1:y+laneH,y2:y+laneH},svg);
+        node('text',{class:'cycle-lane',x:labelW-8,y:y+laneH/2+4,'text-anchor':'end'},svg,name(lane.ko,lane.en));
+      });
+      // Long bars first so short events (V/P transfer) stay visible on top of the bar they interrupt.
+      for(const row of [...steps].sort((p,q)=>(q[1]-q[0])-(p[1]-p[0]))){
+        const [a,b,ko,english,laneKey]=row,y=stripH+lanes.findIndex(lane=>lane.key===laneKey)*laneH;
+        const x=toX(a),w=Math.max(2,toX(b)-x),label=name(ko,english).replace(/ \(.*\)$/,'');
+        const rect=node('rect',{class:'cycle-bar',x,y:y+5,width:w,height:laneH-10},svg);
+        node('title',{},rect,name(ko,english)+' '+span(a,b));
+        const text=fits(label,w,10)?node('text',{class:'cycle-bar-label',x:x+4,y:y+laneH/2+3.5},labels,label):null;
+        bars.push({a,b,rect,text});
+      }
+      for(let s=0;s<=duration+1e-9;s+=plot<420?4:2){
+        node('line',{class:'cycle-tick',x1:toX(s),x2:toX(s),y1:plotBottom,y2:plotBottom+4},svg);
+        node('text',{class:'cycle-axis',x:toX(s),y:plotBottom+15,'text-anchor':'middle'},svg,String(s));
+      }
+      // A light halo keeps the playhead visible where it crosses a dark (active) bar.
+      heads=['cycle-head-halo','cycle-head'].map(cls=>node('line',{class:cls,x1:labelW,x2:labelW,y1:0,y2:plotBottom},svg));
+      svg.appendChild(labels);
+      if(onSeek){
+        const seekAt=event=>{const box=svg.getBoundingClientRect();onSeek(toTime((event.clientX-box.left)*width/box.width));};
+        svg.addEventListener('pointerdown',event=>{dragging=true;svg.setPointerCapture(event.pointerId);seekAt(event);});
+        svg.addEventListener('pointermove',event=>{if(dragging)seekAt(event);});
+        for(const type of ['pointerup','pointercancel'])svg.addEventListener(type,()=>{dragging=false;});
+      }
+    }
+    function setTime(time){
+      if(!heads.length||time===last)return;
+      last=time;const x=toX(time);for(const line of heads){line.setAttribute('x1',x);line.setAttribute('x2',x);}
+      for(const item of [...bars,...stages]){const now=time>=item.a&&time<item.b;item.rect.classList.toggle('is-now',now);item.text?.classList.toggle('is-now',now);}
+    }
+    return {render,setTime,dispose(){container.textContent='';svg=null;heads=[];bars=[];stages=[];}};
+  }
+  window.PHAMachineViewer={createStage,prepareModel,fitShadows,groupClips,frameOrtho,watch,disposeModel,createGovernor,warm,createHeatOverlay,heatGradient,createCycleChart};
 })();

@@ -13,15 +13,15 @@
   const manual={screw:100,rotation:0,mold:0,ejector:0,fill:0,released:false,fall:0,releaseAt:null,flow:''};
   const target={screw:100,rotation:0,mold:0,ejector:0};
   let host=null,locale='ko',onStage=()=>{},runtime=null,loading=null,token=0,raf=0,lastTick=0,failed=false;
-  let unwatch=null,studyPanel=null,pendingPaint=0;
+  let unwatch=null,studyPanel=null,pendingPaint=0,chart=null;
   const t=(ko,en)=>locale==='en'?en:ko;
   // Steady cycle: stages are not time-ordered (dosing for the next shot overlaps cooling).
   const phaseAt=time=>{
     const segment=meta?.stage_segments?.find(([a,b])=>time>=a&&time<b);
     return segment?segment[2]:STARTS.reduce((phase,start,i)=>time>=start?i:phase,0);
   };
-  // Most specific sub-step at this time: later rows refine overlapping earlier rows.
-  const stepAt=time=>{const rows=meta?.steps?.filter(([a,b])=>time>=a&&time<b)||[];const row=rows[rows.length-1];return row?row[locale==='en'?3:2]:'';};
+  // Every sub-step running at this time (e.g. cooling and next-shot dosing), in table order.
+  const stepAt=time=>(meta?.steps||[]).filter(([a,b])=>time>=a&&time<b).map(row=>row[locale==='en'?3:2]).join(' · ');
   const names=[['가소화·계량','Plasticize & meter'],['형폐·충전','Close & fill'],['보압·냉각','Pack & cool'],['금형 개방·취출','Open & eject']];
   /* Barrel/nozzle/mould temperature overlay. Values are the user's entered set points (#f_barrel1 ...),
      never measured melt temperatures; reference bands are the selected grade's source or local ranges. */
@@ -178,6 +178,7 @@
     if(lock&&lock.textContent!==message)lock.textContent=message;
     if(state.mode==='study'&&status)status.textContent=t('계산 동작 · 선택한 기구만 표시','Calculated motion · Selected mechanism');
     if(state.mode==='cycle')onStage(phase);
+    chart?.setTime(state.time);host.querySelector('.motion-cycle')?.classList.toggle('is-idle',state.mode!=='cycle');
   }
   function stopStudy(){state.studyPlaying=false;cancel();studyPanel?.clearStatus();if(state.mode==='study')paint();}
   function leaveStudy(){if(state.mode==='study'){stopStudy();leaveManual();}}
@@ -249,6 +250,8 @@
     viewport.style.height=height+'px';
     runtime.renderer.setSize(width,height,false);
     viewer().frameOrtho(runtime.camera,width,height,meta.view.span);paint();
+    const cycleHost=host.querySelector('.cycle-host');
+    if(chart&&cycleHost?.clientWidth){chart.render(cycleHost.clientWidth);chart.setTime(state.time);}
   }
   async function create(){
     const stage=await viewer().createStage({onContextLost:()=>fallback(),zoom:[.8,4]});
@@ -288,7 +291,7 @@
     token++;stopStudy();cancel();state.visible=false;
     runtime?.renderer.domElement.remove();
     if(window.phaSyncMachineOverlay)window.phaSyncMachineOverlay();else document.body.classList.remove('pha-machine-manual');
-    unwatch?.();unwatch=null;host=null;onStage=()=>{};
+    unwatch?.();unwatch=null;host=null;onStage=()=>{};chart=null;
   }
   async function mount(targetHost,options={}){
     detach();host=targetHost;locale=options.locale||'ko';onStage=options.onStage||(()=>{});const current=token;
@@ -298,6 +301,7 @@
       <div class="motion-viewport" hidden></div>
       <div class="motion-toolbar"><button type="button" data-motion="play" disabled>${t('재생','Play')}</button><label>${t('재생 속도','Playback speed')} <select data-motion="speed" aria-label="${t('설명 재생 속도','Illustration playback speed')}" disabled><option value="0.5">0.5×</option><option value="1">1×</option><option value="1.5">1.5×</option></select></label><button type="button" data-motion="manual" aria-pressed="false" disabled>${t('직접 조작','Manual controls')}</button><label>${t('관찰 부위','View')} <select data-motion="focus" aria-label="${t('관찰 부위','Inspection area')}" disabled><option value="all">${t('전체','Whole machine')}</option><option value="screw">${t('스크류','Screw')}</option><option value="mold">${t('금형·취출','Mold & ejector')}</option></select></label><button type="button" data-motion="front" disabled>${t('측면 보기','Side view')}</button><button type="button" data-motion="view" disabled>${t('시점 초기화','Reset view')}</button><button type="button" data-motion="heat" aria-pressed="false" disabled>${t('온도 표시','Temperatures')}</button><span class="motion-phase"></span></div>
       <label class="motion-progress">${t('공정 진행 위치','Cycle position')}<input type="range" min="0" max="100" step="0.1" data-motion="progress" aria-label="${t('공정 진행 위치','Cycle position')}" disabled></label>
+      <figure class="motion-cycle" hidden><div class="cycle-host"></div><figcaption>${t('장비별 사이클 단계 · 가로축은 재생 시간(초) · 누르거나 끌면 그 시점으로 이동','Cycle by actuator · horizontal axis in playback seconds · press or drag to jump there')}</figcaption></figure>
       <p class="motion-hint">${t('정상 연속 사이클: 14초 재생 = 예시 30초 사이클, 다음 샷 계량은 냉각 중 진행 · 드래그 회전 · 휠/두 손가락 확대 · 초록색은 수지 · 단계 선택 시 일시정지','Steady cycle: 14 s playback = 30 s example cycle; next-shot dosing runs during cooling · Drag to rotate · Wheel/pinch to zoom · Green is polymer · Stage selection pauses playback')}</p>
       <div class="motion-heat" hidden><div class="heat-head"><strong>${t('배럴·노즐·금형 온도 (입력한 설정값)','Barrel, nozzle and mould temperatures (entered set points)')}</strong><label>${t('배럴 1 위치','Barrel 1 is at')} <select data-heat="order" aria-label="${t('배럴 1 위치','Barrel 1 position')}"><option value="hopper">${t('호퍼 쪽','Hopper end')}</option><option value="nozzle">${t('노즐 쪽','Nozzle end')}</option></select></label></div><ol class="heat-zones"></ol><div class="heat-scale"></div><p class="heat-note">${t('공정 조건에 입력한 설정값을 존별 색으로 표시합니다. 배럴 설정값이며 실제 용융온도나 실측값이 아닙니다. 참고 범위는 선택한 그레이드의 근거 또는 사용자 수정 범위이고, 굵은 테두리는 범위 밖, 빗금은 미입력입니다. 배럴 1이 어느 쪽인지는 장비마다 다르므로 현장 표기에 맞춰 선택하세요.','Colours show the set points entered under process conditions. They are barrel set points, not melt or measured temperatures. Reference bands come from the selected grade source or your edits; a heavy outline marks values outside the band and hatching marks missing values. Machines number barrel zones from different ends, so match your site convention.')}</p></div>
       <div class="motion-manual" hidden><p class="motion-manual-intro">${t('계량 완료 상태입니다. 후퇴량을 100→0%로 줄여 스크류를 전진시키고, 금형을 연 뒤 취출하세요.','The shot is metered. Move the screw forward (retraction 100→0%) to fill, then open the mold and eject.')}</p><div class="motion-axes">${[
@@ -319,6 +323,10 @@
       host.querySelector('.motion-load').hidden=true;host.dataset.motionState='ready';
       host.querySelectorAll('button,input,select').forEach(el=>el.disabled=false);
       studyPanel?.refresh();
+      if(meta.lanes){
+        chart=viewer().createCycleChart(host.querySelector('.cycle-host'),meta,{locale,stageNames:names.map(name=>name[locale==='en'?1:0]),onSeek:seek});
+        host.querySelector('.motion-cycle').hidden=false;
+      }
       host.querySelector('[data-motion="play"]').onclick=()=>{state.playing=!state.playing;update();schedule();};
       host.querySelector('[data-motion="speed"]').onchange=event=>{state.speed=Number(event.target.value);};
       host.querySelector('[data-motion="progress"]').oninput=event=>seek(Number(event.target.value)/100*DURATION);

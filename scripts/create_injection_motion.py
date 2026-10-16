@@ -565,26 +565,30 @@ def interp(time, points, smooth=True):
 
 
 # Steady cycle: the 30 s teaching example of the research pack compressed to 14 s.
-# Each row: start, end, Korean, English. Dosing for the next shot overlaps cooling.
+# Each row: start, end, Korean, English, lane. Dosing for the next shot overlaps cooling.
+# Swimlanes of the cycle chart, top to bottom; every sub-step belongs to the actuator that performs it.
+LANES = [('clamp', '형체부', 'Clamp unit'), ('unit', '사출 유닛', 'Injection unit'), ('screw', '스크류', 'Screw'),
+         ('mould', '금형', 'Mould'), ('ejector', '이젝터·취출', 'Ejector & part')]
 STEPS = [
-    (0.00, 0.70, '형폐 (고속)', 'Mould closing (fast)'),
-    (0.70, 0.93, '형폐 (금형보호)', 'Mould closing (mould protection)'),
-    (0.93, 1.17, '형체력 상승', 'Clamp-force build-up'),
-    (1.17, 1.40, '노즐 전진', 'Carriage advance'),
-    (1.40, 2.10, '충전 (다단 속도)', 'Injection filling'),
-    (2.10, 2.16, 'V/P 전환', 'V/P transfer'),
-    (2.10, 4.20, '보압', 'Holding pressure'),
-    (4.20, 11.67, '냉각', 'Cooling'),
-    (4.43, 7.70, '냉각 + 계량 (다음 샷)', 'Cooling + dosing (next shot)'),
-    (7.70, 7.93, '냉각 + 석백', 'Cooling + decompression'),
-    (7.93, 8.07, '냉각 + 노즐 후퇴 (선택)', 'Cooling + carriage retract (optional)'),
-    (11.67, 11.90, '형체 해제', 'Clamp release'),
-    (11.90, 12.83, '형개', 'Mould opening'),
-    (12.83, 13.21, '이젝터 전진', 'Ejector forward'),
-    (13.21, 13.53, '취출 (낙하)', 'Part removal (drop)'),
-    (13.53, 13.77, '이젝터 복귀', 'Ejector return'),
-    (13.77, 14.00, '금형 영역 확인', 'Clearance check'),
+    (0.00, 0.70, '형폐 (고속)', 'Mould closing (fast)', 'clamp'),
+    (0.70, 0.93, '형폐 (금형보호)', 'Mould closing (mould protection)', 'clamp'),
+    (0.93, 1.17, '형체력 상승', 'Clamp-force build-up', 'clamp'),
+    (1.17, 1.40, '노즐 전진', 'Carriage advance', 'unit'),
+    (1.40, 2.10, '충전 (다단 속도)', 'Injection filling', 'screw'),
+    (2.10, 2.16, 'V/P 전환', 'V/P transfer', 'screw'),
+    (2.10, 4.20, '보압', 'Holding pressure', 'screw'),
+    (4.20, 11.67, '냉각', 'Cooling', 'mould'),
+    (4.43, 7.70, '계량 (다음 샷)', 'Dosing (next shot)', 'screw'),
+    (7.70, 7.93, '석백', 'Decompression', 'screw'),
+    (7.93, 8.07, '노즐 후퇴 (선택)', 'Carriage retract (optional)', 'unit'),
+    (11.67, 11.90, '형체 해제', 'Clamp release', 'clamp'),
+    (11.90, 12.83, '형개', 'Mould opening', 'clamp'),
+    (12.83, 13.21, '이젝터 전진', 'Ejector forward', 'ejector'),
+    (13.21, 13.53, '취출 (낙하)', 'Part removal (drop)', 'ejector'),
+    (13.53, 13.77, '이젝터 복귀', 'Ejector return', 'ejector'),
+    (13.77, 14.00, '금형 영역 확인', 'Clearance check', 'ejector'),
 ]
+assert {lane for *_, lane in STEPS} == {key for key, _, _ in LANES}
 # Four app stages (process-atlas steps) in time order; dosing (stage 0) happens while cooling.
 STAGE_SEGMENTS = [[0, 2.10, 1], [2.10, 4.43, 2], [4.43, 7.93, 0], [7.93, 11.67, 2], [11.67, CYCLE, 3]]
 STAGE_STARTS = [4.43, 1.17, 2.10, 11.67]
@@ -670,7 +674,7 @@ for frame in range(sc.frame_start, sc.frame_end + 1):
         dot.keyframe_insert('scale', frame=frame)
 
 kit.bake_linear()
-for start, _end, _ko, en in STEPS:
+for start, _end, _ko, en, _lane in STEPS:
     sc.timeline_markers.new(en, frame=int(round(start * FPS)))
 sc.timeline_markers.new('Mold sweep (manual axis)', frame=int(round(SWEEP_START * FPS)))
 
@@ -698,7 +702,8 @@ META = {
     'schema': 'pha-machine-v1',
     'cycle_seconds': CYCLE, 'example_cycle_seconds': 30, 'fps': FPS,
     'stage_starts': STAGE_STARTS, 'stage_segments': STAGE_SEGMENTS, 'windows': WINDOWS,
-    'steps': [[round(a, 2), round(b, 2), ko, en] for a, b, ko, en in STEPS],
+    'steps': [[round(a, 2), round(b, 2), ko, en, lane] for a, b, ko, en, lane in STEPS],
+    'lanes': [{'key': key, 'ko': ko, 'en': en} for key, ko, en in LANES],
     'sweeps': {'mold_opening': [round(SWEEP_START, 6), round(SWEEP_START + SWEEP, 6)]},
     'strokes_m': {'screw': SCREW_STROKE, 'mold': OPEN_STROKE, 'ejector': EJECT_STROKE,
                   'carriage': CARRIAGE_STROKE, 'cushion': CUSHION},

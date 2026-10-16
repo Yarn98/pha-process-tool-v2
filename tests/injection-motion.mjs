@@ -56,6 +56,21 @@ try{
   assert.ok(opened.nodes.Crosshead.position[0]-locked.nodes.Crosshead.position[0]>.15);
   await page.locator('#injectionMotion').screenshot({path:resolve(out,'03-eject.png')});
   checks.push('Steady cycle on actual transforms: close and lock, fill, hold, dosing with rotation during cooling, check ring, sprue break, toggle-driven opening and ejection');
+  // Cycle chart: lanes and bars come from the GLB metadata, the playhead follows the 3D, and a press seeks (paused).
+  assert.equal(eject.meta.lanes.length,5);assert.ok(eject.meta.steps.every(row=>eject.meta.lanes.some(lane=>lane.key===row[4])),'every sub-step belongs to an actuator lane');
+  const chart=page.locator('#injectionMotion .cycle-chart'),nowBars=()=>chart.evaluate(svg=>[...svg.querySelectorAll('.cycle-bar.is-now title')].map(el=>el.textContent.replace(/ [\d.]+–[\d.]+ s$/,'')).sort());
+  await seek(page,5.0);assert.deepEqual(await nowBars(),['계량 (다음 샷)','냉각']);
+  assert.match(await page.locator('#injectionMotion .motion-phase').innerText(),/냉각 · 계량 \(다음 샷\)/,'status names every overlapping sub-step');
+  await chart.evaluate(svg=>svg.scrollIntoView({block:'center',behavior:'instant'}));
+  const openBar=await chart.evaluate(svg=>{const rect=[...svg.querySelectorAll('.cycle-bar')].find(el=>el.querySelector('title').textContent.startsWith('형개 '));const box=rect.getBoundingClientRect();return {x:box.x+box.width/2,y:box.y+box.height/2,svgX:Number(rect.getAttribute('x'))+Number(rect.getAttribute('width'))/2};});
+  await page.locator('#injectionMotion [data-motion="play"]').click();assert.equal((await page.evaluate(()=>PHAInjectionMotion.getState())).playing,true);
+  await page.mouse.click(openBar.x,openBar.y);
+  const pressed=await page.evaluate(()=>PHAInjectionMotion.getState());
+  assert.equal(pressed.playing,false);assert.ok(Math.abs(pressed.time-(11.90+12.83)/2)<.06,'press seeks to the pressed time: '+pressed.time);
+  assert.deepEqual(await nowBars(),['형개']);
+  assert.ok(Math.abs(await chart.evaluate(svg=>Number(svg.querySelector('.cycle-head').getAttribute('x1')))-openBar.svgX)<1,'playhead sits at the 3D time');
+  await page.locator('#injectionMotion .motion-cycle').screenshot({path:resolve(out,'10-cycle-chart.png')});
+  checks.push('Cycle chart: five actuator lanes from the GLB, overlapping cooling and dosing both active, press seeks and pauses the 3D with the playhead on the same time');
   await page.locator('.atlas-step[data-step="1"]').click();state=await page.evaluate(()=>PHAInjectionMotion.getState());assert.equal(state.playing,false);assert.equal(state.phase,1);
   const held=state.time;await page.waitForTimeout(250);assert.equal((await page.evaluate(()=>PHAInjectionMotion.getState())).time,held);
   await page.selectOption('#injectionMotion [data-motion="speed"]','0.5');await page.locator('[data-lang-choice="en"]').click();
