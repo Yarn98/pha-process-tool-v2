@@ -1,6 +1,6 @@
 {
   "status": "pass",
-  "root": "D:\\My_PJT\\Application\\pha_optimizer_convertor\\dist",
+  "root": "D:\\My_PJT\\Application\\pha_optimizer_convertor",
   "checks": [
     "extrusion: real motion, independent manual mechanisms and keyboard precision",
     "sheet: real motion, independent manual mechanisms and keyboard precision",

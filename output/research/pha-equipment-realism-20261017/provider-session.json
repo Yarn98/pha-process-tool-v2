@@ -1,0 +1,35 @@
+{
+  "status": "completed_answers_read",
+  "vendor": "chatgpt",
+  "requested_model": "GPT-6 Pro",
+  "observed_model_menu": "GPT-6 (checked), reasoning level Pro",
+  "project": "PHA 가공 조건",
+  "sent_observed_at_local": "2026-10-17T00:16:33",
+  "send_method": "Claude in Chrome connector after user approval in chat",
+  "conversations": [
+    {
+      "pack": "A",
+      "title": "사출기 조사 요청",
+      "url": "https://chatgpt.com/g/g-p-67ac788743b88191b7ebf6f1377c1361-pha-gagong-jogeon/c/6ad23f56-7760-83ec-b1bc-d5da48a46d60",
+      "prompt_file": "prompt-a-injection-hmi-viz.txt",
+      "prompt_sha256": "4373b6c30f2617b5108e724204625d24f9820ccec967d5865d4d9006d5df3ba6",
+      "attachment": "pha-equipment-pack-a-injection.zip",
+      "attachment_sha256": "50b71e383af8d38b9f9b31ee018a78e23c29b556b6ad9b13191f3aa4cf65e1e1",
+      "observed_processing_time": "36m 42s",
+      "notes_file": "pack-a-answer-notes.md"
+    },
+    {
+      "pack": "B",
+      "title": "압출 라인 사실화 조사",
+      "url": "https://chatgpt.com/g/g-p-67ac788743b88191b7ebf6f1377c1361-pha-gagong-jogeon/c/6ad23f7a-2a08-83ee-aa32-c31d61713230",
+      "prompt_file": "prompt-b-compounding-lines.txt",
+      "prompt_sha256": "d15a13796ab2cb17c57c4216d8b8ebe2f6409f37574f6e8e51e30769d0113c40",
+      "attachment": "pha-equipment-pack-b-lines.zip",
+      "attachment_sha256": "2de042caade067c5072554ab88eac680750f9dfe1b3108271866b5220eead0fe",
+      "observed_processing_time": "37m 23s",
+      "notes_file": "pack-b-answer-notes.md"
+    }
+  ],
+  "note": "Attachments contain current renders, the injection Blender script and motion metadata only; no user records, API keys or access codes.",
+  "capture_note": "Answers read from the rendered conversation; notes are structured summaries, not character-level exports. Offered attachments were not downloaded."
+}

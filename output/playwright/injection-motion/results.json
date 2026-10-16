@@ -1,9 +1,9 @@
 {
   "status": "pass",
-  "root": "D:\\My_PJT\\Application\\pha_optimizer_convertor\\dist",
+  "root": "D:\\My_PJT\\Application\\pha_optimizer_convertor",
   "checks": [
     "Blender GLB loaded with animation tracks and automatic playback advances",
-    "Actual model transforms: screw recovery and axial fill, pellet/runner motion, cavity fill, closed-mold cooling, opening and ejection",
+    "Steady cycle on actual transforms: close and lock, fill, hold, dosing with rotation during cooling, check ring, sprue break, toggle-driven opening and ejection",
     "Pause, step seek and playback-speed controls; language/grade changes preserve playback position",
     "Flash Process flow uses the same animation; language and surface switches retain a single renderer",
     "Precise manual axes with smooth travel, keyboard control, filling, mold/ejector interlocks, release, reset and close-up views",

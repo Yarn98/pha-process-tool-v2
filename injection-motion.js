@@ -2,18 +2,26 @@
 (function () {
   'use strict';
   const VENDOR='./vendor/three-0.185.1/';
-  const MODEL='./assets/equipment/injection-motion.glb?v=25';
-  const STARTS=[0,4,6,10], DURATION=14;
+  // Shares the service worker's precached asset version (sw.js ASSET_V).
+  const VERSION='?v=25',MODEL='./assets/equipment/injection-motion.glb'+VERSION;
+  // Timing, strokes, part path and views come from the GLB (MachineControls.pha_machine).
+  let STARTS=[0,4,6,10],DURATION=14,meta=null;
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
   const state={time:1.2,speed:1,playing:!reduced.matches,phase:0,ready:false,visible:false,frames:0,mode:'cycle',focus:'all'};
   const axes=['screw','rotation','mold','ejector'];
-  const manual={screw:100,rotation:0,mold:0,ejector:0,fill:0,released:false,fall:0,releaseX:0,flow:''};
+  const manual={screw:100,rotation:0,mold:0,ejector:0,fill:0,released:false,fall:0,releaseAt:null,flow:''};
   const target={screw:100,rotation:0,mold:0,ejector:0};
   let host=null,locale='ko',onStage=()=>{},runtime=null,loading=null,token=0,raf=0,lastTick=0,failed=false;
   let resizeObserver=null,intersectionObserver=null,studyPanel=null;
   const t=(ko,en)=>locale==='en'?en:ko;
-  const phaseAt=time=>time<4?0:time<6?1:time<10?2:3;
-  const names=[['가소화·계량','Plasticize & meter'],['금형 충전','Fill the mold'],['보압·냉각','Pack & cool'],['금형 개방·취출','Open & eject']];
+  // Steady cycle: stages are not time-ordered (dosing for the next shot overlaps cooling).
+  const phaseAt=time=>{
+    const segment=meta?.stage_segments?.find(([a,b])=>time>=a&&time<b);
+    return segment?segment[2]:STARTS.reduce((phase,start,i)=>time>=start?i:phase,0);
+  };
+  // Most specific sub-step at this time: later rows refine overlapping earlier rows.
+  const stepAt=time=>{const rows=meta?.steps?.filter(([a,b])=>time>=a&&time<b)||[];const row=rows[rows.length-1];return row?row[locale==='en'?3:2]:'';};
+  const names=[['가소화·계량','Plasticize & meter'],['형폐·충전','Close & fill'],['보압·냉각','Pack & cool'],['금형 개방·취출','Open & eject']];
 
   function cancel(){if(raf)cancelAnimationFrame(raf);raf=0;lastTick=0;}
   function movingManual(){return state.mode==='manual'&&(axes.some(key=>Math.abs(manual[key]-target[key])>.001)||(manual.released&&manual.fall<1));}
@@ -23,6 +31,11 @@
     if(axis==='mold')return manual.ejector<.01&&target.ejector<.01;
     return manual.mold<.01&&target.mold<.01&&manual.ejector<.01&&target.ejector<.01;
   }
+  // Part position while it is still carried by the moving half (three.js coordinates).
+  function carried(){
+    const s=meta.strokes_m,g=meta.part.gate;
+    return [g[0]+s.mold*manual.mold/100-s.ejector*manual.ejector/100,g[1],g[2]];
+  }
   function stepManual(dt){
     const before=manual.screw,angle=manual.rotation;
     for(const key of axes){
@@ -31,30 +44,42 @@
     }
     manual.flow=manual.screw<before-.0001?'fill':manual.screw>before+.0001||Math.abs(manual.rotation-angle)>.0001?'meter':'';
     if(manual.flow==='fill')manual.fill=Math.max(manual.fill,100-manual.screw);
-    if(!manual.released&&manual.ejector>=99.9&&manual.fill>.1){
-      manual.released=true;manual.releaseX=.8+manual.mold*.011-manual.ejector*.0032;
+    if(!manual.released&&manual.ejector>=meta.part.release_ejector&&manual.fill>.1){manual.released=true;manual.releaseAt=carried();}
+    if(manual.released)manual.fall=Math.min(1,manual.fall+dt*1.1);
+  }
+  function along(points,f){
+    const lengths=points.slice(1).map((p,i)=>Math.hypot(p[0]-points[i][0],p[1]-points[i][1],p[2]-points[i][2]));
+    let remaining=f*lengths.reduce((a,b)=>a+b,0);
+    for(let i=0;i<lengths.length;i++){
+      if(remaining<=lengths[i]||i===lengths.length-1){const k=lengths[i]?Math.min(1,remaining/lengths[i]):0;return points[i].map((v,j)=>v+(points[i+1][j]-v)*k);}
+      remaining-=lengths[i];
     }
-    if(manual.released)manual.fall=Math.min(1,manual.fall+dt*1.7);
+    return points[points.length-1];
   }
   function applyManual(){
-    const n=runtime.nodes,s=manual.screw*.0065,m=manual.mold*.011,e=manual.ejector*.0032;
-    n.ScrewSlide.position.x=-s;n.ScrewSpin.rotation.set(-manual.rotation*Math.PI/180,0,0);
-    n.MovingMold.position.x=m;n.Ejector.position.x=-e;
-    n.ClampRod.position.x=(5.05+m)/2;n.ClampRod.scale.x=1.85-m;
-    n.MeltReservoir.position.x=-.27-(.09+s)/2;n.MeltReservoir.scale.x=.09+s;
-    const drop=manual.fall*manual.fall*(3-2*manual.fall);
-    n.MoldedPart.position.set(manual.released?manual.releaseX:.8+m-e,.72-.15*drop,0);
-    n.MoldedPart.rotation.set(0,0,-Math.PI/2*drop);
-    n.MoldedPart.scale.set(1,Math.max(.001,manual.fill/100),1);
-    n.MoldedPart.visible=manual.fill>.01;
-    n.RunnerFill.visible=manual.fill>.01&&m<.001&&!manual.released;
+    const n=runtime.nodes,s=meta.strokes_m,screw=s.screw*manual.screw/100;
+    n.ScrewSlide.position.x=-screw;n.ScrewSpin.rotation.set(-manual.rotation*Math.PI/180,0,0);
+    n.Ejector.position.x=manual.mold>=95?-s.ejector*manual.ejector/100:0;
+    n.MeltReservoir.scale.x=s.cushion+screw;
+    const drop=manual.fall*manual.fall,offset=manual.released?along(meta.part.drop_path,drop):[0,0,0];
+    const base=manual.released?manual.releaseAt:carried();
+    n.MoldedPart.position.set(base[0]+offset[0],base[1]+offset[1],base[2]+offset[2]);
+    n.MoldedPart.rotation.set(manual.released?1.22*drop:0,0,0);
+    n.MoldedPart.scale.set(1,1,1);n.MoldedPart.visible=manual.fill>.01;
+    n.PartFill.scale.set(1,Math.max(.001,manual.fill/100),1);
+    n.RunnerFill.scale.set(1,1,1);n.RunnerFill.visible=manual.fill>.01;
     runtime.particles.forEach(node=>{node.visible=node.name.startsWith('FillFlow')?manual.flow==='fill':manual.flow==='meter';});
   }
   function paint(){
     if(!runtime||!host?.isConnected)return;
-    const poseTime=state.mode==='manual'||state.mode==='study'?(manual.flow==='meter'?(manual.rotation/180+manual.screw*.04)%3.99:4+(100-manual.screw)/100*1.99):state.time;
+    const posed=state.mode==='manual'||state.mode==='study';
+    // Particles and the check ring replay the dosing/fill windows; the clamp follows its sweep segment.
+    const [d0,d1]=meta.windows.dosing,[f0,f1]=meta.windows.fill;
+    const poseTime=posed?(manual.flow==='meter'?d0+(manual.rotation/180+manual.screw*.03)%(d1-d0-.05):f0+(100-manual.screw)/100*(f1-f0-.01)):state.time;
     runtime.mixer.setTime(Math.min(DURATION-.001,Math.max(0,poseTime)));
-    if(state.mode==='manual'||state.mode==='study')applyManual();
+    const [a,b]=meta.sweeps.mold_opening;
+    runtime.clampMixer.setTime(posed?Math.min(b-.001,a+(b-a)*manual.mold/100):Math.min(DURATION-.001,state.time));
+    if(posed)applyManual();
     runtime.scene.updateMatrixWorld(true);
     runtime.renderer.render(runtime.scene,runtime.camera);
     state.frames++;
@@ -67,7 +92,8 @@
     const progress=host.querySelector('[data-motion="progress"]');
     if(progress){progress.value=String(Math.round(state.time/DURATION*1000)/10);progress.setAttribute('aria-valuetext',names[phase][locale==='en'?1:0]);}
     const status=host.querySelector('.motion-phase');
-    if(status)status.textContent=state.mode==='manual'?t('직접 조작 · 금형 개방 ','Manual · Mold opening ')+manual.mold.toFixed(1)+'% · '+t('충전 ','Fill ')+manual.fill.toFixed(1)+'%':String(phase+1).padStart(2,'0')+' · '+names[phase][locale==='en'?1:0];
+    const step=stepAt(state.time);
+    if(status)status.textContent=state.mode==='manual'?t('직접 조작 · 금형 개방 ','Manual · Mold opening ')+manual.mold.toFixed(1)+'% · '+t('충전 ','Fill ')+manual.fill.toFixed(1)+'%':String(phase+1).padStart(2,'0')+' · '+names[phase][locale==='en'?1:0]+(step?' — '+step:'');
     host.querySelectorAll('[data-motion-stage]').forEach(button=>button.setAttribute('aria-pressed',String(state.mode==='cycle'&&Number(button.dataset.motionStage)===phase)));
     const isManual=state.mode==='manual';
     const toggle=host.querySelector('[data-motion="manual"]');
@@ -113,11 +139,11 @@
   function schedule(){if(canRun()&&!raf)raf=requestAnimationFrame(tick);else if(!canRun())cancel();}
   function leaveManual(){
     state.mode='cycle';
-    if(runtime){runtime.nodes.MoldedPart.visible=true;runtime.nodes.RunnerFill.visible=true;runtime.particles.forEach(node=>node.visible=true);}
+    if(runtime){for(const name of ['MoldedPart','RunnerFill'])runtime.nodes[name].visible=true;runtime.particles.forEach(node=>node.visible=true);}
   }
   function seek(time){stopStudy();leaveManual();state.time=Math.min(DURATION-.001,Math.max(0,time));state.playing=false;cancel();paint();update();}
   function prepareShot(){
-    Object.assign(manual,{screw:100,rotation:0,mold:0,ejector:0,fill:0,released:false,fall:0,releaseX:0,flow:''});
+    Object.assign(manual,{screw:100,rotation:0,mold:0,ejector:0,fill:0,released:false,fall:0,releaseAt:null,flow:''});
     Object.assign(target,{screw:100,rotation:0,mold:0,ejector:0});cancel();paint();update();
   }
   function toggleManual(){
@@ -127,18 +153,21 @@
   }
   function resetView(front=false){
     if(!runtime)return;
-    runtime.camera.position.set(...(front?[-.25,3.1,14]:[6.7,6.2,12.5]));
+    const view=meta.view;
+    runtime.camera.position.set(...(front?view.side_position:view.position));
     runtime.camera.zoom=1;runtime.camera.updateProjectionMatrix();
-    runtime.controls.target.set(-.35,1.22,0);runtime.controls.update();paint();
+    runtime.controls.target.set(...view.target);runtime.controls.update();paint();
     state.focus='all';const selector=host?.querySelector('[data-motion="focus"]');if(selector)selector.value='all';
   }
   function focusView(kind){
     if(!runtime)return;
-    if(kind==='all'){resetView();return;}
-    const center=kind==='screw'?[-2.25,1.42,0]:[1.25,1.24,0];
-    runtime.controls.target.set(...center);
-    runtime.camera.position.set(center[0]+(kind==='screw'?1.2:2.4),center[1]+2.3,9);
-    runtime.camera.zoom=kind==='screw'?2:2.5;runtime.camera.updateProjectionMatrix();
+    const focus=meta.focus[kind];
+    if(!focus){resetView();return;}
+    // A close-up may carry its own camera position; otherwise reuse the overview direction.
+    const view=meta.view,direction=view.position.map((v,i)=>v-view.target[i]);
+    runtime.controls.target.set(...focus.target);
+    runtime.camera.position.set(...(focus.position||focus.target.map((v,i)=>v+direction[i])));
+    runtime.camera.zoom=focus.zoom;runtime.camera.updateProjectionMatrix();
     runtime.controls.update();state.focus=kind;paint();
   }
   function resize(){
@@ -149,10 +178,34 @@
     const height=Math.round(compact?Math.min(width*.55,220):width*(width<480?.66:.50));
     viewport.style.height=height+'px';
     runtime.renderer.setSize(width,height,false);
-    const aspect=width/height,vertical=10.8/aspect;
-    runtime.camera.left=-vertical*aspect/2;runtime.camera.right=vertical*aspect/2;
+    const aspect=width/height,span=meta.view.span,vertical=span/aspect;
+    runtime.camera.left=-span/2;runtime.camera.right=span/2;
     runtime.camera.top=vertical/2;runtime.camera.bottom=-vertical/2;
     runtime.camera.updateProjectionMatrix();paint();
+  }
+  // Soft studio reflections without an HDR download: a dim room with emissive softboxes.
+  function studioEnvironment(THREE,renderer){
+    const room=new THREE.Scene(),panel=(w,h,position,rotation,intensity)=>{
+      const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.DoubleSide}));
+      mesh.material.color.setScalar(intensity);mesh.position.set(...position);mesh.rotation.set(...rotation);room.add(mesh);
+    };
+    room.add(new THREE.Mesh(new THREE.BoxGeometry(14,7,14),new THREE.MeshBasicMaterial({color:0x8c8a84,side:THREE.BackSide})));
+    panel(8,4,[0,3.4,0],[Math.PI/2,0,0],5);
+    panel(4,2.4,[-6.9,1.4,0],[0,Math.PI/2,0],2.6);
+    panel(4,2.4,[6.9,1.6,-1],[0,-Math.PI/2,0],2.2);
+    panel(6,2,[0,1.4,6.9],[0,Math.PI,0],1.8);
+    const generator=new THREE.PMREMGenerator(renderer),texture=generator.fromScene(room,.035).texture;
+    generator.dispose();room.traverse(node=>{node.geometry?.dispose();node.material?.dispose();});
+    return texture;
+  }
+  // Blender exports one clip per animated object; regroup every track so nodes whose
+  // nearest motion_group is "clamp" play on their own mixer.
+  function splitClips(THREE,root,clips){
+    const byName=new Map();root.traverse(node=>{byName.set(node.name,node);byName.set(node.uuid,node);});
+    const groupOf=node=>{while(node&&!node.userData.motion_group)node=node.parent;return node?.userData.motion_group;};
+    const clamp=[],rest=[];
+    for(const clip of clips)for(const track of clip.tracks)(groupOf(byName.get(track.name.split('.')[0]))==='clamp'?clamp:rest).push(track);
+    return [new THREE.AnimationClip('machine',-1,rest),new THREE.AnimationClip('clamp',-1,clamp)];
   }
   async function create(){
     const [THREE,{GLTFLoader},{OrbitControls}]=await Promise.all([
@@ -163,28 +216,38 @@
       renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'low-power'});
       renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
       renderer.setClearColor(0xebe7dc);renderer.outputColorSpace=THREE.SRGBColorSpace;
-      renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.25;
+      renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
+      renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
       const scene=new THREE.Scene();
-      scene.add(new THREE.HemisphereLight(0xfff7e8,0x7a837a,2.6));
-      const key=new THREE.DirectionalLight(0xfff6e7,3.0);key.position.set(-2,7,6);scene.add(key);
-      const fill=new THREE.DirectionalLight(0xe4eeff,2.0);fill.position.set(5,4,-3);scene.add(fill);
-      const camera=new THREE.OrthographicCamera(-5.4,5.4,2.7,-2.7,.01,100);
+      scene.environment=studioEnvironment(THREE,renderer);scene.environmentIntensity=.9;
+      scene.add(new THREE.HemisphereLight(0xfff7e8,0x7a837a,.6));
+      const key=new THREE.DirectionalLight(0xfff6e7,2.2);key.position.set(-2.5,7,5);
+      key.castShadow=true;key.shadow.mapSize.set(2048,2048);key.shadow.bias=-.0004;key.shadow.normalBias=.02;
+      Object.assign(key.shadow.camera,{left:-4.5,right:4.5,top:3.5,bottom:-3.5,near:.5,far:20});
+      scene.add(key,key.target);
+      const camera=new THREE.OrthographicCamera(-3.6,3.6,1.8,-1.8,.01,100);
       const controls=new OrbitControls(camera,renderer.domElement);
       controls.enablePan=false;controls.enableZoom=true;controls.enableDamping=false;
-      controls.minZoom=.8;controls.maxZoom=2.8;
+      controls.minZoom=.8;controls.maxZoom=4;
       controls.minPolarAngle=.30;controls.maxPolarAngle=Math.PI/2.05;
       controls.addEventListener('change',()=>{if(!canRun())paint();});
       const gltf=await new GLTFLoader().loadAsync(MODEL);
       if(!gltf.animations.length)throw new Error('Missing Blender animation');
+      const rig=gltf.scene.getObjectByName('MachineControls');
+      meta=JSON.parse(rig?.userData.pha_machine||'null');
+      if(meta?.schema!=='pha-machine-v1')throw new Error('Missing machine metadata');
+      STARTS=meta.stage_starts;DURATION=meta.cycle_seconds;
+      gltf.scene.traverse(node=>{if(node.isMesh){node.castShadow=!node.material.transparent;node.receiveShadow=true;}});
       scene.add(gltf.scene);
-      const mixer=new THREE.AnimationMixer(gltf.scene);
-      gltf.animations.forEach(clip=>mixer.clipAction(clip).play());
+      const [machineClip,clampClip]=splitClips(THREE,gltf.scene,gltf.animations);
+      const mixer=new THREE.AnimationMixer(gltf.scene),clampMixer=new THREE.AnimationMixer(gltf.scene);
+      mixer.clipAction(machineClip).play();clampMixer.clipAction(clampClip).play();
       renderer.domElement.setAttribute('role','img');
       renderer.domElement.addEventListener('webglcontextlost',event=>{event.preventDefault();fallback();});
-      const nodes=Object.fromEntries(['ScrewSlide','ScrewSpin','MovingMold','Ejector','MoldedPart','ClampRod','MeltReservoir','RunnerFill'].map(name=>[name,gltf.scene.getObjectByName(name)]));
-      if(Object.values(nodes).some(node=>!node))throw new Error('Missing machine rig node');
+      const nodes=Object.fromEntries(['ScrewSlide','ScrewSpin','MovingMold','Ejector','MoldedPart','PartFill','RunnerFill','MeltReservoir','Crosshead'].map(name=>[name,gltf.scene.getObjectByName(name)]));
+      if(Object.values(nodes).some(node=>!node)||!clampClip.tracks.length)throw new Error('Missing machine rig node');
       const particles=[];gltf.scene.traverse(node=>{if(/^(FeedPellet|BarrelFlow|FillFlow)/.test(node.name))particles.push(node);});
-      runtime={renderer,scene,camera,controls,mixer,model:gltf.scene,clips:gltf.animations,nodes,particles};
+      runtime={THREE,renderer,scene,camera,controls,mixer,clampMixer,model:gltf.scene,clips:[machineClip,clampClip],nodes,particles};
       resetView();state.ready=true;
     }catch(error){renderer?.dispose();throw error;}
   }
@@ -210,11 +273,11 @@
     detach();host=targetHost;locale=options.locale||'ko';onStage=options.onStage||(()=>{});const current=token;
     host.dataset.motionState='loading';
     host.innerHTML=`<div class="motion-load" role="status">${t('움직이는 사출 설비 불러오는 중…','Loading the animated injection machine…')}</div>
-      <img class="motion-poster" src="assets/equipment/injection-motion-poster.png?v=25" width="1280" height="640" alt="${t('내부 스크류와 금형을 드러낸 사출기 절개 모델','Cutaway injection machine showing its screw and mold')}">
+      <img class="motion-poster" src="assets/equipment/injection-motion-poster.png${VERSION}" width="1280" height="640" alt="${t('토글 형체부, 절개한 배럴·스크류와 금형을 갖춘 사출기 모델','Injection machine model with a toggle clamp and a cutaway barrel, screw and mold')}">
       <div class="motion-viewport" hidden></div>
       <div class="motion-toolbar"><button type="button" data-motion="play" disabled>${t('재생','Play')}</button><label>${t('재생 속도','Playback speed')} <select data-motion="speed" aria-label="${t('설명 재생 속도','Illustration playback speed')}" disabled><option value="0.5">0.5×</option><option value="1">1×</option><option value="1.5">1.5×</option></select></label><button type="button" data-motion="manual" aria-pressed="false" disabled>${t('직접 조작','Manual controls')}</button><label>${t('관찰 부위','View')} <select data-motion="focus" aria-label="${t('관찰 부위','Inspection area')}" disabled><option value="all">${t('전체','Whole machine')}</option><option value="screw">${t('스크류','Screw')}</option><option value="mold">${t('금형·취출','Mold & ejector')}</option></select></label><button type="button" data-motion="front" disabled>${t('측면 보기','Side view')}</button><button type="button" data-motion="view" disabled>${t('시점 초기화','Reset view')}</button><span class="motion-phase"></span></div>
       <label class="motion-progress">${t('공정 진행 위치','Cycle position')}<input type="range" min="0" max="100" step="0.1" data-motion="progress" aria-label="${t('공정 진행 위치','Cycle position')}" disabled></label>
-      <p class="motion-hint">${t('드래그 회전 · 휠/두 손가락 확대 · 초록색은 수지 · 단계 선택 시 일시정지','Drag to rotate · Wheel/pinch to zoom · Green is polymer · Stage selection pauses playback')}</p>
+      <p class="motion-hint">${t('정상 연속 사이클: 14초 재생 = 예시 30초 사이클, 다음 샷 계량은 냉각 중 진행 · 드래그 회전 · 휠/두 손가락 확대 · 초록색은 수지 · 단계 선택 시 일시정지','Steady cycle: 14 s playback = 30 s example cycle; next-shot dosing runs during cooling · Drag to rotate · Wheel/pinch to zoom · Green is polymer · Stage selection pauses playback')}</p>
       <div class="motion-manual" hidden><p class="motion-manual-intro">${t('계량 완료 상태입니다. 후퇴량을 100→0%로 줄여 스크류를 전진시키고, 금형을 연 뒤 취출하세요.','The shot is metered. Move the screw forward (retraction 100→0%) to fill, then open the mold and eject.')}</p><div class="motion-axes">${[
         ['screw','스크류 후퇴량','Screw retraction',100,.1],['rotation','스크류 회전각','Screw rotation',720,1],['mold','금형 개방량','Mold opening',100,.1],['ejector','이젝터 전진량','Ejector advance',100,.1]
       ].map(([key,ko,en,max,step])=>'<label class="motion-axis"><span>'+t(ko,en)+'<output data-axis-value="'+key+'"></output></span><input type="range" data-axis="'+key+'" min="0" max="'+max+'" step="'+step+'" aria-label="'+t(ko,en)+'" disabled></label>').join('')}</div><p class="motion-interlock" role="status"></p><div class="motion-manual-footer"><button type="button" data-motion="shot" disabled>${t('새 샷 준비','Prepare new shot')}</button><small>${t('%는 모형의 이동 비율입니다. 실제 장비 설정값이 아닙니다.','% is model travel, not a real machine setting.')}</small></div></div>
@@ -229,7 +292,7 @@
       if(!loading)loading=create();await loading;
       if(current!==token||!host?.isConnected)return;
       host.querySelector('.motion-viewport').appendChild(runtime.renderer.domElement);
-      runtime.renderer.domElement.setAttribute('aria-label',t('수지 이동, 스크류 회전·전진, 금형 개폐·취출을 보여주는 3D 애니메이션','3D animation of polymer flow, screw rotation/advance, mold opening and ejection'));
+      runtime.renderer.domElement.setAttribute('aria-label',t('수지 이동, 스크류 회전·전진, 토글 형체와 금형 개폐·취출을 보여주는 3D 애니메이션','3D animation of polymer flow, screw rotation/advance, toggle clamping, mold opening and ejection'));
       host.querySelector('.motion-viewport').hidden=false;host.querySelector('.motion-poster').hidden=true;
       host.querySelector('.motion-load').hidden=true;host.dataset.motionState='ready';
       host.querySelectorAll('button,input,select').forEach(el=>el.disabled=false);
@@ -267,8 +330,14 @@
   window.addEventListener('pha-language-change',()=>requestAnimationFrame(syncSurface));
   reduced.addEventListener('change',event=>{if(event.matches){state.playing=false;stopStudy();cancel();if(state.mode==='manual'){stepManual(10);manual.flow='';paint();}update();}});
   window.PHAInjectionMotion={mount,detach,syncSurface,seekStage(index){if(index>=0&&index<4)seek(STARTS[index]+.35);},getState:()=>({...state,manual:{...manual},target:{...target}})};
-  if(['localhost','127.0.0.1'].includes(location.hostname))window.__phaInjectionMotionTest=()=>({
-    ...state,manual:{...manual},target:{...target},camera:runtime?{zoom:runtime.camera.zoom,target:runtime.controls.target.toArray()}:null,clips:runtime?.clips.map(c=>({name:c.name,duration:c.duration,tracks:c.tracks.length}))||[],
-    nodes:Object.fromEntries(['ScrewSlide','ScrewSpin','MovingMold','Ejector','MoldedPart','FeedPellet00','FillFlow00','ClampRod','MeltReservoir'].map(name=>{const n=runtime?.model.getObjectByName(name);return [name,n?{position:n.position.toArray(),quaternion:n.quaternion.toArray(),scale:n.scale.toArray(),visible:n.visible}:null];}))
-  });
+  if(['localhost','127.0.0.1'].includes(location.hostname))window.__phaInjectionMotionTest=()=>{
+    const world=name=>{const n=runtime?.model.getObjectByName(name);return n?n.getWorldPosition(new runtime.THREE.Vector3()).toArray():null;};
+    const tip=(name,length)=>{const n=runtime?.model.getObjectByName(name);return n?n.localToWorld(new runtime.THREE.Vector3(length,0,0)).toArray():null;};
+    return {
+      ...state,manual:{...manual},target:{...target},meta,camera:runtime?{zoom:runtime.camera.zoom,target:runtime.controls.target.toArray()}:null,
+      clips:runtime?.clips.map(c=>({name:c.name,duration:c.duration,tracks:c.tracks.length}))||[],
+      nodes:Object.fromEntries(['ScrewSlide','ScrewSpin','MovingMold','Ejector','MoldedPart','PartFill','RunnerFill','FeedPellet00','FillFlow00','MeltReservoir','Crosshead','ToggleRearUpper','Carriage','CheckRing'].map(name=>{const n=runtime?.model.getObjectByName(name);return [name,n?{position:n.position.toArray(),quaternion:n.quaternion.toArray(),scale:n.scale.toArray(),visible:n.visible}:null];})),
+      linkage:runtime?{kneeUpper:world('ToggleKneeUpper'),frontTipUpper:tip('ToggleFrontUpper',meta.toggle.L2),kneeLower:world('ToggleKneeLower'),frontTipLower:tip('ToggleFrontLower',meta.toggle.L2),pinUpper:world('ToggleCrossPinUpper'),crossTipUpper:tip('ToggleCrossLinkUpper',meta.toggle.L3)}:null
+    };
+  };
 })();
