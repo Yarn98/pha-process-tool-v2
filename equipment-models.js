@@ -515,17 +515,25 @@ window.PHAEquipmentModels = {
   },
   "sheet": {
     "id": "sheet",
-    "duration": 12,
+    "duration": 15.708333333333334,
+    "frames": [
+      0,
+      377
+    ],
     "poster": "assets/equipment/sheet-motion-poster.png",
     "model": "assets/equipment/sheet-motion.glb",
     "center": [
-      -0.5,
-      1.6,
+      0.752,
+      0.85,
       0
     ],
     "span": [
-      11.6,
-      4.2
+      6.814,
+      2.4
+    ],
+    "zoom": [
+      0.7,
+      12
     ],
     "controls": [
       {
@@ -539,7 +547,7 @@ window.PHAEquipmentModels = {
         "step": 1,
         "range": [
           0,
-          12
+          15.708333333333334
         ]
       },
       {
@@ -553,27 +561,27 @@ window.PHAEquipmentModels = {
         "step": 0.1,
         "range": [
           0,
-          12
+          15.708333333333334
         ]
       },
       {
         "key": "roll",
         "label": [
-          "냉각 롤 회전각",
-          "Cooling roll rotation angle"
+          "3롤 스택 회전각 (250 mm)",
+          "3-roll stack angle (250 mm)"
         ],
         "max": 720,
         "unit": "°",
         "step": 1,
         "range": [
           0,
-          12
+          15.708333333333334
         ]
       },
       {
         "key": "winder",
         "label": [
-          "권취축 회전각",
+          "권취 롤 회전각",
           "Winder rotation angle"
         ],
         "max": 360,
@@ -581,7 +589,7 @@ window.PHAEquipmentModels = {
         "step": 1,
         "range": [
           0,
-          12
+          15.708333333333334
         ]
       }
     ],
@@ -593,8 +601,8 @@ window.PHAEquipmentModels = {
           "Whole line"
         ],
         "center": [
-          -0.5,
-          1.6,
+          0.752,
+          0.85,
           0
         ],
         "zoom": 1
@@ -602,28 +610,41 @@ window.PHAEquipmentModels = {
       {
         "key": "screw",
         "label": [
-          "스크류·공급",
-          "Screw & feed"
+          "스크류·배럴",
+          "Screw & barrel"
         ],
         "center": [
-          -3.1,
-          1.65,
+          -0.7,
+          1.0,
           0
         ],
-        "zoom": 2.1
+        "zoom": 3.2
+      },
+      {
+        "key": "stack",
+        "label": [
+          "평다이·3롤 스택",
+          "Flat die & 3-roll stack"
+        ],
+        "center": [
+          0.48400000000000004,
+          0.75,
+          0
+        ],
+        "zoom": 4.5
       },
       {
         "key": "finish",
         "label": [
-          "성형·후단",
-          "Forming & downstream"
+          "트림·인취·권취",
+          "Trim, haul-off & winder"
         ],
         "center": [
-          1.4,
-          2.1,
+          3.234,
+          0.55,
           0
         ],
-        "zoom": 2.0
+        "zoom": 3
       }
     ],
     "stages": [
@@ -632,18 +653,63 @@ window.PHAEquipmentModels = {
         "Feed & melt"
       ],
       [
-        "다이·성형",
-        "Die & forming"
+        "평다이·롤 접촉",
+        "Flat die & roll contact"
       ],
       [
         "냉각·인취",
         "Cool & haul off"
       ],
       [
-        "제품·배출",
-        "Product & discharge"
+        "트림·권취",
+        "Trim & wind"
       ]
     ],
+    "turns": {
+      "roll": 1,
+      "winder": 1,
+      "screw": 10
+    },
+    "study": {
+      "rpm": 38.2,
+      "speed": 3.0,
+      "diameter": 250.0
+    },
+    "teaching": {
+      "time_scale": 1,
+      "line_speed_m_min": 3.0,
+      "rpm": {
+        "stack": 3.82,
+        "table": 11.937,
+        "haul": 7.958,
+        "winder_at_250": 3.82,
+        "winder_at_500": 1.91,
+        "screw": 38.196
+      },
+      "roll_mm": {
+        "stack": 250.0,
+        "table": 80.0,
+        "haul": 120.0,
+        "winder_now": 250.0,
+        "core": 76.0
+      },
+      "loop_note": "Real time: the 250 mm stack rolls turn once per loop; every roll keeps the same surface speed."
+    },
+    "spec": {
+      "basis": "Pack B grade C teaching values; brand-neutral; not an OEM drawing or PHA setting",
+      "screw_d_mm": 45,
+      "l_d": 30,
+      "flat_die_mm": "500 x 160 x 120",
+      "lip_gap_mm": 1.0,
+      "stack": "3 x 250 mm, face 600 mm",
+      "web_path": "S-wrap: top-middle nip, middle roll, middle-bottom nip, bottom roll",
+      "roller_table": "2000 mm, 80 mm rolls at 200 mm",
+      "trim_mm_each_side": 15,
+      "haul_off_mm": 120.0,
+      "winder_core_mm": 76.0,
+      "winder_max_mm": 500,
+      "sources": "output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md"
+    },
     "blender": "5.2.1 LTS",
     "groups": [
       "flow",

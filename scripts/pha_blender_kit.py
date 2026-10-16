@@ -828,6 +828,83 @@ def single_screw_extruder(name, D, ld, die_x, axis_z, mats, frames, turns, zones
             'hopper_ports': ports, 'x_rear': x_motor - .1, 'frame_top': frame_top, 'r_out': r_out}
 
 
+def arc_xz(cx, cz, r, a0, a1, n=24, y=0.0):
+    """Points on a circle in the XZ plane, angles in degrees from +X toward +Z."""
+    return [Vector((cx + r * math.cos(math.radians(a0 + (a1 - a0) * i / n)), y,
+                    cz + r * math.sin(math.radians(a0 + (a1 - a0) * i / n)))) for i in range(n + 1)]
+
+
+def web(name, points, width, thickness, mat):
+    """Sheet or film following a path in the XZ plane, ``width`` across Y, ``thickness`` normal to the path."""
+    bm = bmesh.new()
+    rows = []
+    for i, p in enumerate(points):
+        a, b = points[max(i - 1, 0)], points[min(i + 1, len(points) - 1)]
+        tangent = Vector((b.x - a.x, 0, b.z - a.z)).normalized()
+        normal = Vector((-tangent.z, 0, tangent.x)) * thickness / 2
+        rows.append([bm.verts.new(p + Vector((0, y, 0)) + normal * side) for side in (-1, 1) for y in (-width / 2, width / 2)])
+    for a, b in zip(rows, rows[1:]):
+        for i, j in ((0, 1), (3, 2), (2, 0), (1, 3)):
+            bm.faces.new((a[i], a[j], b[j], b[i]))
+    bm.faces.new((rows[0][0], rows[0][2], rows[0][3], rows[0][1]))
+    bm.faces.new((rows[-1][0], rows[-1][1], rows[-1][3], rows[-1][2]))
+    bmesh.ops.recalc_face_normals(bm, faces=list(bm.faces))
+    return _finish(name, bm, mat)
+
+
+def roll(name, x, z, radius, face, mats, group, turns, frames, sign, mat=None, marks=1, joint=True, y=0.0):
+    """Driven roll on bearing blocks with an axis along world +Y.
+
+    A positive ``sign`` turns the roll about +Y: its top moves +X and its bottom -X. ``marks`` painted
+    stripes make the rotation visible; set it to 0 for plain rolls whose turns per loop are not whole.
+    ``joint`` adds a rotary union with temperature-control supply (blue) and return (red) hoses.
+    Returns the rotating owner.
+    """
+    owner = empty(name, (x, y, z), group=group)
+    owner.rotation_euler.z = math.pi / 2           # local X (spin axis) along world +Y
+    parts = [cylinder(name + ' shell', (0, 0, 0), radius, face, 'X', mat or mats['chrome'], segments=48),
+             cylinder(name + ' journal', (0, 0, 0), radius * .3, face + .16, 'X', mats['steel'], segments=24)]
+    for k in range(marks):
+        stripe = box(name + ' mark', (0, 0, radius + .0005), (face * .98, .006, .001), mats['steel_dark'], bevel=0)
+        stripe.rotation_euler.x = TAU * k / max(marks, 1)
+        parts.append(stripe)
+    join(parts, name + '_body').parent = owner
+    spin(owner, group, turns, frames, sign)
+    static = []
+    for side in (-1, 1):
+        static.append(box(name + ' bearing block', (x, y + side * (face / 2 + .07), z), (radius * .9 + .06, .08, radius * .9 + .06),
+                          mats['steel_dark'], bevel=.006))
+    if joint:
+        jy = y + face / 2 + .14
+        static.append(cylinder(name + ' rotary union', (x, jy + .03, z), .028, .07, 'Y', mats['brass']))
+        static.append(hose(name + ' supply', (x, jy + .06, z + .01), (x - .1, jy + .25, .12), .012, mats['hose_blue'], sag=.05))
+        static.append(hose(name + ' return', (x, jy + .06, z - .01), (x + .1, jy + .25, .12), .012, mats['hose_red'], sag=.05))
+    join(static, name + ' stand')
+    return owner
+
+
+def flat_die(name, x_inlet, width, depth, height, axis_z, mats, lip_bolts=None):
+    """Coat-hanger flat die: body ``depth`` along X from ``x_inlet``, ``width`` across Y, lips at the +X face,
+    with cartridge-heater rows, lip adjustment bolts and end plates. Returns the lip exit point."""
+    x1 = x_inlet + depth
+    parts = [box(name + ' upper body', (x_inlet + depth / 2, 0, axis_z + height / 4), (depth, width, height / 2 - .002), mats['steel'],
+                 bevel=.004),
+             box(name + ' lower body', (x_inlet + depth / 2, 0, axis_z - height / 4), (depth, width, height / 2 - .002), mats['steel'],
+                 bevel=.004),
+             box(name + ' lip', (x1 + .012, 0, axis_z), (.024, width - .02, .03), mats['chrome'], bevel=.002)]
+    for side in (-1, 1):
+        parts.append(box(name + ' end plate', (x_inlet + depth / 2, side * (width / 2 + .006), axis_z), (depth, .012, height), mats['steel_dark']))
+    count = lip_bolts or max(5, round(width / .025))
+    for i in range(count):
+        y = -width / 2 + .02 + (width - .04) * i / (count - 1)
+        parts.append(cylinder(name + ' lip bolt', (x1 - .01, y, axis_z + height / 2 + .012), .005, .024, 'Z', mats['steel']))
+    for z in (axis_z + height / 2 - .01, axis_z - height / 2 + .01):
+        parts.append(box(name + ' heater row', (x_inlet + depth * .4, 0, z), (depth * .5, width - .04, .006), mats['heater'], bevel=0))
+    parts.append(box(name + ' terminal box', (x_inlet + depth * .4, width / 2 + .04, axis_z + height / 2), (.06, .06, .05), mats['ceramic']))
+    join(parts, name)
+    return Vector((x1 + .024, 0, axis_z))
+
+
 # ------------------------------------------------------------------- render / export
 
 def studio_world(strength=.9, hdri='studio.exr', background=(.93, .91, .86), fill=.55):

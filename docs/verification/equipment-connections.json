@@ -10,55 +10,55 @@
           "kind": "extrusion",
           "drive": "haul",
           "rpm": 9.54929658551372,
-          "elapsed": 0.19993399999999975
+          "elapsed": 0.19993399999999978
         },
         {
           "kind": "extrusion",
           "drive": "cutter",
           "rpm": 120,
-          "elapsed": 0.2832060000000001
+          "elapsed": 0.46668000000000026
         },
         {
           "kind": "compounding",
           "drive": "haul",
           "rpm": 9.54929658551372,
-          "elapsed": 0.1833000000000002
+          "elapsed": 0.19996800000000076
         },
         {
           "kind": "compounding",
           "drive": "cutter",
           "rpm": 15,
-          "elapsed": 0.2
+          "elapsed": 0.18327000000000046
         },
         {
           "kind": "sheet",
           "drive": "roll",
           "rpm": 9.54929658551372,
-          "elapsed": 0.23323400000000222
+          "elapsed": 0.2666999999999998
         },
         {
           "kind": "sheet",
           "drive": "winder",
           "rpm": 9.54929658551372,
-          "elapsed": 0.19997400000000018
+          "elapsed": 0.18340000000000145
         },
         {
           "kind": "castfilm",
           "drive": "winder",
           "rpm": 9.54929658551372,
-          "elapsed": 0.2
+          "elapsed": 0.1999339999999993
         },
         {
           "kind": "blownfilm",
           "drive": "haul",
           "rpm": 9.54929658551372,
-          "elapsed": 0.2
+          "elapsed": 0.1832999999999993
         },
         {
           "kind": "blownfilm",
           "drive": "winder",
           "rpm": 9.54929658551372,
-          "elapsed": 0.19989999999999963
+          "elapsed": 0.19979999999999926
         }
       ]
     },

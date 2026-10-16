@@ -1,14 +1,14 @@
 [
   {
-    "kind": "extrusion",
+    "kind": "sheet",
     "blender": "5.2.1 LTS",
-    "source": "assets/equipment/extrusion-motion.blend",
+    "source": "assets/equipment/sheet-motion.blend",
     "frame": 55,
-    "source_sha256": "e05db86b7a3b787564f663436b044135c027dd4958b65ec58937dee724510694",
-    "fbx": "output/unreal/fbx/extrusion.fbx",
-    "fbx_sha256": "00608fe342cfb5a784825249ee66d666207a156081e786c9f2b4bb853cb3df10",
-    "objects": 107,
-    "vertices": 19052,
+    "source_sha256": "23c0f0021629de0524767b85a60ef5ef7fbc7112770c2e3b7c1c9b9049b5aa64",
+    "fbx": "output/unreal/fbx/sheet.fbx",
+    "fbx_sha256": "0a2e402b46e07a523d07a9d13067584caf6f8aa8c59346f1a400801436c67698",
+    "objects": 94,
+    "vertices": 22836,
     "materials": {
       "Paint / anthracite base": {
         "color": [
@@ -170,26 +170,6 @@
         "roughness": 0.07,
         "alpha": 1.0
       },
-      "Water / calibration bath": {
-        "color": [
-          0.11193,
-          0.34191,
-          0.38133
-        ],
-        "metallic": 0.0,
-        "roughness": 0.05,
-        "alpha": 0.3
-      },
-      "Polycarbonate / guard window": {
-        "color": [
-          0.72306,
-          0.7913,
-          0.7913
-        ],
-        "metallic": 0.0,
-        "roughness": 0.02,
-        "alpha": 0.07
-      },
       "Hose / cooling supply blue": {
         "color": [
           0.02624,
@@ -200,24 +180,34 @@
         "roughness": 0.6,
         "alpha": 1.0
       },
-      "Rubber / haul-off belt": {
+      "Hose / cooling return red": {
         "color": [
-          0.02416,
-          0.02624,
-          0.02843
+          0.39157,
+          0.04231,
+          0.0319
         ],
         "metallic": 0.0,
-        "roughness": 0.75,
+        "roughness": 0.6,
         "alpha": 1.0
       },
-      "Polymer / sage green": {
+      "Polymer / sheet (translucent)": {
         "color": [
           0.04817,
           0.26225,
           0.10224
         ],
         "metallic": 0.0,
-        "roughness": 0.35,
+        "roughness": 0.25,
+        "alpha": 0.75
+      },
+      "Paper / winder core": {
+        "color": [
+          0.47932,
+          0.32314,
+          0.14413
+        ],
+        "metallic": 0.0,
+        "roughness": 0.85,
         "alpha": 1.0
       },
       "Lamp / red": {
@@ -290,16 +280,6 @@
         "roughness": 0.35,
         "alpha": 1.0
       },
-      "Polymer / natural pellet": {
-        "color": [
-          0.58408,
-          0.53948,
-          0.37124
-        ],
-        "metallic": 0.0,
-        "roughness": 0.45,
-        "alpha": 1.0
-      },
       "Polymer / bright marker": {
         "color": [
           0.21223,
@@ -309,12 +289,22 @@
         "metallic": 0.0,
         "roughness": 0.3,
         "alpha": 1.0
+      },
+      "Polymer / natural pellet": {
+        "color": [
+          0.58408,
+          0.53948,
+          0.37124
+        ],
+        "metallic": 0.0,
+        "roughness": 0.45,
+        "alpha": 1.0
       }
     },
     "engine": "5.8.2-56702186+++UE5+Release-5.8",
     "renderer": "Unreal DX12 / Lumen",
-    "png": "output/unreal/extrusion-unreal.png",
-    "png_sha256": "dd5d5696317997b04f62e41ccca2bab94c3c89d8e3dfca0ca1c33eb5502587cf",
+    "png": "output/unreal/sheet-unreal.png",
+    "png_sha256": "751e5f92d58e36774b73b54bef63a75b11b8c02f916586e30dbb500d854eea94",
     "scope": "Illustrative equipment; no measured dimensions or CFD"
   }
 ]

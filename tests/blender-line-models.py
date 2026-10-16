@@ -128,6 +128,17 @@ def bilobal_direction(owner_name, mesh_name, axis, axial_range, feed_sign, rotat
             'scope': 'geometry direction only; not material velocity'}
 
 
+def world_velocity(name, offset):
+    """World-space motion over one frame of the surface point at ``offset`` (world) from the object origin."""
+    obj = bpy.data.objects[name]
+    first = bpy.context.scene.frame_start
+    frame(first)
+    point = obj.matrix_world.translation+Vector(offset)
+    local = obj.matrix_world.inverted() @ point
+    frame(first+1)
+    return obj.matrix_world @ local-point
+
+
 def web_clearance(web, rolls):
     """The web must not cut through a solid roll at a bend or transfer segment."""
     frame(1)
@@ -149,7 +160,7 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
     assert bpy.context.scene.frame_end-bpy.context.scene.frame_start == round(meta['duration']*24)
     reports[kind] = {'objects': len(objects), 'motion_groups': sorted(groups)}
 
-    if kind not in ('straw', 'compounding', 'extrusion'):
+    if kind not in ('straw', 'compounding', 'extrusion', 'sheet'):
         # The core center must stay on its bearing axis, rather than orbit in space.
         names = ['ScrewA_core']
         for name in names:
@@ -232,12 +243,26 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
         checks.append('compounding: roll and rotor speeds follow line speed, roll diameter, cutting edges and pellet length within 0.6 %')
 
     elif kind == 'sheet':
-        web_clearance('SheetWeb', [('BottomRoll', .46), ('MiddleRoll', .46), ('TopRoll', .46), ('SheetGuideRoll', .29), ('Winder', .60)])
-        assert surface_velocity('BottomRoll', (0, 0, .46)).x > 0
-        assert surface_velocity('MiddleRoll', (0, 0, -.46)).x > 0
-        assert surface_velocity('MiddleRoll', (0, 0, .46)).x < 0
-        assert surface_velocity('TopRoll', (0, 0, -.46)).x < 0
-        checks.append('sheet: upstack web clearance and both nip contact directions')
+        teaching = meta['teaching']
+        reports[kind]['screw_direction'] = [screw_direction('Extruder screw', 'Extruder screw flight', 0, 1, -1, meta['turns']['screw'])]
+        r = teaching['roll_mm']['stack']/2000
+        web_clearance('SheetWeb', [('TopRoll', r), ('MiddleRoll', r), ('BottomRoll', r)])
+        # S-wrap contact directions: first nip, round the middle roll's +X side, second nip, round the bottom roll's -X side.
+        assert world_velocity('TopRoll', (0, 0, -r)).x > 0
+        assert world_velocity('MiddleRoll', (0, 0, r)).x > 0 and world_velocity('MiddleRoll', (r, 0, 0)).z < 0
+        assert world_velocity('MiddleRoll', (0, 0, -r)).x < 0 and world_velocity('BottomRoll', (0, 0, r)).x < 0
+        assert world_velocity('BottomRoll', (-r, 0, 0)).z < 0 and world_velocity('BottomRoll', (0, 0, -r)).x > 0
+        # Every roll the web touches moves its contact surface at the same line speed: n = 1000 v / (pi d).
+        step = teaching['line_speed_m_min']/60/24
+        rolls = [('TopRoll', 'stack'), ('MiddleRoll', 'stack'), ('BottomRoll', 'stack'), ('TableRoll00', 'table'), ('TableRoll09', 'table'),
+                 ('HaulRollLower', 'haul'), ('HaulRollUpper', 'haul'), ('Winder', 'winder_now')]
+        for name, key in rolls:
+            radius = teaching['roll_mm'][key]/2000
+            speed = world_velocity(name, (0, 0, radius if name not in ('TopRoll', 'HaulRollUpper') else -radius)).length
+            assert abs(speed-step)/step < .01, (name, speed, step)
+        assert world_velocity('HaulRollUpper', (0, 0, -teaching['roll_mm']['haul']/2000)).x > 0
+        assert world_velocity('Winder', (0, 0, teaching['roll_mm']['winder_now']/2000)).x > 0
+        checks.append('sheet: S-wrap clearance, all nip and wrap directions, and one surface speed for stack, table, haul-off and winder')
 
     elif kind == 'castfilm':
         web_clearance('CastFilmWeb', [('ChillRoll', .70), ('FilmGuideRoll', .29), ('Winder', .61)])
