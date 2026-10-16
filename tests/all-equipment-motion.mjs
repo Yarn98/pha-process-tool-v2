@@ -3,6 +3,8 @@ import { readFile,writeFile,mkdir } from 'node:fs/promises';
 import { resolve,relative,extname } from 'node:path';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
+// Real-scale GLBs (up to ~4 MB) load and compile slowly on software WebGL; 30 s was intermittently tight.
+const MODEL_READY_MS=90000;
 
 const root=resolve(process.env.PHA_TEST_ROOT||'.'),out=resolve('output/playwright/all-equipment');
 await mkdir(out,{recursive:true});
@@ -19,7 +21,7 @@ async function select(page,kind,expected='ready'){
   else{await page.evaluate(()=>switchTab('proc'));await page.selectOption('#process',kind);}
   const panel=page.locator(`.tabpage.active [data-equipment-model="${kind}"]`);
   await panel.scrollIntoViewIfNeeded();
-  await page.waitForFunction(kind=>{const el=document.querySelector(`.tabpage.active [data-equipment-model="${kind}"]`);return ['ready','fallback'].includes(el?.dataset.motionState);},kind);
+  await page.waitForFunction(kind=>{const el=document.querySelector(`.tabpage.active [data-equipment-model="${kind}"]`);return ['ready','fallback'].includes(el?.dataset.motionState);},kind,{timeout:MODEL_READY_MS});
   const data=await page.evaluate(()=>__phaEquipmentTest());
   assert.equal(await panel.getAttribute('data-motion-state'),expected,kind+': '+(data.error||'model state'));
   return panel;
