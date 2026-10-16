@@ -1210,7 +1210,7 @@ const FLASH_TAB_HTML = {
       </div>
     `,
     t3: `
-      <h3>사출 공정 흐름</h3><p>스크류의 회전·후퇴 → 전진 충전 → 보압·냉각 → 금형 개방·취출을 따라가 보세요.</p><div id="flashInjectionMotion" class="injection-motion"></div><p class="atlas-caption">설명용 절개 모델입니다. 실제 장비에서는 계량과 냉각이 겹칠 수 있으며, 재생 시간·수지 흐름은 생산 조건이나 유동해석 결과가 아닙니다.</p>
+      <h3>사출 공정 흐름</h3><p>형폐·형체 → 노즐 전진 → 충전·V/P 전환 → 보압 → 냉각(이 동안 다음 샷 계량·석백) → 형개·취출의 정상 연속 사이클을 따라가 보세요.</p><div id="flashInjectionMotion" class="injection-motion"></div><p class="atlas-caption">1600 kN급 토글식 사출기를 특정 제조사 외관 없이 재현한 교육용 모델입니다. 일부 치수는 공개 카탈로그 1종, 나머지는 설명용 판단값입니다. 14초 재생은 예시 30초 사이클을 압축한 것이며, 생산 조건이나 유동해석 결과가 아닙니다.</p>
     `,
     t4: `
       <h3>시운전 전 확인</h3><div class="success-box"><p><strong>재료·lot·배합과 원료/컴파운드 여부를 확인합니다.</strong></p><p>건조조건은 해당 TDS를 따릅니다. A1000P 본문은 50 °C 미만, S1000P는 80 °C × 5 h입니다. 서로 그대로 옮겨 쓰지 마세요.</p></div><p>금형 접촉면·벤트·온조기 성능, 형체력과 압력 기준을 확인하고, 비교할 중량·치수·외관 기준을 정합니다.</p>
@@ -1358,7 +1358,7 @@ const FLASH_TAB_HTML = {
       <div class="calculator"><h3 style="color:var(--ink);margin-bottom:20px">4. Entered Packing-Ratio Conversion (P1 / P2)</h3><div class="calc-input-group"><label for="flash-p-inj-peak">Peak injection pressure P_inj_peak (bar) — observed peak on this shot</label><input type="number" id="flash-p-inj-peak" placeholder="e.g. 1500" value="1500"></div><div class="calc-input-group"><label for="flash-pack-r1">P1 — user-selected fraction of peak (%)</label><input type="number" id="flash-pack-r1" min="0" max="100" step="any"></div><div class="calc-input-group"><label for="flash-pack-r2">P2 — user-selected fraction of peak (%)</label><input type="number" id="flash-pack-r2" min="0" max="100" step="any"></div><button class="calc-button" onclick="calculateFlashPackingPressure()">Calculate</button><button class="calc-button" onclick="clearFlashInputs('packing')">Reset</button><div class="calc-result" id="flash-packing-result" style="display:none;"><h4>Entered pressure-ratio conversion — P1 / P2</h4><div class="calc-result-value" id="flash-packing-value"></div><p id="flash-packing-recommendation"></p></div></div>
     `,
     t3: `
-      <h3>Injection process flow</h3><p>Follow screw rotation/retraction → axial filling → packing/cooling → mold opening and ejection.</p><div id="flashInjectionMotion" class="injection-motion"></div><p class="atlas-caption">Explanatory cutaway model. Metering and cooling can overlap on a real machine. Playback timing and polymer flow are not production settings or flow-simulation results.</p>
+      <h3>Injection process flow</h3><p>Follow the steady cycle: mould closing and clamping → carriage advance → filling and V/P transfer → holding → cooling (with next-shot dosing and decompression) → mould opening and ejection.</p><div id="flashInjectionMotion" class="injection-motion"></div><p class="atlas-caption">Teaching model of a 1600 kN-class toggle injection machine without any maker's styling. Some dimensions follow one public catalogue; the rest are illustrative judgement. The 14 s playback compresses a 30 s example cycle and is not a production setting or flow-simulation result.</p>
     `,
     t4: `
       <h3>Before the trial</h3><div class="success-box"><p><strong>Confirm grade, lot, formulation and whether the feed is raw resin or compound.</strong></p><p>Follow the grade TDS. A1000P text: below 50 °C. S1000P: 80 °C × 5 h. These are not interchangeable.</p></div><p>Check parting surfaces, vents, temperature-control capability, clamping force and pressure basis. Define weight, dimension and appearance criteria.</p>
@@ -4716,6 +4716,7 @@ window.addEventListener('load', () => {
   <script src="equipment-kinematics.js?v=25"></script>
   <script src="equipment-study.js?v=25"></script>
   <script src="equipment-models.js?v=25"></script>
+<script src="machine-viewer.js?v=25"></script>
 <script src="equipment-motion.js?v=25"></script>
 <script src="injection-motion.js?v=25"></script>
   <script src="process-atlas.js?v=25"></script>

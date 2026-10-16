@@ -1,10 +1,10 @@
-/* Shared, local Blender GLB viewer for seven educational process lines. */
+/* Local Blender GLB player for seven educational process lines; the stage comes from machine-viewer.js. */
 (function(){
   'use strict';
-  const VERSION='?v=25',VENDOR='./vendor/three-0.185.1/';
+  const VERSION='?v=25',viewer=()=>window.PHAMachineViewer;
   const reduced=matchMedia('(prefers-reduced-motion: reduce)'),saved=new Map(),cache=new Map();
-  let host=null,meta=null,state=null,asset=null,engine=null,imports=null,onStage=()=>{};
-  let locale='ko',token=0,raf=0,lastTick=0,resizeObserver=null,intersectionObserver=null,studyPanel=null;
+  let host=null,meta=null,state=null,asset=null,engine=null,enginePending=null,onStage=()=>{};
+  let locale='ko',token=0,raf=0,lastTick=0,unwatch=null,studyPanel=null;
   const t=(ko,en)=>locale==='en'?en:ko,text=pair=>pair[locale==='en'?1:0];
   const clamp=(value,min,max)=>Math.min(max,Math.max(min,value));
   window.phaSyncMachineOverlay=()=>document.body.classList.toggle('pha-machine-manual',!!document.querySelector('.tabpage.active :is(.equipment-motion,.injection-motion):not(.is-study-photo) .motion-manual:not([hidden]),.tabpage.active .equipment-study[open]'));
@@ -158,48 +158,30 @@
     const compact=(state.mode==='manual'||host.classList.contains('is-study-open'))&&matchMedia('(max-width:760px)').matches;
     const height=Math.round(compact?Math.min(width*.55,220):width*(width<480?.72:meta.heightRatio||.5));viewport.style.height=height+'px';
     engine.renderer.setSize(width,height,false);
-    const ratio=width/height,vertical=Math.max(meta.span[1],meta.span[0]/ratio)*1.08;
-    Object.assign(engine.camera,{left:-vertical*ratio/2,right:vertical*ratio/2,top:vertical/2,bottom:-vertical/2});
-    engine.camera.updateProjectionMatrix();paint();
+    viewer().frameOrtho(engine.camera,width,height,meta.span[0],meta.span[1],1.08);paint();
   }
   async function ensureEngine(){
     if(engine)return;
-    if(!imports)imports=Promise.all([import('three'),import(VENDOR+'examples/jsm/loaders/GLTFLoader.js'),import(VENDOR+'examples/jsm/controls/OrbitControls.js')]);
-    const [THREE,{GLTFLoader},{OrbitControls}]=await imports;
+    enginePending||=viewer().createStage({ground:true,exposure:1.08,zoom:[.7,6],polar:[.20,Math.PI/1.95],onContextLost:()=>fallback()});
+    const stage=await enginePending;
     if(engine)return;
-    const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'low-power'});
-    renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setClearColor(0xebe7dc);renderer.outputColorSpace=THREE.SRGBColorSpace;
-    renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.10;
-    const scene=new THREE.Scene();scene.add(new THREE.HemisphereLight(0xfff7e8,0x788579,2.6));
-    for(const [position,color,intensity] of [[[-2,8,7],0xfff6e7,3],[[5,5,-4],0xe4eeff,2]]){const light=new THREE.DirectionalLight(color,intensity);light.position.set(...position);scene.add(light);}
-    const camera=new THREE.OrthographicCamera(-7,7,3.5,-3.5,.01,150),controls=new OrbitControls(camera,renderer.domElement);
-    controls.enablePan=false;controls.enableDamping=false;controls.minZoom=.7;controls.maxZoom=6;controls.minPolarAngle=.20;controls.maxPolarAngle=Math.PI/1.95;
-    controls.addEventListener('change',()=>{if(!canRun())paint();});
-    renderer.domElement.setAttribute('role','img');renderer.domElement.addEventListener('webglcontextlost',event=>{event.preventDefault();fallback();});
-    engine={THREE,renderer,scene,camera,controls,loader:new GLTFLoader()};
+    stage.controls.addEventListener('change',()=>{if(!canRun())paint();});
+    engine=stage;
   }
   async function load(definition){
     if(cache.has(definition.id)){const entry=cache.get(definition.id);cache.delete(definition.id);cache.set(definition.id,entry);return entry;}
-    const gltf=await engine.loader.loadAsync('./'+definition.model+VERSION);
-    const nodes={},byId=new Map(),members={},tracks={};
-    gltf.scene.traverse(node=>{nodes[node.name]=node;byId.set(node.name,node);byId.set(node.uuid,node);if(node.userData.motion_group)(members[node.userData.motion_group]||=[]).push(node);});
-    for(const clip of gltf.animations)for(const track of clip.tracks){
-      let node=byId.get(engine.THREE.PropertyBinding.parseTrackName(track.name).nodeName);
-      while(node&&!node.userData.motion_group)node=node.parent;
-      if(node)(tracks[node.userData.motion_group]||=[]).push(track);
-    }
-    const groups=new Map();
-    for(const [key,list] of Object.entries(tracks)){
-      const clip=new engine.THREE.AnimationClip(key,-1,list),mixer=new engine.THREE.AnimationMixer(gltf.scene);
-      mixer.clipAction(clip).play();groups.set(key,{mixer,duration:clip.duration,tracks:list.length});
-    }
+    const gltf=await engine.loader.loadAsync('./'+definition.model+VERSION),THREE=engine.THREE;
+    viewer().prepareModel(gltf.scene);
+    const nodes={},members={};
+    gltf.scene.traverse(node=>{nodes[node.name]=node;if(node.userData.motion_group)(members[node.userData.motion_group]||=[]).push(node);});
+    const groups=viewer().groupClips(THREE,gltf.scene,gltf.animations);
     const missing=definition.controls.filter(control=>!groups.has(control.key)).map(control=>control.key);
     if(missing.length)throw new Error('Missing Blender mechanism animation: '+missing.join(', '));
     let guide=null;
     const guideDefinition={sheet:['SheetGuideRoll',.46/.29],castfilm:['FilmGuideRoll',.70/.29]}[definition.id];
     if(guideDefinition){
-      const list=(tracks.roll||[]).filter(track=>engine.THREE.PropertyBinding.parseTrackName(track.name).nodeName===guideDefinition[0]);
-      if(list.length){const clip=new engine.THREE.AnimationClip('studyGuide',-1,list),mixer=new engine.THREE.AnimationMixer(gltf.scene);mixer.clipAction(clip).play();guide={mixer,duration:clip.duration,ratio:guideDefinition[1]};}
+      const list=(groups.get('roll')?.clip.tracks||[]).filter(track=>THREE.PropertyBinding.parseTrackName(track.name).nodeName===guideDefinition[0]);
+      if(list.length){const clip=new THREE.AnimationClip('studyGuide',-1,list),mixer=new THREE.AnimationMixer(gltf.scene);mixer.clipAction(clip).play();guide={mixer,duration:clip.duration,ratio:guideDefinition[1]};}
     }
     const loaded={model:gltf.scene,groups,nodes,members,guide};cache.set(definition.id,loaded);return loaded;
   }
@@ -209,8 +191,7 @@
       const [key,old]=entry;
       old.groups.forEach(group=>group.mixer.stopAllAction());
       old.guide?.mixer.stopAllAction();
-      const geometries=new Set(),materials=new Set();old.model.traverse(node=>{if(node.geometry)geometries.add(node.geometry);if(node.material)(Array.isArray(node.material)?node.material:[node.material]).forEach(mat=>materials.add(mat));});
-      geometries.forEach(item=>item.dispose());materials.forEach(item=>item.dispose());cache.delete(key);
+      viewer().disposeModel(old.model);cache.delete(key);
     }
   }
   function fallback(){
@@ -222,7 +203,7 @@
     host.querySelectorAll('.study-viewbar button,.equipment-study input,.equipment-study select,.equipment-study [data-study-stop]').forEach(el=>el.disabled=false);studyPanel?.refresh();
   }
   function detach(){
-    token++;stopStudy();stop();if(state)state.visible=false;resizeObserver?.disconnect();intersectionObserver?.disconnect();
+    token++;stopStudy();stop();if(state)state.visible=false;unwatch?.();unwatch=null;
     engine?.renderer.domElement.remove();host=null;onStage=()=>{};window.phaSyncMachineOverlay();
   }
   async function mount(element,options={}){
@@ -240,7 +221,7 @@
     host.querySelector('.motion-toolbar').addEventListener('change',leaveStudy,true);
     try{
       await ensureEngine();const loaded=await load(definition);if(current!==token||!host?.isConnected){trimCache();return;}
-      if(asset?.model)engine.scene.remove(asset.model);asset=loaded;engine.scene.add(asset.model);trimCache();state.ready=true;
+      if(asset?.model)engine.scene.remove(asset.model);asset=loaded;engine.scene.add(asset.model);viewer().fitShadows(engine,asset.model);trimCache();state.ready=true;
       host.querySelector('.motion-viewport').appendChild(engine.renderer.domElement);host.querySelector('.motion-viewport').hidden=false;host.querySelector('.motion-poster').hidden=true;host.querySelector('.motion-load').hidden=true;host.dataset.motionState='ready';
       engine.renderer.domElement.setAttribute('aria-label',t('설비 부품과 수지 이동을 보여주는 조작 가능한 3D 모델','Interactive 3D equipment model showing mechanisms and polymer movement'));
       host.querySelectorAll('button,input,select').forEach(element=>element.disabled=false);
@@ -259,7 +240,7 @@
         state.target[control.key]=clamp(value,0,control.max);if(reduced.matches){manualStep(10);paint();}else schedule();update();
       });
       host.querySelectorAll('[data-eq-stage]').forEach(button=>button.onclick=()=>seek(Number(button.dataset.eqStage)*meta.duration/4+.25));
-      resizeObserver=new ResizeObserver(resize);resizeObserver.observe(host);intersectionObserver=new IntersectionObserver(entries=>{state.visible=!!entries[0]?.isIntersecting;schedule();},{threshold:.01});intersectionObserver.observe(host);
+      unwatch=viewer().watch(host,{onResize:resize,onVisible:visible=>{state.visible=visible;schedule();},threshold:.01});
       if(prior!==meta.id||!engine.camera.position.lengthSq())resetView(state.focus);resize();paint();update();
     }catch(error){if(current===token){state.error=String(error);fallback();}}
   }

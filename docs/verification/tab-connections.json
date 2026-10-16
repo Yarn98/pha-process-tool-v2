@@ -1,5 +1,5 @@
 {
-  "reviewed": "2026-10-16T16:10:51.440Z",
+  "reviewed": "2026-10-16T16:52:08.020Z",
   "scope": [
     "proc",
     "hist",
@@ -19,7 +19,7 @@
   "testOnlyInstrumentation": "Expose unchanged myaiExecTool in the existing localhost-only test hook; no production file altered.",
   "chartVersion": "4.4.0",
   "sourceSha256": {
-    "index.html": "4c74cdbf2395b950caa641a7705c666c6b54aebfb4166865e1276c9176ee4a98",
+    "index.html": "8f68a026b285785922d786f731cd268ed9f861f5d3d851762f50e16b24fa8496",
     "custom.js": "5168214ac7e1e9943265dd0f4b107dc6c00c51c97af4c743f4dc2c647d7e5be3"
   },
   "baseline": {
@@ -659,22 +659,20 @@
       }
     ]
   },
-  "passed": 16,
-  "failed": 0,
+  "passed": 15,
+  "failed": 1,
   "cases": [
     {
       "id": "process-reference-preserves-draft",
       "description": "Editing reference ranges preserves entered process values and notes",
-      "status": "passed",
-      "observations": {
-        "nozzle": "171",
-        "notes": "unsaved process draft"
-      },
+      "status": "failed",
+      "observations": {},
       "pageErrors": [],
       "blockedExternalRequests": [
         "https://fonts.googleapis.com",
         "https://tars-api.sorisem98.workers.dev"
-      ]
+      ],
+      "error": "page.click: Timeout 7000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('button[onclick=\"openRecoEditor()\"]')\u001b[22m\n\u001b[2m    - locator resolved to <button class=\"btn secondary\" onclick=\"openRecoEditor()\">현재 재료의 참고 범위 편집 · Edit this grade</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is not stable\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - performing click action\u001b[22m\n\u001b[2m    - <canvas role=\"img\" width=\"799\" height=\"400\" data-engine=\"three.js r185\" aria-label=\"수지 이동, 스크류 회전·전진, 토글 형체와 금형 개폐·취출을 보여주는 3D 애니메이션\"></canvas> from <div id=\"processAtlas\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - performing click action\u001b[22m\n\u001b[2m    - <span class=\"range-hint\">참고: 5–25 s</span> from <div class=\"grid\" id=\"dynamicFields\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 100ms\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m    - element is visible, enabled and stable\u001b[22m\n\u001b[2m    - scrolling into view if needed\u001b[22m\n\u001b[2m    - done scrolling\u001b[22m\n\u001b[2m    - performing click action\u001b[22m\n\u001b[2m    - <input step=\"any\" type=\"number\" id=\"f_packTime\" placeholder=\"5-25\" inputmode=\"decimal\"/> from <div class=\"grid\" id=\"dynamicFields\">…</div> subtree intercepts pointer events\u001b[22m\n\u001b[2m  - retrying click action\u001b[22m\n\u001b[2m    - waiting 100ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is visible, enabled and stable\u001b[22m\n\u001b[2m      - scrolling into view if needed\u001b[22m\n\u001b[2m      - done scrolling\u001b[22m\n\u001b[2m      - <span class=\"tars-wordmark-text\">TARS Biopolymer Studio</span> from <header class=\"tars-masthead\">…</header> subtree intercepts pointer events\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 500ms\u001b[22m\n"
     },
     {
       "id": "history-literal-notes",
@@ -682,7 +680,7 @@
       "status": "passed",
       "observations": {
         "saved": {
-          "ts": "2026-10-16T16:09:23.914Z",
+          "ts": "2026-10-16T16:50:40.229Z",
           "proc": "extrusion",
           "grade": "CA1180P",
           "params": {
