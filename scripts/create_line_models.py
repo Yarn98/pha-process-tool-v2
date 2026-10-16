@@ -149,50 +149,39 @@ def shell(name,x0,x1,y,z,ry=.29,rz=.29,mat='metal'):
     return mesh(name,verts,faces,mat)
 
 
-def rotor(name,y,z,twin=False,phase=0):
+def rotor(name,y,z):
     owner=empty(name,(0,y,z),'screw')
     x0,x1=-4.8,-1.15
-    if twin:
-        cyl(name+'_core',((x0+x1)/2,y,z),.092,x1-x0,'steel',owner=owner)
-    else:
-        rings=[(x0,.092),(-3.1,.092),(-1.9,.137),(x1,.137)]
-        core_verts=[(x,y+r*math.cos(i*math.tau/32),z+r*math.sin(i*math.tau/32)) for x,r in rings for i in range(32)]
-        mesh(name+'_core',core_verts,[(j*32+i,j*32+(i+1)%32,(j+1)*32+(i+1)%32,(j+1)*32+i) for j in range(3) for i in range(32)],'steel',owner)
+    rings=[(x0,.092),(-3.1,.092),(-1.9,.137),(x1,.137)]
+    core_verts=[(x,y+r*math.cos(i*math.tau/32),z+r*math.sin(i*math.tau/32)) for x,r in rings for i in range(32)]
+    mesh(name+'_core',core_verts,[(j*32+i,j*32+(i+1)%32,(j+1)*32+(i+1)%32,(j+1)*32+i) for j in range(3) for i in range(32)],'steel',owner)
     verts=[]; faces=[]; samples=440
     for i in range(samples+1):
         x=x0+(x1-x0)*i/samples
         a=math.tau*11*i/samples
-        root=.092 if twin else .092+.045*max(0,min(1,(x+3.1)/1.2))
+        root=.092+.045*max(0,min(1,(x+3.1)/1.2))
         for r in (root,.215): verts.append((x,y+r*math.cos(a),z+r*math.sin(a)))
-        if i and not(twin and (-3.55<x<-2.95 or -2.30<x<-1.85)):
+        if i:
             faces.append((2*i-2,2*i-1,2*i+1,2*i))
     flight=mesh(name+'_flight',verts,faces,'steel',owner)
     mod=flight.modifiers.new('Flight thickness','SOLIDIFY'); mod.thickness=.02
     bpy.context.view_layer.objects.active=flight
     bpy.ops.object.modifier_apply(modifier=mod.name)
-    if twin:
-        for start,count in ((-3.48,6),(-2.23,4)):
-            for i in range(count):
-                obj=cyl(name+'_kneading_disc',(start+i*.09,y,z),1,.065,'bronze')
-                obj.scale.y=.19;obj.scale.z=.085
-                obj.rotation_euler.x=i*math.pi/4+phase
-                bpy.ops.object.transform_apply(location=False,rotation=True,scale=True)
-                parent(obj,owner)
     animate_spin(owner,'screw',direction=-1)
     return owner
 
 
-def extruder(z=1.55,twin=False):
+def extruder(z=1.55):
     box('DriveBed',(-3.3,0,.20),(5.3,1.55,.27),'dark')
     for x in (-5.5,-1.1):
         for y in (-.56,.56): box('MachineFoot',(x,y,.015),(.27,.27,.25),'metal')
     box('GearboxPedestal',(-4.8,0,(z+.25)/2),(.95,.82,z-.15),'metal')
     cyl('DriveMotor',(-5.23,0,z),.39,.82,'dark')
     for x in [-5.51+i*.085 for i in range(8)]: cyl('MotorCoolingFin',(x,0,z),.415,.028,'dark')
-    for y in ([-.17,.17] if twin else [0]): rotor('ScrewA' if y<=0 else 'ScrewB',y,z,twin,0 if y<=0 else math.pi/2)
-    shell('BarrelCutaway',-4.9,-1.03,0,z,.48 if twin else .285,.28)
+    rotor('ScrewA',0,z)
+    shell('BarrelCutaway',-4.9,-1.03,0,z,.285,.28)
     for x in (-4.45,-3.65,-2.7,-1.6):
-        shell('HeaterBand',x-.11,x+.11,0,z,.545 if twin else .35,.345,'bronze')
+        shell('HeaterBand',x-.11,x+.11,0,z,.35,.345,'bronze')
         cyl('Thermocouple',(x,.21,z+.41),.022,.2,'steel','Z')
         pipe('SensorCable',[(x,.21,z+.5),(x,.65,z+.53),(-4.2,.65,z+.53)],.012,'dark')
     cyl('ScreenFlange',(-.94,0,z),.40,.15,'dark')
@@ -263,8 +252,8 @@ def bath(x,length,z=1.55):
     cyl('CirculationPump',(x,.80,.40),.13,.30,'dark')
 
 
-def strand_line(twin=False):
-    extruder(twin=twin)
+def strand_line():
+    extruder()
     z=1.55
     bath(.42,2.15,z)
     for y in (-.18,0,.18):
@@ -280,22 +269,6 @@ def strand_line(twin=False):
     box('PelletTray',(4.35,0,.42),(1.45,1.0,.09),'metal')
     for i in range(14):
         pellet=cyl('CutPellet',(3.9+(i%5)*.19,-.34+(i//5)*.28,.51),.06,.10,'polymer','Y',segments=12)
-    if twin:
-        box('SideFeederRear',(-2.49,.99,1.75),(.06,1.2,.50),'metal')
-        box('SideFeederFloor',(-2.76,.99,1.48),(.60,1.2,.06),'metal')
-        cyl('SideFeedMotor',(-2.76,1.69,1.75),.25,.4,'dark','Y')
-        side=empty('SideFeedRotor',(-2.76,.9,1.75),'side')
-        cyl('SideFeedShaft',(-2.76,.97,1.75),.09,1.1,'steel','Y',side)
-        flight_vertices=[]
-        for i in range(161):
-            a=math.tau*4*i/160;y=.43+1.04*i/160
-            for radius in (.09,.19):flight_vertices.append((-2.76+radius*math.cos(a),y,1.75+radius*math.sin(a)))
-        mesh('SideFeedHelicalFlight',flight_vertices,[(2*i,2*i+1,2*i+3,2*i+2) for i in range(160)],'bronze',side)
-        animate_spin(side,'side',2,1,direction=-1)
-        pipe('VentStack',[(-1.65,.15,1.83),(-1.65,.15,2.55),(-1.25,.15,2.75)],.12)
-        markers([(-2.76,1.45,1.75),(-2.76,.05,1.60)],6,'SideFeedMarker','side',.04)
-        markers([(-1.65,.15,2.3),(-1.65,.15,2.75),(-1.3,.15,3.05)],4,'VentMarker','flow',.03,'water')
-
 
 def flat_die(z):
     pipe('AdapterToFlatDie',[(-.9,0,z),(-.52,0,z)],.17)
@@ -599,7 +572,7 @@ def straw_model():
     export(meta,False)
 
 
-builders={'extrusion':lambda:strand_line(False),
+builders={'extrusion':strand_line,
           'sheet':sheet_line,'castfilm':cast_line,'blownfilm':blown_line,'blowmolding':blow_line}
 # The compounding line is built at real scale by scripts/create_compounding_motion.py.
 KINDS=['extrusion','compounding','sheet','castfilm','blownfilm','blowmolding','straw']
