@@ -95,7 +95,10 @@ try{
   await fields(panel,{diameter:200});
   await fields(panel,{scale:1});await panel.locator('[data-study-run]').click();await page.waitForFunction(()=>PHAEquipmentMotion.getState().study?.elapsed>.12);await panel.locator('[data-study-stop]').click();
   const cast=await data(page,'castfilm'),guide=cast.nodes.roll.find(n=>n.name==='FilmGuideRoll');
-  const guideAngle=2*Math.acos(Math.min(1,Math.abs(guide.rotation[3]))),expectedGuide=Math.acos(Math.cos(cast.study.angle*Math.PI/180*.70/.29));
+  // Rolls turn about their own axis from a rest pose turned 90 deg about the vertical: q_rel = conj(rest) * q.
+  const s45=Math.SQRT1_2,[x,y,z,w]=guide.rotation,rel=[s45*x-s45*z,s45*y-s45*w,s45*z+s45*x,s45*w+s45*y];
+  const mm=await page.evaluate(()=>PHAEquipmentModels.castfilm.teaching.roll_mm);
+  const guideAngle=2*Math.acos(Math.min(1,Math.abs(rel[3]))),expectedGuide=Math.acos(Math.cos(cast.study.angle*Math.PI/180*mm.chill/mm.guide));
   assert.ok(Math.abs(guideAngle-expectedGuide)<.025,'Smaller guide roll turns faster at the same surface speed');
   panel=await select(page,'injection');await panel.locator('[data-study-drive]').selectOption('travel');await fields(panel,{stroke:10,velocity:20,scale:1});await panel.locator('[data-study-run]').click();
   await page.waitForFunction(()=>PHAInjectionMotion.getState().study?.elapsed>=.5);

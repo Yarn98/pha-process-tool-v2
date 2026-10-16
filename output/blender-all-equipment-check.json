@@ -10,9 +10,7 @@
     "compounding: feed-roll nip moves strands downstream, rotor blades pass the bed knife downward, whole turns per loop",
     "compounding: roll and rotor speeds follow line speed, roll diameter, cutting edges and pellet length within 0.6 %",
     "sheet: S-wrap clearance, all nip and wrap directions, and one surface speed for stack, table, haul-off and winder",
-    "castfilm: screw cores remain on their bearing axes",
-    "castfilm: signed screw rotation matches actual helix and downstream +X feed",
-    "castfilm: web stays outside chill, guide and winding rolls",
+    "castfilm: chill wrap, S-transfer, guide, dancer and winder directions; one surface speed; traversing gauge",
     "blownfilm: screw cores remain on their bearing axes",
     "blownfilm: signed screw rotation matches actual helix and downstream +X feed",
     "blownfilm: upward nip contacts, web clearance, flattening orientation and bubble morph",
@@ -117,21 +115,22 @@
       ]
     },
     "castfilm": {
-      "objects": 108,
+      "objects": 70,
       "motion_groups": [
         "flow",
+        "gauge",
         "roll",
         "screw",
         "winder"
       ],
       "screw_direction": [
         {
-          "node": "ScrewA",
+          "node": "Extruder screw",
           "axis": "X",
-          "helix_phase_slope": 18.934174882829236,
-          "rotation_radians_per_frame": -0.04363323003053665,
-          "total_radians": -12.566370964050293,
-          "fixed_azimuth_crest_step": 0.002304469579506533,
+          "helix_phase_slope": 224.76309555325093,
+          "rotation_radians_per_frame": -0.27770984172821045,
+          "total_radians": -50.26548385620117,
+          "fixed_azimuth_crest_step": 0.0012355669023183362,
           "feed_axis_sign": 1,
           "scope": "geometry direction only; not material velocity"
         }

@@ -160,7 +160,7 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
     assert bpy.context.scene.frame_end-bpy.context.scene.frame_start == round(meta['duration']*24)
     reports[kind] = {'objects': len(objects), 'motion_groups': sorted(groups)}
 
-    if kind not in ('straw', 'compounding', 'extrusion', 'sheet'):
+    if kind not in ('straw', 'compounding', 'extrusion', 'sheet', 'castfilm'):
         # The core center must stay on its bearing axis, rather than orbit in space.
         names = ['ScrewA_core']
         for name in names:
@@ -265,10 +265,30 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
         checks.append('sheet: S-wrap clearance, all nip and wrap directions, and one surface speed for stack, table, haul-off and winder')
 
     elif kind == 'castfilm':
-        web_clearance('CastFilmWeb', [('ChillRoll', .70), ('FilmGuideRoll', .29), ('Winder', .61)])
-        assert surface_velocity('ChillRoll', (0, 0, .70)).x > 0
-        assert surface_velocity('FilmGuideRoll', (0, 0, -.29)).x > 0
-        checks.append('castfilm: web stays outside chill, guide and winding rolls')
+        teaching = meta['teaching']
+        reports[kind]['screw_direction'] = [screw_direction('Extruder screw', 'Extruder screw flight', 0, 1, -1, meta['turns']['screw'])]
+        mm = teaching['roll_mm']
+        r1, r2, r3, rg, rw = (mm[key]/2000 for key in ('chill', 'second', 'third', 'guide', 'winder_now'))
+        web_clearance('CastFilmWeb', [('ChillRoll', r1), ('SecondRoll', r2), ('ThirdRoll', r3)])
+        web_clearance('CastFilmTrimmed', [('DancerRoll', rg)])
+        # 180 deg chill wrap on the +X side, S-transfer round the second roll, then over the third roll.
+        assert world_velocity('ChillRoll', (0, 0, r1)).x > 0 and world_velocity('ChillRoll', (r1, 0, 0)).z < 0
+        assert world_velocity('ChillRoll', (0, 0, -r1)).x < 0 and world_velocity('SecondRoll', (0, 0, r2)).x < 0
+        assert world_velocity('SecondRoll', (-r2, 0, 0)).z < 0 and world_velocity('SecondRoll', (0, 0, -r2)).x > 0
+        assert world_velocity('ThirdRoll', (0, 0, r3)).x > 0 and world_velocity('FilmGuideRoll', (0, 0, rg)).x > 0
+        assert world_velocity('DancerRoll', (0, 0, -rg)).x > 0 and world_velocity('Winder', (0, 0, rw)).x > 0
+        step = teaching['line_speed_m_min']/60/24
+        for name, radius in (('ChillRoll', r1), ('SecondRoll', r2), ('ThirdRoll', r3), ('FilmGuideRoll', rg), ('DancerRoll', rg),
+                             ('Winder', rw)):
+            speed = world_velocity(name, (0, 0, radius)).length
+            assert abs(speed-step)/step < .01, (name, speed, step)
+        frame(bpy.context.scene.frame_start)
+        ys = []
+        for f in range(bpy.context.scene.frame_start, bpy.context.scene.frame_end+1, 6):
+            frame(f)
+            ys.append(objects['GaugeHead'].matrix_world.translation.y)
+        assert min(ys) < -.3 and max(ys) > .3, 'O-frame head traverses the web width'
+        checks.append('castfilm: chill wrap, S-transfer, guide, dancer and winder directions; one surface speed; traversing gauge')
 
     elif kind == 'blownfilm':
         assert surface_velocity('NipLeft', (.205, 0, 0)).z > 0

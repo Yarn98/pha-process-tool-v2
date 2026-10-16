@@ -943,11 +943,303 @@
     "blender": "5.2.1 LTS",
     "source": "assets/equipment/castfilm-motion.blend",
     "frame": 55,
-    "source_sha256": "2f53b84e12bbbd3a008cc5dce757dafb00bc8dfa0f38e9570dad895c78979c2e",
+    "source_sha256": "e7371b2d33a0c33507311356dfe738b12eb31a8b941af58d2c7cbcee2e738cb4",
     "fbx": "output/unreal/fbx/castfilm.fbx",
-    "fbx_sha256": "93013ed8fc31afb135b03a5d843e98f870c7d203692f53f046b0ba8073d3faae",
-    "objects": 101,
-    "vertices": 6326
+    "fbx_sha256": "4fb7beeeb90bf365a16dc1acfde75f90ce4dd89fb5e64fa14574e081adc4b26c",
+    "objects": 61,
+    "vertices": 20596,
+    "materials": {
+      "Paint / anthracite base": {
+        "color": [
+          0.03434,
+          0.04092,
+          0.04374
+        ],
+        "metallic": 0.0,
+        "roughness": 0.58,
+        "alpha": 1.0
+      },
+      "Rubber / black hose": {
+        "color": [
+          0.01298,
+          0.0137,
+          0.01521
+        ],
+        "metallic": 0.0,
+        "roughness": 0.82,
+        "alpha": 1.0
+      },
+      "Steel / blackened": {
+        "color": [
+          0.06848,
+          0.07619,
+          0.08438
+        ],
+        "metallic": 0.85,
+        "roughness": 0.48,
+        "alpha": 1.0
+      },
+      "Steel / machined": {
+        "color": [
+          0.54572,
+          0.56471,
+          0.57112
+        ],
+        "metallic": 1.0,
+        "roughness": 0.36,
+        "alpha": 1.0
+      },
+      "Plastic / black": {
+        "color": [
+          0.007,
+          0.0075,
+          0.00802
+        ],
+        "metallic": 0.0,
+        "roughness": 0.55,
+        "alpha": 1.0
+      },
+      "Paint / forest green": {
+        "color": [
+          0.02732,
+          0.11193,
+          0.05613
+        ],
+        "metallic": 0.0,
+        "roughness": 0.42,
+        "alpha": 1.0
+      },
+      "Label / safety yellow": {
+        "color": [
+          0.80695,
+          0.46778,
+          0.00605
+        ],
+        "metallic": 0.0,
+        "roughness": 0.5,
+        "alpha": 1.0
+      },
+      "Paint / light machine grey": {
+        "color": [
+          0.65141,
+          0.65141,
+          0.60383
+        ],
+        "metallic": 0.0,
+        "roughness": 0.46,
+        "alpha": 1.0
+      },
+      "Polycarbonate / smoked": {
+        "color": [
+          0.32314,
+          0.38643,
+          0.39157
+        ],
+        "metallic": 0.0,
+        "roughness": 0.06,
+        "alpha": 0.28
+      },
+      "Brass / fittings": {
+        "color": [
+          0.58408,
+          0.3564,
+          0.10462
+        ],
+        "metallic": 1.0,
+        "roughness": 0.32,
+        "alpha": 1.0
+      },
+      "Section cut / terracotta": {
+        "color": [
+          0.32314,
+          0.07819,
+          0.01764
+        ],
+        "metallic": 0.0,
+        "roughness": 0.7,
+        "alpha": 1.0
+      },
+      "Heater band / stainless mica": {
+        "color": [
+          0.38643,
+          0.36625,
+          0.32314
+        ],
+        "metallic": 0.75,
+        "roughness": 0.45,
+        "alpha": 1.0
+      },
+      "Heater band / ceramic": {
+        "color": [
+          0.68669,
+          0.62396,
+          0.50888
+        ],
+        "metallic": 0.0,
+        "roughness": 0.78,
+        "alpha": 1.0
+      },
+      "Copper / thermocouple": {
+        "color": [
+          0.53948,
+          0.19462,
+          0.06848
+        ],
+        "metallic": 1.0,
+        "roughness": 0.35,
+        "alpha": 1.0
+      },
+      "Steel / brushed stainless": {
+        "color": [
+          0.58408,
+          0.59062,
+          0.59062
+        ],
+        "metallic": 1.0,
+        "roughness": 0.38,
+        "alpha": 1.0
+      },
+      "Steel / hard chrome": {
+        "color": [
+          0.7913,
+          0.80695,
+          0.82279
+        ],
+        "metallic": 1.0,
+        "roughness": 0.07,
+        "alpha": 1.0
+      },
+      "Hose / cooling supply blue": {
+        "color": [
+          0.02624,
+          0.11444,
+          0.34191
+        ],
+        "metallic": 0.0,
+        "roughness": 0.6,
+        "alpha": 1.0
+      },
+      "Hose / cooling return red": {
+        "color": [
+          0.39157,
+          0.04231,
+          0.0319
+        ],
+        "metallic": 0.0,
+        "roughness": 0.6,
+        "alpha": 1.0
+      },
+      "Polymer / film (translucent)": {
+        "color": [
+          0.04817,
+          0.26225,
+          0.10224
+        ],
+        "metallic": 0.0,
+        "roughness": 0.2,
+        "alpha": 0.55
+      },
+      "Paper / winder core": {
+        "color": [
+          0.47932,
+          0.32314,
+          0.14413
+        ],
+        "metallic": 0.0,
+        "roughness": 0.85,
+        "alpha": 1.0
+      },
+      "Lamp / red": {
+        "color": [
+          0.57112,
+          0.02416,
+          0.016
+        ],
+        "metallic": 0.0,
+        "roughness": 0.25,
+        "alpha": 0.92
+      },
+      "Lamp / amber": {
+        "color": [
+          0.76815,
+          0.32778,
+          0.00972
+        ],
+        "metallic": 0.0,
+        "roughness": 0.25,
+        "alpha": 0.92
+      },
+      "Lamp / green": {
+        "color": [
+          0.02732,
+          0.34191,
+          0.09531
+        ],
+        "metallic": 0.0,
+        "roughness": 0.25,
+        "alpha": 0.92
+      },
+      "Display / HMI glass": {
+        "color": [
+          0.00478,
+          0.01229,
+          0.01033
+        ],
+        "metallic": 0.0,
+        "roughness": 0.12,
+        "alpha": 1.0
+      },
+      "Display / HMI bar": {
+        "color": [
+          0.10946,
+          0.40198,
+          0.22323
+        ],
+        "metallic": 0.0,
+        "roughness": 0.3,
+        "alpha": 1.0
+      },
+      "Button / emergency stop yellow": {
+        "color": [
+          0.7991,
+          0.45641,
+          0.00802
+        ],
+        "metallic": 0.0,
+        "roughness": 0.45,
+        "alpha": 1.0
+      },
+      "Button / emergency stop red": {
+        "color": [
+          0.53328,
+          0.02029,
+          0.01229
+        ],
+        "metallic": 0.0,
+        "roughness": 0.35,
+        "alpha": 1.0
+      },
+      "Polymer / bright marker": {
+        "color": [
+          0.21223,
+          0.65141,
+          0.32314
+        ],
+        "metallic": 0.0,
+        "roughness": 0.3,
+        "alpha": 1.0
+      },
+      "Polymer / natural pellet": {
+        "color": [
+          0.58408,
+          0.53948,
+          0.37124
+        ],
+        "metallic": 0.0,
+        "roughness": 0.45,
+        "alpha": 1.0
+      }
+    }
   },
   {
     "kind": "blownfilm",

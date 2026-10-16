@@ -720,17 +720,25 @@ window.PHAEquipmentModels = {
   },
   "castfilm": {
     "id": "castfilm",
-    "duration": 12,
+    "duration": 7.541666666666667,
+    "frames": [
+      0,
+      181
+    ],
     "poster": "assets/equipment/castfilm-motion-poster.png",
     "model": "assets/equipment/castfilm-motion.glb",
     "center": [
-      -0.5,
-      1.6,
+      0.4225000000000001,
+      1.0,
       0
     ],
     "span": [
-      11.6,
-      4.2
+      6.754999999999999,
+      2.6
+    ],
+    "zoom": [
+      0.7,
+      12
     ],
     "controls": [
       {
@@ -744,7 +752,7 @@ window.PHAEquipmentModels = {
         "step": 1,
         "range": [
           0,
-          12
+          7.541666666666667
         ]
       },
       {
@@ -758,27 +766,27 @@ window.PHAEquipmentModels = {
         "step": 0.1,
         "range": [
           0,
-          12
+          7.541666666666667
         ]
       },
       {
         "key": "roll",
         "label": [
-          "냉각 롤 회전각",
-          "Chill roll rotation angle"
+          "칠 롤 회전각 (400 mm)",
+          "Chill roll angle (400 mm)"
         ],
         "max": 720,
         "unit": "°",
         "step": 1,
         "range": [
           0,
-          12
+          7.541666666666667
         ]
       },
       {
         "key": "winder",
         "label": [
-          "권취축 회전각",
+          "권취 롤 회전각",
           "Winder rotation angle"
         ],
         "max": 360,
@@ -786,7 +794,7 @@ window.PHAEquipmentModels = {
         "step": 1,
         "range": [
           0,
-          12
+          7.541666666666667
         ]
       }
     ],
@@ -798,8 +806,8 @@ window.PHAEquipmentModels = {
           "Whole line"
         ],
         "center": [
-          -0.5,
-          1.6,
+          0.4225000000000001,
+          1.0,
           0
         ],
         "zoom": 1
@@ -807,28 +815,41 @@ window.PHAEquipmentModels = {
       {
         "key": "screw",
         "label": [
-          "스크류·공급",
-          "Screw & feed"
+          "스크류·배럴",
+          "Screw & barrel"
         ],
         "center": [
-          -3.1,
-          1.65,
+          -1.0,
+          1.55,
           0
         ],
-        "zoom": 2.1
+        "zoom": 3.2
+      },
+      {
+        "key": "chill",
+        "label": [
+          "다이·에어 갭·칠 롤",
+          "Die, air gap & chill roll"
+        ],
+        "center": [
+          0.55,
+          1.0990384493975585,
+          0
+        ],
+        "zoom": 4.5
       },
       {
         "key": "finish",
         "label": [
-          "성형·후단",
-          "Forming & downstream"
+          "게이지·트림·권취",
+          "Gauge, trim & winder"
         ],
         "center": [
-          1.4,
-          2.1,
+          2.5,
+          0.39783844939755847,
           0
         ],
-        "zoom": 2.0
+        "zoom": 3
       }
     ],
     "stages": [
@@ -837,21 +858,69 @@ window.PHAEquipmentModels = {
         "Feed & melt"
       ],
       [
-        "다이·성형",
-        "Die & forming"
+        "에어 갭·칠 롤 고정",
+        "Air gap & pinning"
       ],
       [
-        "냉각·인취",
-        "Cool & haul off"
+        "냉각·두께 측정",
+        "Cool & gauge"
       ],
       [
-        "제품·배출",
-        "Product & discharge"
+        "트림·권취",
+        "Trim & wind"
       ]
     ],
+    "turns": {
+      "roll": 1,
+      "winder": 2,
+      "screw": 8
+    },
+    "study": {
+      "rpm": 63.6,
+      "speed": 10.0,
+      "diameter": 400.0
+    },
+    "teaching": {
+      "time_scale": 1,
+      "line_speed_m_min": 10.0,
+      "air_gap_mm": 80.0,
+      "landing_deg": 100,
+      "rpm": {
+        "chill": 7.958,
+        "second": 15.915,
+        "winder_at_76": 41.883,
+        "winder_at_200": 15.915,
+        "winder_at_500": 6.366,
+        "screw": 63.646
+      },
+      "roll_mm": {
+        "chill": 400.0,
+        "second": 200.0,
+        "third": 200.0,
+        "guide": 100.0,
+        "winder_now": 200.0,
+        "core": 76.0
+      },
+      "loop_note": "Real time: the 400 mm chill roll turns once per loop and the 200 mm rolls twice; one surface speed."
+    },
+    "spec": {
+      "basis": "Pack B grade C teaching values; brand-neutral; not an OEM drawing or PHA setting",
+      "screw_d_mm": 45,
+      "l_d": 30,
+      "die_width_mm": 500,
+      "air_gap_mm": 80,
+      "rolls_mm": "400 / 200 / 200, face 600",
+      "pinning": "air knife 550 mm",
+      "chill_wrap_deg": 180,
+      "gauge": "traversing O-frame 700 mm",
+      "edge_trim": true,
+      "winder": "76 mm core to 500 mm, dancer with load cells",
+      "sources": "output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md"
+    },
     "blender": "5.2.1 LTS",
     "groups": [
       "flow",
+      "gauge",
       "roll",
       "screw",
       "winder"

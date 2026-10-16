@@ -56,11 +56,6 @@
       }
       group.mixer.setTime(clamp(second,0,group.duration-.00001));
     }
-    // The smaller guide roll follows the same surface speed as the primary roll.
-    if(state.mode==='study'&&state.study?.group==='roll'&&asset.guide){
-      const guide=asset.guide;
-      guide.mixer.setTime((state.study.angle/720*guide.ratio%1)*guide.duration);
-    }
     if(meta.id==='blowmolding'){
       const nodes=asset.nodes,a=state.actual;
       for(const name of ['ParisonLength','InflatedBody','ReleasedBottle'])if(nodes[name])nodes[name].visible=true;
@@ -188,20 +183,13 @@
     const groups=viewer().groupClips(THREE,gltf.scene,gltf.animations);
     const missing=definition.controls.filter(control=>!groups.has(control.key)).map(control=>control.key);
     if(missing.length)throw new Error('Missing Blender mechanism animation: '+missing.join(', '));
-    let guide=null;
-    const guideDefinition={sheet:['SheetGuideRoll',.46/.29],castfilm:['FilmGuideRoll',.70/.29]}[definition.id];
-    if(guideDefinition){
-      const list=(groups.get('roll')?.clip.tracks||[]).filter(track=>THREE.PropertyBinding.parseTrackName(track.name).nodeName===guideDefinition[0]);
-      if(list.length){const clip=new THREE.AnimationClip('studyGuide',-1,list),mixer=new THREE.AnimationMixer(gltf.scene);mixer.clipAction(clip).play();guide={mixer,duration:clip.duration,ratio:guideDefinition[1]};}
-    }
-    const loaded={model:gltf.scene,groups,nodes,members,guide};cache.set(definition.id,loaded);return loaded;
+    const loaded={model:gltf.scene,groups,nodes,members};cache.set(definition.id,loaded);return loaded;
   }
   function trimCache(){
     while(cache.size>2){
       const entry=[...cache].find(([,value])=>value!==asset);if(!entry)break;
       const [key,old]=entry;
       old.groups.forEach(group=>group.mixer.stopAllAction());
-      old.guide?.mixer.stopAllAction();
       viewer().disposeModel(old.model);cache.delete(key);
     }
   }

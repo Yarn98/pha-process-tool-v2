@@ -1,14 +1,14 @@
 [
   {
-    "kind": "sheet",
+    "kind": "castfilm",
     "blender": "5.2.1 LTS",
-    "source": "assets/equipment/sheet-motion.blend",
+    "source": "assets/equipment/castfilm-motion.blend",
     "frame": 55,
-    "source_sha256": "23c0f0021629de0524767b85a60ef5ef7fbc7112770c2e3b7c1c9b9049b5aa64",
-    "fbx": "output/unreal/fbx/sheet.fbx",
-    "fbx_sha256": "0a2e402b46e07a523d07a9d13067584caf6f8aa8c59346f1a400801436c67698",
-    "objects": 94,
-    "vertices": 22836,
+    "source_sha256": "e7371b2d33a0c33507311356dfe738b12eb31a8b941af58d2c7cbcee2e738cb4",
+    "fbx": "output/unreal/fbx/castfilm.fbx",
+    "fbx_sha256": "4fb7beeeb90bf365a16dc1acfde75f90ce4dd89fb5e64fa14574e081adc4b26c",
+    "objects": 61,
+    "vertices": 20596,
     "materials": {
       "Paint / anthracite base": {
         "color": [
@@ -190,15 +190,15 @@
         "roughness": 0.6,
         "alpha": 1.0
       },
-      "Polymer / sheet (translucent)": {
+      "Polymer / film (translucent)": {
         "color": [
           0.04817,
           0.26225,
           0.10224
         ],
         "metallic": 0.0,
-        "roughness": 0.25,
-        "alpha": 0.75
+        "roughness": 0.2,
+        "alpha": 0.55
       },
       "Paper / winder core": {
         "color": [
@@ -303,8 +303,8 @@
     },
     "engine": "5.8.2-56702186+++UE5+Release-5.8",
     "renderer": "Unreal DX12 / Lumen",
-    "png": "output/unreal/sheet-unreal.png",
-    "png_sha256": "751e5f92d58e36774b73b54bef63a75b11b8c02f916586e30dbb500d854eea94",
+    "png": "output/unreal/castfilm-unreal.png",
+    "png_sha256": "82fc6ced5cab9ddc48b20fe0fff30ac558535553aaab56d246ace3b92efa2265",
     "scope": "Illustrative equipment; no measured dimensions or CFD"
   }
 ]
