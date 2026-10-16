@@ -44,6 +44,7 @@ python -m http.server 8097 --bind 127.0.0.1
 # http://127.0.0.1:8097/
 npm run test:process
 npm run test:ui
+npm run test:tools
 npm run test:myai
 npm run test:motion
 npm run test:equipment
@@ -71,11 +72,11 @@ npm run test:single
 
 | 화면 | 기능 | 해석 |
 |---|---|---|
-| 공정 조건 | 그레이드·6개 공정, 전 공정 설비의 3D 동작·직접 조작, 입력과 범위 비교 | 제조사 원문 / 현장 수정 / 근거 미확인을 구분 |
-| 트러블슈팅 | 16개 한영 점검 항목, 25개 형상, 확대 이미지, 정상/단면/3D·설비 조작, 공정·증상 검색 | 검토 KB의 진단 → 조건부 조치 → 중단·복귀 기준 → 재검사 |
+| 공정 조건 | 그레이드·6개 공정, 실제 비율 설비의 3D 동작·직접 조작, 사출 온도 지도·사이클 차트, HMI형 입력 화면(개요·온도·보압 프로파일) | 입력값은 실측이 아님. 제조사 원문 / 현장 수정 / 근거 미확인을 구분 |
+| 트러블슈팅 | 공정별 증상 트리와 판단 흐름, 16개 한영 점검 항목, 25개 형상, 확대 이미지, 정상/단면/3D·설비 조작, 공정·증상 검색 | 검토 KB의 정지 기준 → 진단 → 조건부 조치 → 재검사 → 재발 검토 |
 | 이력·분석 | 조건 저장, JSON/CSV 교환, 트렌드 | 다른 그레이드·설비 기록의 단순 비교에 유의 |
 | 계산기 | 평균 체류시간, 평판 냉각, 필름 단층 두께 | 단위와 모델 가정 확인 |
-| 물성 DB | 로컬 물성 편집·교환, 제조사 시험조건 | MFR 온도·하중, 충격 단위·노치 조건 보존 |
+| 물성 DB | 로컬 물성 편집·교환, 제조사 시험조건, 그레이드 비교(시험조건별 MFR·가공 온도 창·건조) | MFR은 같은 온도·하중끼리만 비교. 레이더 차트 미사용 |
 | 플래시 제어 | 점검 순서, 형체력·압력·전단률·보압비 계산, 배치 로그 | 압력 역산은 사출기 설정값이 아님 |
 | 컴파운딩·스트로 | 전용 3D 설비 조작, 배합 합계·개념 배치 선택, 다열 스트로 생산량·수조 체류 계산 | 배치 선택은 OEM 확인, 최소 체류시간은 시험 입력 필요 |
 | My AI | 사용자 제공 API/LM Studio와 앱 도구 연동 | 키 저장은 사용자 선택; 물리 계산은 같은 정의 사용 |
@@ -118,8 +119,10 @@ S1000P, A1000P, CA1180P, CB0104A, CB0400A, CA1165A, CA1670P, CA1680P, CA1270P의
 | index.html | 셸·기존 계산/기록/My AI |
 | process-evidence.js | 원문 참고 데이터·물리 계산·범위 상태 |
 | process-atlas.js / .css | 단계 설명·출처 패널·형상 예시 |
-| injection-motion.js / vendor/three-0.185.1/ | Blender GLB 재생·단계 이동·회전·확대, 로컬 3D 렌더러 |
-| equipment-motion.js / equipment-models.js | 나머지 7개 공정의 부품별 조작·동작 그룹·관찰 시점 |
+| machine-viewer.js / vendor/three-0.185.1/ | 공용 3D 스테이지·프레임 거버너·온도 오버레이·사이클 차트, 로컬 3D 렌더러 |
+| injection-motion.js | 사출기 GLB 재생·단계 이동·온도 지도·사이클 차트 |
+| hmi-panel.js / troubleshooting-tree.js / grade-compare.js | HMI형 입력 화면, 증상→조치 판단 흐름, 그레이드 비교 차트 |
+| equipment-motion.js / equipment-models.js | 나머지 7개 공정의 부품별 조작·동작 그룹·관찰 시점. 회전수·절단날·확대 범위·블로우 시퀀스는 설비 메타데이터에서 읽음 |
 | equipment-study.js / equipment-kinematics.js | 8종 설비의 Unreal/3D 전환, 단위가 명확한 계산과 선택 기구 동작 |
 | assets/equipment/unreal/ / scripts/unreal/ | 1600×900 WebP 8장·원본 해시, Blender→Unreal 렌더링·패키징 스크립트 |
 | pha-integration.js | 가이드 연결·재료 분류·TARS 읽기 |
@@ -133,7 +136,8 @@ S1000P, A1000P, CA1180P, CB0104A, CB0400A, CA1165A, CA1670P, CA1680P, CA1270P의
 | compounding-guide.js / straw-guide.js | 공정 참고 가이드 |
 | assets/equipment/ | 8개 공정의 GLB·편집 원본·대체 포스터, 기존 PNG 보존 |
 | scripts/render_equipment.py | 설비도 재생성 |
-| scripts/create_line_models.py | 신규 6개 동작 설비 제작·Straw Optimizer 원본의 조작 모델 변환 |
+| scripts/pha_blender_kit.py / scripts/create_<kind>_motion.py | 공용 Blender 부품·재질과 7개 실제 비율 설비(사출·컴파운딩·압출·시트·캐스트·블로운·블로우) 제작 |
+| scripts/create_line_models.py | Straw Optimizer 원본의 조작 모델 변환, equipment-models.js 생성 |
 | assets/flash-example.png | 생성 플래시 형상 |
 | functions/ 및 배포 설정 | 기존 접근 게이트·API 프록시 |
 
@@ -147,32 +151,33 @@ blender --background --factory-startup --python scripts/render_equipment.py
 
 **직접 조작**에서는 스크류·금형·이젝터를 상대 이동값으로 조절하고 충전·취출을 확인할 수 있습니다. 금형 개방 후 이젝터 전진, 이젝터 복귀 후 금형 닫힘 순서가 연결됩니다. 관찰 부위 선택으로 스크류나 금형을 확대합니다. Blender의 BoltFactory 체결부와 드라이버를 사용하며, 원본 `MachineControls`에서도 기계 축을 조절할 수 있습니다.
 
-**회전수·속도 계산과 동작 확인**을 펼치면 RPM, 선속도·현재 롤 직경, 절단 길이·피치, 이동 거리·평균 속도를 입력할 수 있습니다. 선택한 기구를 0.1×/0.25×/1×로 표시합니다. 스트로는 1날, 펠릿 절단기는 4날 모형 기준이며 절단 횟수는 스트랜드 1개당입니다. 이동은 일정 평균 속도의 편도 동작입니다. 예제 입력값을 생산 추천값으로 저장하지 않으며, 유변학·열전달·냉각/보압 시간은 이 기능에서 계산하지 않습니다. 기존 TARS/제조사 공정 근거와 계산기는 별도로 유지합니다.
+**회전수·속도 계산과 동작 확인**을 펼치면 RPM, 선속도·현재 롤 직경, 절단 길이·피치, 이동 거리·평균 속도를 입력할 수 있습니다. 선택한 기구를 0.1×/0.25×/1×로 표시합니다. 절단날 수는 설비 메타데이터를 따릅니다(스트로 1날, 컴파운딩 펠릿타이저 8날, 압출 플라잉 톱 1회/사이클). 절단 횟수는 스트랜드 1개당입니다. 이동은 일정 평균 속도의 편도 동작입니다. 예제 입력값을 생산 추천값으로 저장하지 않으며, 유변학·열전달·냉각/보압 시간은 이 기능에서 계산하지 않습니다. 기존 TARS/제조사 공정 근거와 계산기는 별도로 유지합니다.
 
 ```powershell
 blender --background --factory-startup --python scripts/create_injection_motion.py
 ```
 
-재생 시간은 설명용이며 실제 사이클·수지 유동해석과 다릅니다. 계량과 냉각의 실제 중첩은 모델에서 동작을 구별하기 위해 단순화했습니다. [사출 동작 제작·검증](docs/INJECTION_MOTION_20260906.md).
+정상 연속 사이클(예시 30 s를 14 s로 재생)이며 다음 샷 계량이 냉각과 겹칩니다. 재생 시간은 설명용이며 실제 사이클·수지 유동해석과 다릅니다. [사출 동작 제작·검증](docs/INJECTION_MOTION_20260906.md), [실제 비율 설비·HMI·시각화](docs/REALISTIC_EQUIPMENT_HMI_20261017.md).
 
 일반 압출·시트·캐스트 필름·블로운 필름·압출 블로우 성형은 **공정 조건**에서, 이축 컴파운딩·스트로는 각 전용 탭에서 같은 재생·관찰·직접 조작 기능을 사용합니다. 스크류, 사이드 피더, 롤, 권취축, 벨트, 절단날과 수지 표시를 부품별로 조작합니다. 블로우 성형은 패리슨 토출 → 금형 닫힘 → 핀 삽입 → 팽창 → 핀 복귀 → 금형 개방·배출 순서를 연결합니다.
 
-스트로는 `D:/My_PJT/Application/straw-optimizer-v2`의 작업 중 Blender 설비를 복사해 중공 다이·수조·벨트·절단기 구조를 차용했습니다. 이 프로젝트의 복사본에 조작과 절단물 배출을 추가했으며, 원본의 출처·스냅샷 해시를 보존했습니다. 나머지 6개 라인은 새로 제작했습니다. [전체 설비의 조작·출처·검증 기록](docs/ALL_EQUIPMENT_MOTION_20260906.md).
+스트로는 `D:/My_PJT/Application/straw-optimizer-v2`의 작업 중 Blender 설비를 복사해 중공 다이·수조·벨트·절단기 구조를 차용했습니다. 이 프로젝트의 복사본에 조작과 절단물 배출을 추가했으며, 원본의 출처·스냅샷 해시를 보존했습니다. 나머지 6개 라인은 조사 팩(Pack B)의 교육용 치수로 실제 비율에 맞춰 다시 제작했습니다(조사 노트: `output/research/pha-equipment-realism-20261017/`). [전체 설비의 조작·출처·검증 기록](docs/ALL_EQUIPMENT_MOTION_20260906.md), [실제 비율 재제작](docs/REALISTIC_EQUIPMENT_HMI_20261017.md).
 
 ```powershell
+# 설비별 실제 비율 모델 (compounding, extrusion, sheet, castfilm, blownfilm, blowmolding)
+blender --background --factory-startup --python-exit-code 1 --python scripts/create_sheet_motion.py
+# 스트로 변환과 equipment-models.js 생성
 blender --background --factory-startup --python-exit-code 1 --python scripts/create_line_models.py
 blender --background --factory-startup --python-exit-code 1 --python tests/blender-line-models.py
-# 특정 모델만 재생성할 때
-blender --background --factory-startup --python-exit-code 1 --python scripts/create_line_models.py -- sheet straw
 ```
 
-회전각은 1°, 상대 위치는 0.1% 단위로 조작합니다. 이 값은 모형의 위치이며 실제 RPM·토출량·온도·BUR·생산 조건과 연결되지 않습니다. 수지 표시는 이동 방향을 설명하며, 필름 두께·열전달·체적 보존을 계산하지 않습니다.
+회전각은 1°, 상대 위치는 0.1% 단위로 조작합니다. 자동 재생의 롤·스크류·커터 회전수는 각 설비의 교육용 선속도와 직경에서 n = 1000 v/(π d) 등으로 정한 비율을 따릅니다(루프마다 정수 회전, 오차 0.6% 이내). 이 값은 모형의 동작이며 생산 RPM·토출량·온도·BUR 권장값이 아닙니다. 수지 표시는 이동 방향을 설명하며, 필름 두께·열전달·체적 보존을 계산하지 않습니다.
 
 ## 저장·오프라인
 
 이력·배치·템플릿·물성은 브라우저 로컬 저장소에, 일부 사진은 IndexedDB와 별도 localStorage 갤러리에 저장합니다. 기기 간 자동 동기화되지 않습니다. JSON/CSV로 백업하세요. 업데이트를 위해 웹사이트 데이터를 지우면 현장 기록도 삭제될 수 있습니다.
 
-서비스워커는 HTML network-first, 버전 자산 precache를 사용합니다. v=24 / pha-cache-v24-screw-direction. 첫 정상 로드와 캐시 준비 후 로컬 자료·8개 기존 설비·16개 결함 모형 및 새 두 벤트 모형의 3D 조작·계산을 사용할 수 있습니다. 외부 TARS API와 CDN Chart.js는 오프라인에서 제한됩니다. file://보다 로컬 HTTP 실행을 권장합니다.
+서비스워커는 HTML network-first, 버전 자산 precache를 사용합니다. v=26 / pha-cache-v26-realistic-equipment. 첫 정상 로드와 캐시 준비 후 로컬 자료·8개 기존 설비·16개 결함 모형 및 새 두 벤트 모형의 3D 조작·계산을 사용할 수 있습니다. 외부 TARS API와 CDN Chart.js는 오프라인에서 제한됩니다. file://보다 로컬 HTTP 실행을 권장합니다.
 
 기존 체크리스트·시험 로그는 유지합니다. 의미가 바뀐 컴파운딩 체크 두 항목은 새 키를 사용하며, 이전 완료 표시는 과거 기록으로 남깁니다.
 
