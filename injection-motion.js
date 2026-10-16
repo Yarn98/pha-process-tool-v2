@@ -23,6 +23,65 @@
   // Most specific sub-step at this time: later rows refine overlapping earlier rows.
   const stepAt=time=>{const rows=meta?.steps?.filter(([a,b])=>time>=a&&time<b)||[];const row=rows[rows.length-1];return row?row[locale==='en'?3:2]:'';};
   const names=[['가소화·계량','Plasticize & meter'],['형폐·충전','Close & fill'],['보압·냉각','Pack & cool'],['금형 개방·취출','Open & eject']];
+  /* Barrel/nozzle/mould temperature overlay. Values are the user's entered set points (#f_barrel1 ...),
+     never measured melt temperatures; reference bands are the selected grade's source or local ranges. */
+  const heat={on:false,order:'hopper'};
+  try{heat.order=localStorage.getItem('pha_heat_barrel1')==='nozzle'?'nozzle':'hopper';}catch{}
+  const heatZoneLabel=key=>({Z1:['Z1','Z1'],Z2:['Z2','Z2'],Z3:['Z3','Z3'],nozzle:['노즐','Nozzle'],mold:['금형','Mould']})[key]||[key,key];
+  // Zone key -> input field, honouring which end of the barrel the site calls "barrel 1".
+  function heatFields(){
+    const spec=meta.heat,order=heat.order==='nozzle'?[...spec.barrel_fields].reverse():spec.barrel_fields;
+    const map=Object.fromEntries(spec.barrel_order.map((zone,i)=>[zone,order[i]]));
+    for(const zone of spec.zones)if(zone.field)map[zone.key]=zone.field;
+    return map;
+  }
+  function heatReadings(){
+    const fields=heatFields(),grade=document.getElementById('grade')?.value;
+    let reco={};try{reco=typeof getReco==='function'&&typeof profileOf==='function'?getReco(profileOf(grade),'injection'):{};}catch{}
+    const rows=[],seen=new Set();
+    for(const zone of meta.heat.zones){
+      const field=fields[zone.key],group=zone.field==='mold'?'mold':zone.key;
+      const raw=document.getElementById('f_'+field)?.value??'',value=raw===''?null:Number(raw),range=reco[field]||null;
+      const status=window.PHAEvidence?PHAEvidence.status(raw,range||['-','-']):'unknown';
+      if(!seen.has(group)){seen.add(group);rows.push({group,field,value:Number.isFinite(value)?value:null,range,status});}
+    }
+    return rows;
+  }
+  function heatScale(rows){
+    const numbers=rows.flatMap(row=>[row.value,...(row.range||[])]).filter(Number.isFinite);
+    if(!numbers.length)return [150,200];
+    const lo=Math.floor((Math.min(...numbers)-5)/10)*10,hi=Math.ceil((Math.max(...numbers)+5)/10)*10;
+    return [lo,Math.max(hi,lo+20)];
+  }
+  function statusText(status){
+    return status==='ok'?t('범위 안','Within reference'):status==='empty'?t('미입력','Not entered'):status==='unknown'?t('근거 미확인','Unverified'):t('범위 밖','Outside reference');
+  }
+  function refreshHeat(){
+    if(!runtime?.heat||!host)return;
+    // Melt-side zones and the mould sit ~100 °C apart, so each gets its own fixed comparison range.
+    const rows=heatReadings(),byGroup=Object.fromEntries(rows.map(row=>[row.group,row]));
+    const scales={melt:heatScale(rows.filter(row=>row.group!=='mold')),mold:heatScale(rows.filter(row=>row.group==='mold'))};
+    const fraction=row=>{const [lo,hi]=scales[row.group==='mold'?'mold':'melt'];return row.value==null?null:(row.value-lo)/(hi-lo);};
+    const values={};
+    for(const zone of meta.heat.zones){
+      const row=byGroup[zone.field==='mold'?'mold':zone.key];
+      values[zone.key]={t:row?fraction(row):null,outline:row?.status==='warn'||row?.status==='crit'};
+    }
+    runtime.heat.update(values);runtime.heat.setVisible(heat.on);
+    const panel=host.querySelector('.motion-heat');if(!panel)return;
+    panel.hidden=!heat.on;
+    panel.querySelector('[data-heat="order"]').value=heat.order;
+    const bar=(label,[lo,hi])=>'<b>'+label+'</b><span>'+lo+' °C</span><i style="background:'+viewer().heatGradient()+'"></i><span>'+hi+' °C</span>';
+    panel.querySelector('.heat-scale').innerHTML=bar(t('배럴·노즐','Barrel & nozzle'),scales.melt)+bar(t('금형','Mould'),scales.mold);
+    panel.querySelector('.heat-zones').innerHTML=rows.map(row=>{
+      const label=heatZoneLabel(row.group)[locale==='en'?1:0],fieldLabel=row.field.replace('barrel',t('배럴 ','Barrel ')).replace('nozzle',t('노즐','Nozzle')).replace('mold',t('금형','Mould'));
+      const swatch=row.value==null?'is-missing':'',color=row.value==null?'':' style="background:'+runtime.heat.colorOf(fraction(row))+'"';
+      const range=row.range?t('참고 ','Ref. ')+row.range[0]+'–'+row.range[1]+' °C':t('참고 범위 없음','No reference');
+      return '<li class="heat-zone is-'+row.status+'"><i class="'+swatch+'"'+color+'></i><b>'+label+'</b><span>'+fieldLabel+'</span><strong>'+(row.value==null?t('미입력','—'):row.value+' °C')+'</strong><small>'+range+' · '+statusText(row.status)+'</small></li>';
+    }).join('');
+    const toggle=host.querySelector('[data-motion="heat"]');if(toggle)toggle.setAttribute('aria-pressed',String(heat.on));
+    paint();
+  }
 
   function cancel(){if(raf)cancelAnimationFrame(raf);raf=0;lastTick=0;}
   function movingManual(){return state.mode==='manual'&&(axes.some(key=>Math.abs(manual[key]-target[key])>.001)||(manual.released&&manual.fall<1));}
@@ -207,8 +266,9 @@
       if(Object.values(nodes).some(node=>!node)||!groups.get('clamp')?.tracks)throw new Error('Missing machine rig node');
       const particles=[];gltf.scene.traverse(node=>{if(/^(FeedPellet|BarrelFlow|FillFlow)/.test(node.name))particles.push(node);});
       const governor=viewer().createGovernor(stage,{onQualityChange:()=>resize()});
+      const heatOverlay=meta.heat?viewer().createHeatOverlay(stage,gltf.scene,meta.heat.zones):null;
       await viewer().warm(stage,gltf.scene);
-      runtime={...stage,groups,governor,model:gltf.scene,nodes,particles};
+      runtime={...stage,groups,governor,heat:heatOverlay,model:gltf.scene,nodes,particles};
       resetView();state.ready=true;
     }catch(error){stage.renderer.dispose();throw error;}
   }
@@ -236,9 +296,10 @@
     host.innerHTML=`<div class="motion-load" role="status">${t('움직이는 사출 설비 불러오는 중…','Loading the animated injection machine…')}</div>
       <img class="motion-poster" src="assets/equipment/injection-motion-poster.png${VERSION}" width="1280" height="640" alt="${t('토글 형체부, 절개한 배럴·스크류와 금형을 갖춘 사출기 모델','Injection machine model with a toggle clamp and a cutaway barrel, screw and mold')}">
       <div class="motion-viewport" hidden></div>
-      <div class="motion-toolbar"><button type="button" data-motion="play" disabled>${t('재생','Play')}</button><label>${t('재생 속도','Playback speed')} <select data-motion="speed" aria-label="${t('설명 재생 속도','Illustration playback speed')}" disabled><option value="0.5">0.5×</option><option value="1">1×</option><option value="1.5">1.5×</option></select></label><button type="button" data-motion="manual" aria-pressed="false" disabled>${t('직접 조작','Manual controls')}</button><label>${t('관찰 부위','View')} <select data-motion="focus" aria-label="${t('관찰 부위','Inspection area')}" disabled><option value="all">${t('전체','Whole machine')}</option><option value="screw">${t('스크류','Screw')}</option><option value="mold">${t('금형·취출','Mold & ejector')}</option></select></label><button type="button" data-motion="front" disabled>${t('측면 보기','Side view')}</button><button type="button" data-motion="view" disabled>${t('시점 초기화','Reset view')}</button><span class="motion-phase"></span></div>
+      <div class="motion-toolbar"><button type="button" data-motion="play" disabled>${t('재생','Play')}</button><label>${t('재생 속도','Playback speed')} <select data-motion="speed" aria-label="${t('설명 재생 속도','Illustration playback speed')}" disabled><option value="0.5">0.5×</option><option value="1">1×</option><option value="1.5">1.5×</option></select></label><button type="button" data-motion="manual" aria-pressed="false" disabled>${t('직접 조작','Manual controls')}</button><label>${t('관찰 부위','View')} <select data-motion="focus" aria-label="${t('관찰 부위','Inspection area')}" disabled><option value="all">${t('전체','Whole machine')}</option><option value="screw">${t('스크류','Screw')}</option><option value="mold">${t('금형·취출','Mold & ejector')}</option></select></label><button type="button" data-motion="front" disabled>${t('측면 보기','Side view')}</button><button type="button" data-motion="view" disabled>${t('시점 초기화','Reset view')}</button><button type="button" data-motion="heat" aria-pressed="false" disabled>${t('온도 표시','Temperatures')}</button><span class="motion-phase"></span></div>
       <label class="motion-progress">${t('공정 진행 위치','Cycle position')}<input type="range" min="0" max="100" step="0.1" data-motion="progress" aria-label="${t('공정 진행 위치','Cycle position')}" disabled></label>
       <p class="motion-hint">${t('정상 연속 사이클: 14초 재생 = 예시 30초 사이클, 다음 샷 계량은 냉각 중 진행 · 드래그 회전 · 휠/두 손가락 확대 · 초록색은 수지 · 단계 선택 시 일시정지','Steady cycle: 14 s playback = 30 s example cycle; next-shot dosing runs during cooling · Drag to rotate · Wheel/pinch to zoom · Green is polymer · Stage selection pauses playback')}</p>
+      <div class="motion-heat" hidden><div class="heat-head"><strong>${t('배럴·노즐·금형 온도 (입력한 설정값)','Barrel, nozzle and mould temperatures (entered set points)')}</strong><label>${t('배럴 1 위치','Barrel 1 is at')} <select data-heat="order" aria-label="${t('배럴 1 위치','Barrel 1 position')}"><option value="hopper">${t('호퍼 쪽','Hopper end')}</option><option value="nozzle">${t('노즐 쪽','Nozzle end')}</option></select></label></div><ol class="heat-zones"></ol><div class="heat-scale"></div><p class="heat-note">${t('공정 조건에 입력한 설정값을 존별 색으로 표시합니다. 배럴 설정값이며 실제 용융온도나 실측값이 아닙니다. 참고 범위는 선택한 그레이드의 근거 또는 사용자 수정 범위이고, 굵은 테두리는 범위 밖, 빗금은 미입력입니다. 배럴 1이 어느 쪽인지는 장비마다 다르므로 현장 표기에 맞춰 선택하세요.','Colours show the set points entered under process conditions. They are barrel set points, not melt or measured temperatures. Reference bands come from the selected grade source or your edits; a heavy outline marks values outside the band and hatching marks missing values. Machines number barrel zones from different ends, so match your site convention.')}</p></div>
       <div class="motion-manual" hidden><p class="motion-manual-intro">${t('계량 완료 상태입니다. 후퇴량을 100→0%로 줄여 스크류를 전진시키고, 금형을 연 뒤 취출하세요.','The shot is metered. Move the screw forward (retraction 100→0%) to fill, then open the mold and eject.')}</p><div class="motion-axes">${[
         ['screw','스크류 후퇴량','Screw retraction',100,.1],['rotation','스크류 회전각','Screw rotation',720,1],['mold','금형 개방량','Mold opening',100,.1],['ejector','이젝터 전진량','Ejector advance',100,.1]
       ].map(([key,ko,en,max,step])=>'<label class="motion-axis"><span>'+t(ko,en)+'<output data-axis-value="'+key+'"></output></span><input type="range" data-axis="'+key+'" min="0" max="'+max+'" step="'+step+'" aria-label="'+t(ko,en)+'" disabled></label>').join('')}</div><p class="motion-interlock" role="status"></p><div class="motion-manual-footer"><button type="button" data-motion="shot" disabled>${t('새 샷 준비','Prepare new shot')}</button><small>${t('%는 모형의 이동 비율입니다. 실제 장비 설정값이 아닙니다.','% is model travel, not a real machine setting.')}</small></div></div>
@@ -266,6 +327,12 @@
       host.querySelector('[data-motion="focus"]').onchange=event=>focusView(event.target.value);
       host.querySelector('[data-motion="manual"]').onclick=toggleManual;
       host.querySelector('[data-motion="shot"]').onclick=prepareShot;
+      host.querySelector('[data-motion="heat"]').onclick=()=>{heat.on=!heat.on;refreshHeat();};
+      host.querySelector('[data-heat="order"]').onchange=event=>{
+        heat.order=event.target.value==='nozzle'?'nozzle':'hopper';
+        try{localStorage.setItem('pha_heat_barrel1',heat.order);}catch{}
+        refreshHeat();
+      };
       host.querySelectorAll('[data-axis]').forEach(input=>input.oninput=event=>{
         const axis=input.dataset.axis,value=Number(event.target.value);
         if(state.mode!=='manual'||!canJog(axis)||!Number.isFinite(value)){update();return;}
@@ -275,7 +342,7 @@
       });
       host.querySelectorAll('[data-motion-stage]').forEach(button=>button.onclick=()=>seek(STARTS[Number(button.dataset.motionStage)]+.35));
       unwatch=viewer().watch(host,{onResize:resize,onVisible:visible=>{state.visible=visible;schedule();}});
-      resize();update();
+      resize();update();refreshHeat();
     }catch(error){if(current===token)fallback();}
   }
   document.addEventListener('visibilitychange',schedule);
@@ -288,6 +355,10 @@
     }else detach();
   }
   window.addEventListener('pha-language-change',()=>requestAnimationFrame(syncSurface));
+  // Entered set points, grade/mould-mode changes and saved reference edits update the heat map at once.
+  document.addEventListener('input',event=>{if(heat.on&&event.target.closest?.('#dynamicFields'))refreshHeat();});
+  document.addEventListener('change',event=>{if(heat.on&&['grade','moldMode','process'].includes(event.target.id))setTimeout(refreshHeat,0);});
+  document.addEventListener('click',event=>{if(heat.on&&event.target.closest?.('#modalSaveBtn'))setTimeout(refreshHeat,0);});
   reduced.addEventListener('change',event=>{if(event.matches){state.playing=false;stopStudy();cancel();if(state.mode==='manual'){stepManual(10);manual.flow='';paint();}update();}});
   window.PHAInjectionMotion={mount,detach,syncSurface,seekStage(index){if(index>=0&&index<4)seek(STARTS[index]+.35);},getState:()=>({...state,manual:{...manual},target:{...target}})};
   if(['localhost','127.0.0.1'].includes(location.hostname))window.__phaInjectionMotionTest=()=>{
@@ -297,6 +368,7 @@
       ...state,manual:{...manual},target:{...target},meta,camera:runtime?{zoom:runtime.camera.zoom,target:runtime.controls.target.toArray()}:null,
       clips:runtime?[...runtime.groups].map(([name,group])=>({name,duration:group.duration,tracks:group.tracks})):[],
       quality:runtime?{level:runtime.governor.level,cost:runtime.governor.cost}:null,
+      heat:{on:heat.on,order:heat.order,zones:runtime?.heat?Object.fromEntries(runtime.heat.keys.map(key=>{const mesh=runtime.model.getObjectByName('PHAHeat_'+key);return [key,mesh?{visible:mesh.visible,color:'#'+mesh.material.color.getHexString(),hatched:!!mesh.material.map,outline:!!mesh.children[0]?.visible,parent:mesh.parent?.name}:null];})):null},
       nodes:Object.fromEntries(['ScrewSlide','ScrewSpin','MovingMold','Ejector','MoldedPart','PartFill','RunnerFill','FeedPellet00','FillFlow00','MeltReservoir','Crosshead','ToggleRearUpper','Carriage','CheckRing'].map(name=>{const n=runtime?.model.getObjectByName(name);return [name,n?{position:n.position.toArray(),quaternion:n.quaternion.toArray(),scale:n.scale.toArray(),visible:n.visible}:null];})),
       linkage:runtime?{kneeUpper:world('ToggleKneeUpper'),frontTipUpper:tip('ToggleFrontUpper',meta.toggle.L2),kneeLower:world('ToggleKneeLower'),frontTipLower:tip('ToggleFrontLower',meta.toggle.L2),pinUpper:world('ToggleCrossPinUpper'),crossTipUpper:tip('ToggleCrossLinkUpper',meta.toggle.L3)}:null
     };

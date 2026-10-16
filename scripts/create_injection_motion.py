@@ -682,6 +682,18 @@ def three(v):
 
 
 VIEW_T = (-.20, 0, 1.20)
+# Temperature overlay geometry for the web heat map. Bands cover the rear half only, so the
+# operator-side cutaway (screw, cavity) stays visible; values come from the app's inputs.
+HEAT_R = R_SHROUD + .010
+HEAT_ZONES = [{'key': zone, 'shape': 'half_band', 'x': [round(xc - .10, 4), round(xc + .10, 4)], 'r': HEAT_R,
+               'center': [AX, 0.0], 'parent': 'Carriage'} for xc, zone in ZONES]
+HEAT_ZONES.append({'key': 'nozzle', 'field': 'nozzle', 'shape': 'half_band', 'x': [-.125, -.055], 'r': .036,
+                   'center': [AX, 0.0], 'parent': 'Carriage'})
+for key, (x0, x1), parent in (('mold_a', MOLD_A, None), ('mold_b', MOLD_B, 'MovingMold')):
+    lo = (x0 - .005, 0.0, MOLD_Z[0] - .01)
+    hi = (x1 + .005, MOLD_HALF_W + .012, MOLD_Z[1] + .01)
+    HEAT_ZONES.append({'key': key, 'field': 'mold', 'shape': 'box', 'parent': parent,
+                       'min': three((lo[0], hi[1], lo[2])), 'max': three((hi[0], lo[1], hi[2]))})
 META = {
     'schema': 'pha-machine-v1',
     'cycle_seconds': CYCLE, 'example_cycle_seconds': 30, 'fps': FPS,
@@ -692,6 +704,9 @@ META = {
                   'carriage': CARRIAGE_STROKE, 'cushion': CUSHION},
     'part': {'gate': three(GATE), 'drop_path': [three(p) for p in DROP_PATH], 'release_ejector': 99.9},
     'toggle': {key: TOGGLE[key] for key in ('L1', 'L2', 'L3')},
+    # Barrel heater zones listed hopper -> nozzle; which input is "barrel 1" is a site convention.
+    'heat': {'zones': HEAT_ZONES, 'barrel_order': [zone for _, zone in ZONES],
+             'barrel_fields': ['barrel1', 'barrel2', 'barrel3']},
     'view': {'target': three(VIEW_T), 'position': three((VIEW_T[0] + 4.2, -7.6, VIEW_T[2] + 3.6)), 'span': 6.9,
              'side_position': three((VIEW_T[0], -9, VIEW_T[2]))},
     # Close-ups look down into the operator-side cutaway, above the HMI's line of sight.

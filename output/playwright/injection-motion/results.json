@@ -3,9 +3,10 @@
   "root": "D:\\My_PJT\\Application\\pha_optimizer_convertor",
   "checks": [
     "Blender GLB loaded with animation tracks and automatic playback advances",
-    "Frame governor keeps autoplay responsive on software WebGL (event-loop p90 5.9 ms, quality level 3)",
+    "Frame governor keeps autoplay responsive on software WebGL (event-loop p90 6.0 ms, quality level 3)",
     "Steady cycle on actual transforms: close and lock, fill, hold, dosing with rotation during cooling, check ring, sprue break, toggle-driven opening and ejection",
     "Pause, step seek and playback-speed controls; language/grade changes preserve playback position",
+    "Barrel/nozzle/mould heat map: entered set points ordered light-to-dark, hatched when missing, outlined outside the reference, switchable barrel-1 end, overlays follow carriage and moving mould",
     "Flash Process flow uses the same animation; language and surface switches retain a single renderer",
     "Precise manual axes with smooth travel, keyboard control, filling, mold/ejector interlocks, release, reset and close-up views",
     "Manual mode and precise targets survive Korean/English remounts and mobile layout",

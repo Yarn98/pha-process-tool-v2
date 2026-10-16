@@ -163,5 +163,59 @@
   async function warm(stage,root){
     try{await stage.renderer.compileAsync(root,stage.camera,stage.scene);}catch{}
   }
-  window.PHAMachineViewer={createStage,prepareModel,fitShadows,groupClips,frameOrtho,watch,disposeModel,createGovernor,warm};
+  /* Sequential, colour-vision-safe temperature scale (inferno family, light -> dark): lightness alone
+     orders the values, so the map stays readable without hue discrimination. */
+  const HEAT_STOPS=['#fcffa4','#f6d746','#fca50a','#f1711f','#cf4446','#a52c60'];
+  function heatColor(THREE,t){
+    const x=Math.min(1,Math.max(0,t))*(HEAT_STOPS.length-1),i=Math.min(HEAT_STOPS.length-2,Math.floor(x));
+    return new THREE.Color(HEAT_STOPS[i]).lerp(new THREE.Color(HEAT_STOPS[i+1]),x-i);
+  }
+  const heatGradient=()=>'linear-gradient(90deg,'+HEAT_STOPS.join(',')+')';
+  function hatchTexture(THREE){
+    const canvas=document.createElement('canvas');canvas.width=canvas.height=32;
+    const g=canvas.getContext('2d');g.fillStyle='#d9d5cb';g.fillRect(0,0,32,32);g.strokeStyle='#8f8b82';g.lineWidth=5;
+    for(const o of [-32,0,32]){g.beginPath();g.moveTo(o,32);g.lineTo(o+32,0);g.stroke();}
+    const texture=new THREE.CanvasTexture(canvas);texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(6,2);texture.colorSpace=THREE.SRGBColorSpace;
+    return texture;
+  }
+  /* Unlit data overlay for zone temperatures. Geometry comes from the GLB metadata in world
+     coordinates of the rest pose and is parented to the moving node it belongs to, so bands follow
+     the carriage or the moving mould. update(values) takes key -> {t: 0..1 | null, outline: bool};
+     a null t is drawn grey-hatched ("not entered"), outline marks values outside the reference. */
+  function createHeatOverlay(stage,root,zones){
+    const {THREE}=stage,hatch=hatchTexture(THREE),items=[];
+    for(const zone of zones){
+      let geometry;
+      if(zone.shape==='box'){
+        const min=new THREE.Vector3(...zone.min),max=new THREE.Vector3(...zone.max),size=max.clone().sub(min);
+        geometry=new THREE.BoxGeometry(Math.abs(size.x),Math.abs(size.y),Math.abs(size.z));
+        geometry.translate(...min.clone().add(max).multiplyScalar(.5).toArray());
+      }else{
+        // Rear half only (three.js -Z is the machine's non-operator side), keeping the cutaway open.
+        geometry=new THREE.CylinderGeometry(zone.r,zone.r,zone.x[1]-zone.x[0],40,1,true,Math.PI/2,Math.PI);
+        geometry.rotateZ(-Math.PI/2);geometry.translate((zone.x[0]+zone.x[1])/2,zone.center[0],zone.center[1]);
+      }
+      const material=new THREE.MeshBasicMaterial({color:0xcccccc,transparent:true,opacity:.92,side:THREE.DoubleSide,toneMapped:false,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
+      const mesh=new THREE.Mesh(geometry,material);mesh.name='PHAHeat_'+zone.key;mesh.renderOrder=5;mesh.visible=false;
+      const edges=new THREE.LineSegments(new THREE.EdgesGeometry(geometry,25),new THREE.LineBasicMaterial({color:0x1a1814,toneMapped:false}));
+      edges.visible=false;mesh.add(edges);
+      (zone.parent&&root.getObjectByName(zone.parent)||root).add(mesh);
+      items.push({key:zone.key,mesh,edges});
+    }
+    return {
+      keys:items.map(item=>item.key),
+      setVisible(on){items.forEach(item=>{item.mesh.visible=on;});},
+      update(values){
+        for(const item of items){
+          const value=values[item.key],material=item.mesh.material;
+          if(!value||value.t==null){material.map=hatch;material.color.set(0xffffff);}
+          else{material.map=null;material.color.copy(heatColor(THREE,value.t));}
+          material.needsUpdate=true;item.edges.visible=!!value?.outline;
+        }
+      },
+      colorOf:t=>'#'+heatColor(THREE,t).getHexString(),
+      dispose(){items.forEach(item=>{item.mesh.removeFromParent();item.mesh.geometry.dispose();item.mesh.material.dispose();item.edges.geometry.dispose();item.edges.material.dispose();});hatch.dispose();}
+    };
+  }
+  window.PHAMachineViewer={createStage,prepareModel,fitShadows,groupClips,frameOrtho,watch,disposeModel,createGovernor,warm,createHeatOverlay,heatGradient};
 })();
