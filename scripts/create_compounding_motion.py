@@ -633,7 +633,7 @@ control = lines.control
 META = {
     'id': 'compounding', 'duration': LOOP, 'frames': [0, FRAMES],
     'poster': 'assets/equipment/compounding-motion-poster.png', 'model': 'assets/equipment/compounding-motion.glb',
-    'center': [2.45, .95, 0], 'span': [8.6, 2.5],
+    'center': [2.45, .95, 0], 'span': [8.6, 2.5], 'zoom': [.7, 14],
     'controls': [control('screw', '스크류 회전각', 'Screw rotation angle', time_range=[0, LOOP]),
                  control('side', '사이드 피더 회전각', 'Side feeder rotation angle', time_range=[0, LOOP]),
                  control('flow', '수지 표시 위치', 'Resin marker position', 100, '%', [0, LOOP]),

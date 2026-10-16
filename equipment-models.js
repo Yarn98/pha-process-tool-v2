@@ -157,6 +157,10 @@ window.PHAEquipmentModels = {
       8.6,
       2.5
     ],
+    "zoom": [
+      0.7,
+      14
+    ],
     "controls": [
       {
         "key": "screw",

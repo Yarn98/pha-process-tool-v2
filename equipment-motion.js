@@ -235,6 +235,8 @@
       if(asset?.model)engine.scene.remove(asset.model);asset=loaded;engine.scene.add(asset.model);viewer().fitShadows(engine,asset.model);
       await viewer().warm(engine,asset.model);engine.governor.reset();if(current!==token||!host?.isConnected)return;
       trimCache();state.ready=true;
+      // Real-scale rigs (32 mm twin screws, 80 mm feed rolls) need closer inspection than the teaching-scale lines.
+      [engine.controls.minZoom,engine.controls.maxZoom]=meta.zoom||[.7,6];
       host.querySelector('.motion-viewport').appendChild(engine.renderer.domElement);host.querySelector('.motion-viewport').hidden=false;host.querySelector('.motion-poster').hidden=true;host.querySelector('.motion-load').hidden=true;host.dataset.motionState='ready';
       engine.renderer.domElement.setAttribute('aria-label',t('설비 부품과 수지 이동을 보여주는 조작 가능한 3D 모델','Interactive 3D equipment model showing mechanisms and polymer movement'));
       host.querySelectorAll('button,input,select').forEach(element=>element.disabled=false);

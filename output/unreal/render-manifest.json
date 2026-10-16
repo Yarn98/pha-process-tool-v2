@@ -1,14 +1,14 @@
 [
   {
-    "kind": "injection",
+    "kind": "compounding",
     "blender": "5.2.1 LTS",
-    "source": "assets/equipment/injection-motion.blend",
-    "frame": 319,
-    "source_sha256": "274053331a14414873d79e343ea2d0d05b5ff7eda97ba57888fe5c816b1b626d",
-    "fbx": "output/unreal/fbx/injection.fbx",
-    "fbx_sha256": "1ecfc26e720f2c572be2e0aec63d3b31ec8e3a35eb6be33cd7845c6aeb4b26ce",
-    "objects": 60,
-    "vertices": 26681,
+    "source": "assets/equipment/compounding-motion.blend",
+    "frame": 55,
+    "source_sha256": "b8b86afea73fd2b9c292c9212397b4930888dda07662234bc9a6cb1ec0ac75ce",
+    "fbx": "output/unreal/fbx/compounding.fbx",
+    "fbx_sha256": "80fd33189bafc841546ebd8f02c0171bf4d5b4bf06862b5af75fccb7f3b8dd9d",
+    "objects": 98,
+    "vertices": 72284,
     "materials": {
       "Paint / anthracite base": {
         "color": [
@@ -20,36 +20,6 @@
         "roughness": 0.58,
         "alpha": 1.0
       },
-      "Paint / light machine grey": {
-        "color": [
-          0.65141,
-          0.65141,
-          0.60383
-        ],
-        "metallic": 0.0,
-        "roughness": 0.46,
-        "alpha": 1.0
-      },
-      "Steel / machined": {
-        "color": [
-          0.54572,
-          0.56471,
-          0.57112
-        ],
-        "metallic": 1.0,
-        "roughness": 0.36,
-        "alpha": 1.0
-      },
-      "Steel / hard chrome": {
-        "color": [
-          0.7913,
-          0.80695,
-          0.82279
-        ],
-        "metallic": 1.0,
-        "roughness": 0.07,
-        "alpha": 1.0
-      },
       "Plastic / black": {
         "color": [
           0.007,
@@ -59,16 +29,6 @@
         "metallic": 0.0,
         "roughness": 0.55,
         "alpha": 1.0
-      },
-      "Polycarbonate / smoked": {
-        "color": [
-          0.32314,
-          0.38643,
-          0.39157
-        ],
-        "metallic": 0.0,
-        "roughness": 0.06,
-        "alpha": 0.28
       },
       "Rubber / black hose": {
         "color": [
@@ -90,14 +50,14 @@
         "roughness": 0.48,
         "alpha": 1.0
       },
-      "Steel / brushed stainless": {
+      "Steel / machined": {
         "color": [
-          0.58408,
-          0.59062,
-          0.59062
+          0.54572,
+          0.56471,
+          0.57112
         ],
         "metallic": 1.0,
-        "roughness": 0.38,
+        "roughness": 0.36,
         "alpha": 1.0
       },
       "Paint / forest green": {
@@ -110,6 +70,46 @@
         "roughness": 0.42,
         "alpha": 1.0
       },
+      "Label / safety yellow": {
+        "color": [
+          0.80695,
+          0.46778,
+          0.00605
+        ],
+        "metallic": 0.0,
+        "roughness": 0.5,
+        "alpha": 1.0
+      },
+      "Paint / light machine grey": {
+        "color": [
+          0.65141,
+          0.65141,
+          0.60383
+        ],
+        "metallic": 0.0,
+        "roughness": 0.46,
+        "alpha": 1.0
+      },
+      "Polycarbonate / smoked": {
+        "color": [
+          0.32314,
+          0.38643,
+          0.39157
+        ],
+        "metallic": 0.0,
+        "roughness": 0.06,
+        "alpha": 0.28
+      },
+      "Steel / brushed stainless": {
+        "color": [
+          0.58408,
+          0.59062,
+          0.59062
+        ],
+        "metallic": 1.0,
+        "roughness": 0.38,
+        "alpha": 1.0
+      },
       "Cast iron / painted grey": {
         "color": [
           0.19462,
@@ -118,6 +118,16 @@
         ],
         "metallic": 0.2,
         "roughness": 0.62,
+        "alpha": 1.0
+      },
+      "Section cut / terracotta": {
+        "color": [
+          0.32314,
+          0.07819,
+          0.01764
+        ],
+        "metallic": 0.0,
+        "roughness": 0.7,
         "alpha": 1.0
       },
       "Brass / fittings": {
@@ -130,14 +140,34 @@
         "roughness": 0.32,
         "alpha": 1.0
       },
-      "Section cut / terracotta": {
+      "Heater band / stainless mica": {
         "color": [
-          0.32314,
-          0.07819,
-          0.01764
+          0.38643,
+          0.36625,
+          0.32314
+        ],
+        "metallic": 0.75,
+        "roughness": 0.45,
+        "alpha": 1.0
+      },
+      "Cable / grey jacket": {
+        "color": [
+          0.10462,
+          0.11444,
+          0.12477
         ],
         "metallic": 0.0,
         "roughness": 0.7,
+        "alpha": 1.0
+      },
+      "Copper / thermocouple": {
+        "color": [
+          0.53948,
+          0.19462,
+          0.06848
+        ],
+        "metallic": 1.0,
+        "roughness": 0.35,
         "alpha": 1.0
       },
       "Hose / cooling supply blue": {
@@ -160,6 +190,16 @@
         "roughness": 0.6,
         "alpha": 1.0
       },
+      "Polymer / melt (translucent)": {
+        "color": [
+          0.04817,
+          0.26225,
+          0.10224
+        ],
+        "metallic": 0.0,
+        "roughness": 0.22,
+        "alpha": 0.5
+      },
       "Heater band / ceramic": {
         "color": [
           0.68669,
@@ -168,46 +208,6 @@
         ],
         "metallic": 0.0,
         "roughness": 0.78,
-        "alpha": 1.0
-      },
-      "Heater band / stainless mica": {
-        "color": [
-          0.38643,
-          0.36625,
-          0.32314
-        ],
-        "metallic": 0.75,
-        "roughness": 0.45,
-        "alpha": 1.0
-      },
-      "Copper / thermocouple": {
-        "color": [
-          0.53948,
-          0.19462,
-          0.06848
-        ],
-        "metallic": 1.0,
-        "roughness": 0.35,
-        "alpha": 1.0
-      },
-      "Cable / grey jacket": {
-        "color": [
-          0.10462,
-          0.11444,
-          0.12477
-        ],
-        "metallic": 0.0,
-        "roughness": 0.7,
-        "alpha": 1.0
-      },
-      "Label / safety yellow": {
-        "color": [
-          0.80695,
-          0.46778,
-          0.00605
-        ],
-        "metallic": 0.0,
-        "roughness": 0.5,
         "alpha": 1.0
       },
       "Polymer / sage green": {
@@ -220,6 +220,26 @@
         "roughness": 0.35,
         "alpha": 1.0
       },
+      "Water / strand bath": {
+        "color": [
+          0.11193,
+          0.34191,
+          0.38133
+        ],
+        "metallic": 0.0,
+        "roughness": 0.05,
+        "alpha": 0.3
+      },
+      "Steel / hard chrome": {
+        "color": [
+          0.7913,
+          0.80695,
+          0.82279
+        ],
+        "metallic": 1.0,
+        "roughness": 0.07,
+        "alpha": 1.0
+      },
       "Polycarbonate / guard window": {
         "color": [
           0.72306,
@@ -229,6 +249,36 @@
         "metallic": 0.0,
         "roughness": 0.02,
         "alpha": 0.07
+      },
+      "Steel / knurled roll": {
+        "color": [
+          0.34191,
+          0.36625,
+          0.38133
+        ],
+        "metallic": 1.0,
+        "roughness": 0.5,
+        "alpha": 1.0
+      },
+      "Carton / octabin": {
+        "color": [
+          0.47932,
+          0.32314,
+          0.14413
+        ],
+        "metallic": 0.0,
+        "roughness": 0.85,
+        "alpha": 1.0
+      },
+      "Polymer / natural pellet": {
+        "color": [
+          0.58408,
+          0.53948,
+          0.37124
+        ],
+        "metallic": 0.0,
+        "roughness": 0.45,
+        "alpha": 1.0
       },
       "Lamp / red": {
         "color": [
@@ -300,16 +350,6 @@
         "roughness": 0.35,
         "alpha": 1.0
       },
-      "Polymer / natural pellet": {
-        "color": [
-          0.58408,
-          0.53948,
-          0.37124
-        ],
-        "metallic": 0.0,
-        "roughness": 0.45,
-        "alpha": 1.0
-      },
       "Polymer / bright marker": {
         "color": [
           0.21223,
@@ -323,8 +363,8 @@
     },
     "engine": "5.8.2-56702186+++UE5+Release-5.8",
     "renderer": "Unreal DX12 / Lumen",
-    "png": "output/unreal/injection-unreal.png",
-    "png_sha256": "5c63e648cc7eb9a1533dfa8748f840425aa3421c6fcb7aa041ce64214cf2ed6c",
+    "png": "output/unreal/compounding-unreal.png",
+    "png_sha256": "3bdb5cc0f004d9b85c4c5a3a1a26ee128a368d02eb4efacf4e11e397ef622b61",
     "scope": "Illustrative equipment; no measured dimensions or CFD"
   }
 ]
