@@ -1,0 +1,10 @@
+{
+  "status": "pass",
+  "checks": [
+    "HMI: entered-value tag, single abnormal readout, whole-number pressure axis at pixel width, separate melt/tooling temperature charts",
+    "Troubleshooting: all 16 reviewed entries in the tree, flow quotes the entry, process filter and search apply",
+    "Grade comparison: 4 MFR panels by test condition, \"<\" bounds as bars, selected grade highlighted, no radar",
+    "Mobile 390 px: process, troubleshooting and materials tabs without horizontal overflow",
+    "No uncaught browser errors"
+  ]
+}
