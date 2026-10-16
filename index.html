@@ -405,6 +405,7 @@
       <div class="row"><div class="group"><button class="btn secondary" onclick="openRecoEditor()">현재 재료의 참고 범위 편집 · Edit this grade</button><div class="hint">수정값은 이 재료·공정에만 저장됩니다. / Overrides apply only to this grade and process.</div></div></div>
 
       <div id="dynamicFields" class="grid"></div>
+      <div id="hmiPanel" class="hmi-panel" hidden></div>
 
       <div class="group">
         <label data-i18n="notes">특이사항 메모</label>
@@ -4720,6 +4721,7 @@ window.addEventListener('load', () => {
 <script src="equipment-motion.js?v=25"></script>
 <script src="injection-motion.js?v=25"></script>
   <script src="process-atlas.js?v=25"></script>
+  <script src="hmi-panel.js?v=25"></script>
   <script>
     // Initialize guide tabs and integration after all scripts loaded
     window.addEventListener('load', function(){
