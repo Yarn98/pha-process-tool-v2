@@ -160,7 +160,7 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
     assert bpy.context.scene.frame_end-bpy.context.scene.frame_start == round(meta['duration']*24)
     reports[kind] = {'objects': len(objects), 'motion_groups': sorted(groups)}
 
-    if kind not in ('straw', 'compounding', 'extrusion', 'sheet', 'castfilm'):
+    if kind not in ('straw', 'compounding', 'extrusion', 'sheet', 'castfilm', 'blownfilm'):
         # The core center must stay on its bearing axis, rather than orbit in space.
         names = ['ScrewA_core']
         for name in names:
@@ -291,19 +291,48 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
         checks.append('castfilm: chill wrap, S-transfer, guide, dancer and winder directions; one surface speed; traversing gauge')
 
     elif kind == 'blownfilm':
-        assert surface_velocity('NipLeft', (.205, 0, 0)).z > 0
-        assert surface_velocity('NipRight', (-.205, 0, 0)).z > 0
-        web_clearance('FlattenedFilmWeb', [('NipLeft', .205), ('NipRight', .205), ('TowerGuideRoll', .24), ('Winder', .62)])
-        frame(1)
+        teaching = meta['teaching']
+        reports[kind]['screw_direction'] = [screw_direction('Extruder screw', 'Extruder screw flight', 0, 1, -1, meta['turns']['screw'])]
+        mm = teaching['roll_mm']
+        rn, rg, rw = mm['nip']/2000, mm['guide']/2000, mm['winder_now']/2000
+        assert world_velocity('NipLeft', (rn, 0, 0)).z > 0 and world_velocity('NipRight', (-rn, 0, 0)).z > 0
+        web_clearance('FlattenedFilmWeb', [('TowerGuideRoll', rg), ('TowerGuideRoll2', rg), ('LowerGuideRoll', rg), ('Winder', rw)])
+        step = teaching['line_speed_m_min']/60/24
+        for name, radius in (('NipLeft', rn), ('NipRight', rn), ('TowerGuideRoll', rg), ('TowerGuideRoll2', rg), ('LowerGuideRoll', rg),
+                             ('Winder', rw)):
+            speed = world_velocity(name, (0, 0, radius)).length
+            assert abs(speed-step)/step < .01, (name, speed, step)
+        # Steady BUR 2 bubble: draw-down to the frost line, constant diameter in the cage, collapse to the lay-flat.
+        frame(bpy.context.scene.frame_start)
         points = vertices('FilmBubble')
-        top = [p for p in points if p.z > 5.19]
-        assert max(abs(p.x) for p in top) < .015, 'Collapsed tube must enter between nip rolls'
-        close(max(p.y for p in top)-min(p.y for p in top), 1.84)
-        width1 = max(p.y for p in points if 2.6 < p.z < 2.8)
-        frame(289)
-        width2 = max(p.y for p in vertices('FilmBubble') if 2.6 < p.z < 2.8)
-        assert width2 > width1*1.30
-        checks.append('blownfilm: upward nip contacts, web clearance, flattening orientation and bubble morph')
+        z0, z1 = min(p.z for p in points), max(p.z for p in points)
+        close(z1-z0, teaching['die_to_nip_mm']/1000, 1e-3)
+
+        levels = sorted({round(p.z-z0, 5) for p in points})
+
+        def ring(target):
+            height = min(levels, key=lambda h: abs(h-target))      # nearest modelled section
+            row = [p for p in points if abs(p.z-(z0+height)) < 1e-4]
+            assert len(row) >= 32, (height, len(row))
+            cx, cy = sum(p.x for p in row)/len(row), sum(p.y for p in row)/len(row)
+            row.sort(key=lambda p: math.atan2(p.y-cy, p.x-cx))
+            perimeter = sum((b-a).length for a, b in zip(row, row[1:]+row[:1]))
+            return row, cx, perimeter
+        die_row, cx, _ = ring(0)
+        close(max(math.hypot(p.x-cx, p.y) for p in die_row)*2, teaching['die_mm']/1000, 1e-3)
+        frost_row, _, perimeter = ring(teaching['frost_line_mm']/1000)
+        bubble = max(math.hypot(p.x-cx, p.y) for p in frost_row)*2
+        close(bubble, teaching['bubble_mm']/1000, 1e-3)
+        close(bubble/(teaching['die_mm']/1000), teaching['bur'], 1e-3)
+        assert bubble < teaching['cage_inside_mm']/1000, 'bubble passes inside the stabilising cage'
+        top_row, _, top_perimeter = ring(teaching['die_to_nip_mm']/1000)
+        close(max(abs(p.y) for p in top_row)*2, teaching['layflat_mm']/1000, 2e-3)
+        assert max(abs(p.x-cx) for p in top_row) < .002, 'collapsed tube enters the nip flat'
+        mid_row, _, mid_perimeter = ring((teaching['die_to_nip_mm']-teaching['collapsing_mm']/2)/1000)
+        assert abs(mid_perimeter-perimeter)/perimeter < .01, 'circumference held through the collapsing frame'
+        frame(bpy.context.scene.frame_end)
+        assert vertices('FilmBubble')[0] == points[0], 'steady bubble: no breathing over the loop'
+        checks.append('blownfilm: upward nip contacts, one surface speed, BUR 2 bubble inside the cage, lay-flat = pi D / 2, steady bubble')
 
     elif kind == 'blowmolding':
         frame(25)

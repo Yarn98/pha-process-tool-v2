@@ -1,14 +1,14 @@
 [
   {
-    "kind": "castfilm",
+    "kind": "blownfilm",
     "blender": "5.2.1 LTS",
-    "source": "assets/equipment/castfilm-motion.blend",
+    "source": "assets/equipment/blownfilm-motion.blend",
     "frame": 55,
-    "source_sha256": "e7371b2d33a0c33507311356dfe738b12eb31a8b941af58d2c7cbcee2e738cb4",
-    "fbx": "output/unreal/fbx/castfilm.fbx",
-    "fbx_sha256": "4fb7beeeb90bf365a16dc1acfde75f90ce4dd89fb5e64fa14574e081adc4b26c",
-    "objects": 61,
-    "vertices": 20596,
+    "source_sha256": "a2b06029e370a0401322a8d6626149b5719173b25fbe70e0c1698dd68332fef4",
+    "fbx": "output/unreal/fbx/blownfilm.fbx",
+    "fbx_sha256": "0717e870ae9a37cc585d79d1a9f61128d6b982f6bd4d42a6f21b1b47a841183e",
+    "objects": 77,
+    "vertices": 25926,
     "materials": {
       "Paint / anthracite base": {
         "color": [
@@ -170,26 +170,6 @@
         "roughness": 0.07,
         "alpha": 1.0
       },
-      "Hose / cooling supply blue": {
-        "color": [
-          0.02624,
-          0.11444,
-          0.34191
-        ],
-        "metallic": 0.0,
-        "roughness": 0.6,
-        "alpha": 1.0
-      },
-      "Hose / cooling return red": {
-        "color": [
-          0.39157,
-          0.04231,
-          0.0319
-        ],
-        "metallic": 0.0,
-        "roughness": 0.6,
-        "alpha": 1.0
-      },
       "Polymer / film (translucent)": {
         "color": [
           0.04817,
@@ -197,8 +177,8 @@
           0.10224
         ],
         "metallic": 0.0,
-        "roughness": 0.2,
-        "alpha": 0.55
+        "roughness": 0.15,
+        "alpha": 0.42
       },
       "Paper / winder core": {
         "color": [
@@ -280,16 +260,6 @@
         "roughness": 0.35,
         "alpha": 1.0
       },
-      "Polymer / bright marker": {
-        "color": [
-          0.21223,
-          0.65141,
-          0.32314
-        ],
-        "metallic": 0.0,
-        "roughness": 0.3,
-        "alpha": 1.0
-      },
       "Polymer / natural pellet": {
         "color": [
           0.58408,
@@ -299,12 +269,22 @@
         "metallic": 0.0,
         "roughness": 0.45,
         "alpha": 1.0
+      },
+      "Polymer / bright marker": {
+        "color": [
+          0.21223,
+          0.65141,
+          0.32314
+        ],
+        "metallic": 0.0,
+        "roughness": 0.3,
+        "alpha": 1.0
       }
     },
     "engine": "5.8.2-56702186+++UE5+Release-5.8",
     "renderer": "Unreal DX12 / Lumen",
-    "png": "output/unreal/castfilm-unreal.png",
-    "png_sha256": "82fc6ced5cab9ddc48b20fe0fff30ac558535553aaab56d246ace3b92efa2265",
+    "png": "output/unreal/blownfilm-unreal.png",
+    "png_sha256": "1bba298405772a369b2ab01caafe0078d371e20c4369cf09612d19387ceaa594",
     "scope": "Illustrative equipment; no measured dimensions or CFD"
   }
 ]

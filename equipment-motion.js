@@ -39,9 +39,6 @@
     }
   }
   function pose(){
-    if(meta.id==='blownfilm')asset.members.flow?.forEach(node=>{
-      if(node.userData.phaFlowZ!==undefined)node.position.z=node.userData.phaFlowZ;
-    });
     for(const [key,group] of asset.groups){
       let second=state.time;
       if(state.mode==='study'){
@@ -71,16 +68,6 @@
         nodes.ReleasedBottle.position.set(.7+.3*f,1.37-.66*f,0);
         asset.members.air?.forEach(node=>{node.visible=a.inflate>0&&a.pin>99;});
       }else asset.members.air?.forEach(node=>{node.visible=state.time>=4.6&&state.time<6.5;});
-    }
-    if(meta.id==='blownfilm'){
-      const fraction=state.mode==='manual'?state.actual.bubble/100:state.time/meta.duration;
-      asset.members.flow?.forEach(node=>{
-        if(!node.name.startsWith('BubbleFlowMarker'))return;
-        const h=node.position.y;
-        const envelope=h<2?clamp((h-1.08)/.92,0,1):h>4.45?clamp((4.85-h)/.40,0,1):1;
-        node.userData.phaFlowZ=node.position.z;
-        node.position.z=node.userData.phaFlowZ*(1+.32*fraction*envelope);
-      });
     }
   }
   // frameTime marks a playback frame; its following tick measures the frame cost.

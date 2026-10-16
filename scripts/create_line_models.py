@@ -432,13 +432,7 @@ def config(kind):
                    {'key':'screw','label':['스크류·공급','Screw & feed'],'center':[-3.1,1.65,0],'zoom':2.1},
                    {'key':'finish','label':['성형·후단','Forming & downstream'],'center':[2.4,1.6,0],'zoom':2.0}],
           'stages':[['공급·용융','Feed & melt'],['다이·성형','Die & forming'],['냉각·인취','Cool & haul off'],['제품·배출','Product & discharge']]}
-    if kind=='blownfilm':
-        base.update(center=[-.5,2.8,0],span=[11.6,6.7],heightRatio=.64)
-        base['views'][0]['center']=base['center']
-        base['views'][2].update(label=['버블·닙롤','Bubble & nip'],center=[.25,3.1,0],zoom=1.7)
-        base['controls'] += [control('bubble','버블 형상 조절','Bubble shape adjustment',100,'%'),control('haul','닙롤 회전각','Nip roll rotation angle'),control('winder','권취축 회전각','Winder rotation angle',360)]
-        base['stages']=[['용융 공급','Melt feed'],['버블 성형','Bubble forming'],['냉각·인취','Cool & haul off'],['접힘·권취','Collapse & wind']]
-    elif kind=='blowmolding':
+    if kind=='blowmolding':
         base.update(center=[-.7,2.35,0],span=[11.6,6.1])
         base['views'][0]['center']=base['center']
         base['views'][2].update(label=['금형·블로우 핀','Mold & blow pin'],center=[.7,2.3,0],zoom=1.9)
@@ -567,8 +561,8 @@ def straw_model():
     export(meta,False)
 
 
-builders={'blownfilm':blown_line,'blowmolding':blow_line}
-# The compounding, extrusion, sheet and cast-film lines are built at real scale by scripts/create_<kind>_motion.py.
+builders={'blowmolding':blow_line}
+# Compounding, extrusion, sheet, cast-film and blown-film lines are built at real scale by scripts/create_<kind>_motion.py.
 KINDS=['extrusion','compounding','sheet','castfilm','blownfilm','blowmolding','straw']
 
 

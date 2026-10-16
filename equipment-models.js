@@ -928,17 +928,26 @@ window.PHAEquipmentModels = {
   },
   "blownfilm": {
     "id": "blownfilm",
-    "duration": 12,
+    "duration": 11.291666666666666,
+    "frames": [
+      0,
+      271
+    ],
     "poster": "assets/equipment/blownfilm-motion-poster.png",
     "model": "assets/equipment/blownfilm-motion.glb",
     "center": [
-      -0.5,
-      2.8,
+      -0.044999999999999846,
+      1.9,
       0
     ],
     "span": [
-      11.6,
-      6.7
+      4.79,
+      4.1
+    ],
+    "heightRatio": 0.62,
+    "zoom": [
+      0.7,
+      12
     ],
     "controls": [
       {
@@ -952,7 +961,7 @@ window.PHAEquipmentModels = {
         "step": 1,
         "range": [
           0,
-          12
+          11.291666666666666
         ]
       },
       {
@@ -966,21 +975,7 @@ window.PHAEquipmentModels = {
         "step": 0.1,
         "range": [
           0,
-          12
-        ]
-      },
-      {
-        "key": "bubble",
-        "label": [
-          "버블 형상 조절",
-          "Bubble shape adjustment"
-        ],
-        "max": 100,
-        "unit": "%",
-        "step": 0.1,
-        "range": [
-          0,
-          12
+          11.291666666666666
         ]
       },
       {
@@ -994,13 +989,13 @@ window.PHAEquipmentModels = {
         "step": 1,
         "range": [
           0,
-          12
+          11.291666666666666
         ]
       },
       {
         "key": "winder",
         "label": [
-          "권취축 회전각",
+          "권취 롤 회전각",
           "Winder rotation angle"
         ],
         "max": 360,
@@ -1008,7 +1003,7 @@ window.PHAEquipmentModels = {
         "step": 1,
         "range": [
           0,
-          12
+          11.291666666666666
         ]
       }
     ],
@@ -1020,8 +1015,8 @@ window.PHAEquipmentModels = {
           "Whole line"
         ],
         "center": [
-          -0.5,
-          2.8,
+          -0.044999999999999846,
+          1.9,
           0
         ],
         "zoom": 1
@@ -1029,28 +1024,41 @@ window.PHAEquipmentModels = {
       {
         "key": "screw",
         "label": [
-          "스크류·공급",
-          "Screw & feed"
+          "스크류·배럴",
+          "Screw & barrel"
         ],
         "center": [
-          -3.1,
-          1.65,
+          -0.6,
+          1.0,
           0
         ],
-        "zoom": 2.1
+        "zoom": 3.2
+      },
+      {
+        "key": "die",
+        "label": [
+          "환형 다이·에어링·동결선",
+          "Annular die, air ring & frost line"
+        ],
+        "center": [
+          0.55,
+          1.25,
+          0
+        ],
+        "zoom": 5
       },
       {
         "key": "finish",
         "label": [
-          "버블·닙롤",
-          "Bubble & nip"
+          "접힘·닙롤",
+          "Collapse & nip"
         ],
         "center": [
-          0.25,
-          3.1,
+          0.55,
+          3.25,
           0
         ],
-        "zoom": 1.7
+        "zoom": 3.5
       }
     ],
     "stages": [
@@ -1059,8 +1067,8 @@ window.PHAEquipmentModels = {
         "Melt feed"
       ],
       [
-        "버블 성형",
-        "Bubble forming"
+        "버블 성형·동결선",
+        "Bubble & frost line"
       ],
       [
         "냉각·인취",
@@ -1071,10 +1079,61 @@ window.PHAEquipmentModels = {
         "Collapse & wind"
       ]
     ],
-    "heightRatio": 0.64,
+    "turns": {
+      "haul": 3,
+      "winder": 2,
+      "screw": 11
+    },
+    "study": {
+      "rpm": 58.5,
+      "speed": 5.0,
+      "diameter": 100.0
+    },
+    "teaching": {
+      "time_scale": 1,
+      "line_speed_m_min": 5.0,
+      "bur": 2.0,
+      "die_mm": 80.0,
+      "bubble_mm": 160.0,
+      "layflat_mm": 251.3,
+      "frost_line_mm": 320.0,
+      "die_to_nip_mm": 2500,
+      "collapsing_mm": 700,
+      "cage_inside_mm": 200.0,
+      "rpm": {
+        "nip": 15.915,
+        "winder_at_150": 10.61,
+        "winder_at_450": 3.537,
+        "screw": 58.45
+      },
+      "roll_mm": {
+        "nip": 100.0,
+        "guide": 100.0,
+        "winder_now": 150.0,
+        "core": 76.0
+      },
+      "loop_note": "Real time: steady bubble (no breathing); the nip rolls turn three times per loop and the winder twice."
+    },
+    "spec": {
+      "basis": "Pack B grade C teaching values; brand-neutral; not an OEM drawing or a PHA BUR or frost-line setting",
+      "screw_d_mm": 40,
+      "l_d": 30,
+      "die_mm": 80,
+      "air_ring_od_mm": 240,
+      "bur": 2.0,
+      "layflat_mm": 251.3,
+      "frost_line_mm": 320,
+      "cage_inside_mm": 200,
+      "die_to_nip_mm": 2500,
+      "collapsing_mm": 700,
+      "nip_mm": "100, face 350",
+      "oscillating_haul_off": "optional, not shown",
+      "ibc": "optional, not shown",
+      "winder": "76 mm core to 450 mm, two-ply lay-flat",
+      "sources": "output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md"
+    },
     "blender": "5.2.1 LTS",
     "groups": [
-      "bubble",
       "flow",
       "haul",
       "screw",

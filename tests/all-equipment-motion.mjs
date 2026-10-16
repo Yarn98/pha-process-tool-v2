@@ -95,11 +95,6 @@ try{
       await firstAxis.focus();await page.keyboard.press('ArrowRight');
       const afterKey=await page.evaluate(()=>PHAEquipmentMotion.getState());assert.equal(afterKey.target[controls[0].key],92);
       checks.push(kind+': real motion, independent manual mechanisms and keyboard precision');
-      if(kind==='blownfilm'){
-        const before=(await page.evaluate(()=>__phaEquipmentTest())).nodes.flow;
-        await panel.locator('[data-eq="view"]').click();await panel.locator('[data-eq="view"]').click();
-        assert.deepEqual((await page.evaluate(()=>__phaEquipmentTest())).nodes.flow,before,'Repeated redraws do not accumulate bubble marker displacement');
-      }
     }
     await panel.locator('[data-eq="focus"]').selectOption('finish');
     data=await page.evaluate(()=>__phaEquipmentTest());assert.ok(data.camera.zoom>1);

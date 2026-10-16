@@ -11,9 +11,7 @@
     "compounding: roll and rotor speeds follow line speed, roll diameter, cutting edges and pellet length within 0.6 %",
     "sheet: S-wrap clearance, all nip and wrap directions, and one surface speed for stack, table, haul-off and winder",
     "castfilm: chill wrap, S-transfer, guide, dancer and winder directions; one surface speed; traversing gauge",
-    "blownfilm: screw cores remain on their bearing axes",
-    "blownfilm: signed screw rotation matches actual helix and downstream +X feed",
-    "blownfilm: upward nip contacts, web clearance, flattening orientation and bubble morph",
+    "blownfilm: upward nip contacts, one surface speed, BUR 2 bubble inside the cage, lay-flat = pi D / 2, steady bubble",
     "blowmolding: screw cores remain on their bearing axes",
     "blowmolding: signed screw rotation matches actual helix and downstream +X feed",
     "blowmolding: head-anchored parison, cavity-aligned morph, pin retraction before opening and product discharge",
@@ -137,9 +135,8 @@
       ]
     },
     "blownfilm": {
-      "objects": 112,
+      "objects": 85,
       "motion_groups": [
-        "bubble",
         "flow",
         "haul",
         "screw",
@@ -147,12 +144,12 @@
       ],
       "screw_direction": [
         {
-          "node": "ScrewA",
+          "node": "Extruder screw",
           "axis": "X",
-          "helix_phase_slope": 18.934174868337166,
-          "rotation_radians_per_frame": -0.04363323003053665,
-          "total_radians": -12.566370964050293,
-          "fixed_azimuth_crest_step": 0.002304469581270356,
+          "helix_phase_slope": 255.34996958901726,
+          "rotation_radians_per_frame": -0.2550370395183563,
+          "total_radians": -69.11503601074219,
+          "fixed_azimuth_crest_step": 0.0009987745051579032,
           "feed_axis_sign": 1,
           "scope": "geometry direction only; not material velocity"
         }
