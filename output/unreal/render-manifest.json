@@ -1,14 +1,14 @@
 [
   {
-    "kind": "compounding",
+    "kind": "extrusion",
     "blender": "5.2.1 LTS",
-    "source": "assets/equipment/compounding-motion.blend",
+    "source": "assets/equipment/extrusion-motion.blend",
     "frame": 55,
-    "source_sha256": "b8b86afea73fd2b9c292c9212397b4930888dda07662234bc9a6cb1ec0ac75ce",
-    "fbx": "output/unreal/fbx/compounding.fbx",
-    "fbx_sha256": "80fd33189bafc841546ebd8f02c0171bf4d5b4bf06862b5af75fccb7f3b8dd9d",
-    "objects": 98,
-    "vertices": 72284,
+    "source_sha256": "e05db86b7a3b787564f663436b044135c027dd4958b65ec58937dee724510694",
+    "fbx": "output/unreal/fbx/extrusion.fbx",
+    "fbx_sha256": "00608fe342cfb5a784825249ee66d666207a156081e786c9f2b4bb853cb3df10",
+    "objects": 107,
+    "vertices": 19052,
     "materials": {
       "Paint / anthracite base": {
         "color": [
@@ -18,16 +18,6 @@
         ],
         "metallic": 0.0,
         "roughness": 0.58,
-        "alpha": 1.0
-      },
-      "Plastic / black": {
-        "color": [
-          0.007,
-          0.0075,
-          0.00802
-        ],
-        "metallic": 0.0,
-        "roughness": 0.55,
         "alpha": 1.0
       },
       "Rubber / black hose": {
@@ -58,6 +48,16 @@
         ],
         "metallic": 1.0,
         "roughness": 0.36,
+        "alpha": 1.0
+      },
+      "Plastic / black": {
+        "color": [
+          0.007,
+          0.0075,
+          0.00802
+        ],
+        "metallic": 0.0,
+        "roughness": 0.55,
         "alpha": 1.0
       },
       "Paint / forest green": {
@@ -100,24 +100,14 @@
         "roughness": 0.06,
         "alpha": 0.28
       },
-      "Steel / brushed stainless": {
+      "Brass / fittings": {
         "color": [
           0.58408,
-          0.59062,
-          0.59062
+          0.3564,
+          0.10462
         ],
         "metallic": 1.0,
-        "roughness": 0.38,
-        "alpha": 1.0
-      },
-      "Cast iron / painted grey": {
-        "color": [
-          0.19462,
-          0.21223,
-          0.21586
-        ],
-        "metallic": 0.2,
-        "roughness": 0.62,
+        "roughness": 0.32,
         "alpha": 1.0
       },
       "Section cut / terracotta": {
@@ -130,16 +120,6 @@
         "roughness": 0.7,
         "alpha": 1.0
       },
-      "Brass / fittings": {
-        "color": [
-          0.58408,
-          0.3564,
-          0.10462
-        ],
-        "metallic": 1.0,
-        "roughness": 0.32,
-        "alpha": 1.0
-      },
       "Heater band / stainless mica": {
         "color": [
           0.38643,
@@ -150,14 +130,14 @@
         "roughness": 0.45,
         "alpha": 1.0
       },
-      "Cable / grey jacket": {
+      "Heater band / ceramic": {
         "color": [
-          0.10462,
-          0.11444,
-          0.12477
+          0.68669,
+          0.62396,
+          0.50888
         ],
         "metallic": 0.0,
-        "roughness": 0.7,
+        "roughness": 0.78,
         "alpha": 1.0
       },
       "Copper / thermocouple": {
@@ -170,65 +150,15 @@
         "roughness": 0.35,
         "alpha": 1.0
       },
-      "Hose / cooling supply blue": {
+      "Steel / brushed stainless": {
         "color": [
-          0.02624,
-          0.11444,
-          0.34191
+          0.58408,
+          0.59062,
+          0.59062
         ],
-        "metallic": 0.0,
-        "roughness": 0.6,
+        "metallic": 1.0,
+        "roughness": 0.38,
         "alpha": 1.0
-      },
-      "Hose / cooling return red": {
-        "color": [
-          0.39157,
-          0.04231,
-          0.0319
-        ],
-        "metallic": 0.0,
-        "roughness": 0.6,
-        "alpha": 1.0
-      },
-      "Polymer / melt (translucent)": {
-        "color": [
-          0.04817,
-          0.26225,
-          0.10224
-        ],
-        "metallic": 0.0,
-        "roughness": 0.22,
-        "alpha": 0.5
-      },
-      "Heater band / ceramic": {
-        "color": [
-          0.68669,
-          0.62396,
-          0.50888
-        ],
-        "metallic": 0.0,
-        "roughness": 0.78,
-        "alpha": 1.0
-      },
-      "Polymer / sage green": {
-        "color": [
-          0.04817,
-          0.26225,
-          0.10224
-        ],
-        "metallic": 0.0,
-        "roughness": 0.35,
-        "alpha": 1.0
-      },
-      "Water / strand bath": {
-        "color": [
-          0.11193,
-          0.34191,
-          0.38133
-        ],
-        "metallic": 0.0,
-        "roughness": 0.05,
-        "alpha": 0.3
       },
       "Steel / hard chrome": {
         "color": [
@@ -240,6 +170,16 @@
         "roughness": 0.07,
         "alpha": 1.0
       },
+      "Water / calibration bath": {
+        "color": [
+          0.11193,
+          0.34191,
+          0.38133
+        ],
+        "metallic": 0.0,
+        "roughness": 0.05,
+        "alpha": 0.3
+      },
       "Polycarbonate / guard window": {
         "color": [
           0.72306,
@@ -250,34 +190,34 @@
         "roughness": 0.02,
         "alpha": 0.07
       },
-      "Steel / knurled roll": {
+      "Hose / cooling supply blue": {
         "color": [
-          0.34191,
-          0.36625,
-          0.38133
-        ],
-        "metallic": 1.0,
-        "roughness": 0.5,
-        "alpha": 1.0
-      },
-      "Carton / octabin": {
-        "color": [
-          0.47932,
-          0.32314,
-          0.14413
+          0.02624,
+          0.11444,
+          0.34191
         ],
         "metallic": 0.0,
-        "roughness": 0.85,
+        "roughness": 0.6,
         "alpha": 1.0
       },
-      "Polymer / natural pellet": {
+      "Rubber / haul-off belt": {
         "color": [
-          0.58408,
-          0.53948,
-          0.37124
+          0.02416,
+          0.02624,
+          0.02843
         ],
         "metallic": 0.0,
-        "roughness": 0.45,
+        "roughness": 0.75,
+        "alpha": 1.0
+      },
+      "Polymer / sage green": {
+        "color": [
+          0.04817,
+          0.26225,
+          0.10224
+        ],
+        "metallic": 0.0,
+        "roughness": 0.35,
         "alpha": 1.0
       },
       "Lamp / red": {
@@ -350,6 +290,16 @@
         "roughness": 0.35,
         "alpha": 1.0
       },
+      "Polymer / natural pellet": {
+        "color": [
+          0.58408,
+          0.53948,
+          0.37124
+        ],
+        "metallic": 0.0,
+        "roughness": 0.45,
+        "alpha": 1.0
+      },
       "Polymer / bright marker": {
         "color": [
           0.21223,
@@ -363,8 +313,8 @@
     },
     "engine": "5.8.2-56702186+++UE5+Release-5.8",
     "renderer": "Unreal DX12 / Lumen",
-    "png": "output/unreal/compounding-unreal.png",
-    "png_sha256": "3bdb5cc0f004d9b85c4c5a3a1a26ee128a368d02eb4efacf4e11e397ef622b61",
+    "png": "output/unreal/extrusion-unreal.png",
+    "png_sha256": "dd5d5696317997b04f62e41ccca2bab94c3c89d8e3dfca0ca1c33eb5502587cf",
     "scope": "Illustrative equipment; no measured dimensions or CFD"
   }
 ]

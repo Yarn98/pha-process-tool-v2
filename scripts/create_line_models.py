@@ -432,9 +432,7 @@ def config(kind):
                    {'key':'screw','label':['스크류·공급','Screw & feed'],'center':[-3.1,1.65,0],'zoom':2.1},
                    {'key':'finish','label':['성형·후단','Forming & downstream'],'center':[2.4,1.6,0],'zoom':2.0}],
           'stages':[['공급·용융','Feed & melt'],['다이·성형','Die & forming'],['냉각·인취','Cool & haul off'],['제품·배출','Product & discharge']]}
-    if kind=='extrusion':
-        base['controls'] += [control('haul','인취 롤 회전각','Haul-off roll rotation angle'),control('cutter','절단날 회전각','Cutter rotation angle',360)]
-    elif kind in ('sheet','castfilm'):
+    if kind in ('sheet','castfilm'):
         base['controls'] += [control('roll','냉각 롤 회전각','Chill roll rotation angle' if kind=='castfilm' else 'Cooling roll rotation angle'),control('winder','권취축 회전각','Winder rotation angle',360)]
         base['views'][2]['center']=[1.4,2.1,0]
     elif kind=='blownfilm':
@@ -572,9 +570,8 @@ def straw_model():
     export(meta,False)
 
 
-builders={'extrusion':strand_line,
-          'sheet':sheet_line,'castfilm':cast_line,'blownfilm':blown_line,'blowmolding':blow_line}
-# The compounding line is built at real scale by scripts/create_compounding_motion.py.
+builders={          'sheet':sheet_line,'castfilm':cast_line,'blownfilm':blown_line,'blowmolding':blow_line}
+# The compounding and extrusion lines are built at real scale by scripts/create_<kind>_motion.py.
 KINDS=['extrusion','compounding','sheet','castfilm','blownfilm','blowmolding','straw']
 
 

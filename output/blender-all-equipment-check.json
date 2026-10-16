@@ -2,9 +2,9 @@
   "status": "pass",
   "blender": "5.2.1 LTS",
   "checks": [
-    "extrusion: screw cores remain on their bearing axes",
-    "extrusion: signed screw rotation matches actual helix and downstream +X feed",
-    "extrusion: both puller contacts move downstream",
+    "extrusion: signed screw rotation matches the helix and conveys toward the die (+X)",
+    "extrusion: both belt runs that grip the profile move downstream; pulley speed = 1000 v / (pi d)",
+    "extrusion: flying saw moves with the profile at line speed while cutting; one 500 mm cut per loop",
     "compounding: both bilobal screws co-rotate on fixed axes at the stated centre distance and convey toward the die",
     "compounding: side-feeder screws convey toward the main barrel (-Y)",
     "compounding: feed-roll nip moves strands downstream, rotor blades pass the bed knife downward, whole turns per loop",
@@ -27,7 +27,7 @@
   ],
   "models": {
     "extrusion": {
-      "objects": 138,
+      "objects": 115,
       "motion_groups": [
         "cutter",
         "flow",
@@ -36,12 +36,12 @@
       ],
       "screw_direction": [
         {
-          "node": "ScrewA",
+          "node": "Extruder screw",
           "axis": "X",
-          "helix_phase_slope": 18.934174878344084,
-          "rotation_radians_per_frame": -0.04363323003053665,
-          "total_radians": -12.566370964050293,
-          "fixed_azimuth_crest_step": 0.002304469580052419,
+          "helix_phase_slope": 224.7630951844194,
+          "rotation_radians_per_frame": -0.2617993950843811,
+          "total_radians": -62.831851959228516,
+          "fixed_azimuth_crest_step": 0.001164779275127766,
           "feed_axis_sign": 1,
           "scope": "geometry direction only; not material velocity"
         }

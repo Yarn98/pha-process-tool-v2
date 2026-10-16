@@ -50,7 +50,8 @@ def screw_direction(owner_name, flight_name, axis, feed_sign, rotation_sign, tur
     At a fixed barrel azimuth theta=k*s+phi(t), crest displacement is -dphi/k.
     This checks teaching geometry/direction; it does not predict material velocity.
     """
-    frame(1)
+    first_frame = bpy.context.scene.frame_start
+    frame(first_frame)
     owner = bpy.data.objects[owner_name]
     center = owner.matrix_world.translation.copy()
     # Right-handed radial coordinates about +X or +Y.
@@ -68,7 +69,7 @@ def screw_direction(owner_name, flight_name, axis, feed_sign, rotation_sign, tur
     slope = sum((p[0]-mean_s)*(a-mean_phase) for p,a in zip(outer,phase))/sum((p[0]-mean_s)**2 for p in outer)
     assert abs(slope) > .1
     start = owner.rotation_euler.copy()
-    frame(2)
+    frame(first_frame+1)
     delta = Vector(owner.rotation_euler)-Vector(start)
     assert delta[axis]*rotation_sign > 0, (owner_name, 'Wrong signed rotation', list(delta))
     assert all(abs(delta[i]) < 1e-6 for i in range(3) if i != axis), (owner_name, 'Unexpected rotation axis')
@@ -148,7 +149,7 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
     assert bpy.context.scene.frame_end-bpy.context.scene.frame_start == round(meta['duration']*24)
     reports[kind] = {'objects': len(objects), 'motion_groups': sorted(groups)}
 
-    if kind not in ('straw', 'compounding'):
+    if kind not in ('straw', 'compounding', 'extrusion'):
         # The core center must stay on its bearing axis, rather than orbit in space.
         names = ['ScrewA_core']
         for name in names:
@@ -163,9 +164,27 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
         checks.append(kind+': signed screw rotation matches actual helix and downstream +X feed')
 
     if kind == 'extrusion':
-        assert surface_velocity('PullerLower', (0, 0, .205)).x > 0
-        assert surface_velocity('PullerUpper', (0, 0, -.205)).x > 0
-        checks.append(kind+': both puller contacts move downstream')
+        turns, teaching = meta['turns'], meta['teaching']
+        reports[kind]['screw_direction'] = [screw_direction('Extruder screw', 'Extruder screw flight', 0, 1, -1, turns['screw'])]
+        checks.append(kind+': signed screw rotation matches the helix and conveys toward the die (+X)')
+        # Belt haul-off: the runs that grip the profile move downstream at both pulleys.
+        radius = teaching['pulley_mm']/2000
+        for end in ('In', 'Out'):
+            assert surface_velocity('BeltPulleyLower'+end, (0, 0, radius)).x > 0
+            assert surface_velocity('BeltPulleyUpper'+end, (0, 0, -radius)).x > 0
+        close(teaching['rpm']['haul'], round(1000*teaching['line_speed_m_min']/(math.pi*teaching['pulley_mm']), 3), 1e-6)
+        checks.append(kind+': both belt runs that grip the profile move downstream; pulley speed = 1000 v / (pi d)')
+        # Flying saw: during the cut the carriage travels with the profile at line speed.
+        saw = objects['SawCarriage']
+        cut = saw['cut_frame']
+        frame(cut)
+        x0 = saw.matrix_world.translation.x
+        frame(cut+1)
+        step = saw.matrix_world.translation.x-x0
+        close(step, teaching['line_speed_m_min']/60/24, 1e-6)
+        assert meta['cut_edges'] == 1 and turns['cutter'] == 1
+        close(meta['duration'], teaching['cut_length_mm']/1000/(teaching['line_speed_m_min']/60), 1e-9)
+        checks.append(kind+': flying saw moves with the profile at line speed while cutting; one 500 mm cut per loop')
 
     elif kind == 'compounding':
         turns = meta['turns']
