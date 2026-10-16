@@ -775,4 +775,5 @@ def export_glb(path, skip=()):
                               export_animations=True, export_animation_mode='SCENE',
                               export_force_sampling=True, export_frame_range=True,
                               export_yup=True, export_cameras=False, export_lights=False,
-                              export_extras=True, export_optimize_animation_size=True)
+                              export_extras=True, export_optimize_animation_size=True,
+                              export_texcoords=False)   # untextured PBR: UVs would only add bytes

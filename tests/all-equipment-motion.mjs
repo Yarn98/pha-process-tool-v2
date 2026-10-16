@@ -81,9 +81,14 @@ try{
           if(kind==='compounding')for(const node of after.filter(node=>['ScrewA','ScrewB'].includes(node.name)))assert.ok(Math.abs(2*Math.atan2(node.rotation[0],node.rotation[3])+91*Math.PI/180)<.025,'Both compounding screws follow manual forward angle');
         }
         if(kind==='compounding'&&control.key==='side'){
-          const rotor=after.find(node=>node.name==='SideFeedRotor');assert.ok(rotor);
-          // Blender -Y rotation becomes Three +Z; this helix conveys toward the barrel.
-          assert.ok(Math.abs(2*Math.atan2(rotor.rotation[2],rotor.rotation[3])-91*Math.PI/180)<.025,'Side feeder rotates toward the main screws');
+          // Each side-feeder screw turns about its own axis by the commanded angle, in the sense that the
+          // Blender check proves conveys toward the main barrel. q_rel = conj(rest) * current, in the local frame.
+          for(const name of ['SideScrewA','SideScrewB']){
+            const [ax,ay,az,aw]=before.find(node=>node.name===name).rotation,[bx,by,bz,bw]=after.find(node=>node.name===name).rotation;
+            const rel=[aw*bx-ax*bw-ay*bz+az*by,aw*by+ax*bz-ay*bw-az*bx,aw*bz-ax*by+ay*bx-az*bw,aw*bw+ax*bx+ay*by+az*bz];
+            assert.ok(Math.abs(rel[1])<1e-3&&Math.abs(rel[2])<1e-3,name+' turns about its own axis');
+            assert.ok(Math.abs(2*Math.atan2(rel[0],rel[3])+91*Math.PI/180)<.025,name+' follows the manual angle in its conveying sense');
+          }
         }
       }
       const firstAxis=panel.locator('[data-eq-axis="'+controls[0].key+'"]');

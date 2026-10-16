@@ -5,11 +5,10 @@
     "extrusion: screw cores remain on their bearing axes",
     "extrusion: signed screw rotation matches actual helix and downstream +X feed",
     "extrusion: both puller contacts move downstream",
-    "compounding: screw cores remain on their bearing axes",
-    "compounding: signed screw rotation matches actual helix and downstream +X feed",
-    "compounding: both puller contacts move downstream",
-    "compounding: both screws co-rotate",
-    "compounding: side-feed screw conveys toward the main barrel (-Y)",
+    "compounding: both bilobal screws co-rotate on fixed axes at the stated centre distance and convey toward the die",
+    "compounding: side-feeder screws convey toward the main barrel (-Y)",
+    "compounding: feed-roll nip moves strands downstream, rotor blades pass the bed knife downward, whole turns per loop",
+    "compounding: roll and rotor speeds follow line speed, roll diameter, cutting edges and pellet length within 0.6 %",
     "sheet: screw cores remain on their bearing axes",
     "sheet: signed screw rotation matches actual helix and downstream +X feed",
     "sheet: upstack web clearance and both nip contact directions",
@@ -49,7 +48,7 @@
       ]
     },
     "compounding": {
-      "objects": 178,
+      "objects": 106,
       "motion_groups": [
         "cutter",
         "flow",
@@ -61,34 +60,42 @@
         {
           "node": "ScrewA",
           "axis": "X",
-          "helix_phase_slope": 18.917291472909167,
-          "rotation_radians_per_frame": -0.04363323003053665,
-          "total_radians": -12.566370964050293,
-          "fixed_azimuth_crest_step": 0.0023065262853840555,
-          "feed_axis_sign": 1,
+          "tip_phase_slope": 130.93820617010715,
+          "radians_per_frame": -0.05209904536604881,
+          "fixed_azimuth_crest_step": 0.00039789032468006184,
+          "turns_per_loop": 5,
           "scope": "geometry direction only; not material velocity"
         },
         {
           "node": "ScrewB",
           "axis": "X",
-          "helix_phase_slope": 18.91748388540546,
-          "rotation_radians_per_frame": -0.04363323003053665,
-          "total_radians": -12.566370964050293,
-          "fixed_azimuth_crest_step": 0.002306502825367754,
-          "feed_axis_sign": 1,
+          "tip_phase_slope": 130.93820612605572,
+          "radians_per_frame": -0.05209904536604881,
+          "fixed_azimuth_crest_step": 0.0003978903248139238,
+          "turns_per_loop": 5,
           "scope": "geometry direction only; not material velocity"
         }
       ],
-      "side_feeder_direction": {
-        "node": "SideFeedRotor",
-        "axis": "Y",
-        "helix_phase_slope": -24.166097357452003,
-        "rotation_radians_per_frame": -0.04363323003053665,
-        "total_radians": -12.566370964050293,
-        "fixed_azimuth_crest_step": -0.0018055555013760485,
-        "feed_axis_sign": -1,
-        "scope": "geometry direction only; not material velocity"
-      }
+      "side_feeder_direction": [
+        {
+          "node": "SideScrewA",
+          "axis": "Y",
+          "tip_phase_slope": 224.39215922118072,
+          "radians_per_frame": 0.026039816439151764,
+          "fixed_azimuth_crest_step": -0.00011604601751474133,
+          "turns_per_loop": 2.5,
+          "scope": "geometry direction only; not material velocity"
+        },
+        {
+          "node": "SideScrewB",
+          "axis": "Y",
+          "tip_phase_slope": 224.39215728947985,
+          "radians_per_frame": 0.026039816439151764,
+          "fixed_azimuth_crest_step": -0.00011604601851373432,
+          "turns_per_loop": 2.5,
+          "scope": "geometry direction only; not material velocity"
+        }
+      ]
     },
     "sheet": {
       "objects": 125,

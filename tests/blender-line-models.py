@@ -83,6 +83,50 @@ def screw_direction(owner_name, flight_name, axis, feed_sign, rotation_sign, tur
             'scope':'geometry direction only; not material velocity'}
 
 
+def bilobal_direction(owner_name, mesh_name, axis, axial_range, feed_sign, rotation_sign, turns):
+    """Twin-screw element twist versus rotation for a bilobal (two-tip) profile.
+
+    Tip azimuths are folded mod pi (the two tips coincide), unwrapped along the axis and fitted
+    against axial position; a fixed-azimuth crest then moves by -d(rotation)/slope per frame.
+    ``axis`` 0 = world X, 1 = world Y; ``axial_range`` selects one conveying element; ``rotation_sign`` is
+    the sense about that world axis (right-hand rule).
+    """
+    scene = bpy.context.scene
+    frame(scene.frame_start)
+    owner = bpy.data.objects[owner_name]
+    center = owner.matrix_world.translation.copy()
+    radial = (1, 2) if axis == 0 else (2, 0)
+    points = [p for p in vertices(mesh_name) if axial_range[0] < p[axis] < axial_range[1]]
+
+    def radius(p):
+        return math.hypot(p[radial[0]]-center[radial[0]], p[radial[1]]-center[radial[1]])
+    tip = max(radius(p) for p in points)
+    tips = sorted((p[axis], math.atan2(p[radial[1]]-center[radial[1]], p[radial[0]]-center[radial[0]]) % math.pi)
+                  for p in points if radius(p) > .985*tip)
+    assert len(tips) > 25, (owner_name, len(tips))
+    phase = [tips[0][1]]
+    for before, after in zip(tips, tips[1:]):
+        phase.append(phase[-1]+(after[1]-before[1]+math.pi/2) % math.pi-math.pi/2)
+    mean_s = sum(t[0] for t in tips)/len(tips)
+    mean_phase = sum(phase)/len(phase)
+    slope = sum((t[0]-mean_s)*(a-mean_phase) for t, a in zip(tips, phase))/sum((t[0]-mean_s)**2 for t in tips)
+    rest = owner.matrix_world.to_quaternion()
+    frame(scene.frame_start+1)
+    step = owner.matrix_world.to_quaternion() @ rest.inverted()     # world-frame rotation over one frame
+    world_axis = Vector((1, 0, 0)) if axis == 0 else Vector((0, 1, 0))
+    alignment = Vector(step.axis).normalized().dot(world_axis)    # small-angle axes come back unnormalised
+    assert abs(abs(alignment)-1) < 1e-4, (owner_name, 'rotation axis', tuple(step.axis))
+    signed = step.angle*(1 if alignment > 0 else -1)
+    assert signed*rotation_sign > 0, (owner_name, 'rotation sense', signed)
+    crest_step = -signed/slope
+    assert crest_step*feed_sign > 0, (owner_name, 'twist conveys against the feed direction', slope, crest_step)
+    frame(scene.frame_end)
+    close(abs(owner.rotation_euler.x), turns*math.tau)
+    return {'node': owner_name, 'axis': 'XY'[axis], 'tip_phase_slope': slope, 'radians_per_frame': signed,
+            'fixed_azimuth_crest_step': crest_step, 'turns_per_loop': turns,
+            'scope': 'geometry direction only; not material velocity'}
+
+
 def web_clearance(web, rolls):
     """The web must not cut through a solid roll at a bend or transfer segment."""
     frame(1)
@@ -101,12 +145,12 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
     meta = json.loads((ROOT/'assets/equipment'/f'{kind}-motion.json').read_text(encoding='utf-8'))
     groups = {obj.get('motion_group') for obj in objects if obj.get('motion_group')}
     assert {control['key'] for control in meta['controls']} <= groups
-    assert bpy.context.scene.frame_end == round(meta['duration']*24)+1
+    assert bpy.context.scene.frame_end-bpy.context.scene.frame_start == round(meta['duration']*24)
     reports[kind] = {'objects': len(objects), 'motion_groups': sorted(groups)}
 
-    if kind != 'straw':
+    if kind not in ('straw', 'compounding'):
         # The core center must stay on its bearing axis, rather than orbit in space.
-        names = ['ScrewA_core'] + (['ScrewB_core'] if kind == 'compounding' else [])
+        names = ['ScrewA_core']
         for name in names:
             centers = []
             for f in (1, 37, 73):
@@ -118,20 +162,55 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
         reports[kind]['screw_direction'] = [screw_direction(name.removesuffix('_core'), name.removesuffix('_core')+'_flight', 0, 1, -1, 2) for name in names]
         checks.append(kind+': signed screw rotation matches actual helix and downstream +X feed')
 
-    if kind in ('extrusion', 'compounding'):
+    if kind == 'extrusion':
         assert surface_velocity('PullerLower', (0, 0, .205)).x > 0
         assert surface_velocity('PullerUpper', (0, 0, -.205)).x > 0
         checks.append(kind+': both puller contacts move downstream')
-        if kind == 'compounding':
-            frame(1)
-            first = [objects[name].rotation_euler.x for name in ('ScrewA', 'ScrewB')]
-            frame(20)
-            delta = [objects[name].rotation_euler.x-a for name, a in zip(('ScrewA', 'ScrewB'), first)]
-            assert delta[0]*delta[1] > 0
-            close(delta[0], delta[1])
-            checks.append('compounding: both screws co-rotate')
-            reports[kind]['side_feeder_direction'] = screw_direction('SideFeedRotor', 'SideFeedHelicalFlight', 1, -1, -1, 2)
-            checks.append('compounding: side-feed screw conveys toward the main barrel (-Y)')
+
+    elif kind == 'compounding':
+        turns = meta['turns']
+        # Main screws: the first conveying element (0-128 mm) turns negatively and conveys toward the die (+X).
+        reports[kind]['screw_direction'] = [bilobal_direction(name, name+'_elements', 0, (.012, .116), 1, -1, turns['screw'])
+                                            for name in ('ScrewA', 'ScrewB')]
+        frame(0)
+        axes = [objects[name].matrix_world.translation.copy() for name in ('ScrewA', 'ScrewB')]
+        first = [objects[name].rotation_euler.x for name in ('ScrewA', 'ScrewB')]
+        frame(20)
+        assert all((objects[name].matrix_world.translation-a).length < 1e-6 for name, a in zip(('ScrewA', 'ScrewB'), axes))
+        delta = [objects[name].rotation_euler.x-a for name, a in zip(('ScrewA', 'ScrewB'), first)]
+        assert delta[0] < 0 and delta[1] < 0
+        close(delta[0], delta[1])
+        close(abs(axes[1].y-axes[0].y), meta['spec']['centre_distance_mm']/1000)
+        checks.append('compounding: both bilobal screws co-rotate on fixed axes at the stated centre distance and convey toward the die')
+        # Side-feeder screws run along world Y, turn positively about +Y and convey toward the main barrel (-Y).
+        reports[kind]['side_feeder_direction'] = [bilobal_direction(name, name+'_elements', 1, (.12, .5), -1, 1, turns['side'])
+                                                  for name in ('SideScrewA', 'SideScrewB')]
+        checks.append('compounding: side-feeder screws convey toward the main barrel (-Y)')
+        # Pelletiser: both feed-roll contacts move the strands downstream; blades pass the bed knife downward.
+        lower, upper = objects['FeedRollLower'], objects['FeedRollUpper']
+        frame(0)
+        nip = (lower.matrix_world.translation.z+upper.matrix_world.translation.z)/2
+        top = lower.matrix_world.translation+Vector((0, 0, nip-lower.matrix_world.translation.z))
+        bottom = upper.matrix_world.translation-Vector((0, 0, upper.matrix_world.translation.z-nip))
+        local_top, local_bottom = lower.matrix_world.inverted() @ top, upper.matrix_world.inverted() @ bottom
+        rotor = objects['PelletRotor']
+        knife_side = rotor.matrix_world.translation-Vector((.05, 0, 0))
+        local_knife = rotor.matrix_world.inverted() @ knife_side
+        frame(1)
+        assert (lower.matrix_world @ local_top).x > top.x and (upper.matrix_world @ local_bottom).x > bottom.x
+        assert (rotor.matrix_world @ local_knife).z < knife_side.z
+        frame(bpy.context.scene.frame_end)
+        for name, key in (('FeedRollLower', 'haul'), ('PelletRotor', 'cutter')):
+            close(abs(objects[name].rotation_euler.x), turns[key]*math.tau)
+        checks.append('compounding: feed-roll nip moves strands downstream, rotor blades pass the bed knife downward, whole turns per loop')
+        # Teaching kinematics: n = 1000 v / (pi d) and n_r = 1000 v / (z L_p), all on one time scale.
+        teaching = meta['teaching']
+        close(teaching['rpm']['haul'], round(1000*teaching['line_speed_m_min']/(math.pi*teaching['feed_roll_mm']), 2), 1e-6)
+        close(teaching['rpm']['cutter'], round(1000*teaching['line_speed_m_min']/(meta['cut_edges']*teaching['pellet_mm']), 2), 1e-6)
+        for key, value in turns.items():
+            exact = teaching['rpm'][key]*teaching['time_scale']*meta['duration']/60
+            assert abs(value-exact)/exact < .006, (key, value, exact)
+        checks.append('compounding: roll and rotor speeds follow line speed, roll diameter, cutting edges and pellet length within 0.6 %')
 
     elif kind == 'sheet':
         web_clearance('SheetWeb', [('BottomRoll', .46), ('MiddleRoll', .46), ('TopRoll', .46), ('SheetGuideRoll', .29), ('Winder', .60)])

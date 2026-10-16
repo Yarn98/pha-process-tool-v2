@@ -459,11 +459,8 @@ def config(kind):
                    {'key':'screw','label':['스크류·공급','Screw & feed'],'center':[-3.1,1.65,0],'zoom':2.1},
                    {'key':'finish','label':['성형·후단','Forming & downstream'],'center':[2.4,1.6,0],'zoom':2.0}],
           'stages':[['공급·용융','Feed & melt'],['다이·성형','Die & forming'],['냉각·인취','Cool & haul off'],['제품·배출','Product & discharge']]}
-    if kind in ('extrusion','compounding'):
+    if kind=='extrusion':
         base['controls'] += [control('haul','인취 롤 회전각','Haul-off roll rotation angle'),control('cutter','절단날 회전각','Cutter rotation angle',360)]
-        if kind=='compounding':
-            base['controls'].insert(1,control('side','사이드 피더 회전각','Side feeder rotation angle'))
-            base['stages']=[['공급·이송','Feed & convey'],['용융·혼합','Melt & mix'],['탈가스','Devolatilization'],['다이·펠릿 절단','Die & pelletize']]
     elif kind in ('sheet','castfilm'):
         base['controls'] += [control('roll','냉각 롤 회전각','Chill roll rotation angle' if kind=='castfilm' else 'Cooling roll rotation angle'),control('winder','권취축 회전각','Winder rotation angle',360)]
         base['views'][2]['center']=[1.4,2.1,0]
@@ -602,16 +599,25 @@ def straw_model():
     export(meta,False)
 
 
-builders={'extrusion':lambda:strand_line(False),'compounding':lambda:strand_line(True),
+builders={'extrusion':lambda:strand_line(False),
           'sheet':sheet_line,'castfilm':cast_line,'blownfilm':blown_line,'blowmolding':blow_line}
+# The compounding line is built at real scale by scripts/create_compounding_motion.py.
+KINDS=['extrusion','compounding','sheet','castfilm','blownfilm','blowmolding','straw']
+
+
+def write_manifest():
+    """Collect every rig's control metadata (assets/equipment/*-motion.json) into equipment-models.js."""
+    manifest={}
+    for kind in KINDS:
+        file=OUT/(kind+'-motion.json')
+        if file.exists():manifest[kind]=json.loads(file.read_text(encoding='utf-8'))
+    (ROOT/'equipment-models.js').write_text('/* Blender equipment control metadata. */\nwindow.PHAEquipmentModels = '+json.dumps(manifest,ensure_ascii=False,indent=2)+';\n',encoding='utf-8')
+
+
 if __name__=='__main__':
     requested=sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else [*builders,'straw']
     for kind in requested:
         if kind=='straw':straw_model()
         elif kind in builders:init(kind);builders[kind]();export(config(kind))
         else:raise ValueError('Unknown equipment '+kind)
-    manifest={}
-    for kind in [*builders,'straw']:
-        file=OUT/(kind+'-motion.json')
-        if file.exists():manifest[kind]=json.loads(file.read_text(encoding='utf-8'))
-    (ROOT/'equipment-models.js').write_text('/* Blender equipment control metadata. */\nwindow.PHAEquipmentModels = '+json.dumps(manifest,ensure_ascii=False,indent=2)+';\n',encoding='utf-8')
+    write_manifest()

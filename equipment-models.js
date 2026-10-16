@@ -141,17 +141,21 @@ window.PHAEquipmentModels = {
   },
   "compounding": {
     "id": "compounding",
-    "duration": 12,
+    "duration": 25.125,
+    "frames": [
+      0,
+      603
+    ],
     "poster": "assets/equipment/compounding-motion-poster.png",
     "model": "assets/equipment/compounding-motion.glb",
     "center": [
-      -0.5,
-      1.6,
+      2.45,
+      0.95,
       0
     ],
     "span": [
-      11.6,
-      4.2
+      8.6,
+      2.5
     ],
     "controls": [
       {
@@ -165,7 +169,7 @@ window.PHAEquipmentModels = {
         "step": 1,
         "range": [
           0,
-          12
+          25.125
         ]
       },
       {
@@ -179,7 +183,7 @@ window.PHAEquipmentModels = {
         "step": 1,
         "range": [
           0,
-          12
+          25.125
         ]
       },
       {
@@ -193,35 +197,35 @@ window.PHAEquipmentModels = {
         "step": 0.1,
         "range": [
           0,
-          12
+          25.125
         ]
       },
       {
         "key": "haul",
         "label": [
-          "인취 롤 회전각",
-          "Haul-off roll rotation angle"
+          "피드 롤 회전각",
+          "Feed roll rotation angle"
         ],
         "max": 720,
         "unit": "°",
         "step": 1,
         "range": [
           0,
-          12
+          25.125
         ]
       },
       {
         "key": "cutter",
         "label": [
-          "절단날 회전각",
-          "Cutter rotation angle"
+          "커터 로터 회전각",
+          "Cutter rotor rotation angle"
         ],
         "max": 360,
         "unit": "°",
         "step": 1,
         "range": [
           0,
-          12
+          25.125
         ]
       }
     ],
@@ -233,8 +237,8 @@ window.PHAEquipmentModels = {
           "Whole line"
         ],
         "center": [
-          -0.5,
-          1.6,
+          2.45,
+          0.95,
           0
         ],
         "zoom": 1
@@ -242,28 +246,41 @@ window.PHAEquipmentModels = {
       {
         "key": "screw",
         "label": [
-          "스크류·공급",
-          "Screw & feed"
+          "스크류·배럴",
+          "Screws & barrel"
         ],
         "center": [
-          -3.1,
-          1.65,
+          0.64,
+          1.0,
           0
         ],
-        "zoom": 2.1
+        "zoom": 5.5
       },
       {
         "key": "finish",
         "label": [
-          "성형·후단",
-          "Forming & downstream"
+          "수조·펠릿타이저",
+          "Bath & pelletiser"
         ],
         "center": [
-          2.4,
-          1.6,
+          3.9,
+          0.95,
           0
         ],
-        "zoom": 2.0
+        "zoom": 2.2
+      },
+      {
+        "key": "cutter",
+        "label": [
+          "피드 롤·커터",
+          "Feed rolls & cutter"
+        ],
+        "center": [
+          4.41,
+          1.0,
+          0
+        ],
+        "zoom": 9
       }
     ],
     "stages": [
@@ -284,6 +301,144 @@ window.PHAEquipmentModels = {
         "Die & pelletize"
       ]
     ],
+    "turns": {
+      "screw": 5,
+      "side": 2.5,
+      "haul": 1,
+      "cutter": 10.5
+    },
+    "cut_edges": 8,
+    "study": {
+      "rpm": 120.0,
+      "speed": 6.0,
+      "diameter": 80.0,
+      "pitch": 3.0
+    },
+    "teaching": {
+      "time_scale": 0.1,
+      "rpm": {
+        "screw": 120.0,
+        "side": 60.0,
+        "haul": 23.87,
+        "cutter": 250.0
+      },
+      "line_speed_m_min": 6.0,
+      "pellet_mm": 3.0,
+      "feed_roll_mm": 80.0,
+      "loop_note": "Each drive turns a whole number of symmetric steps per loop (within 0.6 % of the scaled speed)."
+    },
+    "spec": {
+      "basis": "Pack B grade C teaching values; brand-neutral; not an OEM drawing or PHA setting",
+      "screw_d_mm": 32,
+      "l_d": 40,
+      "barrel_blocks": 10,
+      "centre_distance_mm": 26.32,
+      "do_di": 1.55,
+      "shaft_height_mm": 1000,
+      "elements": [
+        [
+          "C",
+          128,
+          48
+        ],
+        [
+          "C",
+          128,
+          32
+        ],
+        [
+          "C",
+          64,
+          32
+        ],
+        [
+          "KB",
+          32,
+          45
+        ],
+        [
+          "KB",
+          32,
+          45
+        ],
+        [
+          "C",
+          128,
+          48
+        ],
+        [
+          "C",
+          128,
+          48
+        ],
+        [
+          "C",
+          96,
+          32
+        ],
+        [
+          "KB",
+          32,
+          45
+        ],
+        [
+          "KB",
+          32,
+          45
+        ],
+        [
+          "KB",
+          32,
+          90
+        ],
+        [
+          "C",
+          64,
+          32
+        ],
+        [
+          "KB",
+          32,
+          90
+        ],
+        [
+          "L",
+          32,
+          16
+        ],
+        [
+          "C",
+          64,
+          32
+        ],
+        [
+          "C",
+          128,
+          48
+        ],
+        [
+          "C",
+          64,
+          32
+        ],
+        [
+          "C",
+          64,
+          16
+        ]
+      ],
+      "feed": "loss-in-weight, B1",
+      "atmospheric_vent": "B4",
+      "side_feeder": "B5",
+      "vacuum_vent": "B9",
+      "strand_holes": "6 x 3 mm, 12 mm pitch",
+      "bath_m": 2.0,
+      "feed_roll_mm": 80.0,
+      "rotor_mm": 100,
+      "rotor_blades": 8,
+      "classifier_mm": "700 x 400",
+      "sources": "output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md"
+    },
     "blender": "5.2.1 LTS",
     "groups": [
       "cutter",
