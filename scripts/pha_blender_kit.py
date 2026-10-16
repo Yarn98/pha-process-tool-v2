@@ -677,6 +677,157 @@ def single_flight_screw(name, x_tip, D, length, zones=(.5, .25, .25), h_feed=.15
     return _finish(name, bm, mat, parent)
 
 
+# --------------------------------------------------------------- mesh helpers / motion
+
+def subtract(obj, cutters):
+    """Boolean-difference each cutter from ``obj`` and delete the cutters."""
+    for cutter in cutters:
+        mod = obj.modifiers.new('Cut', 'BOOLEAN')
+        mod.operation, mod.object, mod.solver = 'DIFFERENCE', cutter, 'EXACT'
+        mod.material_mode = 'TRANSFER'
+        with bpy.context.temp_override(object=obj, active_object=obj):
+            bpy.ops.object.modifier_apply(modifier=mod.name)
+        bpy.data.objects.remove(cutter, do_unlink=True)
+    return obj
+
+
+def prism(name, outline, x0, x1, mat):
+    """Extrude a closed (y, z) outline along X from x0 to x1."""
+    bm = bmesh.new()
+    a = [bm.verts.new((x0, y, z)) for y, z in outline]
+    b = [bm.verts.new((x1, y, z)) for y, z in outline]
+    n = len(outline)
+    for i in range(n):
+        j = (i + 1) % n
+        bm.faces.new((a[i], a[j], b[j], b[i]))
+    bm.faces.new(list(reversed(a)))
+    bm.faces.new(b)
+    bmesh.ops.recalc_face_normals(bm, faces=list(bm.faces))
+    return _finish(name, bm, mat)
+
+
+def spin(owner, group, turns, frames, sign=-1):
+    """Key a seamless rotation about the owner's local X axis: ``turns`` per loop of ``frames``."""
+    owner['motion_group'] = group
+    for frame in range(frames + 1):
+        owner.rotation_euler.x = sign * TAU * turns * frame / frames
+        owner.keyframe_insert('rotation_euler', index=0, frame=frame)
+
+
+def catmull(points, samples=8):
+    """Dense smooth path through control points (shared by meshes and the markers that ride them)."""
+    pts = [Vector(p) for p in points]
+    out = []
+    for i in range(len(pts) - 1):
+        p0, p1, p2, p3 = pts[max(i - 1, 0)], pts[i], pts[i + 1], pts[min(i + 2, len(pts) - 1)]
+        for s in range(samples):
+            t = s / samples
+            out.append(.5 * ((2 * p1) + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t * t
+                             + (-p0 + 3 * p1 - 3 * p2 + p3) * t ** 3))
+    out.append(pts[-1])
+    return out
+
+
+def point_at(path, s):
+    """Point at arc length ``s`` along a polyline."""
+    for a, b in zip(path, path[1:]):
+        length = (b - a).length
+        if s <= length:
+            return a.lerp(b, s / max(length, 1e-9))
+        s -= length
+    return path[-1].copy()
+
+
+def path_length(path):
+    return sum((b - a).length for a, b in zip(path, path[1:]))
+
+
+def ride(name, path, count, spacing, travel, mat, radius, frames, shape='sphere', group='flow'):
+    """Flow markers on a path, seamless over a loop of ``frames``.
+
+    Marker i sits at (i * spacing + travel * frame / frames) mod (count * spacing); a marker past the path end
+    is hidden, so markers can move at a physical speed that is not a whole number of path lengths per loop.
+    """
+    length, wrap = path_length(path), count * spacing
+    for i in range(count):
+        if shape == 'sphere':
+            bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1, radius=radius)
+        else:
+            bpy.ops.mesh.primitive_cylinder_add(vertices=10, radius=radius, depth=radius * 2,
+                                                rotation=(math.pi / 2, 0, 0))
+        obj = bpy.context.object
+        obj.name = '%s%02d' % (name, i)
+        obj.data.materials.append(mat)
+        obj['motion_group'] = group
+        for frame in range(frames + 1):
+            s = (i * spacing + travel * frame / frames) % wrap
+            obj.location = point_at(path, min(s, length))
+            obj.scale = (1, 1, 1) if s <= length else (.001, .001, .001)
+            obj.keyframe_insert('location', frame=frame)
+            obj.keyframe_insert('scale', frame=frame)
+
+
+def single_screw_extruder(name, D, ld, die_x, axis_z, mats, frames, turns, zones=5, frame_top=None):
+    """Brand-neutral single-screw extruder ending at ``die_x`` (barrel front flange), axis at ``axis_z``.
+
+    Inline motor, gearbox with thrust housing, water-cooled feed throat with hopper, ``ld``*D barrel with
+    ``zones`` band heaters and cooling blowers, an operator-side (front-top) cutaway and a three-zone screw
+    that turns ``turns`` times per loop (negative about +X, conveying toward the die). Proportions follow
+    Pack B (D45 30D: motor 450, gearbox 350, shaft height 1000); they are teaching values, not a drawing.
+    Returns anchor points for the line builder.
+    """
+    L = ld * D
+    r_out = 1.1 * D
+    x_barrel = die_x - L
+    x_throat = x_barrel - 3 * D
+    x_gear = x_throat - .35
+    x_motor = x_gear - .47
+    frame_top = frame_top or axis_z - r_out - .16
+    cut = (math.pi, math.pi * 2.5)            # keeps everything except the front-top quadrant
+    parts = [box(name + ' base frame', ((x_motor + die_x) / 2 - .05, 0, frame_top - .02),
+                 (die_x - x_motor + .25, .62, .04), mats['paint_dark'], bevel=.006)]
+    for x in (x_motor - .1, (x_motor + die_x) / 2, die_x - .05):
+        for y in (-.27, .27):
+            parts.append(box(name + ' leg', (x, y, (frame_top - .04) / 2), (.06, .06, frame_top - .04),
+                             mats['paint_dark']))
+            parts.append(leveling_mount(name + ' mount', (x, y, 0), mats))
+    parts.append(louvre_panel(name + ' skirt', x_motor - .08, die_x - .02, .10, frame_top - .06, -.311, mats, slots=4))
+    parts.append(motor(name + ' motor', (x_motor + .2, 0, axis_z - .02), .16, .40, 1, mats))
+    parts.append(box(name + ' motor base', (x_motor + .2, 0, (frame_top + axis_z - .18) / 2),
+                     (.36, .26, axis_z - .18 - frame_top), mats['steel_dark']))
+    parts.append(cylinder(name + ' coupling guard', (x_gear - .035, 0, axis_z - .02), .07, .07, 'X', mats['warning']))
+    parts.append(box(name + ' gearbox', (x_gear + .175, 0, (frame_top + axis_z + .2) / 2), (.35, .40, axis_z + .2 - frame_top),
+                     mats['paint'], bevel=.012, segments=2))
+    parts.append(cylinder(name + ' thrust housing', (x_throat - .03, 0, axis_z), .085, .06, 'X', mats['steel_dark']))
+    parts.append(cylinder(name + ' gearbox sight glass', (x_gear + .12, -.201, axis_z - .10), .018, .006, 'Y', mats['smoked']))
+    parts.append(box(name + ' feed throat', (x_throat + 1.5 * D, 0, axis_z), (3 * D, 2.4 * D, 2.4 * D), mats['steel_dark'],
+                     bevel=.004))
+    for z, mat in ((axis_z - .02, 'hose_blue'), (axis_z + .02, 'hose_red')):
+        parts.append(cylinder(name + ' throat water fitting', (x_throat + 1.5 * D, 1.2 * D + .01, z), .006, .02, 'Y', mats['brass']))
+    parts.append(ring(name + ' barrel', x_barrel, die_x - .01, D / 2 + .0008, r_out, (0, axis_z), mats['steel'], arc=cut,
+                      cap_mat=mats['section']))
+    parts.append(cylinder(name + ' barrel flange', (die_x - .015, 0, axis_z), r_out + .02, .03, 'X', mats['steel_dark'], segments=40))
+    zone_len = (L - 2 * D) / zones
+    for k in range(zones):
+        xc = x_barrel + D + zone_len * (k + .5)
+        parts.append(heater_band(name + ' heater', xc, r_out + .002, zone_len * .78, mats['heater'], mats['ceramic'],
+                                 (0, axis_z), angle=math.pi / 2 + .6, arc=cut, cap_mat=mats['section']))
+        parts.append(box(name + ' cooling blower', (xc, 0, axis_z - r_out - .07), (zone_len * .6, .12, .08), mats['paint'], bevel=.006))
+        parts.append(cylinder(name + ' thermocouple', (xc + zone_len * .42, .02, axis_z + r_out + .015), .004, .03, 'Z', mats['copper']))
+    for x in (x_barrel + .2 * L, x_barrel + .75 * L):
+        parts.append(box(name + ' barrel support', (x, 0, (frame_top + axis_z - r_out) / 2), (.03, .12, axis_z - r_out - frame_top),
+                         mats['paint_dark']))
+    body = join(parts, name)
+    hopper, ports = drying_hopper(name + ' hopper', x_throat + 1.5 * D, 0, axis_z + 1.2 * D, mats, radius=.17)
+    owner = empty(name + ' screw', (0, 0, axis_z), group='screw')
+    screw = single_flight_screw(name + ' screw flight', die_x - .004, D * .99, L + 3 * D - .01, zones=(.33, .33, .34),
+                                center=(0, axis_z), mat=mats['chrome'])
+    reparent(screw, owner)
+    spin(owner, 'screw', turns, frames)
+    return {'body': body, 'hopper': hopper, 'screw': owner, 'die': (die_x, 0, axis_z), 'throat_x': x_throat + 1.5 * D,
+            'hopper_ports': ports, 'x_rear': x_motor - .1, 'frame_top': frame_top, 'r_out': r_out}
+
+
 # ------------------------------------------------------------------- render / export
 
 def studio_world(strength=.9, hdri='studio.exr', background=(.93, .91, .86), fill=.55):

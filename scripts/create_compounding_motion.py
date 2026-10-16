@@ -88,14 +88,6 @@ ROTOR_R = .05
 
 
 # ------------------------------------------------------------------------ helpers
-def spin(owner, group, turns, frames=FRAMES, sign=-1):
-    """Key a seamless rotation about the owner's local X axis (``turns`` per loop)."""
-    owner['motion_group'] = group
-    for frame in range(frames + 1):
-        owner.rotation_euler.x = sign * TAU * turns * frame / frames
-        owner.keyframe_insert('rotation_euler', index=0, frame=frame)
-
-
 PSI = math.pi / 2 - 2 * math.acos(CENTRE / D)          # tip (= root) arc angle of the bilobal profile
 GAMMA = PSI / 2 - (math.pi - 2 * math.acos(CENTRE / D))  # flank-arc centre angle (other rotor's tip)
 
@@ -186,18 +178,6 @@ def screw_mesh(name, elements, phase, rings_per_pitch=12, scale=1.0):
     return kit.link(obj)
 
 
-def subtract(obj, cutters):
-    """Boolean-difference each cutter from ``obj`` and delete the cutters."""
-    for cutter in cutters:
-        mod = obj.modifiers.new('Cut', 'BOOLEAN')
-        mod.operation, mod.object, mod.solver = 'DIFFERENCE', cutter, 'EXACT'
-        mod.material_mode = 'TRANSFER'
-        with bpy.context.temp_override(object=obj, active_object=obj):
-            bpy.ops.object.modifier_apply(modifier=mod.name)
-        bpy.data.objects.remove(cutter, do_unlink=True)
-    return obj
-
-
 def figure8(fill):
     """Outline (y, z) of the twin bore filled to ``fill`` of its height (1 = full)."""
     span = CENTRE / 2 + BORE
@@ -213,72 +193,6 @@ def figure8(fill):
     if fill >= 1:
         return bottom + [(y, upper(y)) for y in reversed(ys)][1:-1]
     return bottom + [(bottom[-1][0], top), (bottom[0][0], top)]
-
-
-def prism(name, outline, x0, x1, mat):
-    """Extrude a (y, z) outline along X."""
-    bm = bmesh.new()
-    a = [bm.verts.new((x0, y, z)) for y, z in outline]
-    b = [bm.verts.new((x1, y, z)) for y, z in outline]
-    n = len(outline)
-    for i in range(n):
-        j = (i + 1) % n
-        bm.faces.new((a[i], a[j], b[j], b[i]))
-    bm.faces.new(list(reversed(a)))
-    bm.faces.new(b)
-    bmesh.ops.recalc_face_normals(bm, faces=list(bm.faces))
-    return kit._finish(name, bm, mat)
-
-
-def catmull(points, samples=8):
-    """Dense smooth path through control points (shared by strand meshes and their markers)."""
-    pts = [Vector(p) for p in points]
-    out = []
-    for i in range(len(pts) - 1):
-        p0, p1, p2, p3 = pts[max(i - 1, 0)], pts[i], pts[i + 1], pts[min(i + 2, len(pts) - 1)]
-        for s in range(samples):
-            t = s / samples
-            out.append(.5 * ((2 * p1) + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t * t
-                             + (-p0 + 3 * p1 - 3 * p2 + p3) * t ** 3))
-    out.append(pts[-1])
-    return out
-
-
-def point_at(path, s):
-    for a, b in zip(path, path[1:]):
-        length = (b - a).length
-        if s <= length:
-            return a.lerp(b, s / max(length, 1e-9))
-        s -= length
-    return path[-1].copy()
-
-
-def path_length(path):
-    return sum((b - a).length for a, b in zip(path, path[1:]))
-
-
-def ride(name, path, count, spacing, travel, mat, radius, shape='sphere'):
-    """Flow markers on a path, seamless over the loop.
-
-    Marker i sits at (i * spacing + travel * t / LOOP) mod (count * spacing). A marker past the path end is
-    hidden, so the markers can move at a physical speed that is not a whole number of path lengths per loop.
-    """
-    length, wrap = path_length(path), count * spacing
-    for i in range(count):
-        if shape == 'sphere':
-            bpy.ops.mesh.primitive_ico_sphere_add(subdivisions=1, radius=radius)
-        else:
-            bpy.ops.mesh.primitive_cylinder_add(vertices=10, radius=radius, depth=radius * 2, rotation=(math.pi / 2, 0, 0))
-        obj = bpy.context.object
-        obj.name = '%s%02d' % (name, i)
-        obj.data.materials.append(mat)
-        obj['motion_group'] = 'flow'
-        for frame in range(FRAMES + 1):
-            s = (i * spacing + travel * frame / FRAMES) % wrap
-            obj.location = point_at(path, min(s, length))
-            obj.scale = (1, 1, 1) if s <= length else (.001, .001, .001)
-            obj.keyframe_insert('location', frame=frame)
-            obj.keyframe_insert('scale', frame=frame)
 
 
 # ---------------------------------------------------------------------------- build
@@ -341,7 +255,7 @@ for name, y, phase in (('ScrewA', Y_A, 0.0), ('ScrewB', Y_B, math.pi / 2)):
     body.data.materials.append(M['steel'])
     body.parent = owner
     tip.parent = owner
-    spin(owner, 'screw', TURNS['screw'])
+    kit.spin(owner, 'screw', TURNS['screw'], FRAMES)
     screws[name] = owner
 
 # Barrel blocks (one mesh: ten blocks share nine materials, so the viewer issues nine draw calls, not ninety)
@@ -359,7 +273,7 @@ for i in range(10):
                                M['section'], bevel=0))
     if i == VENTS['side']:
         cutters.append(kit.box('side port', (xc, BLOCK_W / 4, AX), (.06, BLOCK_W / 2 + .01, .05), M['section'], bevel=0))
-    subtract(block, cutters)
+    kit.subtract(block, cutters)
     details = [block]
     for x in (x0 + .002, x0 + BLOCK - .002):
         details.append(kit.box('Barrel joint', (x, 0, AX), (.004, BLOCK_W + .006, BLOCK_H + .006), M['steel_dark'], bevel=.001))
@@ -392,7 +306,7 @@ kit.join(supports, 'BarrelSupports')
 
 # Melt in the cutaway: full behind restrictive elements, starved under vents and conveying sections.
 for n, (x0, x1, fill) in enumerate(FILL):
-    prism('Melt %02d' % n, figure8(fill), x0 + .001, x1 - .001, M['melt'])
+    kit.prism('Melt %02d' % n, figure8(fill), x0 + .001, x1 - .001, M['melt'])
 
 # Loss-in-weight main feeder (rear stand) into the B1 throat
 feeder = [kit.cylinder('Feed throat', (.064, 0, AX + .10), .05, .08, 'Z', M['stainless'], radius2=.035),
@@ -475,7 +389,7 @@ for name, dx, phase in (('SideScrewA', -SIDE_A, 0.0), ('SideScrewB', SIDE_A, mat
     body = screw_mesh(name + '_elements', [('C', round(.58 / SIDE_D / MM), 32)], phase, 6, SIDE_D)
     body.data.materials.append(M['steel'])
     body.parent = owner
-    spin(owner, 'side', TURNS['side'])
+    kit.spin(owner, 'side', TURNS['side'], FRAMES)
 
 # Adapter, melt sensors and strand die
 die = [kit.cylinder('Adapter', (X_END + .048, 0, AX), .06, .096, 'X', M['steel'], segments=40),
@@ -502,7 +416,7 @@ strand_controls = [(DIE_FACE, AX), (1.50, AX - .006), (1.57, .95), (1.64, .87), 
                    (2.62, WATER - .0665), (3.30, WATER - .045), (3.52, .895), (3.58, .9065), (3.70, .935),
                    (3.95, .975), (4.20, .996), (KNIFE_X, NIP_Z)]
 for y in STRAND_Y:
-    path = catmull([(x, y, z) for x, z in strand_controls])
+    path = kit.catmull([(x, y, z) for x, z in strand_controls])
     kit.tube_path('Strand', path, STRAND_R, M['polymer'], resolution=1, bevel_resolution=1)
 bath = [kit.box('Bath floor', ((BATH[0] + BATH[1]) / 2, 0, WATER - .122), (2.006, .306, .003), M['stainless'], bevel=0)]
 for y in (-.153, .153):
@@ -573,7 +487,7 @@ for name, z, sign, mat in (('FeedRollLower', NIP_Z - STRAND_R - ROLL_R, 1, M['kn
         parts.append(ridge)
     roll = kit.join(parts, name + '_body')
     roll.parent = owner
-    spin(owner, 'haul', TURNS['haul'], sign=sign)
+    kit.spin(owner, 'haul', TURNS['haul'], FRAMES, sign=sign)
 rotor = kit.empty('PelletRotor', (ROTOR[0], 0, ROTOR[1]), group='cutter')
 rotor.rotation_euler.z = math.pi / 2
 parts = [kit.cylinder('Rotor hub', (0, 0, 0), .035, .13, 'X', M['steel'], segments=32)]
@@ -582,7 +496,7 @@ for k in range(EDGES):
     blade.rotation_euler.x = TAU * k / EDGES
     parts.append(blade)
 kit.join(parts, 'PelletRotor_body').parent = rotor
-spin(rotor, 'cutter', TURNS['cutter'], sign=-1)     # knife-side blades sweep down past the bed knife edge
+kit.spin(rotor, 'cutter', TURNS['cutter'], FRAMES, sign=-1)     # knife-side blades sweep down past the bed knife edge
 
 # Classifier and octabin
 cls = [kit.box('Classifier deck', (5.33, 0, .58), (.70, .40, .01), M['steel_dark'], bevel=0),
@@ -611,19 +525,21 @@ kit.stack_light('Stack light', (-1.05, .72, 1.90), M)
 kit.hmi_pedestal('Operator panel', (-.95, -.78, 0), (-.95, -.78, 1.42), M)   # beside the drive, clear of the barrel view
 
 # Flow markers (group "flow"): feed pellets, melt in the screws, strands, pellets, vapour
-_feed = catmull([(.064, .55, AX + .62), (.064, .55, AX + .40), (.064, .30, AX + .37), (.064, .12, AX + .36),
+_feed = kit.catmull([(.064, .55, AX + .62), (.064, .55, AX + .40), (.064, .30, AX + .37), (.064, .12, AX + .36),
                  (.064, .02, AX + .28), (.064, 0, AX + .12), (.20, Y_A, AX + .002)], 6)
-ride('FeedPellet', _feed, 10, path_length(_feed) / 10, 2 * path_length(_feed), M['pellet'], .0035, 'pellet')
+kit.ride('FeedPellet', _feed, 10, kit.path_length(_feed) / 10, 2 * kit.path_length(_feed), M['pellet'], .0035, FRAMES, 'pellet')
 for y in (STRAND_Y[0], STRAND_Y[-1]):
-    _strand = catmull([(x, y, z) for x, z in strand_controls])
-    count = math.ceil(path_length(_strand) / STRAND_TRAVEL)
-    ride('StrandMarker%s' % ('A' if y < 0 else 'B'), _strand, count, STRAND_TRAVEL, STRAND_TRAVEL, M['polymer_marker'], .0032)
-_pellets = catmull([(KNIFE_X + .01, 0, NIP_Z - .01), (4.45, 0, .80), (4.45, 0, .66), (4.75, 0, .66), (5.05, 0, .62),
+    _strand = kit.catmull([(x, y, z) for x, z in strand_controls])
+    count = math.ceil(kit.path_length(_strand) / STRAND_TRAVEL)
+    kit.ride('StrandMarker%s' % ('A' if y < 0 else 'B'), _strand, count, STRAND_TRAVEL, STRAND_TRAVEL, M['polymer_marker'], .0032,
+             FRAMES)
+_pellets = kit.catmull([(KNIFE_X + .01, 0, NIP_Z - .01), (4.45, 0, .80), (4.45, 0, .66), (4.75, 0, .66), (5.05, 0, .62),
                     (5.60, 0, .60), (5.80, 0, .48), (6.05, 0, .54)], 6)
-ride('PelletMarker', _pellets, 12, path_length(_pellets) / 12, 3 * path_length(_pellets), M['pellet'], .003, 'pellet')
-_vapour = catmull([(xv, 0, AX + .08), (xv, .035, AX + .14), (xv, .12, AX + .30), (xv + .05, .40, AX + .32),
+kit.ride('PelletMarker', _pellets, 12, kit.path_length(_pellets) / 12, 3 * kit.path_length(_pellets), M['pellet'], .003, FRAMES,
+         'pellet')
+_vapour = kit.catmull([(xv, 0, AX + .08), (xv, .035, AX + .14), (xv, .12, AX + .30), (xv + .05, .40, AX + .32),
                    (xv + .10, .62, AX + .12), (xv + .10, .66, .70)], 6)
-ride('VapourMarker', _vapour, 6, path_length(_vapour) / 6, 3 * path_length(_vapour), M['water'], .008)
+kit.ride('VapourMarker', _vapour, 6, kit.path_length(_vapour) / 6, 3 * kit.path_length(_vapour), M['water'], .008, FRAMES)
 
 kit.bake_linear()
 sc.timeline_markers.new('Steady line: all drives at teaching speed (0.1x)', frame=0)
