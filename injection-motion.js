@@ -1,7 +1,8 @@
-/* Blender-authored machine motion. This is a teaching sequence, not process simulation. */
+/* Blender-authored injection machine motion on the shared stage (machine-viewer.js).
+   This is a teaching sequence, not process simulation. */
 (function () {
   'use strict';
-  const VENDOR='./vendor/three-0.185.1/';
+  const viewer=()=>window.PHAMachineViewer;
   // Shares the service worker's precached asset version (sw.js ASSET_V).
   const VERSION='?v=25',MODEL='./assets/equipment/injection-motion.glb'+VERSION;
   // Timing, strokes, part path and views come from the GLB (MachineControls.pha_machine).
@@ -12,7 +13,7 @@
   const manual={screw:100,rotation:0,mold:0,ejector:0,fill:0,released:false,fall:0,releaseAt:null,flow:''};
   const target={screw:100,rotation:0,mold:0,ejector:0};
   let host=null,locale='ko',onStage=()=>{},runtime=null,loading=null,token=0,raf=0,lastTick=0,failed=false;
-  let resizeObserver=null,intersectionObserver=null,studyPanel=null;
+  let unwatch=null,studyPanel=null,pendingPaint=0;
   const t=(ko,en)=>locale==='en'?en:ko;
   // Steady cycle: stages are not time-ordered (dosing for the next shot overlaps cooling).
   const phaseAt=time=>{
@@ -70,20 +71,26 @@
     n.RunnerFill.scale.set(1,1,1);n.RunnerFill.visible=manual.fill>.01;
     runtime.particles.forEach(node=>{node.visible=node.name.startsWith('FillFlow')?manual.flow==='fill':manual.flow==='meter';});
   }
-  function paint(){
-    if(!runtime||!host?.isConnected)return;
+  // frameTime marks a playback frame; its following tick measures the frame cost.
+  // Scene pose from the current state (cheap CPU work); paint() also draws it.
+  function pose(){
     const posed=state.mode==='manual'||state.mode==='study';
     // Particles and the check ring replay the dosing/fill windows; the clamp follows its sweep segment.
     const [d0,d1]=meta.windows.dosing,[f0,f1]=meta.windows.fill;
     const poseTime=posed?(manual.flow==='meter'?d0+(manual.rotation/180+manual.screw*.03)%(d1-d0-.05):f0+(100-manual.screw)/100*(f1-f0-.01)):state.time;
-    runtime.mixer.setTime(Math.min(DURATION-.001,Math.max(0,poseTime)));
-    const [a,b]=meta.sweeps.mold_opening;
-    runtime.clampMixer.setTime(posed?Math.min(b-.001,a+(b-a)*manual.mold/100):Math.min(DURATION-.001,state.time));
+    const [a,b]=meta.sweeps.mold_opening,machineTime=Math.min(DURATION-.001,Math.max(0,poseTime));
+    const clampTime=posed?Math.min(b-.001,a+(b-a)*manual.mold/100):Math.min(DURATION-.001,state.time);
+    for(const [key,group] of runtime.groups)group.mixer.setTime(key==='clamp'?clampTime:machineTime);
     if(posed)applyManual();
     runtime.scene.updateMatrixWorld(true);
-    runtime.renderer.render(runtime.scene,runtime.camera);
+  }
+  function paint(frameTime){
+    if(!runtime||!host?.isConnected)return;
+    pose();runtime.governor.render(runtime.camera,frameTime||performance.now(),!!frameTime);
     state.frames++;
   }
+  // Orbit drags fire many change events; draw at most once per animation frame.
+  function paintSoon(){if(!pendingPaint)pendingPaint=requestAnimationFrame(()=>{pendingPaint=0;paint();});}
   function update(){
     const phase=phaseAt(state.time);state.phase=phase;
     if(!host)return;
@@ -113,7 +120,7 @@
     if(state.mode==='study'&&status)status.textContent=t('계산 동작 · 선택한 기구만 표시','Calculated motion · Selected mechanism');
     if(state.mode==='cycle')onStage(phase);
   }
-  function stopStudy(){state.studyPlaying=false;cancel();studyPanel?.clearStatus();}
+  function stopStudy(){state.studyPlaying=false;cancel();studyPanel?.clearStatus();if(state.mode==='study')paint();}
   function leaveStudy(){if(state.mode==='study'){stopStudy();leaveManual();}}
   function startStudy(drive){
     stopStudy();state.playing=false;prepareShot();state.mode='study';state.study={...drive,elapsed:0};state.studyPlaying=drive.type==='travel'||drive.rpm>0;
@@ -132,9 +139,13 @@
   function tick(now){
     raf=0;
     if(!canRun()){lastTick=0;return;}
+    runtime.governor.observe(now);
     if(lastTick){const dt=Math.min((now-lastTick)/1000,.1);if(state.mode==='study')advanceStudy(dt);else if(state.mode==='manual')stepManual(dt);else state.time=(state.time+dt*state.speed)%DURATION;}
-    lastTick=now;paint();update();
-    if(canRun())raf=requestAnimationFrame(tick);else{lastTick=0;if(manual.flow){manual.flow='';paint();}}
+    // Time and pose follow the wall clock every tick; only drawing is skipped while the governor
+    // protects input handling.
+    lastTick=now;if(runtime.governor.due(now)){paint(now);update();}else if(host?.isConnected)pose();
+    // A skipped frame must not leave the final pose undrawn when the loop stops.
+    if(canRun())raf=requestAnimationFrame(tick);else{lastTick=0;manual.flow='';paint();update();}
   }
   function schedule(){if(canRun()&&!raf)raf=requestAnimationFrame(tick);else if(!canRun())cancel();}
   function leaveManual(){
@@ -178,78 +189,28 @@
     const height=Math.round(compact?Math.min(width*.55,220):width*(width<480?.66:.50));
     viewport.style.height=height+'px';
     runtime.renderer.setSize(width,height,false);
-    const aspect=width/height,span=meta.view.span,vertical=span/aspect;
-    runtime.camera.left=-span/2;runtime.camera.right=span/2;
-    runtime.camera.top=vertical/2;runtime.camera.bottom=-vertical/2;
-    runtime.camera.updateProjectionMatrix();paint();
-  }
-  // Soft studio reflections without an HDR download: a dim room with emissive softboxes.
-  function studioEnvironment(THREE,renderer){
-    const room=new THREE.Scene(),panel=(w,h,position,rotation,intensity)=>{
-      const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.DoubleSide}));
-      mesh.material.color.setScalar(intensity);mesh.position.set(...position);mesh.rotation.set(...rotation);room.add(mesh);
-    };
-    room.add(new THREE.Mesh(new THREE.BoxGeometry(14,7,14),new THREE.MeshBasicMaterial({color:0x8c8a84,side:THREE.BackSide})));
-    panel(8,4,[0,3.4,0],[Math.PI/2,0,0],5);
-    panel(4,2.4,[-6.9,1.4,0],[0,Math.PI/2,0],2.6);
-    panel(4,2.4,[6.9,1.6,-1],[0,-Math.PI/2,0],2.2);
-    panel(6,2,[0,1.4,6.9],[0,Math.PI,0],1.8);
-    const generator=new THREE.PMREMGenerator(renderer),texture=generator.fromScene(room,.035).texture;
-    generator.dispose();room.traverse(node=>{node.geometry?.dispose();node.material?.dispose();});
-    return texture;
-  }
-  // Blender exports one clip per animated object; regroup every track so nodes whose
-  // nearest motion_group is "clamp" play on their own mixer.
-  function splitClips(THREE,root,clips){
-    const byName=new Map();root.traverse(node=>{byName.set(node.name,node);byName.set(node.uuid,node);});
-    const groupOf=node=>{while(node&&!node.userData.motion_group)node=node.parent;return node?.userData.motion_group;};
-    const clamp=[],rest=[];
-    for(const clip of clips)for(const track of clip.tracks)(groupOf(byName.get(track.name.split('.')[0]))==='clamp'?clamp:rest).push(track);
-    return [new THREE.AnimationClip('machine',-1,rest),new THREE.AnimationClip('clamp',-1,clamp)];
+    viewer().frameOrtho(runtime.camera,width,height,meta.view.span);paint();
   }
   async function create(){
-    const [THREE,{GLTFLoader},{OrbitControls}]=await Promise.all([
-      import('three'),import(VENDOR+'examples/jsm/loaders/GLTFLoader.js'),import(VENDOR+'examples/jsm/controls/OrbitControls.js')
-    ]);
-    let renderer;
+    const stage=await viewer().createStage({onContextLost:()=>fallback(),zoom:[.8,4]});
     try{
-      renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'low-power'});
-      renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
-      renderer.setClearColor(0xebe7dc);renderer.outputColorSpace=THREE.SRGBColorSpace;
-      renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.05;
-      renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-      const scene=new THREE.Scene();
-      scene.environment=studioEnvironment(THREE,renderer);scene.environmentIntensity=.9;
-      scene.add(new THREE.HemisphereLight(0xfff7e8,0x7a837a,.6));
-      const key=new THREE.DirectionalLight(0xfff6e7,2.2);key.position.set(-2.5,7,5);
-      key.castShadow=true;key.shadow.mapSize.set(2048,2048);key.shadow.bias=-.0004;key.shadow.normalBias=.02;
-      Object.assign(key.shadow.camera,{left:-4.5,right:4.5,top:3.5,bottom:-3.5,near:.5,far:20});
-      scene.add(key,key.target);
-      const camera=new THREE.OrthographicCamera(-3.6,3.6,1.8,-1.8,.01,100);
-      const controls=new OrbitControls(camera,renderer.domElement);
-      controls.enablePan=false;controls.enableZoom=true;controls.enableDamping=false;
-      controls.minZoom=.8;controls.maxZoom=4;
-      controls.minPolarAngle=.30;controls.maxPolarAngle=Math.PI/2.05;
-      controls.addEventListener('change',()=>{if(!canRun())paint();});
-      const gltf=await new GLTFLoader().loadAsync(MODEL);
+      stage.controls.addEventListener('change',()=>{if(!canRun())paintSoon();});
+      const gltf=await stage.loader.loadAsync(MODEL);
       if(!gltf.animations.length)throw new Error('Missing Blender animation');
-      const rig=gltf.scene.getObjectByName('MachineControls');
-      meta=JSON.parse(rig?.userData.pha_machine||'null');
+      meta=viewer().prepareModel(gltf.scene);
       if(meta?.schema!=='pha-machine-v1')throw new Error('Missing machine metadata');
       STARTS=meta.stage_starts;DURATION=meta.cycle_seconds;
-      gltf.scene.traverse(node=>{if(node.isMesh){node.castShadow=!node.material.transparent;node.receiveShadow=true;}});
-      scene.add(gltf.scene);
-      const [machineClip,clampClip]=splitClips(THREE,gltf.scene,gltf.animations);
-      const mixer=new THREE.AnimationMixer(gltf.scene),clampMixer=new THREE.AnimationMixer(gltf.scene);
-      mixer.clipAction(machineClip).play();clampMixer.clipAction(clampClip).play();
-      renderer.domElement.setAttribute('role','img');
-      renderer.domElement.addEventListener('webglcontextlost',event=>{event.preventDefault();fallback();});
+      stage.scene.add(gltf.scene);viewer().fitShadows(stage,gltf.scene);
+      // Clamp-unit tracks sample the mold sweep in manual mode; every other group follows the cycle.
+      const groups=viewer().groupClips(stage.THREE,gltf.scene,gltf.animations,'machine');
       const nodes=Object.fromEntries(['ScrewSlide','ScrewSpin','MovingMold','Ejector','MoldedPart','PartFill','RunnerFill','MeltReservoir','Crosshead'].map(name=>[name,gltf.scene.getObjectByName(name)]));
-      if(Object.values(nodes).some(node=>!node)||!clampClip.tracks.length)throw new Error('Missing machine rig node');
+      if(Object.values(nodes).some(node=>!node)||!groups.get('clamp')?.tracks)throw new Error('Missing machine rig node');
       const particles=[];gltf.scene.traverse(node=>{if(/^(FeedPellet|BarrelFlow|FillFlow)/.test(node.name))particles.push(node);});
-      runtime={THREE,renderer,scene,camera,controls,mixer,clampMixer,model:gltf.scene,clips:[machineClip,clampClip],nodes,particles};
+      const governor=viewer().createGovernor(stage,{onQualityChange:()=>resize()});
+      await viewer().warm(stage,gltf.scene);
+      runtime={...stage,groups,governor,model:gltf.scene,nodes,particles};
       resetView();state.ready=true;
-    }catch(error){renderer?.dispose();throw error;}
+    }catch(error){stage.renderer.dispose();throw error;}
   }
   function fallback(){
     failed=true;state.ready=false;cancel();
@@ -267,7 +228,7 @@
     token++;stopStudy();cancel();state.visible=false;
     runtime?.renderer.domElement.remove();
     if(window.phaSyncMachineOverlay)window.phaSyncMachineOverlay();else document.body.classList.remove('pha-machine-manual');
-    resizeObserver?.disconnect();intersectionObserver?.disconnect();host=null;onStage=()=>{};
+    unwatch?.();unwatch=null;host=null;onStage=()=>{};
   }
   async function mount(targetHost,options={}){
     detach();host=targetHost;locale=options.locale||'ko';onStage=options.onStage||(()=>{});const current=token;
@@ -313,9 +274,8 @@
         update();
       });
       host.querySelectorAll('[data-motion-stage]').forEach(button=>button.onclick=()=>seek(STARTS[Number(button.dataset.motionStage)]+.35));
-      resizeObserver=new ResizeObserver(resize);resizeObserver.observe(host);
-      intersectionObserver=new IntersectionObserver(entries=>{state.visible=!!entries[0]?.isIntersecting;schedule();},{threshold:.02});
-      intersectionObserver.observe(host);resize();update();
+      unwatch=viewer().watch(host,{onResize:resize,onVisible:visible=>{state.visible=visible;schedule();}});
+      resize();update();
     }catch(error){if(current===token)fallback();}
   }
   document.addEventListener('visibilitychange',schedule);
@@ -335,7 +295,8 @@
     const tip=(name,length)=>{const n=runtime?.model.getObjectByName(name);return n?n.localToWorld(new runtime.THREE.Vector3(length,0,0)).toArray():null;};
     return {
       ...state,manual:{...manual},target:{...target},meta,camera:runtime?{zoom:runtime.camera.zoom,target:runtime.controls.target.toArray()}:null,
-      clips:runtime?.clips.map(c=>({name:c.name,duration:c.duration,tracks:c.tracks.length}))||[],
+      clips:runtime?[...runtime.groups].map(([name,group])=>({name,duration:group.duration,tracks:group.tracks})):[],
+      quality:runtime?{level:runtime.governor.level,cost:runtime.governor.cost}:null,
       nodes:Object.fromEntries(['ScrewSlide','ScrewSpin','MovingMold','Ejector','MoldedPart','PartFill','RunnerFill','FeedPellet00','FillFlow00','MeltReservoir','Crosshead','ToggleRearUpper','Carriage','CheckRing'].map(name=>{const n=runtime?.model.getObjectByName(name);return [name,n?{position:n.position.toArray(),quaternion:n.quaternion.toArray(),scale:n.scale.toArray(),visible:n.visible}:null];})),
       linkage:runtime?{kneeUpper:world('ToggleKneeUpper'),frontTipUpper:tip('ToggleFrontUpper',meta.toggle.L2),kneeLower:world('ToggleKneeLower'),frontTipLower:tip('ToggleFrontLower',meta.toggle.L2),pinUpper:world('ToggleCrossPinUpper'),crossTipUpper:tip('ToggleCrossLinkUpper',meta.toggle.L3)}:null
     };

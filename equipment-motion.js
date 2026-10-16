@@ -4,7 +4,7 @@
   const VERSION='?v=25',viewer=()=>window.PHAMachineViewer;
   const reduced=matchMedia('(prefers-reduced-motion: reduce)'),saved=new Map(),cache=new Map();
   let host=null,meta=null,state=null,asset=null,engine=null,enginePending=null,onStage=()=>{};
-  let locale='ko',token=0,raf=0,lastTick=0,unwatch=null,studyPanel=null;
+  let locale='ko',token=0,raf=0,lastTick=0,unwatch=null,studyPanel=null,pendingPaint=0;
   const t=(ko,en)=>locale==='en'?en:ko,text=pair=>pair[locale==='en'?1:0];
   const clamp=(value,min,max)=>Math.min(max,Math.max(min,value));
   window.phaSyncMachineOverlay=()=>document.body.classList.toggle('pha-machine-manual',!!document.querySelector('.tabpage.active :is(.equipment-motion,.injection-motion):not(.is-study-photo) .motion-manual:not([hidden]),.tabpage.active .equipment-study[open]'));
@@ -84,10 +84,13 @@
       });
     }
   }
-  function paint(){
+  // frameTime marks a playback frame; its following tick measures the frame cost.
+  function paint(frameTime){
     if(!engine||!asset||!host?.isConnected)return;
-    pose();engine.scene.updateMatrixWorld(true);engine.renderer.render(engine.scene,engine.camera);state.frames++;
+    pose();engine.scene.updateMatrixWorld(true);engine.governor.render(engine.camera,frameTime||performance.now(),!!frameTime);state.frames++;
   }
+  // Orbit drags fire many change events; draw at most once per animation frame.
+  function paintSoon(){if(!pendingPaint)pendingPaint=requestAnimationFrame(()=>{pendingPaint=0;paint();});}
   function stage(){return Math.min(3,Math.floor(state.time/meta.duration*4));}
   function update(){
     if(!host||!state)return;
@@ -118,7 +121,7 @@
     if(layoutChanged&&state.ready)resize();
     if(state.mode==='cycle')onStage(phase);
   }
-  function stopStudy(){if(!state)return;state.studyPlaying=false;stop();studyPanel?.clearStatus();}
+  function stopStudy(){if(!state)return;state.studyPlaying=false;stop();studyPanel?.clearStatus();if(state.mode==='study')paint();}
   function leaveStudy(){if(state.mode==='study'){stopStudy();state.mode='cycle';}}
   function startStudy(drive){
     stopStudy();state.playing=false;state.mode='study';state.study={...drive,angle:0,elapsed:0};state.studyPlaying=drive.type==='travel'||drive.rpm>0;
@@ -137,8 +140,11 @@
   }
   function tick(now){
     raf=0;if(!canRun()){lastTick=0;return;}
+    engine.governor.observe(now);
     if(lastTick){const dt=Math.min((now-lastTick)/1000,.10);if(state.mode==='study')advanceStudy(dt);else if(state.mode==='manual')manualStep(dt);else state.time=(state.time+dt*state.speed)%meta.duration;}
-    lastTick=now;paint();update();if(canRun())raf=requestAnimationFrame(tick);else lastTick=0;
+    // Time and pose follow the wall clock every tick; only drawing is skipped while the governor
+    // protects input handling.
+    lastTick=now;if(engine.governor.due(now)){paint(now);update();}else{pose();engine.scene.updateMatrixWorld(true);}if(canRun())raf=requestAnimationFrame(tick);else{lastTick=0;paint();update();}
   }
   function seek(second){stopStudy();state.mode='cycle';state.playing=false;state.time=clamp(second,0,meta.duration-.001);stop();paint();update();}
   function resetManual(){
@@ -165,7 +171,8 @@
     enginePending||=viewer().createStage({ground:true,exposure:1.08,zoom:[.7,6],polar:[.20,Math.PI/1.95],onContextLost:()=>fallback()});
     const stage=await enginePending;
     if(engine)return;
-    stage.controls.addEventListener('change',()=>{if(!canRun())paint();});
+    stage.controls.addEventListener('change',()=>{if(!canRun())paintSoon();});
+    stage.governor=viewer().createGovernor(stage,{onQualityChange:()=>resize()});
     engine=stage;
   }
   async function load(definition){
@@ -221,7 +228,9 @@
     host.querySelector('.motion-toolbar').addEventListener('change',leaveStudy,true);
     try{
       await ensureEngine();const loaded=await load(definition);if(current!==token||!host?.isConnected){trimCache();return;}
-      if(asset?.model)engine.scene.remove(asset.model);asset=loaded;engine.scene.add(asset.model);viewer().fitShadows(engine,asset.model);trimCache();state.ready=true;
+      if(asset?.model)engine.scene.remove(asset.model);asset=loaded;engine.scene.add(asset.model);viewer().fitShadows(engine,asset.model);
+      await viewer().warm(engine,asset.model);engine.governor.reset();if(current!==token||!host?.isConnected)return;
+      trimCache();state.ready=true;
       host.querySelector('.motion-viewport').appendChild(engine.renderer.domElement);host.querySelector('.motion-viewport').hidden=false;host.querySelector('.motion-poster').hidden=true;host.querySelector('.motion-load').hidden=true;host.dataset.motionState='ready';
       engine.renderer.domElement.setAttribute('aria-label',t('설비 부품과 수지 이동을 보여주는 조작 가능한 3D 모델','Interactive 3D equipment model showing mechanisms and polymer movement'));
       host.querySelectorAll('button,input,select').forEach(element=>element.disabled=false);
@@ -258,6 +267,7 @@
   if(['localhost','127.0.0.1'].includes(location.hostname))window.__phaEquipmentTest=()=>({
     ...window.PHAEquipmentMotion.getState(),cached:[...cache.keys()],groups:asset?Object.fromEntries([...asset.groups].map(([key,group])=>[key,{duration:group.duration,tracks:group.tracks}])):{},
     nodes:asset?Object.fromEntries(Object.entries(asset.members).map(([group,nodes])=>[group,nodes.map(node=>({name:node.name,position:node.position.toArray(),world:node.getWorldPosition(new engine.THREE.Vector3()).toArray(),rotation:node.quaternion.toArray(),scale:node.scale.toArray(),visible:node.visible,morph:node.morphTargetInfluences||null}))])):{},
-    camera:engine?{zoom:engine.camera.zoom,target:engine.controls.target.toArray()}:null
+    camera:engine?{zoom:engine.camera.zoom,target:engine.controls.target.toArray()}:null,
+    quality:engine?{level:engine.governor.level,cost:engine.governor.cost}:null
   });
 })();

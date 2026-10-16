@@ -20,11 +20,16 @@ try{
   page.on('pageerror',e=>errors.push(String(e)));
   await page.waitForFunction(()=>document.querySelector('#injectionMotion')?.dataset.motionState==='ready');
   let state=await page.evaluate(()=>__phaInjectionMotionTest());
-  assert.deepEqual(state.clips.map(c=>c.name),['machine','clamp']);assert.ok(state.clips.reduce((sum,c)=>sum+c.tracks,0)>30);
+  assert.ok(['machine','clamp'].every(name=>state.clips.some(c=>c.name===name)),'clamp tracks are grouped apart from the cycle');assert.ok(state.clips.reduce((sum,c)=>sum+c.tracks,0)>30);
   assert.equal(state.meta.schema,'pha-machine-v1');assert.equal(state.meta.cycle_seconds,14);assert.deepEqual(state.meta.stage_starts,[4.43,1.17,2.1,11.67]);assert.equal(state.meta.example_cycle_seconds,30);
   assert.ok(state.clips.every(c=>Math.abs(c.duration-state.meta.sweeps.mold_opening[1])<.1),'cycle plus mold-opening sweep');
   const first=state.time;await page.waitForFunction(first=>PHAInjectionMotion.getState().time>first+.15,first);
   assert.ok((await page.evaluate(()=>PHAInjectionMotion.getState())).frames>2);checks.push('Blender GLB loaded with animation tracks and automatic playback advances');
+  // Software WebGL (this suite) is the slowest renderer: the frame governor must keep the page responsive during autoplay.
+  await page.waitForTimeout(2500);
+  const responsiveness=await page.evaluate(async()=>{const lags=[],until=performance.now()+2500;while(performance.now()<until){const t=performance.now();await new Promise(r=>setTimeout(r,0));lags.push(performance.now()-t);}lags.sort((a,b)=>a-b);return {p90:lags[Math.floor(lags.length*.9)],quality:__phaInjectionMotionTest().quality,playing:PHAInjectionMotion.getState().playing};});
+  assert.ok(responsiveness.playing&&responsiveness.p90<60,'event loop stays responsive during playback: '+JSON.stringify(responsiveness));
+  checks.push('Frame governor keeps autoplay responsive on software WebGL (event-loop p90 '+responsiveness.p90.toFixed(1)+' ms, quality level '+responsiveness.quality.level+')');
   const a=await seek(page,5.0),b=await seek(page,7.0);assert.equal(b.phase,0,'dosing overlaps cooling');
   assert.ok(b.nodes.ScrewSlide.position[0]<a.nodes.ScrewSlide.position[0]);assert.notDeepEqual(a.nodes.ScrewSpin.quaternion,b.nodes.ScrewSpin.quaternion);
   assert.notDeepEqual(a.nodes.FeedPellet00.position,b.nodes.FeedPellet00.position);

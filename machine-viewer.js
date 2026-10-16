@@ -105,10 +105,63 @@
     resize.observe(host);visible.observe(host);
     return ()=>{resize.disconnect();visible.disconnect();};
   }
-  function disposeModel(root){
-    const geometries=new Set(),materials=new Set();
-    root.traverse(node=>{if(node.geometry)geometries.add(node.geometry);if(node.material)(Array.isArray(node.material)?node.material:[node.material]).forEach(mat=>materials.add(mat));});
-    geometries.forEach(item=>item.dispose());materials.forEach(item=>item.dispose());
+  function materialsOf(root){
+    const materials=new Set();
+    root.traverse(node=>{if(node.material)(Array.isArray(node.material)?node.material:[node.material]).forEach(mat=>materials.add(mat));});
+    return materials;
   }
-  window.PHAMachineViewer={createStage,prepareModel,fitShadows,groupClips,frameOrtho,watch,disposeModel};
+  function disposeModel(root){
+    const geometries=new Set();root.traverse(node=>{if(node.geometry)geometries.add(node.geometry);});
+    geometries.forEach(item=>item.dispose());materialsOf(root).forEach(item=>item.dispose());
+  }
+  /* Frame-cost governor. On software-rendered or weak GPUs the frame commit after a render can
+     block the page for hundreds of milliseconds, freezing scrolling and clicks. The render call
+     itself returns quickly, so the governor measures the real cost as the interval from a
+     rendered frame to the next animation-frame tick (observe), ignoring the first frames after a
+     model change (shader compilation). It steps quality down in proportion to that cost
+     (resolution, then shadows, then frame pacing) and, once pacing is active, waits at least
+     twice the frame cost between playback frames so input always gets a turn. Playback time
+     still follows the wall clock, so motion speed is unchanged. */
+  const QUALITY=[{shadows:true,dpr:1.5,pace:0},{shadows:true,dpr:1,pace:0},{shadows:false,dpr:1,pace:50},{shadows:false,dpr:.75,pace:120}];
+  const STEP_MS=[28,60,160],WARMUP_FRAMES=4;
+  function createGovernor(stage,{onQualityChange}={}){
+    const {renderer,scene}=stage,state={level:0,cost:0,rendered:-Infinity,measure:false,warmup:WARMUP_FRAMES,samples:0};
+    function apply(level){
+      const quality=QUALITY[level];state.level=level;state.samples=0;
+      if(renderer.shadowMap.enabled!==quality.shadows){
+        renderer.shadowMap.enabled=quality.shadows;
+        materialsOf(scene).forEach(mat=>{mat.needsUpdate=true;});
+      }
+      renderer.setPixelRatio(Math.min(devicePixelRatio,quality.dpr));
+      state.warmup=quality.shadows?state.warmup:2;   // material recompiles after a shadow toggle
+      onQualityChange?.(level);
+    }
+    return {
+      get level(){return state.level;},
+      get cost(){return state.cost;},
+      // Restart the warm-up window, e.g. after a new model enters the scene.
+      reset(){state.warmup=WARMUP_FRAMES;state.measure=false;},
+      // Call at the start of each animation-frame tick with its timestamp.
+      observe(now){
+        if(!state.measure)return;
+        state.measure=false;
+        if(state.warmup>0){state.warmup--;return;}
+        const cost=now-state.rendered;
+        state.cost=state.cost?state.cost*.7+cost*.3:cost;state.samples++;
+        const wanted=state.cost>STEP_MS[2]?3:state.cost>STEP_MS[1]?2:state.cost>STEP_MS[0]?state.level+1:state.level;
+        if(state.samples>=3&&wanted>state.level)apply(Math.min(QUALITY.length-1,wanted));
+      },
+      // True when the next playback frame may be drawn without starving input handling.
+      due(now){const pace=QUALITY[state.level].pace;return !pace||now-state.rendered>=Math.max(pace,state.cost*2);},
+      // `continuous` marks frames of an animation loop, whose next tick measures the frame cost.
+      render(camera,now=performance.now(),continuous=false){
+        renderer.render(scene,camera);state.rendered=now;state.measure=continuous;
+      }
+    };
+  }
+  // Compile shaders off the main thread where the driver allows it, before the first frame.
+  async function warm(stage,root){
+    try{await stage.renderer.compileAsync(root,stage.camera,stage.scene);}catch{}
+  }
+  window.PHAMachineViewer={createStage,prepareModel,fitShadows,groupClips,frameOrtho,watch,disposeModel,createGovernor,warm};
 })();
