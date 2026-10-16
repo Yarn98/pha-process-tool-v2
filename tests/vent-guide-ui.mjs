@@ -143,7 +143,7 @@ try{
     assert.equal(await article.locator('details').getAttribute('open'),'');
     assert.ok((await article.textContent()).includes(item.interpretation.ko));
     for(const check of item.check)assert.ok((await article.textContent()).includes(check.ko));
-    assert.ok((await panel(page).locator('.vent-layout img').getAttribute('src')).includes(config+'_full.webp?v=25'));
+    assert.ok((await panel(page).locator('.vent-layout img').getAttribute('src')).includes(config+'_full.webp?v=26'));
   }
   for(const symptom of symptoms){
     await panel(page).locator(`[data-ts-vent-symptom="${symptom}"]`).click();
@@ -251,7 +251,7 @@ try{
     for(const config of configs){
       await configure(fp,config,'model');await ready(fp,'fallback');
       assert.equal(await fp.locator('#tsModelPoster').isVisible(),true);
-      assert.ok((await fp.locator('#tsModelPoster').getAttribute('src')).includes('vent-guide-'+config+'_full.webp?v=25'));
+      assert.ok((await fp.locator('#tsModelPoster').getAttribute('src')).includes('vent-guide-'+config+'_full.webp?v=26'));
       await imageLoaded(fp.locator('#tsModelPoster'));
     }
     await capture(fp,'fallback-'+failure);
@@ -281,8 +281,8 @@ try{
   await op.evaluate(()=>localStorage.setItem('vent-guide-retention-fixture','preserve'));
   await op.evaluate(async()=>{await navigator.serviceWorker.ready;});
   await op.waitForFunction(async()=>{
-    const cache=await caches.open('pha-cache-v25-flash-guide'),keys=await cache.keys();
-    return ['vent-guide.glb','vent-guide-without_reverse_full.webp','vent-guide-upstream_reverse_full.webp','vent-guide-data.js','vent-guide.js','vent-guide.css','data/vent_guide.json'].every(asset=>keys.some(key=>key.url.endsWith('/'+asset+'?v=25')));
+    const cache=await caches.open('pha-cache-v26-realistic-equipment'),keys=await cache.keys();
+    return ['vent-guide.glb','vent-guide-without_reverse_full.webp','vent-guide-upstream_reverse_full.webp','vent-guide-data.js','vent-guide.js','vent-guide.css','data/vent_guide.json'].every(asset=>keys.some(key=>key.url.endsWith('/'+asset+'?v=26')));
   },{},{timeout:60000});
   await op.reload({waitUntil:'domcontentloaded'});await unlock(op);await enterTroubleshooting(op);
   await op.waitForFunction(()=>!!navigator.serviceWorker.controller);
@@ -297,7 +297,7 @@ try{
   }
   assert.equal(await op.evaluate(()=>localStorage.getItem('vent-guide-retention-fixture')),'preserve');
   await capture(op,'offline-en');await close(op);await offline.close();
-  record('v25 service-worker offline reload covers both layouts and KO/EN guide while preserving local records');
+  record('v26 service-worker offline reload covers both layouts and KO/EN guide while preserving local records');
 
   assert.deepEqual(errors,[]);
   const report={status:'passed',root:relative(resolve('.'),root)||'.',checks,screenshots,openGeometry,errors,productionDeployed:false};
