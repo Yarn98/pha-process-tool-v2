@@ -118,6 +118,13 @@ try{
     await page.setViewportSize({width:1440,height:1100});
   }
   checks.push('All seven lines: Korean/English, mobile model visible during manipulation, manual state retention, focus views and resets');
+  // The process atlas and the blow-moulding rig's own stage segments describe the same re-based cycle.
+  await select(page,'blowmolding');
+  for(const step of [0,1,2,3]){
+    await page.locator(`.atlas-step[data-step="${step}"]`).click();
+    assert.equal((await page.evaluate(()=>PHAEquipmentMotion.getState())).phase,step,'atlas step '+step+' seeks the matching blow-moulding stage');
+  }
+  checks.push('Blow molding: each process-atlas step seeks the matching stage of the re-based cycle');
   let panel=await select(page,'straw');const source=await page.evaluate(()=>PHAEquipmentModels.straw.source);
   assert.equal(source.sha256,'91b712018468ed304c4101eeaf5e57ffd6da8a2a5ef337e24ea0344ab3ee2bb1');
   await panel.locator('[data-eq="play"]').click();await page.waitForFunction(()=>PHAEquipmentMotion.getState().visible);

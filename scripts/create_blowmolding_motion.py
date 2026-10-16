@@ -291,8 +291,12 @@ META = {
               {'key': 'screw', 'label': ['스크류·배럴', 'Screw & barrel'], 'center': [-.6, AX, 0], 'zoom': 3.2},
               {'key': 'finish', 'label': ['금형·블로우 핀', 'Mold & blow pin'], 'center': three((X_H, -SHUTTLE / 2, z_m)), 'zoom': 4.5},
               {'key': 'head', 'label': ['패리슨 헤드', 'Parison head'], 'center': three((X_H, 0, Z_OUT)), 'zoom': 6}],
-    'stages': [['절단·이송·블로우', 'Cut, shuttle & blow'], ['냉각', 'Cool'], ['배기·개방·취출', 'Exhaust, open & take out'],
-               ['패리슨·금형 닫힘', 'Parison & capture']],
+    # Stage names match the process atlas (melt & head, parison, mould & inflate, cool & trim); the segments
+    # map them onto the re-based cycle and the starts are where an atlas step seeks.
+    'stages': [['용융·헤드', 'Melt & head'], ['패리슨·금형 닫힘', 'Parison & capture'], ['금형·공기 팽창', 'Mould & inflate'],
+               ['냉각·트리밍', 'Cool & trim']],
+    'stage_segments': [[0.0, T['inflate'][1], 2], [T['inflate'][1], T['parison'][0], 3], [T['parison'][0], 10.25, 0], [10.25, LOOP, 1]],
+    'stage_starts': [T['parison'][0] + .3, 11.0, T['inflate'][0] + .25, T['take_out'][0] + .3],
     # Player contract for the manual sequence: shuttle clip times at the head and at the blow station, the take-out
     # drop and the blow-air window (three.js coordinates).
     'blow': {'shuttle': {'head': round(T['parison'][0] + .5, 3), 'station': round(T['hold_cool'][0] + 1, 3)},

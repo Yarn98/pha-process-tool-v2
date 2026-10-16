@@ -10,55 +10,55 @@
           "kind": "extrusion",
           "drive": "haul",
           "rpm": 9.54929658551372,
-          "elapsed": 0.2
+          "elapsed": 0.19993400000000022
         },
         {
           "kind": "extrusion",
           "drive": "cutter",
           "rpm": 120,
-          "elapsed": 0.31648200000000004
+          "elapsed": 0.24990000000000057
         },
         {
           "kind": "compounding",
           "drive": "haul",
           "rpm": 9.54929658551372,
-          "elapsed": 0.2
+          "elapsed": 0.19999999999999912
         },
         {
           "kind": "compounding",
           "drive": "cutter",
           "rpm": 15,
-          "elapsed": 0.28323400000000043
+          "elapsed": 0.18339999999999967
         },
         {
           "kind": "sheet",
           "drive": "roll",
           "rpm": 9.54929658551372,
-          "elapsed": 0.19989999999999963
+          "elapsed": 0.19990000000000058
         },
         {
           "kind": "sheet",
           "drive": "winder",
           "rpm": 9.54929658551372,
-          "elapsed": 0.26679999999999926
+          "elapsed": 0.19989999999999963
         },
         {
           "kind": "castfilm",
           "drive": "winder",
           "rpm": 9.54929658551372,
-          "elapsed": 0.18339999999999967
+          "elapsed": 0.2
         },
         {
           "kind": "blownfilm",
           "drive": "haul",
           "rpm": 9.54929658551372,
-          "elapsed": 0.18339999999999962
+          "elapsed": 0.1832999999999993
         },
         {
           "kind": "blownfilm",
           "drive": "winder",
           "rpm": 9.54929658551372,
-          "elapsed": 0.2
+          "elapsed": 0.1832999999999993
         }
       ]
     },
@@ -133,7 +133,7 @@
   ],
   "source_sha256": {
     "equipment-study.js": "795ff0cff56214f238963116038ed51c138905c2e386f3e278594cdda7d21abe",
-    "equipment-motion.js": "9f7f9852540cc092e6bb1db5570e38df409d25b16927ba7a853f19b685765572",
+    "equipment-motion.js": "8b72d4e4bdab2f35beeb41cec2cfe5e22abcf928f640bacdebc5bdc4a2a73619",
     "injection-motion.js": "dfe7c0867d1e9dcff53081cc41a9ac2df2d03f78a49faeb10ec4c886c2241c2d",
     "troubleshooting-visuals.js": "842541c07142579c46550c256500827d07c29e92bf21e0f19c2f33ec1fcea1ff",
     "straw-guide.js": "1f69a2a32a1fd6577b1c3057984ff6339632e0fdaf9c3e8f016bca6d58a5e747"

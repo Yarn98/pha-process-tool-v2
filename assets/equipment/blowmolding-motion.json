@@ -143,21 +143,49 @@
   ],
   "stages": [
     [
-      "절단·이송·블로우",
-      "Cut, shuttle & blow"
-    ],
-    [
-      "냉각",
-      "Cool"
-    ],
-    [
-      "배기·개방·취출",
-      "Exhaust, open & take out"
+      "용융·헤드",
+      "Melt & head"
     ],
     [
       "패리슨·금형 닫힘",
       "Parison & capture"
+    ],
+    [
+      "금형·공기 팽창",
+      "Mould & inflate"
+    ],
+    [
+      "냉각·트리밍",
+      "Cool & trim"
     ]
+  ],
+  "stage_segments": [
+    [
+      0.0,
+      1.5,
+      2
+    ],
+    [
+      1.5,
+      9.0,
+      3
+    ],
+    [
+      9.0,
+      10.25,
+      0
+    ],
+    [
+      10.25,
+      12.0,
+      1
+    ]
+  ],
+  "stage_starts": [
+    9.3,
+    11.0,
+    1.25,
+    7.8
   ],
   "blow": {
     "shuttle": {

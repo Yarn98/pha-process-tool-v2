@@ -1,9 +1,9 @@
 {
   "format": 1,
   "artifact": "single-file/PHA-Process-Single.html",
-  "bytes": 65471041,
-  "sha256": "b29fee207500ac3c6be9f87f35212c7ec924b297fb20a678410cb05a4864fba6",
-  "source_sha256": "c8fb937a4c8fbc332a271da409701b4cac72da0abffa25c15bd5c61b2d6800e8",
+  "bytes": 65471710,
+  "sha256": "7356cf2cc98bcdbb6a6728b245ee3557de67c97ffbbfeec53c50ad57c538d004",
+  "source_sha256": "0ae3d651bbcc64eb5ee42d4541895a5f71c4806ee7387f66f3c2e88c17233591",
   "hash_basis": "SHA-256 of UTF-8 text normalized to LF; binary bytes unchanged. Artifact bytes and hash use LF.",
   "embedded_assets": 155,
   "embedded_glbs": 26,
@@ -1051,15 +1051,15 @@
       "path": "equipment-models.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
-      "bytes": 30320,
-      "sha256": "4d6ecbb2eb71ef461d3d829fa6289cc722969825f180c5d89a276e3fd2b3fba2"
+      "bytes": 30630,
+      "sha256": "64bbd3e7378b58dedb732d2aadc44d9590f85096d4e2d59a2fd275767b794de2"
     },
     {
       "path": "equipment-motion.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
-      "bytes": 23752,
-      "sha256": "9f7f9852540cc092e6bb1db5570e38df409d25b16927ba7a853f19b685765572"
+      "bytes": 24111,
+      "sha256": "74320ff6827a0de7d5330e426f836878fb512cb259dfc74840b0192e93ea97fd"
     },
     {
       "path": "equipment-study.js",

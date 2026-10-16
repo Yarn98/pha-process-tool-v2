@@ -80,7 +80,13 @@
   }
   // Orbit drags fire many change events; draw at most once per animation frame.
   function paintSoon(){if(!pendingPaint)pendingPaint=requestAnimationFrame(()=>{pendingPaint=0;paint();});}
-  function stage(){return Math.min(3,Math.floor(state.time/meta.duration*4));}
+  // A rig with a non-uniform cycle (blow moulding) states its own stage segments and seek times; continuous
+  // lines split the loop into four equal parts.
+  function stage(){
+    const segment=meta.stage_segments?.find(([a,b])=>state.time>=a&&state.time<b);
+    return segment?segment[2]:Math.min(3,Math.floor(state.time/meta.duration*4));
+  }
+  function stageStart(index){return meta.stage_starts?meta.stage_starts[index]:index*meta.duration/4+.25;}
   function update(){
     if(!host||!state)return;
     const manual=state.mode==='manual',phase=stage();
@@ -232,7 +238,7 @@
         if(state.mode!=='manual'||!enabled(control.key)||!Number.isFinite(value)){update();return;}
         state.target[control.key]=clamp(value,0,control.max);if(reduced.matches){manualStep(10);paint();}else schedule();update();
       });
-      host.querySelectorAll('[data-eq-stage]').forEach(button=>button.onclick=()=>seek(Number(button.dataset.eqStage)*meta.duration/4+.25));
+      host.querySelectorAll('[data-eq-stage]').forEach(button=>button.onclick=()=>seek(stageStart(Number(button.dataset.eqStage))));
       unwatch=viewer().watch(host,{onResize:resize,onVisible:visible=>{state.visible=visible;schedule();},threshold:.01});
       if(prior!==meta.id||!engine.camera.position.lengthSq())resetView(state.focus);resize();paint();update();
     }catch(error){if(current===token){state.error=String(error);fallback();}}
@@ -247,7 +253,7 @@
   document.addEventListener('visibilitychange',schedule);
   window.addEventListener('pha-language-change',()=>requestAnimationFrame(syncSurface));
   reduced.addEventListener('change',event=>{if(event.matches&&state){state.playing=false;stopStudy();stop();if(state.mode==='manual'){manualStep(10);paint();}update();}});
-  window.PHAEquipmentMotion={mount,detach,syncSurface,seekStage(index){if(meta&&index>=0&&index<4)seek(index*meta.duration/4+.25);},getState(){return state?{...state,kind:meta.id,actual:{...state.actual},target:{...state.target}}:null;}};
+  window.PHAEquipmentMotion={mount,detach,syncSurface,seekStage(index){if(meta&&index>=0&&index<4)seek(stageStart(index));},getState(){return state?{...state,kind:meta.id,actual:{...state.actual},target:{...state.target}}:null;}};
   if(['localhost','127.0.0.1'].includes(location.hostname))window.__phaEquipmentTest=()=>({
     ...window.PHAEquipmentMotion.getState(),cached:[...cache.keys()],groups:asset?Object.fromEntries([...asset.groups].map(([key,group])=>[key,{duration:group.duration,tracks:group.tracks}])):{},
     nodes:asset?Object.fromEntries(Object.entries(asset.members).map(([group,nodes])=>[group,nodes.map(node=>({name:node.name,position:node.position.toArray(),world:node.getWorldPosition(new engine.THREE.Vector3()).toArray(),rotation:node.quaternion.toArray(),scale:node.scale.toArray(),visible:node.visible,morph:node.morphTargetInfluences||null}))])):{},
