@@ -13,8 +13,9 @@
     straw:['Straw Optimizer v2의 Unreal 환형 다이 이미지입니다. 스크린 팩, 맨드렐과 중공 출구를 보여줍니다.','Unreal annular-die image from Straw Optimizer v2: screen pack, mandrel and hollow outlet.']
   };
   function mount(host,{kind,locale,start,stop,pause}){
-    const en=locale==='en',t=(ko,english)=>en?english:ko;
-    if(!saved.has(kind))saved.set(kind,{photo:false,open:false,drive:kind==='blowmolding'?'travel':'screw',rpm:30,speed:6,diameter:200,pitch:kind==='straw'?200:3,stroke:100,velocity:50,scale:.1});
+    const en=locale==='en',t=(ko,english)=>en?english:ko,model=window.PHAEquipmentModels?.[kind];
+    // A rig may carry its own worked example (e.g. the compounding line's feed roll and pellet length).
+    if(!saved.has(kind))saved.set(kind,{photo:false,open:false,drive:kind==='blowmolding'?'travel':'screw',rpm:30,speed:6,diameter:200,pitch:kind==='straw'?200:3,stroke:100,velocity:50,scale:.1,...model?.study});
     const state=saved.get(kind);
     const choices=kind==='blowmolding'?[['travel','금형 이동','Mold travel']]:[
       ['screw','스크류 회전','Screw rotation'],
@@ -56,7 +57,7 @@
       const required=linear?['stroke','velocity']:motion==='screw'?['rpm']:cut?['speed','pitch']:['speed','diameter'];
       panel.querySelectorAll('[data-study-field]').forEach(label=>label.hidden=!required.includes(label.dataset.studyField));
       const valid=[...required,'scale'].every(key=>{const input=panel.querySelector(`[data-study-input="${key}"]`);return input.value.trim()!==''&&input.checkValidity()&&Number.isFinite(Number(input.value));});
-      const edges=kind==='straw'?1:4;
+      const edges=model?.cut_edges??(kind==='straw'?1:4);
       let value=valid?(linear?PHAKinematics.travel(state.stroke,state.velocity):motion==='screw'?state.rpm:cut?PHAKinematics.cuts(state.speed,state.pitch)/edges:PHAKinematics.rpm(state.speed,state.diameter)):null;
       if(value!==null&&!Number.isFinite(value))value=null;
       drive=value===null?null:{group:motion==='screw'&&kind==='injection'?'rotation':motion,type:linear?'travel':'spin',rpm:linear?0:value,seconds:linear?value:0,scale:state.scale};

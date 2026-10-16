@@ -7,6 +7,9 @@
   let locale='ko',token=0,raf=0,lastTick=0,unwatch=null,studyPanel=null,pendingPaint=0;
   const t=(ko,en)=>locale==='en'?en:ko,text=pair=>pair[locale==='en'?1:0];
   const clamp=(value,min,max)=>Math.min(max,Math.max(min,value));
+  // Whole turns a spin clip makes per loop: from the rig metadata, else the older rigs' two turns
+  // (one for winders, cutters and the straw line).
+  const turnsOf=key=>meta.turns?.[key]??(meta.id==='straw'||key==='winder'||key==='cutter'?1:2);
   window.phaSyncMachineOverlay=()=>document.body.classList.toggle('pha-machine-manual',!!document.querySelector('.tabpage.active :is(.equipment-motion,.injection-motion):not(.is-study-photo) .motion-manual:not([hidden]),.tabpage.active .equipment-study[open]'));
 
   function initial(definition){
@@ -43,12 +46,13 @@
       let second=state.time;
       if(state.mode==='study'){
         const drive=state.study;
-        const turns=meta.id==='straw'||key==='winder'||key==='cutter'?1:2;
-        second=drive?.type==='spin'&&key===drive.group?(drive.angle/360/turns%1)*group.duration:0;
+        second=drive?.type==='spin'&&key===drive.group?(drive.angle/360/turnsOf(key)%1)*group.duration:0;
       }
       if(state.mode==='manual'||state.mode==='study'&&state.study?.type==='travel'){
         const control=meta.controls.find(c=>c.key===key);
-        second=control?control.range[0]+(control.range[1]-control.range[0])*state.actual[key]/control.max:0;
+        // Angles of rigs with metadata turns map through those turns; other controls span their range.
+        second=!control?0:meta.turns?.[key]&&control.unit==='°'?(state.actual[key]/360/meta.turns[key]%1)*group.duration
+          :control.range[0]+(control.range[1]-control.range[0])*state.actual[key]/control.max;
       }
       group.mixer.setTime(clamp(second,0,group.duration-.00001));
     }
