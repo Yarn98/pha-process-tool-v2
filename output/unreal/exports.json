@@ -327,11 +327,11 @@
     "blender": "5.2.1 LTS",
     "source": "assets/equipment/extrusion-motion.blend",
     "frame": 55,
-    "source_sha256": "8e07398507b047a81fc8c97cc1241b0651740fccb6c04abe0a695c2b98a225d3",
+    "source_sha256": "c00b3d4cc3f717c94de895f8c884b1c3ee9ddd03491a90eb032e07633a7399f1",
     "fbx": "output/unreal/fbx/extrusion.fbx",
-    "fbx_sha256": "558851f2b66e814734f5919862cd57075b3db6502454ccb4c1726f5d2a72da3b",
-    "objects": 107,
-    "vertices": 18768,
+    "fbx_sha256": "2c5f1aad2f00d4bed84ffae553e5a9da58c40fb0fa8e39d576c2c0e8e800e343",
+    "objects": 160,
+    "vertices": 22112,
     "materials": {
       "Paint / anthracite base": {
         "color": [
@@ -640,11 +640,11 @@
     "blender": "5.2.1 LTS",
     "source": "assets/equipment/sheet-motion.blend",
     "frame": 55,
-    "source_sha256": "23c0f0021629de0524767b85a60ef5ef7fbc7112770c2e3b7c1c9b9049b5aa64",
+    "source_sha256": "4959f23f0fb4e8549891ccf0e26383e52b8f17b2c28d7c611c5c77e584c788a8",
     "fbx": "output/unreal/fbx/sheet.fbx",
-    "fbx_sha256": "0a2e402b46e07a523d07a9d13067584caf6f8aa8c59346f1a400801436c67698",
-    "objects": 94,
-    "vertices": 22836,
+    "fbx_sha256": "69796564c3859f359898f1fd818d0e81e6541182c890c6660d9a39865062d11a",
+    "objects": 138,
+    "vertices": 23120,
     "materials": {
       "Paint / anthracite base": {
         "color": [
@@ -943,11 +943,11 @@
     "blender": "5.2.1 LTS",
     "source": "assets/equipment/castfilm-motion.blend",
     "frame": 55,
-    "source_sha256": "06813c337283456ce70e74063ff946bab0707bc55310a0a6a20e352a897e7b98",
+    "source_sha256": "e88ef4a0f18549de4fb390ea04804162bf78c1458b295d82a1840195a4df892b",
     "fbx": "output/unreal/fbx/castfilm.fbx",
-    "fbx_sha256": "947ed6050786ddcd997218aed143980b40f9e6f0b09a7cc9a5c12230d43d0594",
-    "objects": 61,
-    "vertices": 20028,
+    "fbx_sha256": "9e5762e340867e7c25cc9ecc23f19283ef8346d6bc2af30c6bd65f292132211b",
+    "objects": 108,
+    "vertices": 20944,
     "materials": {
       "Paint / anthracite base": {
         "color": [
@@ -1246,11 +1246,11 @@
     "blender": "5.2.1 LTS",
     "source": "assets/equipment/blownfilm-motion.blend",
     "frame": 55,
-    "source_sha256": "6c3b59507aa3fc3855094495c0cd6e922d53c09045fb93c80a142880384723e0",
+    "source_sha256": "e26fc98bc5065b40323f28bbacac6494c4047036961ea3339f81f8c3136b0786",
     "fbx": "output/unreal/fbx/blownfilm.fbx",
-    "fbx_sha256": "7ac14eff6e0d09345418252c45fcd721c6aa8c34f2de80bd58cd9d6528c17ff4",
-    "objects": 77,
-    "vertices": 25642,
+    "fbx_sha256": "6d900b900154b51ce3f135dd6bc2021ab26658a5acd61af76de31341b94ed9b5",
+    "objects": 178,
+    "vertices": 30268,
     "materials": {
       "Paint / anthracite base": {
         "color": [
@@ -1412,6 +1412,56 @@
         "roughness": 0.07,
         "alpha": 1.0
       },
+      "Insulation / aluminium jacket": {
+        "color": [
+          0.57758,
+          0.5972,
+          0.6105
+        ],
+        "metallic": 0.6,
+        "roughness": 0.45,
+        "alpha": 1.0
+      },
+      "Display / HMI glass": {
+        "color": [
+          0.00478,
+          0.01229,
+          0.01033
+        ],
+        "metallic": 0.0,
+        "roughness": 0.12,
+        "alpha": 1.0
+      },
+      "Lamp / amber": {
+        "color": [
+          0.76815,
+          0.32778,
+          0.00972
+        ],
+        "metallic": 0.0,
+        "roughness": 0.25,
+        "alpha": 0.92
+      },
+      "Lamp / green": {
+        "color": [
+          0.02732,
+          0.34191,
+          0.09531
+        ],
+        "metallic": 0.0,
+        "roughness": 0.25,
+        "alpha": 0.92
+      },
+      "Cable / grey jacket": {
+        "color": [
+          0.10462,
+          0.11444,
+          0.12477
+        ],
+        "metallic": 0.0,
+        "roughness": 0.7,
+        "alpha": 1.0
+      },
       "Polymer / film (translucent)": {
         "color": [
           0.04817,
@@ -1441,36 +1491,6 @@
         "metallic": 0.0,
         "roughness": 0.25,
         "alpha": 0.92
-      },
-      "Lamp / amber": {
-        "color": [
-          0.76815,
-          0.32778,
-          0.00972
-        ],
-        "metallic": 0.0,
-        "roughness": 0.25,
-        "alpha": 0.92
-      },
-      "Lamp / green": {
-        "color": [
-          0.02732,
-          0.34191,
-          0.09531
-        ],
-        "metallic": 0.0,
-        "roughness": 0.25,
-        "alpha": 0.92
-      },
-      "Display / HMI glass": {
-        "color": [
-          0.00478,
-          0.01229,
-          0.01033
-        ],
-        "metallic": 0.0,
-        "roughness": 0.12,
-        "alpha": 1.0
       },
       "Display / HMI bar": {
         "color": [
@@ -1521,6 +1541,16 @@
         "metallic": 0.0,
         "roughness": 0.3,
         "alpha": 1.0
+      },
+      "Air / warm (marker)": {
+        "color": [
+          0.7454,
+          0.19462,
+          0.02732
+        ],
+        "metallic": 0.0,
+        "roughness": 0.4,
+        "alpha": 0.7
       }
     }
   },
@@ -1852,11 +1882,11 @@
     "blender": "5.2.1 LTS",
     "source": "assets/equipment/compounding-motion.blend",
     "frame": 55,
-    "source_sha256": "b8b86afea73fd2b9c292c9212397b4930888dda07662234bc9a6cb1ec0ac75ce",
+    "source_sha256": "03a37da82aeb43928130e4d62659179d1575d414e31d46cd935f20d79f074a82",
     "fbx": "output/unreal/fbx/compounding.fbx",
-    "fbx_sha256": "80fd33189bafc841546ebd8f02c0171bf4d5b4bf06862b5af75fccb7f3b8dd9d",
-    "objects": 98,
-    "vertices": 72284,
+    "fbx_sha256": "adf86bdcfb65c04ad68feeea1bea85a67d34b003fae2f1195cb58456419420e6",
+    "objects": 135,
+    "vertices": 77500,
     "materials": {
       "Paint / anthracite base": {
         "color": [
@@ -2108,16 +2138,6 @@
         "roughness": 0.5,
         "alpha": 1.0
       },
-      "Carton / octabin": {
-        "color": [
-          0.47932,
-          0.32314,
-          0.14413
-        ],
-        "metallic": 0.0,
-        "roughness": 0.85,
-        "alpha": 1.0
-      },
       "Polymer / natural pellet": {
         "color": [
           0.58408,
@@ -2126,6 +2146,16 @@
         ],
         "metallic": 0.0,
         "roughness": 0.45,
+        "alpha": 1.0
+      },
+      "Carton / octabin": {
+        "color": [
+          0.47932,
+          0.32314,
+          0.14413
+        ],
+        "metallic": 0.0,
+        "roughness": 0.85,
         "alpha": 1.0
       },
       "Lamp / red": {
@@ -2215,11 +2245,11 @@
     "blender": "5.2.1 LTS",
     "source": "assets/equipment/straw-motion.blend",
     "frame": 55,
-    "source_sha256": "412a12942c6088cc5eb5324547771db3fbf3d98af88067ca24d5113890987545",
+    "source_sha256": "0846b1848eb6e77eaa07cb17a378c913cde89cff4e1668f69e167b221a6f9d43",
     "fbx": "output/unreal/fbx/straw.fbx",
-    "fbx_sha256": "7dd3cecbda412a77dc51515d56f03b223d22e50111e262a904b5ed8009fd87ea",
-    "objects": 135,
-    "vertices": 30870,
+    "fbx_sha256": "fb710e0f9aef502877506b1b7b46dff005aa7f7df41d216eb45dbc445526f0bc",
+    "objects": 189,
+    "vertices": 43174,
     "materials": {
       "Paint / anthracite base": {
         "color": [
