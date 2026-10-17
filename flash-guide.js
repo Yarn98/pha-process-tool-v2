@@ -1,7 +1,7 @@
 /* Source-linked flash guidance. Choices explain observations; no machine setpoints are predicted. */
 (function (global) {
   'use strict';
-  const V = '?v=28', ASSET = './assets/flash-control/';
+  const V = '?v=29', ASSET = './assets/flash-control/';
   const state = { location: 'unknown', timing: 'unknown', thermal: 'none', progress: .82, opening: .55, onset: 'fill', normal: false, modelOpen: false };
   const trial = { checks: new Set(), baseline: '', change: '', observed: '' };
   let lang = 'ko', viewer = null, loading = false, failed = false, generation = 0, playing = false, raf = 0, lastTime = 0;
