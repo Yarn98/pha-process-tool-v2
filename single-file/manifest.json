@@ -1,9 +1,9 @@
 {
   "format": 1,
   "artifact": "single-file/PHA-Process-Single.html",
-  "bytes": 69833039,
-  "sha256": "b997462968e28ac8910a754481d3dee34a71c231696e462f8bc5b79a89dbadea",
-  "source_sha256": "be21276c693650b806157216d72342673d4ccb132bc2db656a302a4445b9bf36",
+  "bytes": 69833316,
+  "sha256": "189b271207e3a31ccb42170626a74ab5ff681d06198956fab0cb4bdf3f9ed22c",
+  "source_sha256": "9651e54d1d21ed101fc8c20290f5e3946c8895d4f2cc2a21b53a107b44d41bc7",
   "hash_basis": "SHA-256 of UTF-8 text normalized to LF; binary bytes unchanged. Artifact bytes and hash use LF.",
   "embedded_assets": 155,
   "embedded_glbs": 26,
@@ -1135,8 +1135,8 @@
       "path": "index.html",
       "role": "entry",
       "encoding": "utf8-lf",
-      "bytes": 326871,
-      "sha256": "046b8ac7374bfa0b0641ed31f0e34d8a21d1af5a2ffbcbd43285e5330a0379cc"
+      "bytes": 327148,
+      "sha256": "7e2f28525132ade1022afea5102e26a765b3b5152fb82c2a33c524dcc88b2be1"
     },
     {
       "path": "injection-motion.js",

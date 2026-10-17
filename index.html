@@ -2117,9 +2117,14 @@ function clearFlashInputs(type) {
     }catch(e){console.warn(e);}
   }
   function applyCA1180P(){ ensureCA1180PMat(); rebuildForm(); }
+  // A grade or process picked before 'load' (slow first load) must survive the start-up defaults.
+  let pickedBeforeLoad=false;
+  ['grade','process'].forEach(id=>$(id)?.addEventListener('change',()=>{pickedBeforeLoad=true;},{once:true}));
   window.addEventListener('load', ()=>{
-    const g=$('grade'); if(g){ g.value='CA1180P'; }
-    const p=$('process'); if(p){ p.value='injection'; }
+    if(!pickedBeforeLoad){
+      const g=$('grade'); if(g){ g.value='CA1180P'; }
+      const p=$('process'); if(p){ p.value='injection'; }
+    }
     applyCA1180P();
     loadBatchContext();
     renderBatchContextBanner();
