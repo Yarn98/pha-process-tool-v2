@@ -10,55 +10,55 @@
           "kind": "extrusion",
           "drive": "haul",
           "rpm": 9.54929658551372,
-          "elapsed": 0.1999000000000001
+          "elapsed": 0.2835
         },
         {
           "kind": "extrusion",
           "drive": "cutter",
           "rpm": 120,
-          "elapsed": 0.31669999999999987
+          "elapsed": 0.36670000000000075
         },
         {
           "kind": "compounding",
           "drive": "haul",
           "rpm": 9.54929658551372,
-          "elapsed": 0.1999340000000002
+          "elapsed": 0.19996800000000076
         },
         {
           "kind": "compounding",
           "drive": "cutter",
           "rpm": 15,
-          "elapsed": 0.20010000000000036
+          "elapsed": 0.2498680000000022
         },
         {
           "kind": "sheet",
           "drive": "roll",
           "rpm": 9.54929658551372,
-          "elapsed": 0.26669999999999894
+          "elapsed": 0.28330000000001027
         },
         {
           "kind": "sheet",
           "drive": "winder",
           "rpm": 9.54929658551372,
-          "elapsed": 0.18340000000000145
+          "elapsed": 0.3667360000000045
         },
         {
           "kind": "castfilm",
           "drive": "winder",
           "rpm": 9.54929658551372,
-          "elapsed": 0.19999999999999998
+          "elapsed": 0.2333339999999953
         },
         {
           "kind": "blownfilm",
           "drive": "haul",
           "rpm": 9.54929658551372,
-          "elapsed": 0.19989999999999963
+          "elapsed": 0.21659999999999857
         },
         {
           "kind": "blownfilm",
           "drive": "winder",
           "rpm": 9.54929658551372,
-          "elapsed": 0.19984799999999997
+          "elapsed": 0.2666779999999999
         }
       ]
     },
@@ -132,10 +132,10 @@
     }
   ],
   "source_sha256": {
-    "equipment-study.js": "5b73f0a372fbe42f2d6569f6d8039a92f9ce59ad85fe5cbbeb182c535a5c5fc1",
-    "equipment-motion.js": "d467efcfd32f3225b2c924ec589033b22279d4df0945bd8baad9a761a787fd9c",
-    "injection-motion.js": "0f5a192ce19b54b64c90a28c482a6cf54b15a0eea81ea46f09966baf7bd5441a",
-    "troubleshooting-visuals.js": "35b56d74b9d1f3562f08b1984bb65a84a9244ff11acad5a787f69bc63bda1b89",
+    "equipment-study.js": "b86cfef704a6afefa37bd897588115ca0714144050ba840a039708f684c2d00f",
+    "equipment-motion.js": "63dc9294b06611f2b928269a5b0adeb8a206eabcb423972d55d6faf3d601f0bf",
+    "injection-motion.js": "56a0ba500432a23762769ca2ac8da4f7dd7c3fcbccbc2efcfafc4eda3082de0c",
+    "troubleshooting-visuals.js": "38afe07b10a6edf85530d1989ef073f3bec88e43e197172eddc428f973b75615",
     "straw-guide.js": "ec89136b9060ab88d8266965278cf42189fe3ec49adff9b2e11c077870152b00"
   },
   "scope": "Supplementary local-browser connection audit. Existing signed-screw/full-equipment suites were not rerun. No process solver acceptance or production claim. Browser storage is isolated."

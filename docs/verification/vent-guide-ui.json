@@ -9,24 +9,24 @@
     "390px and 320px touch controls, both languages and four tabs fit without horizontal overflow",
     "Unavailable WebGL or GLB retains each new layout poster and the source-linked guide",
     "KB fingerprint and guide review mismatches separately fail closed without main guide actions",
-    "v28 service-worker offline reload covers both layouts and KO/EN guide while preserving local records"
+    "v29 service-worker offline reload covers both layouts and KO/EN guide while preserving local records"
   ],
   "screenshots": [
-    "output\\playwright\\vent-guide\\source\\guide-ko.png",
-    "output\\playwright\\vent-guide\\source\\temperature-ko.png",
-    "output\\playwright\\vent-guide\\source\\model-without_reverse.png",
-    "output\\playwright\\vent-guide\\source\\model-upstream_reverse.png",
-    "output\\playwright\\vent-guide\\source\\model-focus-atm.png",
-    "output\\playwright\\vent-guide\\source\\model-focus-seal.png",
-    "output\\playwright\\vent-guide\\source\\model-focus-vac.png",
-    "output\\playwright\\vent-guide\\source\\guide-en.png",
-    "output\\playwright\\vent-guide\\source\\mobile-ko-390.png",
-    "output\\playwright\\vent-guide\\source\\mobile-en-390.png",
-    "output\\playwright\\vent-guide\\source\\mobile-ko-320.png",
-    "output\\playwright\\vent-guide\\source\\mobile-en-320.png",
-    "output\\playwright\\vent-guide\\source\\fallback-webgl.png",
-    "output\\playwright\\vent-guide\\source\\fallback-glb.png",
-    "output\\playwright\\vent-guide\\source\\offline-en.png"
+    "output/playwright/vent-guide/source/guide-ko.png",
+    "output/playwright/vent-guide/source/temperature-ko.png",
+    "output/playwright/vent-guide/source/model-without_reverse.png",
+    "output/playwright/vent-guide/source/model-upstream_reverse.png",
+    "output/playwright/vent-guide/source/model-focus-atm.png",
+    "output/playwright/vent-guide/source/model-focus-seal.png",
+    "output/playwright/vent-guide/source/model-focus-vac.png",
+    "output/playwright/vent-guide/source/guide-en.png",
+    "output/playwright/vent-guide/source/mobile-ko-390.png",
+    "output/playwright/vent-guide/source/mobile-en-390.png",
+    "output/playwright/vent-guide/source/mobile-ko-320.png",
+    "output/playwright/vent-guide/source/mobile-en-320.png",
+    "output/playwright/vent-guide/source/fallback-webgl.png",
+    "output/playwright/vent-guide/source/fallback-glb.png",
+    "output/playwright/vent-guide/source/offline-en.png"
   ],
   "openGeometry": [
     {
@@ -42,7 +42,7 @@
       },
       "title": {
         "left": 187,
-        "right": 425.109375,
+        "right": 418.984375,
         "top": 91.390625,
         "bottom": 124.734375
       },
@@ -66,7 +66,7 @@
       },
       "title": {
         "left": 187,
-        "right": 403.9375,
+        "right": 397.828125,
         "top": 192.8125,
         "bottom": 226.15625
       },
@@ -90,7 +90,7 @@
       },
       "title": {
         "left": 187,
-        "right": 425.109375,
+        "right": 418.984375,
         "top": 91.390625,
         "bottom": 124.734375
       },
@@ -114,12 +114,12 @@
       },
       "title": {
         "left": 23,
-        "right": 233.375,
+        "right": 214.640625,
         "top": 68.703125,
         "bottom": 96.25
       },
       "close": {
-        "left": 301.625,
+        "left": 303.546875,
         "right": 367,
         "top": 44.3125,
         "bottom": 88.3125
@@ -138,9 +138,9 @@
       },
       "title": {
         "left": 23,
-        "right": 217.546875,
+        "right": 214.640625,
         "top": 68.703125,
-        "bottom": 123.796875
+        "bottom": 96.25
       },
       "close": {
         "left": 233.546875,
@@ -162,7 +162,7 @@
       },
       "title": {
         "left": 107,
-        "right": 345.109375,
+        "right": 338.984375,
         "top": 87.390625,
         "bottom": 120.734375
       },
@@ -186,7 +186,7 @@
       },
       "title": {
         "left": 107,
-        "right": 345.109375,
+        "right": 338.984375,
         "top": 87.390625,
         "bottom": 120.734375
       },
@@ -210,7 +210,7 @@
       },
       "title": {
         "left": 107,
-        "right": 345.109375,
+        "right": 338.984375,
         "top": 421.71875,
         "bottom": 455.0625
       },
@@ -234,7 +234,7 @@
       },
       "title": {
         "left": 107,
-        "right": 345.109375,
+        "right": 338.984375,
         "top": 421.71875,
         "bottom": 455.0625
       },
@@ -258,7 +258,7 @@
       },
       "title": {
         "left": 107,
-        "right": 345.109375,
+        "right": 338.984375,
         "top": 87.390625,
         "bottom": 120.734375
       },
