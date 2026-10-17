@@ -1,6 +1,6 @@
 {
   "status": "pass",
-  "root": "/home/user/pha-process-tool-v2",
+  "root": "D:\\My_PJT\\Application\\pha_optimizer_convertor",
   "checks": [
     "extrusion: start-up order with interlocks - the product grows from the die, the actuator closes on it, locks hold, the first cut frees a piece, and the running line returns closed and fully threaded",
     "sheet: start-up order with interlocks - the product grows from the die, the actuator closes on it, locks hold, the wound roll grows, and the running line returns closed and fully threaded",

@@ -1,9 +1,9 @@
 {
   "status": "passed",
   "artifact": "single-file/PHA-Process-Single.html",
-  "bytes": 68613986,
-  "sha256": "5e5258a864ab39a4dd481e55289d9aa77b5c694fcedb09dbd4ef73f0dd1bc9aa",
-  "sourceHash": "cec9f49625c48e33df4e2db361fb8d07ad43b3ff8b7cbedfbede7ad211f88a38",
+  "bytes": 68615782,
+  "sha256": "453acfe60ac6b705e520ccc96841c1dd85978785b3baea1850576f2ecade26cc",
+  "sourceHash": "bfbee702edaf6642d78128bc5a6f3f0b29f46bb56747a4051d998afc55847568",
   "hashBasis": "SHA-256 of UTF-8 text normalized to LF; binary bytes unchanged. Artifact bytes and hash use LF.",
   "checks": [
     "Canonical LF and CRLF checkouts generate byte-identical HTML and manifest without changing source files",
@@ -18,12 +18,12 @@
     "No uncaught browser errors, sibling-file requests or external API calls"
   ],
   "screenshots": [
-    "output/playwright/single-file/injection-file.png",
-    "output/playwright/single-file/compounding-file.png",
-    "output/playwright/single-file/flash-file.png",
-    "output/playwright/single-file/vent-file.png",
-    "output/playwright/single-file/vent-mobile-file.png",
-    "output/playwright/single-file/webgl-fallback-file.png"
+    "output\\playwright\\single-file\\injection-file.png",
+    "output\\playwright\\single-file\\compounding-file.png",
+    "output\\playwright\\single-file\\flash-file.png",
+    "output\\playwright\\single-file\\vent-file.png",
+    "output\\playwright\\single-file\\vent-mobile-file.png",
+    "output\\playwright\\single-file\\webgl-fallback-file.png"
   ],
   "errors": [],
   "unexpectedRequests": []
