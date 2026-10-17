@@ -4,13 +4,13 @@
   const saved=new Map();
   const descriptions={
     injection:['스크류·배럴 절개와 열린 금형, 타이바, 취출 구조를 확인하세요.','Inspect the cutaway screw/barrel, open mold, tie bars and ejection mechanism.'],
-    extrusion:['단축 압출기 → 스트랜드 수조 → 인취 롤 → 펠릿 절단기 구성입니다.','Single-screw extruder → strand bath → puller rolls → pelletizer.'],
+    extrusion:['단축 압출기 → 튜브 다이·진공 교정조 → 벨트 인취 → 플라잉 톱 구성입니다.','Single-screw extruder → tube die and vacuum calibration bath → belt haul-off → flying saw.'],
     sheet:['평다이와 3롤 업스택 배치의 예입니다. 실제 롤 배치는 설비마다 다릅니다.','A flat die and three-roll upstack example. Actual roll arrangements vary.'],
     castfilm:['평다이, 에어 갭, 칠 롤, 가이드 롤과 권취부의 경로를 확인하세요.','Trace the flat die, air gap, chill roll, guide rolls and winding path.'],
     blownfilm:['환형 다이와 에어링, 버블, 접힘부, 닙롤, 권취부의 구성입니다.','Annular die, air ring, bubble, collapsing frame, nip rolls and winder.'],
     blowmolding:['압출 블로우 성형의 패리슨, 분할 금형, 블로우 핀과 병 형상입니다.','Extrusion blow molding: parison, split mold, blow pin and formed bottle.'],
     compounding:['동방향 이축 스크류·혼련 디스크, 사이드 피더, 벤트와 펠릿화 후단입니다.','Co-rotating twin screws, kneading discs, side feeder, vent and pelletizing section.'],
-    straw:['Straw Optimizer v2의 Unreal 환형 다이 이미지입니다. 스크린 팩, 맨드렐과 중공 출구를 보여줍니다.','Unreal annular-die image from Straw Optimizer v2: screen pack, mandrel and hollow outlet.']
+    straw:['4열 튜브 헤드 → 진공 사이징조 → 냉각 수조 → 벨트 인취 → 회전 커터 구성의 스트로 라인입니다.','Straw line: four-outlet tube head → vacuum sizing tank → cooling bath → belt haul-off → rotary cutter.']
   };
   function mount(host,{kind,locale,start,stop,pause}){
     const en=locale==='en',t=(ko,english)=>en?english:ko,model=window.PHAEquipmentModels?.[kind];
@@ -20,7 +20,7 @@
     const choices=kind==='blowmolding'?[['travel','금형 이동','Mold travel']]:[
       ['screw','스크류 회전','Screw rotation'],
       ...(kind==='injection'?[['travel','스크류 전진','Screw advance']]:
-        [...(kind==='straw'?[]:[[kind==='sheet'||kind==='castfilm'?'roll':'haul','인취·냉각 롤','Puller / cooling roll']]),
+        [[kind==='sheet'||kind==='castfilm'?'roll':'haul','인취·냉각 롤','Puller / cooling roll'],
           ...(['sheet','castfilm','blownfilm'].includes(kind)?[['winder','권취 롤','Winding roll']]:[]),
           ...(['straw','extrusion','compounding'].includes(kind)?[['cutter','절단날','Cutter']]:[])])
     ];
@@ -28,7 +28,7 @@
     bar.innerHTML=`<div role="group" aria-label="${t('설비 보기 방식','Equipment view')}"><button type="button" data-study-view="model">${t('3D 조작','Interactive 3D')}</button><button type="button" data-study-view="photo">${t('Unreal 상세 이미지','Unreal detail')}</button></div><span>${t('설비 구조 살펴보기','Equipment inspection')}</span>`;
     host.prepend(bar);
     const figure=document.createElement('figure');figure.className='study-photo';figure.hidden=true;
-    figure.innerHTML=`<img src="assets/equipment/unreal/${kind}.webp?v=26" width="1600" height="900" decoding="async" alt="${descriptions[kind][en?1:0]}"><figcaption><span>${descriptions[kind][en?1:0]}</span><small>${t('Blender 형상 · Unreal 조명/재질 · 설명용 설비','Blender geometry · Unreal lighting/materials · Illustrative equipment')}</small></figcaption>`;
+    figure.innerHTML=`<img src="assets/equipment/unreal/${kind}.webp?v=27" width="1600" height="900" decoding="async" alt="${descriptions[kind][en?1:0]}"><figcaption><span>${descriptions[kind][en?1:0]}</span><small>${t('Blender 형상 · Unreal 조명/재질 · 설명용 설비','Blender geometry · Unreal lighting/materials · Illustrative equipment')}</small></figcaption>`;
     bar.after(figure);
     const panel=document.createElement('details');panel.className='equipment-study';panel.open=state.open;
     panel.innerHTML=`<summary>${t('회전수·속도 계산과 동작 확인','Calculate motion and inspect operation')}</summary><p class="study-basis">${t('예제 입력값입니다. 실측값으로 바꿔 비교하세요. 이 계산은 생산 조건을 추천하지 않습니다.','Example inputs. Replace them with measured values to compare. These calculations do not recommend production conditions.')}</p><div class="study-fields"><label>${t('확인할 동작','Mechanism')}<select data-study-drive>${choices.map(([key,ko,english])=>`<option value="${key}">${t(ko,english)}</option>`).join('')}</select></label>${[

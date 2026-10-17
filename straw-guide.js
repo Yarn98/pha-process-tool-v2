@@ -226,7 +226,7 @@
       style: 'color:#1e3c72;margin-bottom:8px',
       text: t('PHA 스트로 압출 가이드', 'PHA Straw Extrusion Guide'),
     }));
-    root.appendChild(el('figure',{className:'guide-equipment',html:`<div class="equipment-motion" data-equipment-model="straw"></div><figcaption>${t('Straw Optimizer V2의 Blender 원본을 활용한 조작 모델입니다. 다이 → 두 수조 → 벨트 인취 → 회전 절단. 호박색 고리는 흐름 방향 표시이며 실제 속도·냉각·절단 품질 해석이 아닙니다.','Interactive model adapted from the Straw Optimizer V2 Blender scene. Die → two baths → belt haul-off → rotary cutting. Amber rings show direction, not actual speed, cooling or cut-quality simulation.')}</figcaption>`}));
+    root.appendChild(el('figure',{className:'guide-equipment',html:`<div class="equipment-motion" data-equipment-model="straw"></div><figcaption>${t('실제 크기 비율의 4열 스트로 라인 조작 모델입니다. D50 압출기 → 튜브 헤드 → 진공 사이징조 → 냉각 수조 → 벨트 인취 → 회전 커터, 12 m/min·200 mm 절단 기준. 초록 표시는 흐름 방향이며 실제 냉각·절단 품질 해석이 아닙니다.','Real-scale four-lane straw line. D50 extruder → tube head → vacuum sizing tank → cooling bath → belt haul-off → rotary cutter, at 12 m/min and 200 mm cuts. Green markers show direction, not a cooling or cut-quality simulation.')}</figcaption>`}));
     root.appendChild(el('p', {
       style: 'color:#6b7280;margin-bottom:0',
       text: t(

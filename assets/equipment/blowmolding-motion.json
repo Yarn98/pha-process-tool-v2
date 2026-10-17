@@ -104,15 +104,20 @@
     {
       "key": "screw",
       "label": [
-        "스크류·배럴",
-        "Screw & barrel"
+        "스크류·배럴 단면",
+        "Screw & barrel cutaway"
       ],
       "center": [
         -0.6,
         1.5,
         0
       ],
-      "zoom": 3.2
+      "zoom": 3.4,
+      "position": [
+        0.6,
+        6.7,
+        6.0
+      ]
     },
     {
       "key": "finish",
@@ -125,7 +130,12 @@
         1.215,
         0.15
       ],
-      "zoom": 4.5
+      "zoom": 4.5,
+      "position": [
+        1.55,
+        3.715,
+        6.15
+      ]
     },
     {
       "key": "head",
@@ -138,8 +148,308 @@
         1.34,
         0
       ],
-      "zoom": 6
+      "zoom": 6,
+      "position": [
+        1.55,
+        3.34,
+        6.0
+      ]
     }
+  ],
+  "heat": {
+    "input": "process",
+    "reference": "process",
+    "title": [
+      "배럴·다이 존 온도 (입력한 설정값)",
+      "Barrel and die zone temperatures (entered set points)"
+    ],
+    "note": [
+      "공정 조건에 입력한 존 설정값을 색으로 표시합니다. 실측·용융온도가 아니며, 존 번호는 호퍼 쪽부터 다이 방향입니다. 참고 범위는 선택한 그레이드의 근거 또는 사용자 수정 범위입니다. 굵은 테두리는 범위 밖, 빗금은 미입력입니다.",
+      "Colours show the zone set points entered under process conditions, not measured or melt temperatures; zones are numbered from the hopper toward the die. Reference bands come from the selected grade source or your edits; a heavy outline marks values outside the band and hatching marks missing values."
+    ],
+    "scale_labels": {
+      "melt": [
+        "배럴·다이",
+        "Barrel & die"
+      ],
+      "tool": [
+        "금형",
+        "Mould"
+      ]
+    },
+    "zones": [
+      {
+        "key": "Z1",
+        "field": "zone1",
+        "label": [
+          "존 1",
+          "Zone 1"
+        ],
+        "group": "melt",
+        "shape": "half_band",
+        "x": [
+          -1.11893,
+          -0.82773
+        ],
+        "r": 0.056,
+        "center": [
+          1.5,
+          0.0
+        ],
+        "parent": null
+      },
+      {
+        "key": "Z2",
+        "field": "zone2",
+        "label": [
+          "존 2",
+          "Zone 2"
+        ],
+        "group": "melt",
+        "shape": "half_band",
+        "x": [
+          -0.7456,
+          -0.4544
+        ],
+        "r": 0.056,
+        "center": [
+          1.5,
+          0.0
+        ],
+        "parent": null
+      },
+      {
+        "key": "Z3",
+        "field": "zone3",
+        "label": [
+          "존 3",
+          "Zone 3"
+        ],
+        "group": "melt",
+        "shape": "half_band",
+        "x": [
+          -0.37227,
+          -0.08107
+        ],
+        "r": 0.056,
+        "center": [
+          1.5,
+          0.0
+        ],
+        "parent": null
+      },
+      {
+        "key": "head",
+        "field": "head",
+        "label": [
+          "패리슨 헤드",
+          "Parison head"
+        ],
+        "group": "melt",
+        "shape": "vband",
+        "center": [
+          0.35,
+          0
+        ],
+        "y": [
+          1.36,
+          1.58
+        ],
+        "r": 0.104,
+        "parent": null,
+        "full": true
+      },
+      {
+        "key": "die",
+        "field": "die",
+        "label": [
+          "다이 부싱",
+          "Die bushing"
+        ],
+        "group": "melt",
+        "shape": "vband",
+        "center": [
+          0.35,
+          0
+        ],
+        "y": [
+          1.34,
+          1.36
+        ],
+        "r": 0.036,
+        "parent": null,
+        "full": true
+      },
+      {
+        "key": "mold_a",
+        "field": "mold",
+        "label": [
+          "금형",
+          "Mould"
+        ],
+        "group": "tool",
+        "shape": "box",
+        "parent": "MoldLeft",
+        "min": [
+          0.258,
+          1.113,
+          -0.113
+        ],
+        "max": [
+          0.349,
+          1.317,
+          -0.0405
+        ]
+      },
+      {
+        "key": "mold_b",
+        "field": "mold",
+        "label": [
+          "금형",
+          "Mould"
+        ],
+        "group": "tool",
+        "shape": "box",
+        "parent": "MoldRight",
+        "min": [
+          0.351,
+          1.113,
+          -0.113
+        ],
+        "max": [
+          0.442,
+          1.317,
+          -0.0405
+        ]
+      }
+    ]
+  },
+  "lanes": [
+    {
+      "key": "head",
+      "ko": "헤드·패리슨",
+      "en": "Head & parison"
+    },
+    {
+      "key": "clamp",
+      "ko": "형체부",
+      "en": "Clamp"
+    },
+    {
+      "key": "shuttle",
+      "ko": "셔틀",
+      "en": "Shuttle"
+    },
+    {
+      "key": "pin",
+      "ko": "블로우 핀",
+      "en": "Blow pin"
+    },
+    {
+      "key": "takeout",
+      "ko": "취출",
+      "en": "Take-out"
+    }
+  ],
+  "steps": [
+    [
+      0.0,
+      0.4,
+      "패리슨 절단",
+      "Parison cut",
+      "head"
+    ],
+    [
+      0.4,
+      12.0,
+      "패리슨 연속 성장",
+      "Parison grows continuously",
+      "head"
+    ],
+    [
+      0.0,
+      7.0,
+      "금형 닫힘 유지",
+      "Mould closed",
+      "clamp"
+    ],
+    [
+      7.0,
+      7.5,
+      "형개",
+      "Mould opening",
+      "clamp"
+    ],
+    [
+      7.5,
+      11.5,
+      "열림 대기",
+      "Open, waiting",
+      "clamp"
+    ],
+    [
+      11.5,
+      12.0,
+      "금형 닫힘·포획",
+      "Close & capture",
+      "clamp"
+    ],
+    [
+      0.0,
+      0.5,
+      "블로우 위치로 이동",
+      "Shuttle to blow station",
+      "shuttle"
+    ],
+    [
+      8.2,
+      9.0,
+      "헤드 아래로 복귀",
+      "Return under the head",
+      "shuttle"
+    ],
+    [
+      0.5,
+      1.0,
+      "핀 삽입",
+      "Pin in",
+      "pin"
+    ],
+    [
+      1.0,
+      1.5,
+      "팽창",
+      "Inflate",
+      "pin"
+    ],
+    [
+      1.5,
+      6.5,
+      "보압·냉각",
+      "Hold & cool",
+      "pin"
+    ],
+    [
+      6.5,
+      7.0,
+      "배기",
+      "Exhaust",
+      "pin"
+    ],
+    [
+      7.0,
+      7.25,
+      "핀 복귀",
+      "Pin out",
+      "pin"
+    ],
+    [
+      7.5,
+      8.2,
+      "취출·컨베이어",
+      "Take-out to conveyor",
+      "takeout"
+    ]
   ],
   "stages": [
     [

@@ -1,4 +1,4 @@
-"""Package verified Unreal images; retain provenance and reuse Straw bytes exactly.
+"""Package verified Unreal images with their provenance.
 
 Only the kinds in output/unreal/render-manifest.json are re-packed; records of the other kinds in
 assets/equipment/unreal/manifest.json are kept unchanged, so one machine can be re-rendered alone.
@@ -6,18 +6,15 @@ assets/equipment/unreal/manifest.json are kept unchanged, so one machine can be 
 import hashlib
 import json
 from pathlib import Path
-import shutil
-import subprocess
 from PIL import Image, ImageStat, ImageDraw
 
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'output/unreal'
 DEST = ROOT / 'assets/equipment/unreal'
-SOURCE = ROOT.parent / 'straw-optimizer-v2'
 ORDER = ['injection', 'extrusion', 'sheet', 'castfilm', 'blownfilm', 'blowmolding', 'compounding', 'straw']
 DEST.mkdir(parents=True, exist_ok=True)
 rendered = json.loads((OUT / 'render-manifest.json').read_text(encoding='utf-8'))
-assert rendered and {r['kind'] for r in rendered} <= set(ORDER[:-1]), 'Unexpected Unreal batch'
+assert rendered and {r['kind'] for r in rendered} <= set(ORDER), 'Unexpected Unreal batch'
 existing_file = DEST / 'manifest.json'
 records = {r['kind']: r for r in json.loads(existing_file.read_text(encoding='utf-8'))} if existing_file.exists() else {}
 for record in rendered:
@@ -33,18 +30,6 @@ for record in rendered:
     record.update(webp=destination.relative_to(ROOT).as_posix(), webp_bytes=destination.stat().st_size,
                   webp_sha256=hashlib.sha256(destination.read_bytes()).hexdigest())
     records[record['kind']] = record
-if 'straw' not in records:
-    source_image = SOURCE / 'src/assets/process/annular-die-unreal.webp'
-    straw = DEST / 'straw.webp'
-    shutil.copyfile(source_image, straw)
-    source_manifest = json.loads((SOURCE / 'output/unreal/render-manifest.json').read_text(encoding='utf-8'))
-    records['straw'] = {'kind': 'straw', 'source_repository': 'Yarn98/straw-optimizer-v2',
-        'source_commit': subprocess.check_output(['git', '-C', str(SOURCE), 'rev-parse', 'HEAD'], text=True).strip(),
-        'source_asset': 'src/assets/process/annular-die-unreal.webp',
-        'source_task': '01a072b6-2784-7172-903c-201486003681',
-        'webp': straw.relative_to(ROOT).as_posix(), 'webp_bytes': straw.stat().st_size,
-        'webp_sha256': hashlib.sha256(straw.read_bytes()).hexdigest(),
-        'reuse': 'Unmodified bytes', 'original_render': source_manifest}
 ordered = [records[kind] for kind in ORDER if kind in records]
 existing_file.write_text(json.dumps(ordered, indent=2) + '\n', encoding='utf-8')
 # A compact contact sheet for human review; the individual images stay unchanged.

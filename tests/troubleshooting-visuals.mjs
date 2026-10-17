@@ -67,7 +67,7 @@ try{
   await open(page,'pha-kb-15','model');await ready(page);await page.locator('[data-ts-context="true"]').click();await ready(page);assert.equal((await state(page)).context,true);
   await phase(page,10);const contextState=await state(page);await phase(page,80);assert.ok((await state(page)).frames>contextState.frames);
   await page.locator('#tsVisualDialog').screenshot({path:resolve(out,'straw-reused-equipment.png')});await close(page);
-  record('Existing Straw Optimizer-derived equipment loads with its original Blender animation');
+  record('Existing straw-line equipment loads with its Blender animation');
 
   await page.evaluate(()=>setLanguage('en'));
   for(const entry of data.entries){await open(page,entry.kb_id,'flow');assert.ok((await page.locator('.ts-flow-stop').textContent()).includes(kb.find(x=>x.id===entry.kb_id).stop_conditions));assert.equal(await page.locator('#tsVisualClose').textContent(),'Close ×');await close(page);}
@@ -101,7 +101,7 @@ try{
   const oc=await browser.newContext({viewport:{width:1280,height:1000},reducedMotion:'reduce'}),op=await app(oc);
   await op.evaluate(()=>localStorage.setItem('ts-visual-retention-fixture','preserve'));
   await op.evaluate(async()=>{await navigator.serviceWorker.ready;});
-  await op.waitForFunction(async()=>{const cache=await caches.open('pha-cache-v26-realistic-equipment');const keys=await cache.keys();return keys.some(k=>k.url.includes('thermoforming.glb?v=26'))&&keys.some(k=>k.url.includes('troubleshooting-viewer.js?v=26'));},{},{timeout:60000});
+  await op.waitForFunction(async()=>{const cache=await caches.open('pha-cache-v27-injection-level-lines');const keys=await cache.keys();return keys.some(k=>k.url.includes('thermoforming.glb?v=27'))&&keys.some(k=>k.url.includes('troubleshooting-viewer.js?v=27'));},{},{timeout:60000});
   await op.reload({waitUntil:'domcontentloaded'});await unlock(op);await op.locator('.tab[data-tab="ts"]').click();await op.waitForFunction(()=>!!navigator.serviceWorker.controller);
   await oc.setOffline(true);await op.reload({waitUntil:'domcontentloaded'});await unlock(op);await op.locator('.tab[data-tab="ts"]').click();
   for(const entry of data.entries){await open(op,entry.kb_id,'model');await ready(op);assert.ok((await state(op)).compatible);await close(op);}

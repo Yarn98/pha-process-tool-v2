@@ -1,20 +1,60 @@
 /* Local Blender GLB player for seven educational process lines; the stage comes from machine-viewer.js. */
 (function(){
   'use strict';
-  const VERSION='?v=26',viewer=()=>window.PHAMachineViewer;
+  const VERSION='?v=27',viewer=()=>window.PHAMachineViewer;
   const reduced=matchMedia('(prefers-reduced-motion: reduce)'),saved=new Map(),cache=new Map();
   let host=null,meta=null,state=null,asset=null,engine=null,enginePending=null,onStage=()=>{};
-  let locale='ko',token=0,raf=0,lastTick=0,unwatch=null,studyPanel=null,pendingPaint=0;
+  let locale='ko',token=0,raf=0,lastTick=0,unwatch=null,studyPanel=null,pendingPaint=0,chart=null;
   const t=(ko,en)=>locale==='en'?en:ko,text=pair=>pair[locale==='en'?1:0];
   const clamp=(value,min,max)=>Math.min(max,Math.max(min,value));
-  // Whole turns a spin clip makes per loop: from the rig metadata, else the older rigs' two turns
-  // (one for winders, cutters and the straw line).
-  const turnsOf=key=>meta.turns?.[key]??(meta.id==='straw'||key==='winder'||key==='cutter'?1:2);
+  // Whole turns a spin clip makes per loop, as every rig declares them (meta.turns).
+  const turnsOf=key=>meta.turns?.[key]??1;
   window.phaSyncMachineOverlay=()=>document.body.classList.toggle('pha-machine-manual',!!document.querySelector('.tabpage.active :is(.equipment-motion,.injection-motion):not(.is-study-photo) .motion-manual:not([hidden]),.tabpage.active .equipment-study[open]'));
 
   function initial(definition){
     const values=Object.fromEntries(definition.controls.map(control=>[control.key,definition.initial?.[control.key]||0]));
-    return {time:.7,speed:1,playing:!reduced.matches,mode:'cycle',focus:'all',visible:false,ready:false,frames:0,actual:{...values},target:{...values},released:false,drop:0};
+    return {time:.7,speed:1,playing:!reduced.matches,mode:'cycle',focus:'all',visible:false,ready:false,frames:0,actual:{...values},target:{...values},released:false,drop:0,heatOn:false};
+  }
+  /* Zone temperatures (meta.heat): entered set points coloured on the shared heat overlay. Process-tab lines read
+     the process form (#f_zone1 …) and compare with the grade's reference; compounding and straw keep the set
+     points typed into the panel (meta.heat.input "panel"), compared with a registry grade or no reference. */
+  function heatEntries(){try{return JSON.parse(localStorage.getItem('pha_heat_'+meta.id)||'{}');}catch{return {};}}
+  function heatRead(field){return meta.heat.input==='panel'?heatEntries()[field]??'':document.getElementById('f_'+field)?.value??'';}
+  function heatRange(field){
+    const reference=meta.heat.reference;
+    if(reference==='process'){
+      try{return getReco(profileOf(document.getElementById('grade')?.value),meta.id)?.[field]||null;}catch{return null;}
+    }
+    if(reference?.grade){
+      let value=window.PHAEvidence?.GRADES?.[reference.grade];
+      for(const key of meta.heat.zones.find(zone=>zone.field===field)?.ref||[])value=value?.[key];
+      if(Array.isArray(value)&&value.length===3&&Array.isArray(value[2]))value=value[2];          // TDS stage row
+      return Array.isArray(value)&&value.length===2?value:null;
+    }
+    return null;
+  }
+  function refreshHeat(keepInputs=false){
+    if(!host||!meta?.heat||!asset?.heat)return;
+    const zones=meta.heat.zones,rows=viewer().heatRows(zones,heatRead,heatRange),scales=viewer().heatScales(rows);
+    asset.heat.update(viewer().heatValues(zones,rows,scales));asset.heat.setVisible(state.heatOn);
+    const panel=host.querySelector('.motion-heat');
+    if(panel){
+      panel.hidden=!state.heatOn;
+      const options={rows,scales,colorOf:asset.heat.colorOf,locale,scaleLabels:meta.heat.scale_labels,editable:meta.heat.input==='panel'};
+      if(keepInputs){
+        // Typing in a panel input: refresh swatches, statuses and scales without replacing the inputs.
+        const draft=document.createElement('div');draft.innerHTML='<ol class="heat-zones"></ol><div class="heat-scale"></div>';
+        viewer().renderHeatPanel(draft,options);
+        panel.querySelector('.heat-scale').innerHTML=draft.querySelector('.heat-scale').innerHTML;
+        const fresh=draft.querySelectorAll('.heat-zone');
+        panel.querySelectorAll('.heat-zone').forEach((item,i)=>{
+          item.className=fresh[i].className;item.firstElementChild.replaceWith(fresh[i].firstElementChild);
+          item.querySelector('small').replaceWith(fresh[i].querySelector('small'));
+        });
+      }else viewer().renderHeatPanel(panel,options);
+    }
+    host.querySelector('[data-eq="heat"]')?.setAttribute('aria-pressed',String(state.heatOn));
+    paint();
   }
   function stop(){if(raf)cancelAnimationFrame(raf);raf=0;lastTick=0;}
   function changing(){return state?.mode==='manual'&&meta.controls.some(c=>Math.abs(state.actual[c.key]-state.target[c.key])>.001);}
@@ -113,6 +153,7 @@
       if(notice.textContent!==message)notice.textContent=message;
     }else notice.textContent=t('슬라이더 또는 키보드 화살표로 부품과 흐름 표시를 조절합니다.','Use sliders or keyboard arrows to move the mechanisms and flow markers.');
     host.querySelectorAll('[data-eq-stage]').forEach(button=>button.setAttribute('aria-pressed',String(!manual&&Number(button.dataset.eqStage)===phase)));
+    chart?.setTime(state.time);host.querySelector('.motion-cycle')?.classList.toggle('is-idle',state.mode!=='cycle');
     if(layoutChanged&&state.ready)resize();
     if(state.mode==='cycle')onStage(phase);
   }
@@ -149,7 +190,9 @@
   function resetView(key='all',side=false){
     if(!engine||!meta)return;
     const view=meta.views.find(v=>v.key===key)||meta.views[0],center=view.center;
-    engine.camera.position.set(center[0]+(side?0:5),center[1]+(side?1:4),side?16:14);
+    // A close-up may state its own camera position; otherwise the line's oblique front view.
+    if(view.position&&!side)engine.camera.position.set(...view.position);
+    else engine.camera.position.set(center[0]+(side?0:5),center[1]+(side?1:4),side?16:14);
     engine.controls.target.set(...center);engine.camera.zoom=view.zoom;engine.camera.updateProjectionMatrix();engine.controls.update();
     state.focus=view.key;host.querySelector('[data-eq="focus"]').value=view.key;paint();
   }
@@ -160,6 +203,8 @@
     const height=Math.round(compact?Math.min(width*.55,220):width*(width<480?.72:meta.heightRatio||.5));viewport.style.height=height+'px';
     engine.renderer.setSize(width,height,false);
     viewer().frameOrtho(engine.camera,width,height,meta.span[0],meta.span[1],1.08);paint();
+    const cycleHost=host.querySelector('.cycle-host');
+    if(chart&&cycleHost?.clientWidth){chart.render(cycleHost.clientWidth);chart.setTime(state.time);}
   }
   async function ensureEngine(){
     if(engine)return;
@@ -179,14 +224,15 @@
     const groups=viewer().groupClips(THREE,gltf.scene,gltf.animations);
     const missing=definition.controls.filter(control=>!groups.has(control.key)).map(control=>control.key);
     if(missing.length)throw new Error('Missing Blender mechanism animation: '+missing.join(', '));
-    const loaded={model:gltf.scene,groups,nodes,members};cache.set(definition.id,loaded);return loaded;
+    const heat=definition.heat?viewer().createHeatOverlay(engine,gltf.scene,definition.heat.zones):null;
+    const loaded={model:gltf.scene,groups,nodes,members,heat};cache.set(definition.id,loaded);return loaded;
   }
   function trimCache(){
     while(cache.size>2){
       const entry=[...cache].find(([,value])=>value!==asset);if(!entry)break;
       const [key,old]=entry;
       old.groups.forEach(group=>group.mixer.stopAllAction());
-      viewer().disposeModel(old.model);cache.delete(key);
+      old.heat?.dispose();viewer().disposeModel(old.model);cache.delete(key);
     }
   }
   function fallback(){
@@ -199,7 +245,7 @@
   }
   function detach(){
     token++;stopStudy();stop();if(state)state.visible=false;unwatch?.();unwatch=null;
-    engine?.renderer.domElement.remove();host=null;onStage=()=>{};window.phaSyncMachineOverlay();
+    engine?.renderer.domElement.remove();host=null;onStage=()=>{};chart=null;window.phaSyncMachineOverlay();
   }
   async function mount(element,options={}){
     const definition=window.PHAEquipmentModels?.[options.kind||element.dataset.equipmentModel];if(!definition)return;
@@ -207,8 +253,10 @@
     if(!saved.has(meta.id))saved.set(meta.id,initial(meta));state=saved.get(meta.id);state.ready=false;
     host.dataset.motionState='loading';
     host.innerHTML=`<div class="motion-load" role="status">${t('움직이는 설비 불러오는 중…','Loading the animated equipment…')}</div><img class="motion-poster" src="${meta.poster+VERSION}" width="1280" height="720" alt="${t('내부 구조와 수지 경로를 보여주는 설비 개념도','Equipment concept showing internal mechanisms and the polymer path')}"><div class="motion-viewport" hidden></div>
-      <div class="motion-toolbar"><button type="button" data-eq="play" disabled>${t('재생','Play')}</button><label>${t('재생 속도','Playback speed')}<select data-eq="speed" aria-label="${t('설명 재생 속도','Illustration playback speed')}" disabled><option value="0.5">0.5×</option><option value="1">1×</option><option value="1.5">1.5×</option></select></label><button type="button" data-eq="manual" aria-pressed="false" disabled>${t('직접 조작','Manual controls')}</button><label>${t('관찰 부위','View')}<select data-eq="focus" aria-label="${t('관찰 부위','Inspection area')}" disabled>${meta.views.map(view=>'<option value="'+view.key+'">'+text(view.label)+'</option>').join('')}</select></label><button type="button" data-eq="side" disabled>${t('측면 보기','Side view')}</button><button type="button" data-eq="view" disabled>${t('시점 초기화','Reset view')}</button><span class="motion-phase"></span></div>
+      <div class="motion-toolbar"><button type="button" data-eq="play" disabled>${t('재생','Play')}</button><label>${t('재생 속도','Playback speed')}<select data-eq="speed" aria-label="${t('설명 재생 속도','Illustration playback speed')}" disabled><option value="0.5">0.5×</option><option value="1">1×</option><option value="1.5">1.5×</option></select></label><button type="button" data-eq="manual" aria-pressed="false" disabled>${t('직접 조작','Manual controls')}</button><label>${t('관찰 부위','View')}<select data-eq="focus" aria-label="${t('관찰 부위','Inspection area')}" disabled>${meta.views.map(view=>'<option value="'+view.key+'">'+text(view.label)+'</option>').join('')}</select></label><button type="button" data-eq="side" disabled>${t('측면 보기','Side view')}</button><button type="button" data-eq="view" disabled>${t('시점 초기화','Reset view')}</button>${meta.heat?'<button type="button" data-eq="heat" aria-pressed="false" disabled>'+t('온도 표시','Temperatures')+'</button>':''}<span class="motion-phase"></span></div>
       <label class="motion-progress">${t('공정 진행 위치','Cycle position')}<input type="range" data-eq="progress" min="0" max="100" step=".1" aria-label="${t('공정 진행 위치','Cycle position')}" disabled></label><p class="motion-hint">${t('드래그 회전 · 휠/두 손가락 확대 · ','Drag to rotate · Wheel/pinch to zoom · ')}${meta.amberFlow?t('호박색 고리는 흐름 방향 표시','Amber rings mark the flow direction'):t('밝은 초록 점은 흐름 방향 표시','Bright green markers show flow direction')}</p>
+      ${meta.lanes?'<figure class="motion-cycle" hidden><div class="cycle-host"></div><figcaption>'+t('장비별 사이클 단계 · 가로축은 재생 시간(초) · 누르거나 끌면 그 시점으로 이동','Cycle by actuator · horizontal axis in playback seconds · press or drag to jump there')+'</figcaption></figure>':''}
+      ${meta.heat?'<div class="motion-heat" hidden><div class="heat-head"><strong>'+text(meta.heat.title)+'</strong></div><ol class="heat-zones"></ol><div class="heat-scale"></div><p class="heat-note">'+text(meta.heat.note)+'</p></div>':''}
       <div class="motion-manual" hidden><p class="motion-manual-intro">${meta.id==='blowmolding'?t('패리슨 토출 → 금형 닫힘 → 핀 삽입 → 팽창 → 핀 복귀 → 금형 개방 순서로 조작하세요.','Extrude the parison → close the mold → insert the pin → inflate → retract the pin → open the mold.'):t('부품별로 회전·이동을 멈춰 관찰하거나 위치를 직접 바꿔보세요.','Inspect individual mechanisms at rest or adjust their positions directly.')}</p><div class="motion-axes">${meta.controls.map(control=>'<label class="motion-axis"><span>'+text(control.label)+'<output aria-live="off" data-eq-value="'+control.key+'"></output></span><input type="range" data-eq-axis="'+control.key+'" min="0" max="'+control.max+'" step="'+control.step+'" aria-label="'+text(control.label)+'" disabled></label>').join('')}</div><p class="motion-interlock" role="status"></p><div class="motion-manual-footer"><button type="button" data-eq="reset" disabled>${t('초기 위치','Reset model')}</button><small>${t('각도·%는 모형 위치입니다. 실제 RPM·속도·생산 설정값이 아닙니다.','Angles and % are model positions, not real RPM, speeds or production settings.')}</small></div></div>
       ${options.stages!==false?'<div class="motion-stages">'+meta.stages.map((name,index)=>'<button type="button" data-eq-stage="'+index+'" aria-pressed="false">'+String(index+1).padStart(2,'0')+' · '+text(name)+'</button>').join('')+'</div>':''}`;
     studyPanel=window.PHAEquipmentStudy?.mount(host,{kind:meta.id,locale,start:startStudy,stop:stopStudy,pause:()=>{state.playing=false;stop();update();}});
@@ -239,8 +287,20 @@
         state.target[control.key]=clamp(value,0,control.max);if(reduced.matches){manualStep(10);paint();}else schedule();update();
       });
       host.querySelectorAll('[data-eq-stage]').forEach(button=>button.onclick=()=>seek(stageStart(Number(button.dataset.eqStage))));
+      const heatButton=host.querySelector('[data-eq="heat"]');
+      if(heatButton)heatButton.onclick=()=>{state.heatOn=!state.heatOn;refreshHeat();};
+      host.querySelector('.motion-heat')?.addEventListener('input',event=>{
+        const field=event.target.dataset.heatField;if(!field)return;
+        const entries=heatEntries();entries[field]=event.target.value;
+        try{localStorage.setItem('pha_heat_'+meta.id,JSON.stringify(entries));}catch{}
+        refreshHeat(true);
+      });
+      if(meta.lanes){
+        chart=viewer().createCycleChart(host.querySelector('.cycle-host'),meta,{locale,stageNames:meta.stages.map(text),onSeek:seek});
+        host.querySelector('.motion-cycle').hidden=false;
+      }
       unwatch=viewer().watch(host,{onResize:resize,onVisible:visible=>{state.visible=visible;schedule();},threshold:.01});
-      if(prior!==meta.id||!engine.camera.position.lengthSq())resetView(state.focus);resize();paint();update();
+      if(prior!==meta.id||!engine.camera.position.lengthSq())resetView(state.focus);resize();paint();update();refreshHeat();
     }catch(error){if(current===token){state.error=String(error);fallback();}}
   }
   function syncSurface(){
@@ -251,6 +311,10 @@
     mount(element,{kind:element.dataset.equipmentModel,locale:typeof LANG!=='undefined'?LANG:'ko'});
   }
   document.addEventListener('visibilitychange',schedule);
+  // Entered set points, grade/process changes and saved reference edits update an open heat map at once.
+  document.addEventListener('input',event=>{if(state?.heatOn&&meta?.heat?.input!=='panel'&&event.target.closest?.('#dynamicFields'))refreshHeat();});
+  document.addEventListener('change',event=>{if(state?.heatOn&&['grade','moldMode','process'].includes(event.target.id))setTimeout(()=>refreshHeat(),0);});
+  document.addEventListener('click',event=>{if(state?.heatOn&&event.target.closest?.('#modalSaveBtn'))setTimeout(()=>refreshHeat(),0);});
   window.addEventListener('pha-language-change',()=>requestAnimationFrame(syncSurface));
   reduced.addEventListener('change',event=>{if(event.matches&&state){state.playing=false;stopStudy();stop();if(state.mode==='manual'){manualStep(10);paint();}update();}});
   window.PHAEquipmentMotion={mount,detach,syncSurface,seekStage(index){if(meta&&index>=0&&index<4)seek(stageStart(index));},getState(){return state?{...state,kind:meta.id,actual:{...state.actual},target:{...state.target}}:null;}};
@@ -258,6 +322,8 @@
     ...window.PHAEquipmentMotion.getState(),cached:[...cache.keys()],groups:asset?Object.fromEntries([...asset.groups].map(([key,group])=>[key,{duration:group.duration,tracks:group.tracks}])):{},
     nodes:asset?Object.fromEntries(Object.entries(asset.members).map(([group,nodes])=>[group,nodes.map(node=>({name:node.name,position:node.position.toArray(),world:node.getWorldPosition(new engine.THREE.Vector3()).toArray(),rotation:node.quaternion.toArray(),scale:node.scale.toArray(),visible:node.visible,morph:node.morphTargetInfluences||null}))])):{},
     camera:engine?{zoom:engine.camera.zoom,target:engine.controls.target.toArray()}:null,
-    quality:engine?{level:engine.governor.level,cost:engine.governor.cost}:null
+    quality:engine?{level:engine.governor.level,cost:engine.governor.cost}:null,
+    heat:{on:!!state?.heatOn,zones:asset?.heat?Object.fromEntries(asset.heat.keys.map(key=>{const mesh=asset.model.getObjectByName('PHAHeat_'+key);return [key,mesh?{visible:mesh.visible,color:'#'+mesh.material.color.getHexString(),hatched:!!mesh.material.map,outline:!!mesh.children[0]?.visible,parent:mesh.parent?.name}:null];})):null},
+    chart:chart?{now:[...document.querySelectorAll('.tabpage.active .cycle-bar.is-now title')].map(el=>el.textContent)}:null
   });
 })();

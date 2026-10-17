@@ -398,11 +398,12 @@ def heater_band(name, x, radius, width, mat, terminal_mat, center=(0, 0), parent
 
 
 def hydraulic_cylinder(name, start, end, bore_r, rod_r, mats, parent=None, rod_parent=None,
-                       rod_length=None, ports=True):
+                       rod_length=None, ports=True, rod_inset=None):
     """Tie-rod hydraulic cylinder from ``start`` (cap end) to ``end`` (rod end) on X.
 
-    Returns (body, rod). The rod points from ``end`` outward along +X or -X and
-    is a separate object so a mechanism can move it.
+    Returns (body, rod). The rod reaches ``rod_length`` outward from ``end`` along +X or -X and
+    ``rod_inset`` (default 0.6 of the body) back inside it; it is a separate object so a mechanism
+    can move it. A rod that retracts by a stroke s needs rod_inset + s inside the body.
     """
     (x0, y, z), (x1, _, _) = start, end
     direction = 1 if x1 > x0 else -1
@@ -424,8 +425,9 @@ def hydraulic_cylinder(name, start, end, bore_r, rod_r, mats, parent=None, rod_p
     if parent is not None:
         body.parent = parent
     rod_length = rod_length or length * .9
-    rod = cylinder(name + ' rod', (x1 + direction * rod_length / 2 - direction * length * .3, y, z),
-                   rod_r, rod_length + length * .6, 'X', mats['chrome'], parent=rod_parent)
+    inset = length * .6 if rod_inset is None else rod_inset
+    rod = cylinder(name + ' rod', (x1 + direction * (rod_length - inset) / 2, y, z),
+                   rod_r, rod_length + inset, 'X', mats['chrome'], parent=rod_parent)
     return body, rod
 
 
@@ -824,8 +826,69 @@ def single_screw_extruder(name, D, ld, die_x, axis_z, mats, frames, turns, zones
                                 center=(0, axis_z), mat=mats['chrome'])
     reparent(screw, owner)
     spin(owner, 'screw', turns, frames)
+    heaters = [(x_barrel + D + zone_len * k + zone_len * .11, x_barrel + D + zone_len * (k + 1) - zone_len * .11) for k in range(zones)]
     return {'body': body, 'hopper': hopper, 'screw': owner, 'die': (die_x, 0, axis_z), 'throat_x': x_throat + 1.5 * D,
-            'hopper_ports': ports, 'x_rear': x_motor - .1, 'frame_top': frame_top, 'r_out': r_out}
+            'hopper_ports': ports, 'x_rear': x_motor - .1, 'frame_top': frame_top, 'r_out': r_out, 'heaters': heaters,
+            'axis_z': axis_z}
+
+
+# ------------------------------------------------------------------ heat-map zone metadata
+# Zone descriptors for the web heat overlay (machine-viewer.js createHeatOverlay), in glTF/three.js Y-up
+# coordinates of the rest pose. ``field`` is the input the zone reads; ``group`` "melt" or "tool" picks the
+# colour scale. Bands and boxes cover the non-operator half so the cutaways stay open; parts without a cutaway
+# (flat dies, heads, adapters) are wrapped whole so the colour reads from the operator side.
+
+def heat_band(key, field, label, x0, x1, r, axis_z, group='melt', parent=None, full=False):
+    """Band around a horizontal (X) axis: barrel heater zones (rear half), round dies and adapters (``full``)."""
+    zone = {'key': key, 'field': field, 'label': label, 'group': group, 'shape': 'half_band', 'x': [round(x0, 5), round(x1, 5)],
+            'r': round(r, 5), 'center': [round(axis_z, 5), 0.0], 'parent': parent}
+    return {**zone, 'full': True} if full else zone
+
+
+def heat_box(key, field, label, lo, hi, group='melt', parent=None, half=True):
+    """Box from Blender corners ``lo``/``hi`` (Z-up), clipped to the non-operator half (Blender +Y) unless ``half`` is False."""
+    y0 = max(lo[1], 0.0) if half else lo[1]
+    a, b = (lo[0], hi[2], -y0), (hi[0], lo[2], -hi[1])
+    return {'key': key, 'field': field, 'label': label, 'group': group, 'shape': 'box', 'parent': parent,
+            'min': [round(min(a[i], b[i]), 5) for i in range(3)], 'max': [round(max(a[i], b[i]), 5) for i in range(3)]}
+
+
+def heat_roll_ends(key, field, label, x, z, r, face, group='tool', width=.04):
+    """Bands at both ends of a roll whose axis runs along Blender Y (the face itself stays visible)."""
+    return {'key': key, 'field': field, 'label': label, 'group': group, 'shape': 'roll_ends', 'x': round(x, 5), 'y': round(z, 5),
+            'r': round(r, 5), 'z': [round(-face / 2, 5), round(face / 2, 5)], 'width': width}
+
+
+def heat_vband(key, field, label, x, y, z0, z1, r, group='melt', parent=None, full=False):
+    """Band around a vertical axis at Blender (x, y) between heights z0 and z1 (annular dies, heads): the rear half,
+    or all round (``full``) on a body without a cutaway."""
+    zone = {'key': key, 'field': field, 'label': label, 'group': group, 'shape': 'vband', 'center': [round(x, 5), round(-y, 5)],
+            'y': [round(z0, 5), round(z1, 5)], 'r': round(r, 5), 'parent': parent}
+    return {**zone, 'full': True} if full else zone
+
+
+def extruder_heat(ext, fields):
+    """One half band per heater zone of single_screw_extruder, numbered from the hopper (zone 1) to the die."""
+    assert len(fields) == len(ext['heaters']), (fields, len(ext['heaters']))
+    return [heat_band('Z%d' % (i + 1), field, ['존 %d' % (i + 1), 'Zone %d' % (i + 1)], x0, x1, ext['r_out'] + .012, ext['axis_z'])
+            for i, (field, (x0, x1)) in enumerate(zip(fields, ext['heaters']))]
+
+
+def camera_view(key, label, target, offset=None, zoom=1.0):
+    """Player view (three.js coordinates): look at Blender ``target`` from ``target + offset``; without an offset the
+    player uses its oblique front view."""
+    three = lambda v: [round(v[0], 4), round(v[2], 4), round(-v[1], 4)]
+    view = {'key': key, 'label': label, 'center': three(target), 'zoom': zoom}
+    if offset is not None:
+        view['position'] = three([t + o for t, o in zip(target, offset)])
+    return view
+
+
+PROCESS_HEAT_NOTE = ['공정 조건에 입력한 존 설정값을 색으로 표시합니다. 실측·용융온도가 아니며, 존 번호는 호퍼 쪽부터 다이 방향입니다. '
+                     '참고 범위는 선택한 그레이드의 근거 또는 사용자 수정 범위입니다. 굵은 테두리는 범위 밖, 빗금은 미입력입니다.',
+                     'Colours show the zone set points entered under process conditions, not measured or melt temperatures; zones are '
+                     'numbered from the hopper toward the die. Reference bands come from the selected grade source or your edits; a '
+                     'heavy outline marks values outside the band and hatching marks missing values.']
 
 
 def arc_xz(cx, cz, r, a0, a1, n=24, y=0.0):

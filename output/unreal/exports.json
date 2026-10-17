@@ -327,11 +327,11 @@
     "blender": "5.2.1 LTS",
     "source": "assets/equipment/extrusion-motion.blend",
     "frame": 55,
-    "source_sha256": "e05db86b7a3b787564f663436b044135c027dd4958b65ec58937dee724510694",
+    "source_sha256": "8e07398507b047a81fc8c97cc1241b0651740fccb6c04abe0a695c2b98a225d3",
     "fbx": "output/unreal/fbx/extrusion.fbx",
-    "fbx_sha256": "00608fe342cfb5a784825249ee66d666207a156081e786c9f2b4bb853cb3df10",
+    "fbx_sha256": "558851f2b66e814734f5919862cd57075b3db6502454ccb4c1726f5d2a72da3b",
     "objects": 107,
-    "vertices": 19052,
+    "vertices": 18768,
     "materials": {
       "Paint / anthracite base": {
         "color": [
@@ -943,11 +943,11 @@
     "blender": "5.2.1 LTS",
     "source": "assets/equipment/castfilm-motion.blend",
     "frame": 55,
-    "source_sha256": "e7371b2d33a0c33507311356dfe738b12eb31a8b941af58d2c7cbcee2e738cb4",
+    "source_sha256": "06813c337283456ce70e74063ff946bab0707bc55310a0a6a20e352a897e7b98",
     "fbx": "output/unreal/fbx/castfilm.fbx",
-    "fbx_sha256": "4fb7beeeb90bf365a16dc1acfde75f90ce4dd89fb5e64fa14574e081adc4b26c",
+    "fbx_sha256": "947ed6050786ddcd997218aed143980b40f9e6f0b09a7cc9a5c12230d43d0594",
     "objects": 61,
-    "vertices": 20596,
+    "vertices": 20028,
     "materials": {
       "Paint / anthracite base": {
         "color": [
@@ -1246,11 +1246,11 @@
     "blender": "5.2.1 LTS",
     "source": "assets/equipment/blownfilm-motion.blend",
     "frame": 55,
-    "source_sha256": "a2b06029e370a0401322a8d6626149b5719173b25fbe70e0c1698dd68332fef4",
+    "source_sha256": "6c3b59507aa3fc3855094495c0cd6e922d53c09045fb93c80a142880384723e0",
     "fbx": "output/unreal/fbx/blownfilm.fbx",
-    "fbx_sha256": "0717e870ae9a37cc585d79d1a9f61128d6b982f6bd4d42a6f21b1b47a841183e",
+    "fbx_sha256": "7ac14eff6e0d09345418252c45fcd721c6aa8c34f2de80bd58cd9d6528c17ff4",
     "objects": 77,
-    "vertices": 25926,
+    "vertices": 25642,
     "materials": {
       "Paint / anthracite base": {
         "color": [
@@ -1529,11 +1529,11 @@
     "blender": "5.2.1 LTS",
     "source": "assets/equipment/blowmolding-motion.blend",
     "frame": 165,
-    "source_sha256": "6b41d8ca3f42e5a1d1a5eef573daaeff1f06ee2f67a818ff640604eced4a8c96",
+    "source_sha256": "66acc355c79ae23863ca3258497ba3cda8a2af8764078e019f6185df21eac6f2",
     "fbx": "output/unreal/fbx/blowmolding.fbx",
-    "fbx_sha256": "70dfad6db5f5ab2a93798d65e421706bf4b108f6ce0ab0af01ade97c2cea52cd",
-    "objects": 36,
-    "vertices": 20272,
+    "fbx_sha256": "d4bdb43b6443bd45ce395989bd17bfb2f0e9f98757fd86d8b089a98124e2c2ff",
+    "objects": 39,
+    "vertices": 19920,
     "materials": {
       "Paint / anthracite base": {
         "color": [
@@ -2196,6 +2196,329 @@
         ],
         "metallic": 0.0,
         "roughness": 0.35,
+        "alpha": 1.0
+      },
+      "Polymer / bright marker": {
+        "color": [
+          0.21223,
+          0.65141,
+          0.32314
+        ],
+        "metallic": 0.0,
+        "roughness": 0.3,
+        "alpha": 1.0
+      }
+    }
+  },
+  {
+    "kind": "straw",
+    "blender": "5.2.1 LTS",
+    "source": "assets/equipment/straw-motion.blend",
+    "frame": 55,
+    "source_sha256": "412a12942c6088cc5eb5324547771db3fbf3d98af88067ca24d5113890987545",
+    "fbx": "output/unreal/fbx/straw.fbx",
+    "fbx_sha256": "7dd3cecbda412a77dc51515d56f03b223d22e50111e262a904b5ed8009fd87ea",
+    "objects": 135,
+    "vertices": 30870,
+    "materials": {
+      "Paint / anthracite base": {
+        "color": [
+          0.03434,
+          0.04092,
+          0.04374
+        ],
+        "metallic": 0.0,
+        "roughness": 0.58,
+        "alpha": 1.0
+      },
+      "Rubber / black hose": {
+        "color": [
+          0.01298,
+          0.0137,
+          0.01521
+        ],
+        "metallic": 0.0,
+        "roughness": 0.82,
+        "alpha": 1.0
+      },
+      "Steel / blackened": {
+        "color": [
+          0.06848,
+          0.07619,
+          0.08438
+        ],
+        "metallic": 0.85,
+        "roughness": 0.48,
+        "alpha": 1.0
+      },
+      "Steel / machined": {
+        "color": [
+          0.54572,
+          0.56471,
+          0.57112
+        ],
+        "metallic": 1.0,
+        "roughness": 0.36,
+        "alpha": 1.0
+      },
+      "Plastic / black": {
+        "color": [
+          0.007,
+          0.0075,
+          0.00802
+        ],
+        "metallic": 0.0,
+        "roughness": 0.55,
+        "alpha": 1.0
+      },
+      "Paint / forest green": {
+        "color": [
+          0.02732,
+          0.11193,
+          0.05613
+        ],
+        "metallic": 0.0,
+        "roughness": 0.42,
+        "alpha": 1.0
+      },
+      "Label / safety yellow": {
+        "color": [
+          0.80695,
+          0.46778,
+          0.00605
+        ],
+        "metallic": 0.0,
+        "roughness": 0.5,
+        "alpha": 1.0
+      },
+      "Paint / light machine grey": {
+        "color": [
+          0.65141,
+          0.65141,
+          0.60383
+        ],
+        "metallic": 0.0,
+        "roughness": 0.46,
+        "alpha": 1.0
+      },
+      "Polycarbonate / smoked": {
+        "color": [
+          0.32314,
+          0.38643,
+          0.39157
+        ],
+        "metallic": 0.0,
+        "roughness": 0.06,
+        "alpha": 0.28
+      },
+      "Brass / fittings": {
+        "color": [
+          0.58408,
+          0.3564,
+          0.10462
+        ],
+        "metallic": 1.0,
+        "roughness": 0.32,
+        "alpha": 1.0
+      },
+      "Section cut / terracotta": {
+        "color": [
+          0.32314,
+          0.07819,
+          0.01764
+        ],
+        "metallic": 0.0,
+        "roughness": 0.7,
+        "alpha": 1.0
+      },
+      "Heater band / stainless mica": {
+        "color": [
+          0.38643,
+          0.36625,
+          0.32314
+        ],
+        "metallic": 0.75,
+        "roughness": 0.45,
+        "alpha": 1.0
+      },
+      "Heater band / ceramic": {
+        "color": [
+          0.68669,
+          0.62396,
+          0.50888
+        ],
+        "metallic": 0.0,
+        "roughness": 0.78,
+        "alpha": 1.0
+      },
+      "Copper / thermocouple": {
+        "color": [
+          0.53948,
+          0.19462,
+          0.06848
+        ],
+        "metallic": 1.0,
+        "roughness": 0.35,
+        "alpha": 1.0
+      },
+      "Steel / brushed stainless": {
+        "color": [
+          0.58408,
+          0.59062,
+          0.59062
+        ],
+        "metallic": 1.0,
+        "roughness": 0.38,
+        "alpha": 1.0
+      },
+      "Steel / hard chrome": {
+        "color": [
+          0.7913,
+          0.80695,
+          0.82279
+        ],
+        "metallic": 1.0,
+        "roughness": 0.07,
+        "alpha": 1.0
+      },
+      "Hose / cooling supply blue": {
+        "color": [
+          0.02624,
+          0.11444,
+          0.34191
+        ],
+        "metallic": 0.0,
+        "roughness": 0.6,
+        "alpha": 1.0
+      },
+      "Water / warm bath": {
+        "color": [
+          0.11193,
+          0.34191,
+          0.38133
+        ],
+        "metallic": 0.0,
+        "roughness": 0.05,
+        "alpha": 0.3
+      },
+      "Display / HMI glass": {
+        "color": [
+          0.00478,
+          0.01229,
+          0.01033
+        ],
+        "metallic": 0.0,
+        "roughness": 0.12,
+        "alpha": 1.0
+      },
+      "Hose / cooling return red": {
+        "color": [
+          0.39157,
+          0.04231,
+          0.0319
+        ],
+        "metallic": 0.0,
+        "roughness": 0.6,
+        "alpha": 1.0
+      },
+      "Polycarbonate / guard window": {
+        "color": [
+          0.72306,
+          0.7913,
+          0.7913
+        ],
+        "metallic": 0.0,
+        "roughness": 0.02,
+        "alpha": 0.07
+      },
+      "Rubber / haul-off belt": {
+        "color": [
+          0.02416,
+          0.02624,
+          0.02843
+        ],
+        "metallic": 0.0,
+        "roughness": 0.75,
+        "alpha": 1.0
+      },
+      "Polymer / straw": {
+        "color": [
+          0.76815,
+          0.71569,
+          0.53948
+        ],
+        "metallic": 0.0,
+        "roughness": 0.38,
+        "alpha": 1.0
+      },
+      "Lamp / red": {
+        "color": [
+          0.57112,
+          0.02416,
+          0.016
+        ],
+        "metallic": 0.0,
+        "roughness": 0.25,
+        "alpha": 0.92
+      },
+      "Lamp / amber": {
+        "color": [
+          0.76815,
+          0.32778,
+          0.00972
+        ],
+        "metallic": 0.0,
+        "roughness": 0.25,
+        "alpha": 0.92
+      },
+      "Lamp / green": {
+        "color": [
+          0.02732,
+          0.34191,
+          0.09531
+        ],
+        "metallic": 0.0,
+        "roughness": 0.25,
+        "alpha": 0.92
+      },
+      "Display / HMI bar": {
+        "color": [
+          0.10946,
+          0.40198,
+          0.22323
+        ],
+        "metallic": 0.0,
+        "roughness": 0.3,
+        "alpha": 1.0
+      },
+      "Button / emergency stop yellow": {
+        "color": [
+          0.7991,
+          0.45641,
+          0.00802
+        ],
+        "metallic": 0.0,
+        "roughness": 0.45,
+        "alpha": 1.0
+      },
+      "Button / emergency stop red": {
+        "color": [
+          0.53328,
+          0.02029,
+          0.01229
+        ],
+        "metallic": 0.0,
+        "roughness": 0.35,
+        "alpha": 1.0
+      },
+      "Polymer / natural pellet": {
+        "color": [
+          0.58408,
+          0.53948,
+          0.37124
+        ],
+        "metallic": 0.0,
+        "roughness": 0.45,
         "alpha": 1.0
       },
       "Polymer / bright marker": {

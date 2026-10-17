@@ -89,7 +89,7 @@ M['bottle'] = kit.material('Polymer / bottle (translucent)', '#3E8C5A', 0, .18, 
 M['flash'] = kit.material('Polymer / flash', '#2F6B45', 0, .4)
 M['air'] = kit.material('Air / blow marker', '#8FC8E8', 0, .2, alpha=.7)
 
-ext = kit.single_screw_extruder('Extruder', D, 30, X_E, AX, M, FRAMES, 12)   # 60 rpm teaching speed
+ext = kit.single_screw_extruder('Extruder', D, 30, X_E, AX, M, FRAMES, 12, zones=3)   # 60 rpm; schema zone1-zone3
 
 # Head: 90 deg adapter into a 180 x 220 mm parison head with a 25 mm outlet
 head = [kit.cylinder('Adapter', (.06, 0, AX), .045, .12, 'X', M['steel'], segments=32),
@@ -119,16 +119,25 @@ base = [kit.box('Clamp base', (X_H, -SHUTTLE / 2, .35), (.80, SHUTTLE + .60, .70
         kit.louvre_panel('Clamp base skirt', X_H - .38, X_H + .38, .08, .62, -SHUTTLE - .301, M, slots=4)]
 for dx in (-.25, .25):
     base.append(kit.box('Shuttle rail', (X_H + dx, -SHUTTLE / 2, .72), (.04, SHUTTLE + .55, .04), M['steel']))
-base += [kit.cylinder('Shuttle cylinder', (X_H, .26, .76), .03, .24, 'Y', M['paint_accent']),
-         kit.cylinder('Shuttle cylinder rod', (X_H, .08, .76), .012, .14, 'Y', M['chrome'])]
+# Shuttle cylinder (y .18-.55) behind the carriage on a pedestal. Its rod is fixed to a clevis under the carriage
+# plate (y .15) and runs out by the 300 mm stroke while the carriage travels to the blow station.
+base += [kit.cylinder('Shuttle cylinder', (X_H, .365, .725), .028, .37, 'Y', M['paint_accent']),
+         kit.box('Shuttle cylinder cap', (X_H, .555, .725), (.07, .02, .07), M['steel_dark']),
+         kit.box('Shuttle cylinder pedestal', (X_H, .53, .345), (.08, .06, .69), M['paint_dark'], bevel=.004)]
 kit.join(base, 'ClampBase')
 carriage = kit.empty('ShuttleCarriage', (0, 0, 0), group='shuttle')
 z_m = MOULD_TOP - MOULD_H / 2
-frame_parts = [kit.box('Carriage plate', (X_H, 0, .76), (.62, .34, .03), M['paint'], bevel=.006)]
+frame_parts = [kit.box('Carriage plate', (X_H, 0, .76), (.62, .34, .03), M['paint'], bevel=.006),
+               kit.box('Shuttle rod clevis', (X_H, .15, .725), (.05, .03, .05), M['steel_dark'])]
+kit.reparent(kit.cylinder('Shuttle cylinder rod', (X_H, .325, .725), .012, .35, 'Y', M['chrome']), carriage)
+# Clamp cylinders sit on the outer faces of the end plates; each rod passes through its plate to a clevis on the
+# platen and rides with that mould half (parented below), so the 80 mm stroke shows and the rod stays in its body.
+clamp_rods = {}
 for side in (-1, 1):
     frame_parts.append(kit.box('Clamp end plate', (X_H + side * .27, 0, (z_m + .78) / 2 + .05), (.03, .30, z_m - .78 + .26), M['paint'], bevel=.006))
-    frame_parts.extend(kit.hydraulic_cylinder('Clamp cylinder', (X_H + side * .30, 0, z_m), (X_H + side * .21, 0, z_m), .035, .016, M,
-                                              rod_length=.05))
+    body, clamp_rods[side] = kit.hydraulic_cylinder('Clamp cylinder', (X_H + side * .43, 0, z_m), (X_H + side * .285, 0, z_m), .035, .016, M,
+                                                    rod_length=.16, rod_inset=.02)
+    frame_parts.append(body)
 for dy in (-.12, .12):
     for dz in (-.07, .07):
         frame_parts.append(kit.cylinder('Clamp guide rod', (X_H, dy, z_m + dz), .008, .54, 'X', M['chrome'], segments=12))
@@ -154,12 +163,14 @@ def lathe(name, radius_of, heights, z0, center, mat, inner=None):
 heights = [BOTTLE_H * i / 36 for i in range(37)]
 for side, name in ((-1, 'MoldLeft'), (1, 'MoldRight')):
     owner = kit.empty(name, (0, 0, 0), carriage, group='mold')
+    kit.reparent(clamp_rods[side], owner)
     x0, x1 = (X_H - MOULD_HALF, X_H) if side < 0 else (X_H, X_H + MOULD_HALF)
     half = kit.box(name + '_block', ((x0 + x1) / 2, 0, z_m), (MOULD_HALF - .001, MOULD_W, MOULD_H), M['cast'], bevel=.003)
     cavity = lathe(name + ' cavity', lambda h: bottle_radius(h) + .0008, heights, BOTTLE_TOP - BOTTLE_H, (X_H, 0), M['section'])
     front = kit.box('front cut', ((x0 + x1) / 2, -MOULD_W / 4 - .005, z_m), (MOULD_HALF + .01, MOULD_W / 2 + .01, MOULD_H + .02), M['section'], bevel=0)
     kit.subtract(half, [cavity, front])
     parts = [half, kit.box(name + ' platen', (X_H + side * (MOULD_HALF + .02), 0, z_m), (.03, .28, .26), M['steel_dark'], bevel=.004),
+             kit.box(name + ' rod clevis', (X_H + side * (MOULD_HALF + .045), 0, z_m), (.02, .05, .05), M['steel_dark'], bevel=.003),
              kit.cylinder(name + ' water in', (X_H + side * (MOULD_HALF - .02), MOULD_W / 2 + .01, z_m - .05), .006, .02, 'Y', M['hose_blue']),
              kit.cylinder(name + ' water out', (X_H + side * (MOULD_HALF - .02), MOULD_W / 2 + .01, z_m + .05), .006, .02, 'Y', M['hose_red'])]
     kit.reparent(kit.join(parts, name + '_body'), owner)
@@ -186,7 +197,10 @@ for frame in range(FRAMES + 1):
 
 # Blow station: pin unit above the station, 50 mm stroke into the neck
 pin = kit.empty('BlowPin', (0, 0, 0), group='pin')
+# The piston rod continues the stem through the bridge into the pin cylinder (PIN_UP + .24 to + .42) at both ends
+# of the stroke.
 pin_parts = [kit.cylinder('BlowPinStem', (X_H, -SHUTTLE, PIN_UP + .06), .009, .12, 'Z', M['chrome'], segments=16),
+             kit.cylinder('Blow pin piston rod', (X_H, -SHUTTLE, PIN_UP + .22), .007, .20, 'Z', M['chrome'], segments=16),
              kit.cylinder('Blow pin calibrating sleeve', (X_H, -SHUTTLE, PIN_UP + .005), NECK_R - .001, .01, 'Z', M['steel'], segments=24)]
 kit.reparent(kit.join(pin_parts, 'BlowPin_body'), pin)
 for frame in range(FRAMES + 1):
@@ -288,9 +302,32 @@ META = {
     'initial': {'parison': 0, 'mold': 100, 'pin': 0, 'inflate': 0},
     'turns': {'screw': 12},
     'views': [{'key': 'all', 'label': ['전체 설비', 'Whole machine'], 'center': centre, 'zoom': 1},
-              {'key': 'screw', 'label': ['스크류·배럴', 'Screw & barrel'], 'center': [-.6, AX, 0], 'zoom': 3.2},
-              {'key': 'finish', 'label': ['금형·블로우 핀', 'Mold & blow pin'], 'center': three((X_H, -SHUTTLE / 2, z_m)), 'zoom': 4.5},
-              {'key': 'head', 'label': ['패리슨 헤드', 'Parison head'], 'center': three((X_H, 0, Z_OUT)), 'zoom': 6}],
+              kit.camera_view('screw', ['스크류·배럴 단면', 'Screw & barrel cutaway'], (-.6, 0, AX), (1.2, -6.0, 5.2), 3.4),
+              kit.camera_view('finish', ['금형·블로우 핀', 'Mold & blow pin'], (X_H, -SHUTTLE / 2, z_m), (1.2, -6.0, 2.5), 4.5),
+              kit.camera_view('head', ['패리슨 헤드', 'Parison head'], (X_H, 0, Z_OUT), (1.2, -6.0, 2.0), 6)],
+    'heat': {'input': 'process', 'reference': 'process',
+             'title': ['배럴·다이 존 온도 (입력한 설정값)', 'Barrel and die zone temperatures (entered set points)'],
+             'note': kit.PROCESS_HEAT_NOTE, 'scale_labels': {'melt': ['배럴·다이', 'Barrel & die'], 'tool': ['금형', 'Mould']},
+             'zones': kit.extruder_heat(ext, ['zone1', 'zone2', 'zone3'])
+             + [kit.heat_vband('head', 'head', ['패리슨 헤드', 'Parison head'], X_H, 0, Z_HEAD_TOP - .22, Z_HEAD_TOP, .104, full=True),
+                kit.heat_vband('die', 'die', ['다이 부싱', 'Die bushing'], X_H, 0, Z_OUT, Z_OUT + .02, .036, full=True)]
+             # Mould halves: the block behind the cavity (beyond the body radius) so the cut section stays readable.
+             + [kit.heat_box('mold_' + side, 'mold', ['금형', 'Mould'], (x0, BODY_R + .008, z_m - MOULD_H / 2 - .002), (x1, MOULD_W / 2 + .003, z_m + MOULD_H / 2 + .002),
+                             group='tool', parent=name)
+                for side, name, x0, x1 in (('a', 'MoldLeft', X_H - MOULD_HALF - .002, X_H - .001), ('b', 'MoldRight', X_H + .001, X_H + MOULD_HALF + .002))]},
+    # Cycle chart: one lane per actuator on the re-based 12 s timeline; the parison grows through the whole cycle.
+    'lanes': [{'key': key, 'ko': ko, 'en': en} for key, ko, en in (('head', '헤드·패리슨', 'Head & parison'), ('clamp', '형체부', 'Clamp'),
+              ('shuttle', '셔틀', 'Shuttle'), ('pin', '블로우 핀', 'Blow pin'), ('takeout', '취출', 'Take-out'))],
+    'steps': [[0.0, .4, '패리슨 절단', 'Parison cut', 'head'], [.4, LOOP, '패리슨 연속 성장', 'Parison grows continuously', 'head'],
+              [0.0, T['pin_out_open'][0], '금형 닫힘 유지', 'Mould closed', 'clamp'],
+              [T['pin_out_open'][0], T['pin_out_open'][1], '형개', 'Mould opening', 'clamp'],
+              [T['pin_out_open'][1], T['capture'][0], '열림 대기', 'Open, waiting', 'clamp'],
+              [T['capture'][0], T['capture'][1], '금형 닫힘·포획', 'Close & capture', 'clamp'],
+              [T['cut_shuttle'][0], T['cut_shuttle'][1], '블로우 위치로 이동', 'Shuttle to blow station', 'shuttle'],
+              [T['return'][0], T['return'][1], '헤드 아래로 복귀', 'Return under the head', 'shuttle'],
+              [T['pin_in'][0], T['pin_in'][1], '핀 삽입', 'Pin in', 'pin'], [T['inflate'][0], T['inflate'][1], '팽창', 'Inflate', 'pin'],
+              [T['hold_cool'][0], T['hold_cool'][1], '보압·냉각', 'Hold & cool', 'pin'], [T['exhaust'][0], T['exhaust'][1], '배기', 'Exhaust', 'pin'],
+              [T['pin_out_open'][0], 7.25, '핀 복귀', 'Pin out', 'pin'], [T['take_out'][0], T['take_out'][1], '취출·컨베이어', 'Take-out to conveyor', 'takeout']],
     # Stage names match the process atlas (melt & head, parison, mould & inflate, cool & trim); the segments
     # map them onto the re-based cycle and the starts are where an atlas step seeks.
     'stages': [['용융·헤드', 'Melt & head'], ['패리슨·금형 닫힘', 'Parison & capture'], ['금형·공기 팽창', 'Mould & inflate'],

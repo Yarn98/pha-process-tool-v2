@@ -39,5 +39,5 @@ test('offline manifest includes every public visual asset and excludes editable 
   const assets=context.self.PHA_TS_VISUAL_ASSETS;
   for(const entry of data.entries){assert.ok(assets.includes(entry.model));assert.ok(assets.includes(entry.thumbnail));}
   for(const asset of assets){assert.ok(!/\.blend|^art\/|^output\//.test(asset));assert.ok(fs.existsSync(path.join(root,asset)));}
-  const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');assert.match(sw,/pha-cache-v26-realistic-equipment/);assert.match(sw,/PHA_TS_VISUAL_ASSETS\.map/);
+  const sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');assert.match(sw,/pha-cache-v27-injection-level-lines/);assert.match(sw,/PHA_TS_VISUAL_ASSETS\.map/);
 });

@@ -5,7 +5,7 @@ blender -b --factory-startup --python scripts/unreal/export-equipment.py [-- inj
 Adapted from Straw Optimizer v2 scripts/blender/export-die.py. The export is render-only: web
 interaction keeps using the animated GLBs. Each record also carries the Principled values of every
 material slot, so the Unreal studio reproduces the Blender look instead of guessing from names.
-Without arguments all seven Blender-built kinds are exported; with arguments only those kinds are
+Without arguments all eight Blender-built kinds are exported; with arguments only those kinds are
 re-exported and merged into the existing exports.json.
 """
 import hashlib
@@ -17,7 +17,7 @@ import bpy
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'output/unreal/fbx'
 OUT.mkdir(parents=True, exist_ok=True)
-KINDS = ['injection', 'extrusion', 'sheet', 'castfilm', 'blownfilm', 'blowmolding', 'compounding']
+KINDS = ['injection', 'extrusion', 'sheet', 'castfilm', 'blownfilm', 'blowmolding', 'compounding', 'straw']
 # Still frames: the injection steady cycle at 13.3 s shows the open mould, toggle and ejected part.
 FRAMES = {'injection': 319, 'blowmolding': 165}
 # Web staging only: the Unreal studio has its own ground, and a 3 m-wider floor would shrink the camera fit.

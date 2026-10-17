@@ -178,6 +178,17 @@
     const texture=new THREE.CanvasTexture(canvas);texture.wrapS=texture.wrapT=THREE.RepeatWrapping;texture.repeat.set(6,2);texture.colorSpace=THREE.SRGBColorSpace;
     return texture;
   }
+  // Concatenate non-indexed copies of simple geometries (positions and normals only).
+  function mergeGeometries(THREE,parts){
+    const flat=parts.map(part=>part.index?part.toNonIndexed():part),merged=new THREE.BufferGeometry();
+    for(const name of ['position','normal']){
+      const arrays=flat.map(part=>part.getAttribute(name).array),out=new Float32Array(arrays.reduce((n,a)=>n+a.length,0));
+      let offset=0;for(const array of arrays){out.set(array,offset);offset+=array.length;}
+      merged.setAttribute(name,new THREE.BufferAttribute(out,3));
+    }
+    parts.forEach(part=>part.dispose());
+    return merged;
+  }
   /* Unlit data overlay for zone temperatures. Geometry comes from the GLB metadata in world
      coordinates of the rest pose and is parented to the moving node it belongs to, so bands follow
      the carriage or the moving mould. update(values) takes key -> {t: 0..1 | null, outline: bool};
@@ -185,14 +196,25 @@
   function createHeatOverlay(stage,root,zones){
     const {THREE}=stage,hatch=hatchTexture(THREE),items=[];
     for(const zone of zones){
-      let geometry;
+      let geometry;const arc=zone.full?[0,Math.PI*2]:[Math.PI/2,Math.PI];
       if(zone.shape==='box'){
         const min=new THREE.Vector3(...zone.min),max=new THREE.Vector3(...zone.max),size=max.clone().sub(min);
         geometry=new THREE.BoxGeometry(Math.abs(size.x),Math.abs(size.y),Math.abs(size.z));
         geometry.translate(...min.clone().add(max).multiplyScalar(.5).toArray());
+      }else if(zone.shape==='roll_ends'){
+        // Two bands at the ends of a roll whose axis runs across the line (three.js Z): the face stays visible.
+        const parts=[zone.z[0]+zone.width/2,zone.z[1]-zone.width/2].map(z=>{
+          const band=new THREE.CylinderGeometry(zone.r,zone.r,zone.width,40,1,true);band.rotateX(Math.PI/2);band.translate(zone.x,zone.y,z);return band;
+        });
+        geometry=mergeGeometries(THREE,parts);
+      }else if(zone.shape==='vband'){
+        // Vertical band (annular die, parison head): the non-operator half, or all round (zone.full) on a solid body.
+        geometry=new THREE.CylinderGeometry(zone.r,zone.r,zone.y[1]-zone.y[0],40,1,true,...arc);
+        geometry.translate(zone.center[0],(zone.y[0]+zone.y[1])/2,zone.center[1]);
       }else{
-        // Rear half only (three.js -Z is the machine's non-operator side), keeping the cutaway open.
-        geometry=new THREE.CylinderGeometry(zone.r,zone.r,zone.x[1]-zone.x[0],40,1,true,Math.PI/2,Math.PI);
+        // Rear half only (three.js -Z is the machine's non-operator side), keeping the cutaway open; zone.full wraps
+        // a part that has no cutaway.
+        geometry=new THREE.CylinderGeometry(zone.r,zone.r,zone.x[1]-zone.x[0],40,1,true,...arc);
         geometry.rotateZ(-Math.PI/2);geometry.translate((zone.x[0]+zone.x[1])/2,zone.center[0],zone.center[1]);
       }
       const material=new THREE.MeshBasicMaterial({color:0xcccccc,transparent:true,opacity:.92,side:THREE.DoubleSide,toneMapped:false,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2});
@@ -217,6 +239,54 @@
       dispose(){items.forEach(item=>{item.mesh.removeFromParent();item.mesh.geometry.dispose();item.mesh.material.dispose();item.edges.geometry.dispose();item.edges.material.dispose();});hatch.dispose();}
     };
   }
+  /* Heat-map rows shared by every player. One row per input field, in zone order. read(field) returns the
+     raw entry ('' = not entered); range(field) returns the reference [lo, hi] or null. Zones carry a group:
+     "melt" (barrel, head, die, nozzle) or "tool" (mould, rolls, bath, cooling air); each group gets its own
+     colour scale so a 40 °C mould does not compress the barrel colours. */
+  function heatRows(zones,read,range){
+    const rows=[],seen=new Set();
+    for(const zone of zones){
+      if(!zone.field||seen.has(zone.field))continue;seen.add(zone.field);
+      const raw=String(read(zone.field)??'').trim(),value=raw===''?null:Number(raw),ref=range(zone.field)||null;
+      const status=window.PHAEvidence?PHAEvidence.status(raw,ref||['-','-']):'unknown';
+      rows.push({field:zone.field,group:zone.group||'melt',label:zone.label,value:Number.isFinite(value)?value:null,range:ref,status});
+    }
+    return rows;
+  }
+  function heatScale(rows){
+    const numbers=rows.flatMap(row=>[row.value,...(row.range||[])]).filter(Number.isFinite);
+    if(!numbers.length)return [150,200];
+    const lo=Math.floor((Math.min(...numbers)-5)/10)*10,hi=Math.ceil((Math.max(...numbers)+5)/10)*10;
+    return [lo,Math.max(hi,lo+20)];
+  }
+  function heatScales(rows){return {melt:heatScale(rows.filter(row=>row.group==='melt')),tool:heatScale(rows.filter(row=>row.group!=='melt'))};}
+  // Overlay values per zone key: colour fraction on the zone's group scale and an outline when outside the reference.
+  function heatValues(zones,rows,scales){
+    const byField=Object.fromEntries(rows.map(row=>[row.field,row])),values={};
+    for(const zone of zones){
+      const row=byField[zone.field],[lo,hi]=scales[(zone.group||'melt')==='melt'?'melt':'tool'];
+      values[zone.key]={t:row?.value==null?null:(row.value-lo)/(hi-lo),outline:row?.status==='warn'||row?.status==='crit'};
+    }
+    return values;
+  }
+  function heatStatusText(status,en){
+    return status==='ok'?(en?'Within reference':'범위 안'):status==='empty'?(en?'Not entered':'미입력'):status==='unknown'?(en?'Unverified':'근거 미확인'):(en?'Outside reference':'범위 밖');
+  }
+  /* Zone list and colour-scale bars of a heat panel (.heat-zones / .heat-scale). With ``editable`` each row
+     holds the set-point input itself (rigs whose tab has no process form). */
+  function renderHeatPanel(panel,{rows,scales,colorOf,locale,scaleLabels,editable=false}){
+    const en=locale==='en',esc=value=>String(value??'').replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[ch]);
+    const groupOf=row=>row.group==='melt'?'melt':'tool',fraction=row=>{const [lo,hi]=scales[groupOf(row)];return (row.value-lo)/(hi-lo);};
+    const bar=group=>'<b>'+esc(scaleLabels[group][en?1:0])+'</b><span>'+scales[group][0]+' °C</span><i style="background:'+heatGradient()+'"></i><span>'+scales[group][1]+' °C</span>';
+    panel.querySelector('.heat-scale').innerHTML=[...new Set(rows.map(groupOf))].map(bar).join('');
+    panel.querySelector('.heat-zones').innerHTML=rows.map(row=>{
+      const label=row.label?row.label[en?1:0]:row.field,swatch=row.value==null?'is-missing':'',color=row.value==null?'':' style="background:'+colorOf(fraction(row))+'"';
+      const range=row.range?(en?'Ref. ':'참고 ')+row.range[0]+'–'+row.range[1]+' °C':(en?'No reference':'참고 범위 없음');
+      const value=editable?'<input type="number" inputmode="decimal" step="1" data-heat-field="'+esc(row.field)+'" value="'+(row.value??'')+'" aria-label="'+esc(label)+' (°C)">'
+        :(row.value==null?(en?'—':'미입력'):row.value+' °C');
+      return '<li class="heat-zone is-'+row.status+'"><i class="'+swatch+'"'+color+'></i><b>'+esc(label)+'</b><span>'+esc(row.fieldLabel||'')+'</span><strong>'+value+'</strong><small>'+range+' · '+heatStatusText(row.status,en)+'</small></li>';
+    }).join('');
+  }
   /* Swimlane chart of a teaching cycle: one row per actuator (meta.lanes), one bar per sub-step
      (meta.steps rows [start, end, ko, en, lane]) and the app stages (meta.stage_segments) on top.
      Neutral greys; the bars active at the playhead turn dark, so colour stays free for abnormal states
@@ -224,7 +294,7 @@
   const SVG_NS='http://www.w3.org/2000/svg';
   function createCycleChart(container,meta,{locale='ko',stageNames=[],onSeek}={}){
     const en=locale==='en',lanes=meta.lanes||[],steps=(meta.steps||[]).filter(row=>lanes.some(lane=>lane.key===row[4]));
-    const duration=meta.cycle_seconds,labelW=en?104:84,right=12,stripH=18,laneH=24,axisH=20,plotBottom=stripH+lanes.length*laneH;
+    const duration=meta.cycle_seconds??meta.duration,labelW=en?104:84,right=12,stripH=18,laneH=24,axisH=20,plotBottom=stripH+lanes.length*laneH;
     const height=plotBottom+axisH;
     const name=(ko,english)=>en?english:ko;
     const node=(tag,attrs,parent,text)=>{const el=document.createElementNS(SVG_NS,tag);for(const key in attrs)el.setAttribute(key,attrs[key]);if(text!=null)el.textContent=text;parent?.appendChild(el);return el;};
@@ -285,5 +355,5 @@
     }
     return {render,setTime,dispose(){container.textContent='';svg=null;heads=[];bars=[];stages=[];}};
   }
-  window.PHAMachineViewer={createStage,prepareModel,fitShadows,groupClips,frameOrtho,watch,disposeModel,createGovernor,warm,createHeatOverlay,heatGradient,createCycleChart};
+  window.PHAMachineViewer={createStage,prepareModel,fitShadows,groupClips,frameOrtho,watch,disposeModel,createGovernor,warm,createHeatOverlay,heatGradient,heatRows,heatScales,heatValues,renderHeatPanel,createCycleChart};
 })();

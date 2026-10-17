@@ -3,7 +3,6 @@
 blender -b --factory-startup --python-exit-code 1 --python tests/blender-line-models.py
 These checks verify geometry and motion, not production performance or OEM design.
 """
-import hashlib
 import json
 import math
 from pathlib import Path
@@ -159,20 +158,6 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
     assert {control['key'] for control in meta['controls']} <= groups
     assert bpy.context.scene.frame_end-bpy.context.scene.frame_start == round(meta['duration']*24)
     reports[kind] = {'objects': len(objects), 'motion_groups': sorted(groups)}
-
-    if kind not in ('straw', 'compounding', 'extrusion', 'sheet', 'castfilm', 'blownfilm', 'blowmolding'):
-        # The core center must stay on its bearing axis, rather than orbit in space.
-        names = ['ScrewA_core']
-        for name in names:
-            centers = []
-            for f in (1, 37, 73):
-                frame(f)
-                lo, hi = bounds(name)
-                centers.append(Vector([(a+b)/2 for a, b in zip(lo, hi)]))
-            assert max((center-centers[0]).length for center in centers) < .001, (kind, name)
-        checks.append(kind+': screw cores remain on their bearing axes')
-        reports[kind]['screw_direction'] = [screw_direction(name.removesuffix('_core'), name.removesuffix('_core')+'_flight', 0, 1, -1, 2) for name in names]
-        checks.append(kind+': signed screw rotation matches actual helix and downstream +X feed')
 
     if kind == 'extrusion':
         turns, teaching = meta['turns'], meta['teaching']
@@ -382,33 +367,58 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
         assert released.scale.x < .01
         assert blow['air'][0] == T['inflate'][0] and blow['air'][1] == T['exhaust'][1]
         checks.append('blowmolding: continuous parison, capture, knife, 300 mm shuttle, 50 mm pin, 160 mm opening, bottle morph from the parison and conveyor take-out')
+        # Linkages over the whole cycle: each clamp rod ends at its platen face (125 mm from the axis, plus the
+        # opening) and keeps its inner end inside the body (285 mm rod end to 418 mm cap); the shuttle rod stays
+        # fixed to the carriage clevis (y = 150 mm) and inside its cylinder (y 180-550 mm).
+        rods = {side: next(o for o in objects if o.name.startswith('Clamp cylinder rod') and o.parent and o.parent.name == half)
+                for side, half in ((-1, 'MoldLeft'), (1, 'MoldRight'))}
+        for f in range(0, round(meta['duration']*24)+1, 6):
+            frame(f)
+            for side, rod in rods.items():
+                lo, hi = bounds(rod.name)
+                inner, outer = (lo[0], hi[0]) if side < 0 else (hi[0], lo[0])
+                assert .285 < side*(inner-axis_x) < .418, (rod.name, f, inner)
+                close(side*(outer-axis_x), .125+side*rod.parent.location.x)
+            lo, hi = bounds('Shuttle cylinder rod')
+            close(lo[1], .15+carriage.matrix_world.translation.y)
+            assert .18 < hi[1] < .55, ('shuttle rod', f, hi[1])
+        checks.append('blowmolding: clamp rods ride the mould halves from their cylinders and the shuttle rod from its cylinder through the full strokes')
 
     elif kind == 'straw':
-        reports[kind]['screw_direction'] = [screw_direction('Screw rotation — illustrative speed', 'Continuous helical screw flight', 0, 1, 1, 1)]
-        checks.append('straw: opposite-handed borrowed helix retains its correct +X rotation')
-        frame(1)
-        upper = objects['Upper tread 00']
-        lower = min((o for o in objects if o.name.startswith('Lower tread ')), key=lambda o: abs(o.location.x-5.15)+abs(o.location.z-1.741))
-        first = {obj.name: tuple(obj.location) for obj in (upper, lower)}
-        segment1 = bounds('Cut strand at outlet')
-        frame(2)
-        assert all(obj.location.x > first[obj.name][0] for obj in (upper, lower))
-        close(first[upper.name][2]-.009, 1.85)
-        close(first[lower.name][2]+.009, 1.75)
-        frame(15)
-        segment2 = bounds('Cut strand at outlet')
-        assert segment2[0][0] > segment1[0][0]+.2
-        assert segment2[0][2] < segment1[0][2]-.04
-        close(segment1[1][0]-segment1[0][0], segment2[1][0]-segment2[0][0])
-        frame(60)
-        segment3 = bounds('Cut strand at outlet')
-        assert .2 < segment3[1][0]-segment3[0][0] < .6
-        for obj in objects:
-            if 'BoltFactory flange fastener' in obj.name:
-                assert .005 < max(obj.dimensions) < .2
-        snapshot = ROOT/'assets/equipment/sources/straw-optimizer-v2.blend'
-        assert hashlib.sha256(snapshot.read_bytes()).hexdigest() == '91b712018468ed304c4101eeaf5e57ffd6da8a2a5ef337e24ea0344ab3ee2bb1'
-        checks.append('straw: original snapshot hash, belt contact direction, visible fasteners and cut-segment discharge/regrowth')
+        turns, teaching = meta['turns'], meta['teaching']
+        reports[kind]['screw_direction'] = [screw_direction('Extruder screw', 'Extruder screw flight', 0, 1, -1, turns['screw'])]
+        checks.append(kind+': signed screw rotation matches the helix and conveys toward the die (+X)')
+        # Belt runs and bath guide pulleys that touch the straws move downstream; drum speed = 1000 v / (pi d).
+        for end in ('In', 'Out'):
+            assert surface_velocity('BeltPulleyLower'+end, (0, 0, teaching['pulley_mm']/2000)).x > 0
+            assert surface_velocity('BeltPulleyUpper'+end, (0, 0, -teaching['pulley_mm']/2000)).x > 0
+        for i in (1, 2, 3):
+            assert surface_velocity('BathGuidePulley%d' % i, (0, 0, teaching['guide_pulley_mm']/2000)).x > 0
+        for key, d in (('haul', teaching['pulley_mm']), ('guide', teaching['guide_pulley_mm'])):
+            close(teaching['rpm'][key], round(1000*teaching['line_speed_m_min']/(math.pi*d), 3), 1e-6)
+        checks.append('straw: belt runs and bath guide pulleys touching the straws move downstream; drum speed = 1000 v / (pi d)')
+        # Four lanes at 40 mm pitch, 6 mm OD.
+        frame(0)
+        lane = bounds('StrawLane1')
+        centres = [(lambda b: (b[0][1]+b[1][1])/2)(bounds('StrawLane%d' % i)) for i in range(1, teaching['lanes']+1)]
+        assert all(abs(b-a-teaching['lane_pitch_mm']/1000) < 1e-4 for a, b in zip(centres, centres[1:])), centres
+        close(lane[1][2]-lane[0][2], teaching['straw_mm']['od']/1000, 2e-4)
+        # Rotary cutter: at every cut frame the knife points down below the straws and moves downstream, exactly
+        # when a 200 mm piece's rear end is at the knife; five cuts per 5 s loop with one knife.
+        rotor, knife = objects['CutterRotor'], teaching['knife_mm']/2000
+        x_cut = rotor.matrix_world.translation.x
+        assert list(rotor['cut_frames']) == [round(k*24*meta['duration']/turns['cutter']) for k in range(turns['cutter'])]
+        for f in rotor['cut_frames']:
+            frame(f)
+            tip = rotor.matrix_world @ Vector((0, 0, -knife))
+            assert tip.z < lane[0][2] and abs(tip.x-x_cut) < 1e-6, ('knife below the straws at the cut', f, tuple(tip))
+            rear = [o.matrix_world.translation.x-teaching['cut_length_mm']/2000 for o in objects if o.name.startswith('CutStraw1_') and o.scale.x > .99]
+            assert min(abs(x-x_cut) for x in rear) < 2e-3, ('a piece rear end at the knife on each cut', f)
+            frame(f+1)
+            assert (rotor.matrix_world @ Vector((0, 0, -knife))).x > tip.x, 'knife tip moves downstream at the bottom'
+        close(meta['duration'], turns['cutter']*teaching['cut_length_mm']/1000/(teaching['line_speed_m_min']/60), 1e-9)
+        assert meta['cut_edges'] == 1
+        checks.append('straw: four lanes at 40 mm pitch, 6 mm OD; the knife passes below the straws moving downstream once per turn as each 200 mm piece is cut; five cuts per 5 s loop')
 
 checks.append('All seven rigs: embedded geometry, finite transforms and all configured motion groups')
 report = {'status': 'pass', 'blender': bpy.app.version_string, 'checks': checks, 'models': reports}
