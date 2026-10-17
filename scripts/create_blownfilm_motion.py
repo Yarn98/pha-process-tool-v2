@@ -14,7 +14,8 @@ A steady bubble does not breathe, so the running bubble keeps its BUR 2 shape at
 right nip roll rides a carriage that two pneumatic cylinders close onto the film (40 mm open for threading), the bubble
 segments carry a shape key from the BUR 1 start-up tube to BUR 2, and the wound roll grows from its core. The air ring is a
 hot air ring: blower, airflow switch, inline heater, insulated hoses, plenum sensor, PID controller and high-limit, set to
-the in-house 60 C for semi-crystalline PHA so that the film crystallizes before the nip and does not block. IBC supplies air
+the in-house 60 C for semi-crystalline PHA to speed crystallization before the nip and reduce blocking (evidence grades in
+docs/research/pha-blown-film-hot-air-ring-20261017.md; not validated on a line). IBC supplies air
 through a stack on the die mandrel and draws it back into the stack top, balanced on three ultrasonic bubble sensors (no IBC
 air temperature is set). The oscillating haul-off reverses the nip and collapsing frame +-90 deg on a slewing ring (Pack B:
 180 deg total, 120 s period); the film above the nip twists back to the fixed guide roll in place of turning bars. No PHA
@@ -470,14 +471,23 @@ STARTUP, CONTROLS = kit.startup(
               needs=['screw'], move='nip'),
      kit.step('air', ['열풍 에어링 기동 · 60 °C', 'Start the hot air ring · 60 °C'],
               ['블로어를 켜고 인라인 히터로 에어링 공기를 60 °C까지 올리세요. 히터는 블로어가 돌고 풍량 스위치가 풍량을 확인해야 켜지며, '
-               '과열 차단기가 따로 지킵니다. 60 °C는 반결정성 PHA(S1000P)의 사내 운전 기준으로, 프로스트 라인 위에서 결정화를 앞당겨 닙과 '
-               '권취 롤에서의 융착(블로킹)을 막습니다. 문헌의 PHB 전체 결정화 반감기 최소(60–70 °C)와 같은 범위이며, 2–5 mol% 4HB에 대한 '
-               '측정값은 공개되어 있지 않습니다. 비결정성 A1000P에는 해당하지 않습니다.',
+               '과열 차단기가 따로 지킵니다. 60 °C는 반결정성 PHA(S1000P)의 사내 운전 기준이며, 프로스트 라인 위에서 결정화를 앞당겨 닙과 '
+               '권취 롤에서의 융착(블로킹)을 줄이려는 설정입니다. 사내 DSC에서 S1000P(4HB 3.3–5.3 %)의 60 °C 반결정화 시간은 7–28초였고'
+               '(용융 조건 미기록), CJ제일제당 공동 연구는 P(3HB-co-4HB)의 등온 결정화가 약 60 °C에서 가장 잘 진행된다고 보고했습니다. CJ는 '
+               'S1000P·A1000P 압출코팅에도 결정화를 위해 65–75 °C의 따뜻한 칠롤을 권장합니다. 다만 최적 온도는 4HB 함량과 용융 이력에 따라 '
+               '달라지고(2.1 mol%는 60–90 °C에서 거의 평탄), 공기 온도는 필름 온도와 같지 않습니다. 공개된 PHBV·PHBH 블로운 필름 예는 '
+               '20–30 °C의 냉각 공기를 썼고, 60 °C 공기의 효과를 S1000P에서 검증한 공개 자료는 없습니다. 비결정성 A1000P에는 해당하지 '
+               '않습니다.',
                'Start the blower and let the inline heater bring the ring air to 60 °C. The heater can only switch on while the '
                'blower runs and the airflow switch confirms flow, and an independent high-limit guards it. 60 °C is the in-house '
-               'practice for semi-crystalline PHA (S1000P): it speeds crystallization above the frost line so the film does not '
-               'fuse (block) in the nip or on the winder. It matches the 60–70 °C minimum of the overall crystallization '
-               'half-time reported for PHB; no value has been published for 2–5 mol% 4HB. It does not apply to amorphous A1000P.'],
+               'standard for semi-crystalline PHA (S1000P); it is meant to speed crystallization above the frost line so the film '
+               'fuses (blocks) less in the nip and on the winder. In-house DSC gave a 60 °C crystallization half-time of 7–28 s for '
+               'S1000P (4HB 3.3–5.3 %; melt conditions not recorded), and a study co-authored by CJ CheilJedang found that '
+               'P(3HB-co-4HB) crystallizes best at about 60 °C. CJ also recommends a warm 65–75 °C chill roll to crystallize its '
+               'S1000P/A1000P extrusion-coating grades. The optimum still shifts with 4HB content and melt history (2.1 mol% is '
+               'nearly flat from 60 to 90 °C), and air temperature is not film temperature. Published PHBV and PHBH blown-film '
+               'examples used 20–30 °C cooling air, and no public source has tested 60 °C air on S1000P. It does not apply to '
+               'amorphous A1000P.'],
               needs=['screw'], spin={'hotair': [3.4, 0]}, reveal=['hotair'],
               readout={'from': 25, 'to': AIR_SETPOINT, 'unit': '°C', 'digits': 1}),
      kit.step('inflate', ['버블 팽창 · BUR 1→2', 'Inflate the bubble · BUR 1 to 2'],
