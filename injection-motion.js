@@ -35,50 +35,25 @@
     for(const zone of spec.zones)if(zone.field)map[zone.key]=zone.field;
     return map;
   }
-  function heatReadings(){
-    const fields=heatFields(),grade=document.getElementById('grade')?.value;
-    let reco={};try{reco=typeof getReco==='function'&&typeof profileOf==='function'?getReco(profileOf(grade),'injection'):{};}catch{}
-    const rows=[],seen=new Set();
-    for(const zone of meta.heat.zones){
-      const field=fields[zone.key],group=zone.field==='mold'?'mold':zone.key;
-      const raw=document.getElementById('f_'+field)?.value??'',value=raw===''?null:Number(raw),range=reco[field]||null;
-      const status=window.PHAEvidence?PHAEvidence.status(raw,range||['-','-']):'unknown';
-      if(!seen.has(group)){seen.add(group);rows.push({group,field,value:Number.isFinite(value)?value:null,range,status});}
-    }
-    return rows;
-  }
-  function heatScale(rows){
-    const numbers=rows.flatMap(row=>[row.value,...(row.range||[])]).filter(Number.isFinite);
-    if(!numbers.length)return [150,200];
-    const lo=Math.floor((Math.min(...numbers)-5)/10)*10,hi=Math.ceil((Math.max(...numbers)+5)/10)*10;
-    return [lo,Math.max(hi,lo+20)];
-  }
-  function statusText(status){
-    return status==='ok'?t('범위 안','Within reference'):status==='empty'?t('미입력','Not entered'):status==='unknown'?t('근거 미확인','Unverified'):t('범위 밖','Outside reference');
+  // Zones with the field each one reads, its colour group and label (mould halves share one row).
+  function heatZones(){
+    const fields=heatFields();
+    return meta.heat.zones.map(zone=>({...zone,field:fields[zone.key],group:zone.field==='mold'?'tool':'melt',
+      label:heatZoneLabel(zone.field==='mold'?'mold':zone.key)}));
   }
   function refreshHeat(){
     if(!runtime?.heat||!host)return;
+    const grade=document.getElementById('grade')?.value;
+    let reco={};try{reco=typeof getReco==='function'&&typeof profileOf==='function'?getReco(profileOf(grade),'injection'):{};}catch{}
+    const zones=heatZones(),rows=viewer().heatRows(zones,field=>document.getElementById('f_'+field)?.value??'',field=>reco[field]||null);
+    for(const row of rows)row.fieldLabel=row.field.replace('barrel',t('배럴 ','Barrel ')).replace('nozzle',t('노즐','Nozzle')).replace('mold',t('금형','Mould'));
     // Melt-side zones and the mould sit ~100 °C apart, so each gets its own fixed comparison range.
-    const rows=heatReadings(),byGroup=Object.fromEntries(rows.map(row=>[row.group,row]));
-    const scales={melt:heatScale(rows.filter(row=>row.group!=='mold')),mold:heatScale(rows.filter(row=>row.group==='mold'))};
-    const fraction=row=>{const [lo,hi]=scales[row.group==='mold'?'mold':'melt'];return row.value==null?null:(row.value-lo)/(hi-lo);};
-    const values={};
-    for(const zone of meta.heat.zones){
-      const row=byGroup[zone.field==='mold'?'mold':zone.key];
-      values[zone.key]={t:row?fraction(row):null,outline:row?.status==='warn'||row?.status==='crit'};
-    }
-    runtime.heat.update(values);runtime.heat.setVisible(heat.on);
+    const scales=viewer().heatScales(rows);
+    runtime.heat.update(viewer().heatValues(zones,rows,scales));runtime.heat.setVisible(heat.on);
     const panel=host.querySelector('.motion-heat');if(!panel)return;
     panel.hidden=!heat.on;
     panel.querySelector('[data-heat="order"]').value=heat.order;
-    const bar=(label,[lo,hi])=>'<b>'+label+'</b><span>'+lo+' °C</span><i style="background:'+viewer().heatGradient()+'"></i><span>'+hi+' °C</span>';
-    panel.querySelector('.heat-scale').innerHTML=bar(t('배럴·노즐','Barrel & nozzle'),scales.melt)+bar(t('금형','Mould'),scales.mold);
-    panel.querySelector('.heat-zones').innerHTML=rows.map(row=>{
-      const label=heatZoneLabel(row.group)[locale==='en'?1:0],fieldLabel=row.field.replace('barrel',t('배럴 ','Barrel ')).replace('nozzle',t('노즐','Nozzle')).replace('mold',t('금형','Mould'));
-      const swatch=row.value==null?'is-missing':'',color=row.value==null?'':' style="background:'+runtime.heat.colorOf(fraction(row))+'"';
-      const range=row.range?t('참고 ','Ref. ')+row.range[0]+'–'+row.range[1]+' °C':t('참고 범위 없음','No reference');
-      return '<li class="heat-zone is-'+row.status+'"><i class="'+swatch+'"'+color+'></i><b>'+label+'</b><span>'+fieldLabel+'</span><strong>'+(row.value==null?t('미입력','—'):row.value+' °C')+'</strong><small>'+range+' · '+statusText(row.status)+'</small></li>';
-    }).join('');
+    viewer().renderHeatPanel(panel,{rows,scales,colorOf:runtime.heat.colorOf,locale,scaleLabels:{melt:['배럴·노즐','Barrel & nozzle'],tool:['금형','Mould']}});
     const toggle=host.querySelector('[data-motion="heat"]');if(toggle)toggle.setAttribute('aria-pressed',String(heat.on));
     paint();
   }
