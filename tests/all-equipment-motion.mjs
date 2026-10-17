@@ -125,6 +125,59 @@ try{
     assert.equal((await page.evaluate(()=>PHAEquipmentMotion.getState())).phase,step,'atlas step '+step+' seeks the matching blow-moulding stage');
   }
   checks.push('Blow molding: each process-atlas step seeks the matching stage of the re-based cycle');
+  // Zone heat maps: process-tab lines colour their zones from the process form against the grade reference;
+  // compounding takes set points typed into the panel (no reference). Missing values hatch, outside values outline.
+  // Few line processes have an audited reference, so the bands come from the app's own user-edit path (reco_overrides).
+  await page.evaluate(()=>switchTab('proc'));await page.selectOption('#grade','CA1180P');
+  for(const kind of ['extrusion','sheet','castfilm','blownfilm','blowmolding','compounding']){
+    const panel=await select(page,kind),heat=await page.evaluate(kind=>PHAEquipmentModels[kind].heat,kind);
+    const fields=[...new Set(heat.zones.map(zone=>zone.field))],keysOf=field=>heat.zones.filter(zone=>zone.field===field).map(zone=>zone.key);
+    await panel.locator('[data-eq="heat"]').click();
+    let data=await page.evaluate(()=>__phaEquipmentTest());
+    assert.equal(data.heat.on,true);assert.equal(await panel.locator('.motion-heat').isVisible(),true,kind+' heat panel shown');
+    assert.equal(await panel.locator('.heat-zone').count(),fields.length,kind+' one panel row per input field');
+    for(const zone of heat.zones)assert.ok(data.heat.zones[zone.key]?.visible,kind+'/'+zone.key+' overlay mesh shown in the model');
+    if(heat.input==='process'){
+      const [inside,missing]=fields,outside=fields.at(-1);
+      await page.evaluate(({kind,inside,outside})=>{
+        const grade=document.getElementById('grade').value,key=PHAEvidence.overrideKey(grade,kind,document.getElementById('moldMode')?.value);
+        const overrides=JSON.parse(localStorage.getItem('reco_overrides')||'{}');overrides[key]={[inside]:[170,190],[outside]:[30,50]};
+        localStorage.setItem('reco_overrides',JSON.stringify(overrides));
+      },{kind,inside,outside});
+      await page.fill('#f_'+inside,'180');await page.fill('#f_'+outside,'90');await page.fill('#f_'+missing,'');
+      data=await page.evaluate(()=>__phaEquipmentTest());
+      for(const key of keysOf(inside))assert.ok(!data.heat.zones[key].hatched&&!data.heat.zones[key].outline,kind+'/'+key+' in range: coloured, no outline');
+      for(const key of keysOf(outside))assert.ok(!data.heat.zones[key].hatched&&data.heat.zones[key].outline,kind+'/'+key+' outside the reference: outlined');
+      for(const key of keysOf(missing))assert.ok(data.heat.zones[key].hatched,kind+'/'+key+' not entered: hatched');
+      assert.notEqual(data.heat.zones[keysOf(inside)[0]].color,data.heat.zones[keysOf(outside)[0]].color,kind+' different set points, different colours');
+      assert.ok(await panel.locator('.heat-zone.is-ok').count()>=1&&await panel.locator('.heat-zone.is-empty').count()>=1,kind+' panel statuses');
+    }else{
+      const input=panel.locator('[data-heat-field="B2"]');await input.fill('205');
+      data=await page.evaluate(()=>__phaEquipmentTest());
+      assert.ok(!data.heat.zones.B2.hatched&&!data.heat.zones.B2.outline&&data.heat.zones.B3.hatched,'Compounding: typed block coloured, empty block hatched, no reference outline');
+      assert.equal(await input.inputValue(),'205','typing keeps the panel input');
+      assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('pha_heat_compounding')).B2),'205');
+      assert.match(await panel.locator('.heat-zone').first().innerText(),/참고 범위 없음/);
+    }
+    if(kind==='blowmolding'){
+      assert.equal(data.heat.zones.mold_a.parent,'MoldLeft');assert.equal(data.heat.zones.mold_b.parent,'MoldRight');
+      // Cycle chart: one bar per step; pressing the chart at 3 s seeks there and marks the hold-and-cool step.
+      const chart=panel.locator('.motion-cycle');assert.equal(await chart.isVisible(),true,'blow-moulding cycle chart shown');
+      assert.equal(await chart.locator('.cycle-bar').count(),await page.evaluate(()=>PHAEquipmentModels.blowmolding.steps.length));
+      const svg=chart.locator('svg');await svg.scrollIntoViewIfNeeded();
+      const box=await svg.boundingBox(),width=Number(await svg.getAttribute('width'));
+      await svg.click({position:{x:(84+3/12*(width-84-12))*box.width/width,y:box.height/2}});
+      const state=await page.evaluate(()=>PHAEquipmentMotion.getState());assert.ok(Math.abs(state.time-3)<.1&&state.mode==='cycle','chart press seeks the cycle: '+state.time);
+      data=await page.evaluate(()=>__phaEquipmentTest());
+      for(const step of ['보압·냉각','금형 닫힘 유지','패리슨 연속 성장'])assert.ok(data.chart.now.some(title=>title.startsWith(step)),'active at 3 s: '+step);
+      await chart.screenshot({path:resolve(out,'blowmolding-cycle.png')});
+    }
+    await panel.screenshot({path:resolve(out,kind+'-heat.png')});
+    await panel.locator('[data-eq="heat"]').click();
+    assert.equal((await page.evaluate(()=>__phaEquipmentTest())).heat.zones[heat.zones[0].key].visible,false,kind+' heat overlay hides again');
+  }
+  checks.push('Heat maps on six lines: form or panel set points colour real zone meshes, missing values hatch, out-of-reference values outline; mould overlays ride the moving halves');
+  checks.push('Blow molding: cycle chart lanes match the timeline and seek the player');
   let panel=await select(page,'straw');const source=await page.evaluate(()=>PHAEquipmentModels.straw.source);
   assert.equal(source.sha256,'91b712018468ed304c4101eeaf5e57ffd6da8a2a5ef337e24ea0344ab3ee2bb1');
   await panel.locator('[data-eq="play"]').click();await page.waitForFunction(()=>PHAEquipmentMotion.getState().visible);
