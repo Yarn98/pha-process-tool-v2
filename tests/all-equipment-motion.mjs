@@ -45,7 +45,8 @@ try{
     await panel.locator('[data-eq="play"]').click();const first=data.time;
     await page.waitForFunction(first=>PHAEquipmentMotion.getState().time>first+.1,first);
     await panel.locator('[data-eq="play"]').click();
-    const afterPlay=await page.evaluate(()=>__phaEquipmentTest()),forwardSign=kind==='straw'?1:-1;
+    // Every line's screw is a right-handed kit helix: it turns negatively about +X to convey toward the die.
+    const afterPlay=await page.evaluate(()=>__phaEquipmentTest()),forwardSign=-1;
     const signedX=q=>2*Math.atan2(q[0],q[3]);
     const rotationStep=(a,b)=>Math.atan2(Math.sin(signedX(b)-signedX(a)),Math.cos(signedX(b)-signedX(a)));
     assert.ok(forwardSign*rotationStep(data.nodes.screw[0].rotation,afterPlay.nodes.screw[0].rotation)>0,kind+' automatic screw rotation matches its helix and feed-to-die direction');
@@ -126,10 +127,11 @@ try{
   }
   checks.push('Blow molding: each process-atlas step seeks the matching stage of the re-based cycle');
   // Zone heat maps: process-tab lines colour their zones from the process form against the grade reference;
-  // compounding takes set points typed into the panel (no reference). Missing values hatch, outside values outline.
+  // compounding takes set points typed into the panel (no reference), straw too (against the CB0400A source).
+  // Missing values hatch, outside values outline.
   // Few line processes have an audited reference, so the bands come from the app's own user-edit path (reco_overrides).
   await page.evaluate(()=>switchTab('proc'));await page.selectOption('#grade','CA1180P');
-  for(const kind of ['extrusion','sheet','castfilm','blownfilm','blowmolding','compounding']){
+  for(const kind of ['extrusion','sheet','castfilm','blownfilm','blowmolding','compounding','straw']){
     const panel=await select(page,kind),heat=await page.evaluate(kind=>PHAEquipmentModels[kind].heat,kind);
     const fields=[...new Set(heat.zones.map(zone=>zone.field))],keysOf=field=>heat.zones.filter(zone=>zone.field===field).map(zone=>zone.key);
     await panel.locator('[data-eq="heat"]').click();
@@ -151,13 +153,21 @@ try{
       for(const key of keysOf(missing))assert.ok(data.heat.zones[key].hatched,kind+'/'+key+' not entered: hatched');
       assert.notEqual(data.heat.zones[keysOf(inside)[0]].color,data.heat.zones[keysOf(outside)[0]].color,kind+' different set points, different colours');
       assert.ok(await panel.locator('.heat-zone.is-ok').count()>=1&&await panel.locator('.heat-zone.is-empty').count()>=1,kind+' panel statuses');
-    }else{
+    }else if(kind==='compounding'){
       const input=panel.locator('[data-heat-field="B2"]');await input.fill('205');
       data=await page.evaluate(()=>__phaEquipmentTest());
       assert.ok(!data.heat.zones.B2.hatched&&!data.heat.zones.B2.outline&&data.heat.zones.B3.hatched,'Compounding: typed block coloured, empty block hatched, no reference outline');
       assert.equal(await input.inputValue(),'205','typing keeps the panel input');
       assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('pha_heat_compounding')).B2),'205');
       assert.match(await panel.locator('.heat-zone').first().innerText(),/참고 범위 없음/);
+    }else{
+      // Straw: zone 1 inside the CB0400A solid-conveying stage (165-175 C), zone 3 above metering (165 C), head empty.
+      await panel.locator('[data-heat-field="zone1"]').fill('170');await panel.locator('[data-heat-field="zone3"]').fill('185');
+      data=await page.evaluate(()=>__phaEquipmentTest());
+      assert.ok(!data.heat.zones.Z1.hatched&&!data.heat.zones.Z1.outline,'straw zone 1 in the source range');
+      assert.ok(data.heat.zones.Z3.outline&&data.heat.zones.die.hatched,'straw zone 3 outlined above metering; empty head hatched');
+      assert.match(await panel.locator('.heat-zone').first().innerText(),/참고 25–40 °C/);
+      assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('pha_heat_straw')).zone3),'185');
     }
     if(kind==='blowmolding'){
       assert.equal(data.heat.zones.mold_a.parent,'MoldLeft');assert.equal(data.heat.zones.mold_b.parent,'MoldRight');
@@ -176,18 +186,20 @@ try{
     await panel.locator('[data-eq="heat"]').click();
     assert.equal((await page.evaluate(()=>__phaEquipmentTest())).heat.zones[heat.zones[0].key].visible,false,kind+' heat overlay hides again');
   }
-  checks.push('Heat maps on six lines: form or panel set points colour real zone meshes, missing values hatch, out-of-reference values outline; mould overlays ride the moving halves');
+  checks.push('Heat maps on all seven lines: form or panel set points colour real zone meshes, missing values hatch, out-of-reference values outline (straw against CB0400A); mould overlays ride the moving halves');
   checks.push('Blow molding: cycle chart lanes match the timeline and seek the player');
-  let panel=await select(page,'straw');const source=await page.evaluate(()=>PHAEquipmentModels.straw.source);
-  assert.equal(source.sha256,'91b712018468ed304c4101eeaf5e57ffd6da8a2a5ef337e24ea0344ab3ee2bb1');
+  // Straw: real-scale four-lane line, one knife, 60 straws/min per lane at 12 m/min and 200 mm.
+  let panel=await select(page,'straw');const straw=await page.evaluate(()=>PHAEquipmentModels.straw);
+  assert.equal(straw.teaching.lanes,4);assert.equal(straw.cut_edges,1);assert.equal(straw.teaching.straws_per_min.lane,60);
+  assert.equal(straw.source,undefined,'no borrowed rig metadata left');
   await panel.locator('[data-eq="play"]').click();await page.waitForFunction(()=>PHAEquipmentMotion.getState().visible);
   await page.evaluate(()=>switchTab('calc'));const heldTime=(await page.evaluate(()=>PHAEquipmentMotion.getState())).time;
   await page.waitForTimeout(250);assert.equal((await page.evaluate(()=>PHAEquipmentMotion.getState())).time,heldTime);
-  checks.push('Straw source snapshot provenance and rendering suspension on inactive tabs');
+  checks.push('Straw line rate metadata and rendering suspension on inactive tabs');
   await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.waitForFunction(()=>!!navigator.serviceWorker.controller);
   await context.setOffline(true);await page.reload({waitUntil:'load'});
   for(const kind of ['straw','sheet','blownfilm'])await select(page,kind);
-  checks.push('Offline service-worker reload loads borrowed straw and newly generated roll/bubble GLBs');
+  checks.push('Offline service-worker reload loads the straw, roll and bubble GLBs');
   await context.close();
   const failContext=await browser.newContext({serviceWorkers:'block',reducedMotion:'reduce'});await failContext.route('**/sheet-motion.glb*',route=>route.abort());
   const failPage=await open(failContext),fallback=await select(failPage,'sheet','fallback');assert.equal(await fallback.locator('.motion-poster').isVisible(),true);

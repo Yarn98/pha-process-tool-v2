@@ -67,7 +67,7 @@ try{
   await open(page,'pha-kb-15','model');await ready(page);await page.locator('[data-ts-context="true"]').click();await ready(page);assert.equal((await state(page)).context,true);
   await phase(page,10);const contextState=await state(page);await phase(page,80);assert.ok((await state(page)).frames>contextState.frames);
   await page.locator('#tsVisualDialog').screenshot({path:resolve(out,'straw-reused-equipment.png')});await close(page);
-  record('Existing Straw Optimizer-derived equipment loads with its original Blender animation');
+  record('Existing straw-line equipment loads with its Blender animation');
 
   await page.evaluate(()=>setLanguage('en'));
   for(const entry of data.entries){await open(page,entry.kb_id,'flow');assert.ok((await page.locator('.ts-flow-stop').textContent()).includes(kb.find(x=>x.id===entry.kb_id).stop_conditions));assert.equal(await page.locator('#tsVisualClose').textContent(),'Close ×');await close(page);}

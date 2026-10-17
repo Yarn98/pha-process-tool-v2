@@ -14,8 +14,9 @@
     "blownfilm: upward nip contacts, one surface speed, BUR 2 bubble inside the cage, lay-flat = pi D / 2, steady bubble",
     "blowmolding: continuous parison, capture, knife, 300 mm shuttle, 50 mm pin, 160 mm opening, bottle morph from the parison and conveyor take-out",
     "blowmolding: clamp rods ride the mould halves from their cylinders and the shuttle rod from its cylinder through the full strokes",
-    "straw: opposite-handed borrowed helix retains its correct +X rotation",
-    "straw: original snapshot hash, belt contact direction, visible fasteners and cut-segment discharge/regrowth",
+    "straw: signed screw rotation matches the helix and conveys toward the die (+X)",
+    "straw: belt runs and bath guide pulleys touching the straws move downstream; drum speed = 1000 v / (pi d)",
+    "straw: four lanes at 40 mm pitch, 6 mm OD; the knife passes below the straws moving downstream once per turn as each 200 mm piece is cut; five cuts per 5 s loop",
     "All seven rigs: embedded geometry, finite transforms and all configured motion groups"
   ],
   "models": {
@@ -181,7 +182,7 @@
       ]
     },
     "straw": {
-      "objects": 436,
+      "objects": 145,
       "motion_groups": [
         "cutter",
         "flow",
@@ -190,12 +191,12 @@
       ],
       "screw_direction": [
         {
-          "node": "Screw rotation \u2014 illustrative speed",
+          "node": "Extruder screw",
           "axis": "X",
-          "helix_phase_slope": -13.189818309117797,
-          "rotation_radians_per_frame": 0.05235987901687622,
-          "total_radians": 6.2831854820251465,
-          "fixed_azimuth_crest_step": 0.003969719505588725,
+          "helix_phase_slope": 195.97713942614504,
+          "rotation_radians_per_frame": -0.2617993950843811,
+          "total_radians": -31.415925979614258,
+          "fixed_azimuth_crest_step": 0.0013358670090347017,
           "feed_axis_sign": 1,
           "scope": "geometry direction only; not material velocity"
         }
