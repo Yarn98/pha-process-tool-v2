@@ -1,9 +1,9 @@
 {
   "format": 1,
   "artifact": "single-file/PHA-Process-Single.html",
-  "bytes": 65804383,
-  "sha256": "4d2c00b1b3902b844c7f892d94d1fec7e74e208c83f53a6f58199ba9702d40d3",
-  "source_sha256": "43de509cb13458fc6be967faa609c8bb175be8b864d2dcd2c4ca39cb87522779",
+  "bytes": 65804717,
+  "sha256": "01c29898a6652956b012470672f8285a0ff90879314c1fc9fe5904cb0c8e11b7",
+  "source_sha256": "85ad071638948f6f82b926e9d0a3f59ab3d70f1a212cbb7b20cb3f5ee02116cd",
   "hash_basis": "SHA-256 of UTF-8 text normalized to LF; binary bytes unchanged. Artifact bytes and hash use LF.",
   "embedded_assets": 155,
   "embedded_glbs": 26,
@@ -1058,15 +1058,15 @@
       "path": "equipment-motion.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
-      "bytes": 29706,
-      "sha256": "71a109bc869b13aa2b69f5c31d9dea653742fc82408ad93b53a717332e098b65"
+      "bytes": 30040,
+      "sha256": "d467efcfd32f3225b2c924ec589033b22279d4df0945bd8baad9a761a787fd9c"
     },
     {
       "path": "equipment-study.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 11252,
-      "sha256": "f1adf66b44e5658f81b81db04f48faf4bfae012a5f2a2585cda22cc2a7946641"
+      "sha256": "5b73f0a372fbe42f2d6569f6d8039a92f9ce59ad85fe5cbbeb182c535a5c5fc1"
     },
     {
       "path": "flash-guide-data.js",
@@ -1087,14 +1087,14 @@
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 26424,
-      "sha256": "86b10801dfce9c7e7d3516e05196004837e4857bd7099179872922f4510fdc8e"
+      "sha256": "09d9db000793a8a0e773b155fe7c86f89d9d199fc5b3032ebc1661fe7359f99e"
     },
     {
       "path": "flash-mold-viewer.js",
       "role": "module",
       "encoding": "utf8-lf",
       "bytes": 3913,
-      "sha256": "6b0e5950c857dcfce5f45952a247de3109b0cd9558f7aa85b4c98ddd935b9ff0"
+      "sha256": "e6f8b408794c79f6491fea2e9c9d2ace7a742eade8167f7e5fb85d65e2d42698"
     },
     {
       "path": "glossary.js",
@@ -1136,14 +1136,14 @@
       "role": "entry",
       "encoding": "utf8-lf",
       "bytes": 326868,
-      "sha256": "04a7d7e84fbff5eee92945b8c2a62c3da18f3b82fd9a3ca6f4ccc5d542469b3d"
+      "sha256": "641bbe0175b6bda5df7fa289a086721f25af66d8e57bb7824ddbe5a9d75e58e3"
     },
     {
       "path": "injection-motion.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 31162,
-      "sha256": "57cf8839c51ea8eb87c6821e877bdb4224bca9a9aed913cc66dc3c5c65a8ddbe"
+      "sha256": "0f5a192ce19b54b64c90a28c482a6cf54b15a0eea81ea46f09966baf7bd5441a"
     },
     {
       "path": "machine-viewer.js",
@@ -1269,7 +1269,7 @@
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 25655,
-      "sha256": "11f37c952cb6da836dcca744f0ce470505da6842b0c47abfec73d47c8f137930"
+      "sha256": "35b56d74b9d1f3562f08b1984bb65a84a9244ff11acad5a787f69bc63bda1b89"
     },
     {
       "path": "vendor/chart-4.4.0/LICENSE",
@@ -1367,7 +1367,7 @@
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 6811,
-      "sha256": "886b9160b6c89873e289eafc2b4e4c6d263907ebab2038e0aa9cc374d0b48fe3"
+      "sha256": "6b1218c8fb353c921ef084c08e83148c1877fc9b75e55230e28297806ddebe30"
     }
   ]
 }

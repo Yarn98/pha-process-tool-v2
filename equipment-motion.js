@@ -1,7 +1,7 @@
 /* Local Blender GLB player for seven educational process lines; the stage comes from machine-viewer.js. */
 (function(){
   'use strict';
-  const VERSION='?v=27',viewer=()=>window.PHAMachineViewer;
+  const VERSION='?v=28',viewer=()=>window.PHAMachineViewer;
   const reduced=matchMedia('(prefers-reduced-motion: reduce)'),saved=new Map(),cache=new Map();
   let host=null,meta=null,state=null,asset=null,engine=null,enginePending=null,onStage=()=>{};
   let locale='ko',token=0,raf=0,lastTick=0,unwatch=null,studyPanel=null,pendingPaint=0,chart=null;
@@ -9,6 +9,9 @@
   const clamp=(value,min,max)=>Math.min(max,Math.max(min,value));
   // Whole turns a spin clip makes per loop, as every rig declares them (meta.turns).
   const turnsOf=key=>meta.turns?.[key]??1;
+  // mount() switches meta and state at once, but the previous rig's model stays on stage until the new GLB has
+  // loaded. Posing, sizing and colouring therefore wait until the model on stage belongs to the current rig.
+  const rigOnStage=()=>!!(asset&&meta&&asset.id===meta.id);
   window.phaSyncMachineOverlay=()=>document.body.classList.toggle('pha-machine-manual',!!document.querySelector('.tabpage.active :is(.equipment-motion,.injection-motion):not(.is-study-photo) .motion-manual:not([hidden]),.tabpage.active .equipment-study[open]'));
 
   function initial(definition){
@@ -34,7 +37,7 @@
     return null;
   }
   function refreshHeat(keepInputs=false){
-    if(!host||!meta?.heat||!asset?.heat)return;
+    if(!host||!meta?.heat||!rigOnStage()||!asset.heat)return;
     const zones=meta.heat.zones,rows=viewer().heatRows(zones,heatRead,heatRange),scales=viewer().heatScales(rows);
     asset.heat.update(viewer().heatValues(zones,rows,scales));asset.heat.setVisible(state.heatOn);
     const panel=host.querySelector('.motion-heat');
@@ -58,7 +61,7 @@
   }
   function stop(){if(raf)cancelAnimationFrame(raf);raf=0;lastTick=0;}
   function changing(){return state?.mode==='manual'&&meta.controls.some(c=>Math.abs(state.actual[c.key]-state.target[c.key])>.001);}
-  function canRun(){return !!(engine&&asset&&host?.isConnected&&!host.classList.contains('is-study-photo')&&state?.ready&&state.visible&&document.visibilityState==='visible'&&(state.playing||state.studyPlaying||changing()));}
+  function canRun(){return !!(engine&&rigOnStage()&&host?.isConnected&&!host.classList.contains('is-study-photo')&&state?.ready&&state.visible&&document.visibilityState==='visible'&&(state.playing||state.studyPlaying||changing()));}
   function schedule(){if(canRun()&&!raf)raf=requestAnimationFrame(tick);else if(!canRun())stop();}
   function enabled(key){
     if(meta.id!=='blowmolding')return true;
@@ -115,7 +118,7 @@
   }
   // frameTime marks a playback frame; its following tick measures the frame cost.
   function paint(frameTime){
-    if(!engine||!asset||!host?.isConnected)return;
+    if(!engine||!rigOnStage()||!host?.isConnected)return;
     pose();engine.scene.updateMatrixWorld(true);engine.governor.render(engine.camera,frameTime||performance.now(),!!frameTime);state.frames++;
   }
   // Orbit drags fire many change events; draw at most once per animation frame.
@@ -197,7 +200,7 @@
     state.focus=view.key;host.querySelector('[data-eq="focus"]').value=view.key;paint();
   }
   function resize(){
-    if(!engine||!asset||!host?.isConnected)return;
+    if(!engine||!rigOnStage()||!host?.isConnected)return;
     const viewport=host.querySelector('.motion-viewport'),width=viewport.clientWidth;if(!width)return;
     const compact=(state.mode==='manual'||host.classList.contains('is-study-open'))&&matchMedia('(max-width:760px)').matches;
     const height=Math.round(compact?Math.min(width*.55,220):width*(width<480?.72:meta.heightRatio||.5));viewport.style.height=height+'px';
@@ -225,7 +228,7 @@
     const missing=definition.controls.filter(control=>!groups.has(control.key)).map(control=>control.key);
     if(missing.length)throw new Error('Missing Blender mechanism animation: '+missing.join(', '));
     const heat=definition.heat?viewer().createHeatOverlay(engine,gltf.scene,definition.heat.zones):null;
-    const loaded={model:gltf.scene,groups,nodes,members,heat};cache.set(definition.id,loaded);return loaded;
+    const loaded={id:definition.id,model:gltf.scene,groups,nodes,members,heat};cache.set(definition.id,loaded);return loaded;
   }
   function trimCache(){
     while(cache.size>2){

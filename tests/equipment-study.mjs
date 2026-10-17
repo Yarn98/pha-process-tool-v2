@@ -20,7 +20,14 @@ async function select(page,kind,ready=true){
   if(['compounding','straw'].includes(kind))await page.evaluate(k=>switchTab(k),kind);
   else{await page.evaluate(()=>switchTab('proc'));await page.selectOption('#process',kind);}
   const panel=page.locator(kind==='injection'?'#injectionMotion':`.tabpage.active [data-equipment-model="${kind}"]`);
-  await page.waitForFunction(kind=>{const el=kind==='injection'?document.querySelector('#injectionMotion'):document.querySelector(`.tabpage.active [data-equipment-model="${kind}"]`);return ['ready','fallback'].includes(el?.dataset.motionState);},kind,{timeout:MODEL_READY_MS});
+  try{await page.waitForFunction(kind=>{const el=kind==='injection'?document.querySelector('#injectionMotion'):document.querySelector(`.tabpage.active [data-equipment-model="${kind}"]`);return ['ready','fallback'].includes(el?.dataset.motionState);},kind,{timeout:MODEL_READY_MS});}
+  catch(error){
+    // Say where the model stopped instead of a bare timeout: the panels' load states and the player's own report.
+    const seen=await page.evaluate(()=>({models:[...document.querySelectorAll('.tabpage.active :is([data-equipment-model],#injectionMotion)')].map(el=>(el.dataset.equipmentModel||el.id)+':'+el.dataset.motionState),
+      line:(()=>{try{const s=__phaEquipmentTest();return s&&{kind:s.kind,ready:s.ready,error:s.error,cached:s.cached};}catch(e){return String(e);}})(),
+      injection:(()=>{try{const s=__phaInjectionMotionTest();return s&&{ready:s.ready,error:s.error};}catch(e){return String(e);}})()})).catch(e=>String(e));
+    throw new Error(`${kind} model not ready within ${MODEL_READY_MS} ms: ${JSON.stringify(seen)}; page errors: ${JSON.stringify(errors)}`,{cause:error});
+  }
   await panel.evaluate(el=>el.scrollIntoView({block:'nearest',behavior:'instant'}));
   assert.equal(await panel.getAttribute('data-motion-state'),ready?'ready':'fallback');return panel;
 }
@@ -91,6 +98,19 @@ try{
   await panel.locator('[data-study-run]').click();await page.waitForFunction(()=>PHAEquipmentMotion.getState().study?.elapsed>.1);
   assert.equal((await data(page,'straw')).study.rpm,30);
   await panel.locator('[data-study-stop]').click();
+  // Regression: a process change while the previous rig is still loading must not pose the model on stage
+  // (straw) with the loading rig's state (blow moulding, still in study mode). Both changes run in one task, so
+  // the second detach always lands inside that loading window; the new rig must then mount.
+  const race=await page.evaluate(()=>{
+    const thrown=[],onError=event=>thrown.push(String(event.error||event.message));window.addEventListener('error',onError);
+    switchTab('proc');const process=document.getElementById('process');
+    process.value='blowmolding';process.dispatchEvent(new Event('change'));
+    const loading=PHAEquipmentMotion.getState();
+    process.value='castfilm';process.dispatchEvent(new Event('change'));
+    window.removeEventListener('error',onError);
+    return {kind:loading.kind,ready:loading.ready,mode:loading.mode,thrown};
+  });
+  assert.deepEqual(race,{kind:'blowmolding',ready:false,mode:'study',thrown:[]},'process change during a rig load: no error');
   panel=await select(page,'castfilm');await panel.locator('[data-study-drive]').selectOption('roll');await fields(panel,{speed:6,diameter:200});
   assert.match(await panel.locator('.study-result').textContent(),/9\.55 rpm/);
   await fields(panel,{diameter:0});assert.equal(await panel.locator('[data-study-run]').isDisabled(),true);
