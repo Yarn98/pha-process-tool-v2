@@ -84,8 +84,12 @@ WATER = .86                       # bath water level
 BATH = (1.62, 3.62)               # 2 m bath (inner)
 FEED_X, NIP_Z = 4.36, 1.0         # feed roll centre and strand plane at the nip
 ROLL_R = FEED_ROLL / 2 * MM
-KNIFE_X = 4.41
-ROTOR = (4.445, 1.035)            # rotor axis (x, z): blade tips pass the bed knife edge
+KNIFE_X = 4.43                    # bed-knife cutting edge; the 25 mm knife and its holder start 5 mm past the lower roll
+KNIFE_TOP = NIP_Z - STRAND_R      # the strands rest on the bed knife
+BLADE_TIP = math.hypot(.0425 + .008, .002)      # rotor blade corner radius (blade boxes below)
+# Rotor axis (x, z): the blade corners pass the bed-knife edge (KNIFE_X, KNIFE_TOP) with a 0.2 mm cutting gap, the
+# axis 20 deg above the knife plane, so the blades shear down through the strands clear of both feed rolls.
+ROTOR = (KNIFE_X + (BLADE_TIP + .0002) * math.cos(math.radians(20)), KNIFE_TOP + (BLADE_TIP + .0002) * math.sin(math.radians(20)))
 ROTOR_R = .05
 
 
@@ -469,8 +473,8 @@ housing = [kit.box('Pelletiser rear wall', (4.52, .21, 1.02), (.56, .02, .54), M
            kit.box('Pelletiser end wall', (4.79, .02, 1.02), (.02, .40, .54), M['paint'], bevel=.004),
            kit.box('Strand inlet slot', (4.243, 0, NIP_Z), (.006, .10, .012), M['black'], bevel=0),
            kit.box('Strand guide comb', (4.28, 0, NIP_Z - .008), (.04, .10, .01), M['brass'], bevel=.002),
-           kit.box('Bed knife', (KNIFE_X - .015, 0, NIP_Z - .011), (.03, .13, .02), M['chrome'], bevel=.002),
-           kit.box('Bed knife holder', (KNIFE_X - .03, 0, NIP_Z - .04), (.06, .14, .04), M['steel_dark'])]
+           kit.box('Bed knife', (KNIFE_X - .0125, 0, KNIFE_TOP - .01), (.025, .13, .02), M['chrome'], bevel=.0005),
+           kit.box('Bed knife holder', (KNIFE_X - .0125, 0, KNIFE_TOP - .042), (.025, .14, .044), M['steel_dark'])]
 housing.append(kit.guard_panel('Pelletiser window', 4.26, 4.78, .76, 1.29, -.18, M, handle=True))
 for dx in (-.25, .25):
     for dy in (-.15, .19):
@@ -526,7 +530,7 @@ for k in range(24):
                           'Y' if k % 2 else 'X', M['pellet'], segments=8)
     first.append(pellet)
 first = kit.join(first, 'FirstPellets')
-FIRST_PATH = [(ROTOR[0] - .01, 0, .97), (4.45, 0, .76), (4.45, 0, .69), (4.75, 0, .66), (5.05, 0, .63), (5.35, 0, .592)]
+FIRST_PATH = [(ROTOR[0] - .01, 0, ROTOR[1] - .065), (4.45, 0, .76), (4.45, 0, .69), (4.75, 0, .66), (5.05, 0, .63), (5.35, 0, .592)]
 first.location = FIRST_PATH[0]
 rotor = kit.empty('PelletRotor', (ROTOR[0], 0, ROTOR[1]), group='cutter')
 rotor.rotation_euler.z = math.pi / 2
@@ -575,7 +579,7 @@ for y in (STRAND_Y[0], STRAND_Y[-1]):
     count = math.ceil(kit.path_length(_strand) / STRAND_TRAVEL)
     kit.ride('StrandMarker%s' % ('A' if y < 0 else 'B'), _strand, count, STRAND_TRAVEL, STRAND_TRAVEL, M['polymer_marker'], .0032,
              FRAMES)
-_pellets = kit.catmull([(KNIFE_X + .01, 0, NIP_Z - .01), (4.45, 0, .80), (4.45, 0, .66), (4.75, 0, .66), (5.05, 0, .62),
+_pellets = kit.catmull([(KNIFE_X + .006, 0, KNIFE_TOP - .03), (4.45, 0, .80), (4.45, 0, .66), (4.75, 0, .66), (5.05, 0, .62),
                     (5.60, 0, .60), (5.80, 0, .48), (6.05, 0, .54)], 6)
 kit.ride('PelletMarker', _pellets, 12, kit.path_length(_pellets) / 12, 3 * kit.path_length(_pellets), M['pellet'], .003, FRAMES,
          'pellet')

@@ -178,7 +178,7 @@ blender --background --factory-startup --python-exit-code 1 --python tests/blend
 
 이력·배치·템플릿·물성은 브라우저 로컬 저장소에, 일부 사진은 IndexedDB와 별도 localStorage 갤러리에 저장합니다. 기기 간 자동 동기화되지 않습니다. JSON/CSV로 백업하세요. 업데이트를 위해 웹사이트 데이터를 지우면 현장 기록도 삭제될 수 있습니다.
 
-서비스워커는 HTML network-first, 버전 자산 precache를 사용합니다. v=29 / pha-cache-v29-startup-sequence. 첫 정상 로드와 캐시 준비 후 로컬 자료·8개 기존 설비·16개 결함 모형 및 새 두 벤트 모형의 3D 조작·계산을 사용할 수 있습니다. 외부 TARS API와 CDN Chart.js는 오프라인에서 제한됩니다. file://보다 로컬 HTTP 실행을 권장합니다.
+서비스워커는 HTML network-first, 버전 자산 precache를 사용합니다. v=30 / pha-cache-v30-pelletiser-clearance. 첫 정상 로드와 캐시 준비 후 로컬 자료·8개 기존 설비·16개 결함 모형 및 새 두 벤트 모형의 3D 조작·계산을 사용할 수 있습니다. 외부 TARS API와 CDN Chart.js는 오프라인에서 제한됩니다. file://보다 로컬 HTTP 실행을 권장합니다.
 
 기존 체크리스트·시험 로그는 유지합니다. 의미가 바뀐 컴파운딩 체크 두 항목은 새 키를 사용하며, 이전 완료 표시는 과거 기록으로 남깁니다.
 

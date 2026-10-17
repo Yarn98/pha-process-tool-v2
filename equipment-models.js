@@ -714,15 +714,15 @@ window.PHAEquipmentModels = {
           },
           "thread": [
             3.01942,
-            3.06942
+            3.08943
           ],
           "release": {
             "node": "FirstPellets",
             "at": 0.1,
             "path": [
               [
-                4.435,
-                0.97,
+                4.46768,
+                0.95085,
                 0
               ],
               [
