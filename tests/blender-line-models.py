@@ -160,20 +160,6 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
     assert bpy.context.scene.frame_end-bpy.context.scene.frame_start == round(meta['duration']*24)
     reports[kind] = {'objects': len(objects), 'motion_groups': sorted(groups)}
 
-    if kind not in ('straw', 'compounding', 'extrusion', 'sheet', 'castfilm', 'blownfilm', 'blowmolding'):
-        # The core center must stay on its bearing axis, rather than orbit in space.
-        names = ['ScrewA_core']
-        for name in names:
-            centers = []
-            for f in (1, 37, 73):
-                frame(f)
-                lo, hi = bounds(name)
-                centers.append(Vector([(a+b)/2 for a, b in zip(lo, hi)]))
-            assert max((center-centers[0]).length for center in centers) < .001, (kind, name)
-        checks.append(kind+': screw cores remain on their bearing axes')
-        reports[kind]['screw_direction'] = [screw_direction(name.removesuffix('_core'), name.removesuffix('_core')+'_flight', 0, 1, -1, 2) for name in names]
-        checks.append(kind+': signed screw rotation matches actual helix and downstream +X feed')
-
     if kind == 'extrusion':
         turns, teaching = meta['turns'], meta['teaching']
         reports[kind]['screw_direction'] = [screw_direction('Extruder screw', 'Extruder screw flight', 0, 1, -1, turns['screw'])]
@@ -382,6 +368,22 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
         assert released.scale.x < .01
         assert blow['air'][0] == T['inflate'][0] and blow['air'][1] == T['exhaust'][1]
         checks.append('blowmolding: continuous parison, capture, knife, 300 mm shuttle, 50 mm pin, 160 mm opening, bottle morph from the parison and conveyor take-out')
+        # Linkages over the whole cycle: each clamp rod ends at its platen face (125 mm from the axis, plus the
+        # opening) and keeps its inner end inside the body (285 mm rod end to 418 mm cap); the shuttle rod stays
+        # fixed to the carriage clevis (y = 150 mm) and inside its cylinder (y 180-550 mm).
+        rods = {side: next(o for o in objects if o.name.startswith('Clamp cylinder rod') and o.parent and o.parent.name == half)
+                for side, half in ((-1, 'MoldLeft'), (1, 'MoldRight'))}
+        for f in range(0, round(meta['duration']*24)+1, 6):
+            frame(f)
+            for side, rod in rods.items():
+                lo, hi = bounds(rod.name)
+                inner, outer = (lo[0], hi[0]) if side < 0 else (hi[0], lo[0])
+                assert .285 < side*(inner-axis_x) < .418, (rod.name, f, inner)
+                close(side*(outer-axis_x), .125+side*rod.parent.location.x)
+            lo, hi = bounds('Shuttle cylinder rod')
+            close(lo[1], .15+carriage.matrix_world.translation.y)
+            assert .18 < hi[1] < .55, ('shuttle rod', f, hi[1])
+        checks.append('blowmolding: clamp rods ride the mould halves from their cylinders and the shuttle rod from its cylinder through the full strokes')
 
     elif kind == 'straw':
         reports[kind]['screw_direction'] = [screw_direction('Screw rotation — illustrative speed', 'Continuous helical screw flight', 0, 1, 1, 1)]

@@ -119,16 +119,25 @@ base = [kit.box('Clamp base', (X_H, -SHUTTLE / 2, .35), (.80, SHUTTLE + .60, .70
         kit.louvre_panel('Clamp base skirt', X_H - .38, X_H + .38, .08, .62, -SHUTTLE - .301, M, slots=4)]
 for dx in (-.25, .25):
     base.append(kit.box('Shuttle rail', (X_H + dx, -SHUTTLE / 2, .72), (.04, SHUTTLE + .55, .04), M['steel']))
-base += [kit.cylinder('Shuttle cylinder', (X_H, .26, .76), .03, .24, 'Y', M['paint_accent']),
-         kit.cylinder('Shuttle cylinder rod', (X_H, .08, .76), .012, .14, 'Y', M['chrome'])]
+# Shuttle cylinder (y .18-.55) behind the carriage on a pedestal. Its rod is fixed to a clevis under the carriage
+# plate (y .15) and runs out by the 300 mm stroke while the carriage travels to the blow station.
+base += [kit.cylinder('Shuttle cylinder', (X_H, .365, .725), .028, .37, 'Y', M['paint_accent']),
+         kit.box('Shuttle cylinder cap', (X_H, .555, .725), (.07, .02, .07), M['steel_dark']),
+         kit.box('Shuttle cylinder pedestal', (X_H, .53, .345), (.08, .06, .69), M['paint_dark'], bevel=.004)]
 kit.join(base, 'ClampBase')
 carriage = kit.empty('ShuttleCarriage', (0, 0, 0), group='shuttle')
 z_m = MOULD_TOP - MOULD_H / 2
-frame_parts = [kit.box('Carriage plate', (X_H, 0, .76), (.62, .34, .03), M['paint'], bevel=.006)]
+frame_parts = [kit.box('Carriage plate', (X_H, 0, .76), (.62, .34, .03), M['paint'], bevel=.006),
+               kit.box('Shuttle rod clevis', (X_H, .15, .725), (.05, .03, .05), M['steel_dark'])]
+kit.reparent(kit.cylinder('Shuttle cylinder rod', (X_H, .325, .725), .012, .35, 'Y', M['chrome']), carriage)
+# Clamp cylinders sit on the outer faces of the end plates; each rod passes through its plate to a clevis on the
+# platen and rides with that mould half (parented below), so the 80 mm stroke shows and the rod stays in its body.
+clamp_rods = {}
 for side in (-1, 1):
     frame_parts.append(kit.box('Clamp end plate', (X_H + side * .27, 0, (z_m + .78) / 2 + .05), (.03, .30, z_m - .78 + .26), M['paint'], bevel=.006))
-    frame_parts.extend(kit.hydraulic_cylinder('Clamp cylinder', (X_H + side * .30, 0, z_m), (X_H + side * .21, 0, z_m), .035, .016, M,
-                                              rod_length=.05))
+    body, clamp_rods[side] = kit.hydraulic_cylinder('Clamp cylinder', (X_H + side * .43, 0, z_m), (X_H + side * .285, 0, z_m), .035, .016, M,
+                                                    rod_length=.16, rod_inset=.02)
+    frame_parts.append(body)
 for dy in (-.12, .12):
     for dz in (-.07, .07):
         frame_parts.append(kit.cylinder('Clamp guide rod', (X_H, dy, z_m + dz), .008, .54, 'X', M['chrome'], segments=12))
@@ -154,12 +163,14 @@ def lathe(name, radius_of, heights, z0, center, mat, inner=None):
 heights = [BOTTLE_H * i / 36 for i in range(37)]
 for side, name in ((-1, 'MoldLeft'), (1, 'MoldRight')):
     owner = kit.empty(name, (0, 0, 0), carriage, group='mold')
+    kit.reparent(clamp_rods[side], owner)
     x0, x1 = (X_H - MOULD_HALF, X_H) if side < 0 else (X_H, X_H + MOULD_HALF)
     half = kit.box(name + '_block', ((x0 + x1) / 2, 0, z_m), (MOULD_HALF - .001, MOULD_W, MOULD_H), M['cast'], bevel=.003)
     cavity = lathe(name + ' cavity', lambda h: bottle_radius(h) + .0008, heights, BOTTLE_TOP - BOTTLE_H, (X_H, 0), M['section'])
     front = kit.box('front cut', ((x0 + x1) / 2, -MOULD_W / 4 - .005, z_m), (MOULD_HALF + .01, MOULD_W / 2 + .01, MOULD_H + .02), M['section'], bevel=0)
     kit.subtract(half, [cavity, front])
     parts = [half, kit.box(name + ' platen', (X_H + side * (MOULD_HALF + .02), 0, z_m), (.03, .28, .26), M['steel_dark'], bevel=.004),
+             kit.box(name + ' rod clevis', (X_H + side * (MOULD_HALF + .045), 0, z_m), (.02, .05, .05), M['steel_dark'], bevel=.003),
              kit.cylinder(name + ' water in', (X_H + side * (MOULD_HALF - .02), MOULD_W / 2 + .01, z_m - .05), .006, .02, 'Y', M['hose_blue']),
              kit.cylinder(name + ' water out', (X_H + side * (MOULD_HALF - .02), MOULD_W / 2 + .01, z_m + .05), .006, .02, 'Y', M['hose_red'])]
     kit.reparent(kit.join(parts, name + '_body'), owner)
@@ -186,7 +197,10 @@ for frame in range(FRAMES + 1):
 
 # Blow station: pin unit above the station, 50 mm stroke into the neck
 pin = kit.empty('BlowPin', (0, 0, 0), group='pin')
+# The piston rod continues the stem through the bridge into the pin cylinder (PIN_UP + .24 to + .42) at both ends
+# of the stroke.
 pin_parts = [kit.cylinder('BlowPinStem', (X_H, -SHUTTLE, PIN_UP + .06), .009, .12, 'Z', M['chrome'], segments=16),
+             kit.cylinder('Blow pin piston rod', (X_H, -SHUTTLE, PIN_UP + .22), .007, .20, 'Z', M['chrome'], segments=16),
              kit.cylinder('Blow pin calibrating sleeve', (X_H, -SHUTTLE, PIN_UP + .005), NECK_R - .001, .01, 'Z', M['steel'], segments=24)]
 kit.reparent(kit.join(pin_parts, 'BlowPin_body'), pin)
 for frame in range(FRAMES + 1):

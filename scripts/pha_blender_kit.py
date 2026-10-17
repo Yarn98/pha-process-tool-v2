@@ -398,11 +398,12 @@ def heater_band(name, x, radius, width, mat, terminal_mat, center=(0, 0), parent
 
 
 def hydraulic_cylinder(name, start, end, bore_r, rod_r, mats, parent=None, rod_parent=None,
-                       rod_length=None, ports=True):
+                       rod_length=None, ports=True, rod_inset=None):
     """Tie-rod hydraulic cylinder from ``start`` (cap end) to ``end`` (rod end) on X.
 
-    Returns (body, rod). The rod points from ``end`` outward along +X or -X and
-    is a separate object so a mechanism can move it.
+    Returns (body, rod). The rod reaches ``rod_length`` outward from ``end`` along +X or -X and
+    ``rod_inset`` (default 0.6 of the body) back inside it; it is a separate object so a mechanism
+    can move it. A rod that retracts by a stroke s needs rod_inset + s inside the body.
     """
     (x0, y, z), (x1, _, _) = start, end
     direction = 1 if x1 > x0 else -1
@@ -424,8 +425,9 @@ def hydraulic_cylinder(name, start, end, bore_r, rod_r, mats, parent=None, rod_p
     if parent is not None:
         body.parent = parent
     rod_length = rod_length or length * .9
-    rod = cylinder(name + ' rod', (x1 + direction * rod_length / 2 - direction * length * .3, y, z),
-                   rod_r, rod_length + length * .6, 'X', mats['chrome'], parent=rod_parent)
+    inset = length * .6 if rod_inset is None else rod_inset
+    rod = cylinder(name + ' rod', (x1 + direction * (rod_length - inset) / 2, y, z),
+                   rod_r, rod_length + inset, 'X', mats['chrome'], parent=rod_parent)
     return body, rod
 
 

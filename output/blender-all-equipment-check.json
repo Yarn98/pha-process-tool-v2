@@ -13,6 +13,7 @@
     "castfilm: chill wrap, S-transfer, guide, dancer and winder directions; one surface speed; traversing gauge",
     "blownfilm: upward nip contacts, one surface speed, BUR 2 bubble inside the cage, lay-flat = pi D / 2, steady bubble",
     "blowmolding: continuous parison, capture, knife, 300 mm shuttle, 50 mm pin, 160 mm opening, bottle morph from the parison and conveyor take-out",
+    "blowmolding: clamp rods ride the mould halves from their cylinders and the shuttle rod from its cylinder through the full strokes",
     "straw: opposite-handed borrowed helix retains its correct +X rotation",
     "straw: original snapshot hash, belt contact direction, visible fasteners and cut-segment discharge/regrowth",
     "All seven rigs: embedded geometry, finite transforms and all configured motion groups"
@@ -154,7 +155,7 @@
       ]
     },
     "blowmolding": {
-      "objects": 46,
+      "objects": 49,
       "motion_groups": [
         "air",
         "flow",
