@@ -1313,6 +1313,26 @@ window.PHAEquipmentModels = {
         ]
       },
       {
+        "key": "gap",
+        "label": [
+          "하단 롤 갭 설정 · 갭 조정기",
+          "Set the bottom roll gap · gap adjusters"
+        ],
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
+        "range": [
+          0,
+          15.708333333333334
+        ],
+        "readout": {
+          "from": 11.0,
+          "to": 1.0,
+          "unit": "mm",
+          "digits": 1
+        }
+      },
+      {
         "key": "roll",
         "label": [
           "롤 스택 이송",
@@ -1343,8 +1363,8 @@ window.PHAEquipmentModels = {
     ],
     "startup": {
       "intro": [
-        "실제 라인의 기동 순서입니다. 롤 갭을 연 상태에서 스크류가 용융 시트를 평다이 밖으로 밀어내 상단과 중단 롤 사이로 넣고, 유압 실린더로 상단 롤을 내려 갭을 닫은 뒤 롤 스택을 돌려 시트를 S자로 감아 롤러 테이블, 트림, 인취를 거쳐 권취기까지 보내고 권취를 시작합니다. 실제 라인은 존과 롤 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.",
-        "The real start-up order: with the roll gap open, the screw pushes the melt sheet out of the flat die between the top and middle rolls; the hydraulic cylinders lower the top roll to close the gap, the stack draws the sheet through its S-wrap over the roller table, trim and haul-off to the winder, and winding starts. A real line only lets the screw start once every zone and roll has reached its set point and soaked (cold-start protection); the model starts after that."
+        "실제 라인의 기동 순서입니다. 롤 갭을 연 상태에서 스크류가 용융 시트를 평다이 밖으로 밀어내 상단과 중단 롤 사이로 넣고, 유압 실린더로 상단 롤을 내려 갭을 닫고, 갭 조정기로 하단 롤을 올려 중단·하단 롤 갭을 맞춘 뒤 롤 스택을 돌려 시트를 S자로 감아 롤러 테이블, 트림, 인취를 거쳐 권취기까지 보내고 권취를 시작합니다. 실제 라인은 존과 롤 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.",
+        "The real start-up order: with the roll gaps open, the screw pushes the melt sheet out of the flat die between the top and middle rolls; the hydraulic cylinders lower the top roll to close the gap, the gap adjusters raise the bottom roll to set the middle-bottom gap, the stack draws the sheet through its S-wrap over the roller table, trim and haul-off to the winder, and winding starts. A real line only lets the screw start once every zone and roll has reached its set point and soaked (cold-start protection); the model starts after that."
       ],
       "steps": [
         {
@@ -1389,20 +1409,44 @@ window.PHAEquipmentModels = {
           "move": "nip"
         },
         {
+          "key": "gap",
+          "label": [
+            "하단 롤 갭 설정 · 갭 조정기",
+            "Set the bottom roll gap · gap adjusters"
+          ],
+          "hint": [
+            "상단 갭이 닫혔습니다. 양쪽 갭 조정기의 유압 실린더로 하단 롤을 올려 쐐기 스토퍼에 붙이세요. 중단·하단 롤 갭이 11 mm에서 모형의 1 mm까지 줄어듭니다. 쐐기 위치는 스핀들 핸들로 정하며, 실제 갭은 제품 두께와 같지 않고 두께를 보며 맞춥니다.",
+            "The top gap is closed. Raise the bottom roll with the hydraulic cylinders of both gap adjusters until its bearing blocks rest on the wedge stops; the middle-bottom gap closes from 11 mm to the model's 1 mm. The spindle handwheel sets the wedge; a real gap is not the product thickness and is set while watching the gauge."
+          ],
+          "needs": [
+            "nip"
+          ],
+          "locks": [],
+          "once": false,
+          "move": "gap",
+          "readout": {
+            "from": 11.0,
+            "to": 1.0,
+            "unit": "mm",
+            "digits": 1
+          }
+        },
+        {
           "key": "roll",
           "label": [
             "롤 스택 이송",
             "Draw with the roll stack"
           ],
           "hint": [
-            "갭이 닫혔습니다. 롤 스택을 돌려 시트를 S자로 감아 롤러 테이블, 트림, 인취를 거쳐 권취기까지 보내세요. 이송이 시작되면 갭을 열 수 없습니다.",
-            "The gap is closed. Run the stack to draw the sheet through its S-wrap over the roller table, trim and haul-off to the winder; the gap stays closed once drawing starts."
+            "두 갭이 닫혔습니다. 롤 스택을 돌려 시트를 S자로 감아 롤러 테이블, 트림, 인취를 거쳐 권취기까지 보내세요. 이송이 시작되면 갭을 열 수 없습니다.",
+            "Both gaps are closed. Run the stack to draw the sheet through its S-wrap over the roller table, trim and haul-off to the winder; the gaps stay closed once drawing starts."
           ],
           "needs": [
-            "nip"
+            "gap"
           ],
           "locks": [
-            "nip"
+            "nip",
+            "gap"
           ],
           "once": true,
           "spin": {
@@ -1460,7 +1504,8 @@ window.PHAEquipmentModels = {
         "Start-up complete. Choose \"Return to cycle\" to play steady running at 3 m/min."
       ],
       "pinned": {
-        "nip": 1
+        "nip": 1,
+        "gap": 1
       },
       "hidden": [
         "flow"
@@ -1783,6 +1828,10 @@ window.PHAEquipmentModels = {
         "winder_now": 250.0,
         "core": 76.0
       },
+      "bottom_gap_mm": {
+        "open": 11.0,
+        "set": 1.0
+      },
       "loop_note": "Real time: the 250 mm stack rolls turn once per loop; every roll keeps the same surface speed."
     },
     "spec": {
@@ -1797,6 +1846,13 @@ window.PHAEquipmentModels = {
       "trim_mm_each_side": 15,
       "gap_threading_mm": 30.0,
       "gap_cylinders": 2,
+      "bottom_gap_adjusters": {
+        "per_side": "vertical hydraulic cylinder under the bottom roll bearing block, wedge stop under the middle roll block, wedge spindle with handwheel and scale",
+        "threading_open_mm": 10.0,
+        "set_gap_mm": 1.0,
+        "note": "model gap = lip-gap example; a real gap is set on the gauge and is not the product thickness",
+        "grade": "C teaching values; not an OEM drawing"
+      },
       "haul_off_mm": 120.0,
       "winder_core_mm": 76.0,
       "winder_max_mm": 500,
@@ -1805,6 +1861,7 @@ window.PHAEquipmentModels = {
     "blender": "5.2.1 LTS",
     "groups": [
       "flow",
+      "gap",
       "nip",
       "resin",
       "roll",
@@ -1878,6 +1935,20 @@ window.PHAEquipmentModels = {
         ]
       },
       {
+        "key": "tension",
+        "label": [
+          "권취 장력 걸기 · 댄서",
+          "Take up the tension · dancer"
+        ],
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
+        "range": [
+          0,
+          7.541666666666667
+        ]
+      },
+      {
         "key": "winder",
         "label": [
           "권취 시작",
@@ -1890,12 +1961,26 @@ window.PHAEquipmentModels = {
           0,
           7.541666666666667
         ]
+      },
+      {
+        "key": "turret",
+        "label": [
+          "권취 교체 · 터릿 180° 인덱싱",
+          "Change the roll · turret 180° index"
+        ],
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
+        "range": [
+          0,
+          7.541666666666667
+        ]
       }
     ],
     "startup": {
       "intro": [
-        "실제 라인의 기동 순서입니다. 스크류가 용융 커튼을 평다이 밖으로 밀어내 에어 갭을 지나 도는 칠 롤 위에 떨어뜨리면, 에어 나이프를 실린더로 밀어 넣어 커튼을 칠 롤에 밀착(pinning)시키고, 롤을 돌려 필름을 두께 측정, 트림, 댄서를 거쳐 권취기까지 보낸 뒤 권취를 시작합니다. 실제 라인은 존과 칠 롤 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.",
-        "The real start-up order: the screw pushes the melt curtain out of the flat die through the air gap onto the turning chill roll; the cylinders push the air knife in to pin the curtain to the roll, the rolls draw the film through the gauge, trim and dancer to the winder, and winding starts. A real line only lets the screw start once every zone and the chill roll have reached their set points and soaked (cold-start protection); the model starts after that."
+        "실제 라인의 기동 순서입니다. 스크류가 용융 커튼을 평다이 밖으로 밀어내 에어 갭을 지나 도는 칠 롤 위에 떨어뜨리면, 에어 나이프를 실린더로 밀어 넣어 커튼을 칠 롤에 밀착(pinning)시키고, 롤을 돌려 필름을 두께 측정, 트림, 댄서를 거쳐 권취기까지 보낸 뒤 장력을 걸어 댄서를 작동 위치로 올리고 권취를 시작합니다. 롤이 차면 터릿을 돌려 라인을 멈추지 않고 롤을 교체합니다. 실제 라인은 존과 칠 롤 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.",
+        "The real start-up order: the screw pushes the melt curtain out of the flat die through the air gap onto the turning chill roll; the cylinders push the air knife in to pin the curtain to the roll, the rolls draw the film through the gauge, trim and dancer to the winder, the tension lifts the dancer to its working position, and winding starts. When the roll is full, the turret changes it without stopping the line. A real line only lets the screw start once every zone and the chill roll have reached their set points and soaked (cold-start protection); the model starts after that."
       ],
       "steps": [
         {
@@ -1958,18 +2043,42 @@ window.PHAEquipmentModels = {
           "once": true,
           "spin": {
             "roll": [
-              2.9694,
+              2.9215,
               0
             ],
             "screw": [
-              23.7495,
+              23.3663,
               0
             ]
           },
           "thread": [
             0.07961,
-            3.81109
+            3.75087
           ]
+        },
+        {
+          "key": "tension",
+          "label": [
+            "권취 장력 걸기 · 댄서",
+            "Take up the tension · dancer"
+          ],
+          "hint": [
+            "필름이 권취 코어에 닿았습니다. 권취기를 천천히 돌려 늘어진 필름을 감으세요. 장력이 생기면 댄서 롤이 하한 스토퍼에서 작동 위치까지 25 mm 올라오고, 필름 루프가 그만큼 짧아집니다. 이후에는 댄서 위치 센서가 권취 속도를 보정해 이 위치를 유지하며, 장력이 변하면 댄서가 오르내려 받아냅니다.",
+            "The film has reached the winder core. Turn the winder slowly to take up the slack. As the tension builds, the dancer roll rises 25 mm from its lower stops to the working position and the film loop shortens with it. From then on the dancer position sensor trims the winder speed to hold that position, and the dancer rises or falls to absorb tension changes."
+          ],
+          "needs": [
+            "roll"
+          ],
+          "locks": [],
+          "once": false,
+          "spin": {
+            "winder": [
+              0.144,
+              0
+            ]
+          },
+          "move": "dancer",
+          "morph": "dancer"
         },
         {
           "key": "winder",
@@ -1978,13 +2087,15 @@ window.PHAEquipmentModels = {
             "Start winding"
           ],
           "hint": [
-            "필름이 권취 코어에 닿았습니다. 권취기를 돌려 감으세요. 모형은 76 mm 코어에서 200 mm 권취 롤까지를 압축해 보여줍니다.",
-            "The film has reached the winder core. Turn the winder to wind it; the model compresses the growth from the 76 mm core to a 200 mm roll."
+            "댄서가 작동 위치에 섰습니다. 권취기를 돌려 감으세요. 모형은 76 mm 코어에서 200 mm 권취 롤까지를 압축해 보여줍니다.",
+            "The dancer stands at its working position. Turn the winder to wind the film; the model compresses the growth from the 76 mm core to a 200 mm roll."
           ],
           "needs": [
-            "roll"
+            "tension"
           ],
-          "locks": [],
+          "locks": [
+            "tension"
+          ],
           "once": true,
           "spin": {
             "winder": [
@@ -2004,6 +2115,39 @@ window.PHAEquipmentModels = {
             "node": "Winder_body",
             "core": 0.38
           }
+        },
+        {
+          "key": "turret",
+          "label": [
+            "권취 교체 · 터릿 180° 인덱싱",
+            "Change the roll · turret 180° index"
+          ],
+          "hint": [
+            "권취 롤이 찼습니다. 라인을 멈추지 않고 터릿을 180° 돌려, 다 감긴 롤은 아래로 돌아 대기 위치로 가고 빈 코어는 위로 넘어와 권취 위치에 서게 하세요. 실제 권취기는 이때 새 코어에 필름을 붙이고 잘라 넘깁니다. 모형은 절단·전사를 생략하므로 필름 끝은 새 코어 위에서 기다립니다.",
+            "The roll is full. Without stopping the line, index the turret 180°: the full roll swings down to the standby position and the empty core comes over the top to the winding position. A real winder now lays the film onto the new core and cuts it; the model leaves out the cut and transfer, so the film end waits above the new core."
+          ],
+          "needs": [
+            "winder"
+          ],
+          "locks": [
+            "winder"
+          ],
+          "once": true,
+          "spin": {
+            "roll": [
+              0.7958,
+              0
+            ],
+            "screw": [
+              6.3646,
+              0
+            ],
+            "winder": [
+              1.5915,
+              0
+            ]
+          },
+          "move": "turret"
         }
       ],
       "done": [
@@ -2011,7 +2155,9 @@ window.PHAEquipmentModels = {
         "Start-up complete. Choose \"Return to cycle\" to play steady running at 10 m/min."
       ],
       "pinned": {
-        "nip": 1
+        "nip": 1,
+        "dancer": 1,
+        "turret": 0
       },
       "hidden": [
         "flow"
@@ -2261,6 +2407,17 @@ window.PHAEquipmentModels = {
         "winder_now": 200.0,
         "core": 76.0
       },
+      "dancer": {
+        "arm_mm": 240.0,
+        "swing_deg": 6.0,
+        "rise_mm": 25.09,
+        "take_up_mm": 34.37
+      },
+      "turret": {
+        "spindle_spacing_mm": 400.0,
+        "index_deg": 180,
+        "index_film_m": 1.0
+      },
       "loop_note": "Real time: the 400 mm chill roll turns once per loop and the 200 mm rolls twice; one surface speed."
     },
     "spec": {
@@ -2276,17 +2433,33 @@ window.PHAEquipmentModels = {
       "chill_wrap_deg": 180,
       "gauge": "traversing O-frame 700 mm",
       "edge_trim": true,
-      "winder": "76 mm core to 500 mm, dancer with load cells",
+      "winder": "76 mm core to 500 mm on a two-spindle turret, with a dancer",
+      "dancer": {
+        "type": "pivot arm with the roll in a film loop, position sensor on the pivot shaft, rubber lower stops",
+        "arm_mm": 240.0,
+        "threading_to_working_deg": 6.0,
+        "control": "the position sensor trims the winder speed to hold the working position",
+        "grade": "C teaching values; not an OEM drawing"
+      },
+      "turret": {
+        "type": "two spindles on two turret arms, index gear motor",
+        "spindle_spacing_mm": 400.0,
+        "index_deg": 180,
+        "transfer": "cut and transfer to the new core not modelled",
+        "grade": "C teaching values; not an OEM drawing"
+      },
       "sources": "output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md"
     },
     "blender": "5.2.1 LTS",
     "groups": [
+      "dancer",
       "flow",
       "gauge",
       "nip",
       "resin",
       "roll",
       "screw",
+      "turret",
       "winder"
     ]
   },
@@ -2377,6 +2550,20 @@ window.PHAEquipmentModels = {
         ]
       },
       {
+        "key": "ibc",
+        "label": [
+          "IBC 기동 · 공급/배기",
+          "Start the IBC · supply and exhaust"
+        ],
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
+        "range": [
+          0,
+          11.291666666666666
+        ]
+      },
+      {
         "key": "haul",
         "label": [
           "닙롤 이송",
@@ -2403,12 +2590,26 @@ window.PHAEquipmentModels = {
           0,
           11.291666666666666
         ]
+      },
+      {
+        "key": "oscillate",
+        "label": [
+          "오실레이팅 인취 · ±90° 반전",
+          "Oscillating haul-off · ±90° reversing"
+        ],
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
+        "range": [
+          0,
+          11.291666666666666
+        ]
       }
     ],
     "startup": {
       "intro": [
-        "실제 라인의 기동 순서입니다. 스크류가 튜브를 환형 다이 밖으로 밀어내면 작업자가 케이지와 접힘 프레임을 지나 닙롤까지 끌어 올리고, 닙을 닫아 튜브 위쪽을 막고, 열풍 에어링을 60 °C로 올린 뒤 다이 중앙으로 공기를 넣어 버블을 BUR 2까지 부풀리고, 닙롤로 접힌 필름을 권취기까지 보내 권취를 시작합니다. 실제 라인은 존 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.",
-        "The real start-up order: the screw pushes the tube out of the annular die, the operator pulls it up through the cage and collapsing frame to the nip rolls, the nip closes to seal the top of the tube, the hot air ring is brought to 60 °C, air through the die centre inflates the bubble to BUR 2, and the nip rolls draw the lay-flat film to the winder, where winding starts. A real line only lets the screw start once every zone has reached its set point and soaked (cold-start protection); the model starts after that."
+        "실제 라인의 기동 순서입니다. 스크류가 튜브를 환형 다이 밖으로 밀어내면 작업자가 케이지와 접힘 프레임을 지나 닙롤까지 끌어 올리고, 닙을 닫아 튜브 위쪽을 막고, 열풍 에어링을 60 °C로 올린 뒤 다이 중앙으로 공기를 넣어 버블을 BUR 2까지 부풀리고, IBC로 버블 안쪽 공기를 순환시키며 지름을 잡고, 닙롤로 접힌 필름을 권취기까지 보내 권취를 시작한 뒤 오실레이팅 인취를 돌립니다. 실제 라인은 존 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.",
+        "The real start-up order: the screw pushes the tube out of the annular die, the operator pulls it up through the cage and collapsing frame to the nip rolls, the nip closes to seal the top of the tube, the hot air ring is brought to 60 °C, air through the die centre inflates the bubble to BUR 2, the IBC circulates the air inside the bubble and holds its diameter, the nip rolls draw the lay-flat film to the winder, where winding starts, and the oscillating haul-off starts reversing. A real line only lets the screw start once every zone has reached its set point and soaked (cold-start protection); the model starts after that."
       ],
       "steps": [
         {
@@ -2502,22 +2703,48 @@ window.PHAEquipmentModels = {
           "morph": "inflate"
         },
         {
+          "key": "ibc",
+          "label": [
+            "IBC 기동 · 공급/배기",
+            "Start the IBC · supply and exhaust"
+          ],
+          "hint": [
+            "버블이 BUR 2로 섰습니다. IBC 공급·배기 블로어를 켜세요. 공급 공기는 다이 중앙의 스택 노즐에서 나와 필름 안쪽을 따라 올라가며 열을 빼앗고, 데워진 공기는 스택 위 흡입구로 빠집니다. 케이지의 초음파 센서 3개가 버블 지름을 재고, 제어기가 배기량을 맞춰 BUR 2를 유지합니다. IBC 공기 온도는 PHA 근거가 없어 정하지 않았습니다(비결정성 CA1240PF TDS는 냉각 공기를 권장).",
+            "The bubble stands at BUR 2. Start the IBC supply and exhaust blowers: supply air leaves the nozzles of the stack in the die centre and sweeps up the inside of the film, taking heat away, and the warmed air is drawn into the stack top. Three ultrasonic sensors on the cage measure the bubble and the controller trims the exhaust to hold BUR 2. No IBC air temperature is set, for lack of a PHA source (the amorphous CA1240PF TDS recommends cooling air)."
+          ],
+          "needs": [
+            "inflate"
+          ],
+          "locks": [],
+          "once": false,
+          "spin": {
+            "ibc": [
+              3.4,
+              0
+            ]
+          },
+          "reveal": [
+            "ibc"
+          ]
+        },
+        {
           "key": "haul",
           "label": [
             "닙롤 이송",
             "Draw with the nip rolls"
           ],
           "hint": [
-            "버블이 섰습니다. 닙롤을 돌려 접힌 필름을 타워 위 가이드 롤을 지나 권취기까지 보내세요. 이송이 시작되면 모형은 닙, 에어링 온도, 버블 크기를 고정합니다.",
-            "The bubble stands. Run the nip rolls to draw the lay-flat film over the tower guide rolls to the winder; the model holds the nip, the air-ring temperature and the bubble size once drawing starts."
+            "IBC가 버블을 잡고 있습니다. 닙롤을 돌려 접힌 필름을 타워 위 가이드 롤을 지나 권취기까지 보내세요. 이송이 시작되면 모형은 닙, 에어링 온도, 버블 크기와 IBC를 고정합니다.",
+            "The IBC holds the bubble. Run the nip rolls to draw the lay-flat film over the tower guide rolls to the winder; the model holds the nip, the air-ring temperature, the bubble size and the IBC once drawing starts."
           ],
           "needs": [
-            "inflate"
+            "ibc"
           ],
           "locks": [
             "nip",
             "air",
-            "inflate"
+            "inflate",
+            "ibc"
           ],
           "once": true,
           "spin": {
@@ -2568,6 +2795,23 @@ window.PHAEquipmentModels = {
             "node": "Winder_body",
             "core": 0.5067
           }
+        },
+        {
+          "key": "oscillate",
+          "label": [
+            "오실레이팅 인취 · ±90° 반전",
+            "Oscillating haul-off · ±90° reversing"
+          ],
+          "hint": [
+            "권취가 시작되었습니다. 오실레이팅 인취를 돌리세요. 닙롤, 실린더, 접힘 프레임을 실은 프레임이 데크의 선회 베어링 위에서 버블 축을 중심으로 좌우 90°씩(총 180°, 한 주기 120 s) 천천히 반전 회전하며, 버블 둘레의 두께 편차가 권취 롤 폭 전체로 퍼집니다. 슬라이더는 가운데 → +90° → −90°의 한 번 반전입니다. 실제 장치는 프레임 위 터닝 바가 필름 방향을 바로잡으며, 모형은 닙 위 필름의 비틀림으로 나타냅니다.",
+            "Winding has started. Start the oscillating haul-off: the frame that carries the nip rolls, their cylinders and the collapsing frame turns on a slewing ring on the deck, reversing 90° each way about the bubble axis (180° total, 120 s per cycle), so the bubble’s circumferential gauge bands spread across the width of the wound roll. The slider runs one reversal: centre, +90°, then -90°. A real haul-off straightens the film with turning bars on the frame; the model shows it as a twist of the film above the nip."
+          ],
+          "needs": [
+            "winder"
+          ],
+          "locks": [],
+          "once": false,
+          "move": "oscillate"
         }
       ],
       "done": [
@@ -2575,7 +2819,8 @@ window.PHAEquipmentModels = {
         "Start-up complete. Choose \"Return to cycle\" to play steady running at 5 m/min."
       ],
       "pinned": {
-        "nip": 1
+        "nip": 1,
+        "oscillate": 0
       },
       "hidden": [
         "flow"
@@ -2821,7 +3066,8 @@ window.PHAEquipmentModels = {
       "haul": 3,
       "winder": 2,
       "screw": 11,
-      "hotair": 1
+      "hotair": 1,
+      "ibc": 1
     },
     "study": {
       "rpm": 58.5,
@@ -2852,6 +3098,14 @@ window.PHAEquipmentModels = {
         "core": 76.0
       },
       "air_ring_air_c": 60,
+      "oscillation": {
+        "total_deg": 180,
+        "period_s": 120,
+        "twist_mm": [
+          62.5,
+          200.0
+        ]
+      },
       "loop_note": "Real time: steady bubble (no breathing); the nip rolls turn three times per loop and the winder twice."
     },
     "spec": {
@@ -2902,8 +3156,31 @@ window.PHAEquipmentModels = {
         "grade": "C teaching values; not an OEM drawing",
         "sources": "docs/research/pha-blown-film-hot-air-ring-20261017.md"
       },
-      "oscillating_haul_off": "optional, not shown",
-      "ibc": "optional, not shown",
+      "oscillating_haul_off": {
+        "type": "nip, carriage, cylinders and collapsing frame on a frame turning on a slewing ring (gear motor and pinion)",
+        "total_deg": 180,
+        "period_s": 120,
+        "film_above_nip": "twists back to the fixed guide roll between 62.5 and 200 mm above the nip (turning bars not modelled)",
+        "grade": "C teaching values (Pack B); not an OEM drawing"
+      },
+      "ibc": {
+        "train": [
+          "supply blower",
+          "die-centre supply channel",
+          "stack with nozzle ring",
+          "stack-top exhaust intake",
+          "exhaust blower",
+          "three ultrasonic bubble-diameter sensors on the cage",
+          "IBC controller (trims the exhaust)"
+        ],
+        "stack_mm": {
+          "od": 32.0,
+          "height": 250.0,
+          "nozzle_height": 50.0
+        },
+        "air_temperature": "not set (no PHA source); the amorphous CA1240PF TDS recommends cooling air for ring and IBC",
+        "grade": "C teaching values (Pack B: optional, separate supply and exhaust); not an OEM drawing"
+      },
       "winder": "76 mm core to 450 mm, two-ply lay-flat",
       "sources": "output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md"
     },
@@ -2912,7 +3189,9 @@ window.PHAEquipmentModels = {
       "flow",
       "haul",
       "hotair",
+      "ibc",
       "nip",
+      "oscillate",
       "resin",
       "screw",
       "winder"

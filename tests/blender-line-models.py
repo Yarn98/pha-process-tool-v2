@@ -8,7 +8,7 @@ import math
 from pathlib import Path
 
 import bpy
-from mathutils import Vector
+from mathutils import Matrix, Vector
 from mathutils.bvhtree import BVHTree
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -165,16 +165,38 @@ def web_clearance(web, rolls):
         assert minimum > radius-.005, (web, name, minimum, radius)
 
 
+def no_overlap(movers, fixed, frames, label):
+    """Mesh pairs that must stay apart over the listed frames (moving parts against the parts and product around them)."""
+    for f in frames:
+        frame(f)
+        for a in movers:
+            for b in fixed:
+                assert not meshes_overlap(a, b), (label, a, b, f)
+
+
 def startup_checks(kind, meta, objects):
     """Start-up sequence: the product segments tile their path from the die lip, the thread steps chain end to end,
-    each actuator carrier is keyed from its open offset to rest, and every linked cylinder rod stays on its body's axis
-    with its inner end inside the body through the whole stroke."""
+    each actuator carrier is keyed from its open offset to rest, every moved carrier holds a different pose half-way
+    through its step, and every linked cylinder rod stays on its body's axis with its inner end inside the body through
+    the whole stroke."""
     steps = meta['startup']['steps']
     # Half-way through a step every spun drive must show a different pose: its turns must not be whole playback loops.
     for s in steps:
         for group, (count, *_) in s.get('spin', {}).items():
             loops = count*.5/meta['turns'][group] % 1
             assert .02 < loops < .98, (kind, s['key'], group, count, meta['turns'][group])
+    # A moved group maps its step's 0-100 % onto its clip: half-way, every carrier of the group stands at least 1 mm
+    # (or about 0.06 deg) away from its start pose.
+    end = bpy.context.scene.frame_end
+    for s in steps:
+        if 'move' in s:
+            owners = [obj for obj in objects if obj.get('motion_group') == s['move']]
+            assert owners, (kind, s['move'])
+            frame(0)
+            start = [owner.matrix_world.copy() for owner in owners]
+            frame(end//2)
+            moved = max(abs(a[i][j]-owner.matrix_world[i][j]) for a, owner in zip(start, owners) for i in range(3) for j in range(4))
+            assert moved > 1e-3, (kind, s['key'], moved)
     chain = [s['thread'] for s in steps if 'thread' in s]
     assert chain and chain[0][0] == 0, (kind, chain)
     for a, b in zip(chain, chain[1:]):
@@ -191,7 +213,6 @@ def startup_checks(kind, meta, objects):
     if release:
         assert release['node'] in objects, (kind, release['node'])
     carriers = [obj for obj in objects if obj.get('open_offset')]
-    end = bpy.context.scene.frame_end
     for owner in carriers:
         frame(0)
         close((owner.location-Vector(owner['open_offset'])).length, 0, 1e-4)   # offset stored to 0.01 mm
@@ -202,7 +223,10 @@ def startup_checks(kind, meta, objects):
     for f in (0, end//2, end):
         frame(f)
         for rod in rods:
-            cap, tip = Vector(rod['bore'][0]), Vector(rod['bore'][1])
+            # A carriage may ride a turning frame (an origin carrier, identity at rest) that also carries the cylinder
+            # bodies: the recorded body ends then move with that frame.
+            base = rod.parent.parent.matrix_world if rod.parent.parent else Matrix.Identity(4)
+            cap, tip = base @ Vector(rod['bore'][0]), base @ Vector(rod['bore'][1])
             axis, length = (tip-cap).normalized(), (tip-cap).length
             points = vertices(rod.name)
             along = [(p-cap).dot(axis) for p in points]
@@ -225,7 +249,8 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
         segments, carriers, rods = startup_checks(kind, meta, objects)
         startup_report = {'segments': segments, 'carriers': carriers, 'rods': rods}
         checks.append(kind+': start-up - product segments tile the path from the die, thread steps chain, actuators key '
-                      'open to closed, and cylinder rods stay on axis inside their bodies through the stroke')
+                      'open to closed, every moved carrier stands in a new pose half-way through its step, and cylinder rods '
+                      'stay on axis inside their bodies through the stroke')
     else:
         startup_report = None
         assert {control['key'] for control in meta['controls']} <= groups
@@ -339,6 +364,43 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
         assert world_velocity('HaulRollUpper', (0, 0, -teaching['roll_mm']['haul']/2000)).x > 0
         assert world_velocity('Winder', (0, 0, teaching['roll_mm']['winder_now']/2000)).x > 0
         checks.append('sheet: S-wrap clearance, all nip and wrap directions, and one surface speed for stack, table, haul-off and winder')
+        # Bottom gap adjusters: the bottom roll carriage rises from the 11 mm threading gap to the set gap, its step reads
+        # that gap out, drawing waits for it and holds it, and the running line keeps it closed. Over the stroke the moving
+        # roll, its stand, rods and clevises clear the stack frame, the middle roll, the wedge stops and the sheet.
+        steps = {s['key']: s for s in meta['startup']['steps']}
+        assert steps['gap']['move'] == 'gap' and steps['gap']['needs'] == ['nip']
+        assert 'gap' in steps['roll']['needs'] and 'gap' in steps['roll']['locks'] and meta['startup']['pinned']['gap'] == 1
+        carriage = objects['BottomRollCarriage']
+        assert objects['BottomRoll'].parent == carriage and objects['BottomRoll stand'].parent == carriage
+
+        def bottom_gap():
+            return (objects['MiddleRoll'].matrix_world.translation.z-objects['BottomRoll'].matrix_world.translation.z-2*r)*1000
+        end = bpy.context.scene.frame_end
+        gaps = []
+        for f in (0, end//2, end):
+            frame(f)
+            gaps.append(bottom_gap())
+        readout = steps['gap']['readout']
+        close(gaps[0], readout['from'], 1e-3)
+        close(gaps[2], readout['to'], 1e-3)
+        close(gaps[0], teaching['bottom_gap_mm']['open'], 1e-3)
+        close(gaps[2], teaching['bottom_gap_mm']['set'], 1e-3)
+        assert gaps[0]-gaps[2] > 5 and gaps[2] < gaps[1] < gaps[0], gaps
+        rods = [o.name for o in objects if o.parent == carriage and o.name.startswith('Bottom gap cylinder')]
+        bodies = [o.name for o in objects if o.type == 'MESH' and o.parent is None and o.name.startswith('Bottom gap cylinder')]
+        assert len(rods) == 4 and len(bodies) == 2, (rods, bodies)
+        sheet = [o.name for o in objects if o.get('thread_s') or o.get('thread_at') is not None]
+        fixed = ['StackFrame', 'MiddleRoll_body', 'MiddleRoll stand', 'TopRoll_body', 'TopRoll stand', 'BottomGapAdjusters']
+        # Closed, the two rolls nip the sheet at the set gap (checked on the axes above; their painted stripes may touch).
+        no_overlap(['BottomRoll_body'], ['MiddleRoll_body'], (0, end//2), 'sheet bottom roll opening')
+        no_overlap(['BottomRoll_body'], [name for name in fixed+bodies if name != 'MiddleRoll_body'], (0, end//2, end), 'sheet bottom roll')
+        no_overlap(['BottomRoll stand'], fixed+bodies, (0, end//2, end), 'sheet bottom roll stand')
+        no_overlap(['BottomRoll stand']+rods, sheet, (0, end//2, end), 'sheet bottom roll stand and rods against the sheet')
+        no_overlap(rods, fixed, (0, end//2, end), 'sheet gap cylinder rods')
+        reports[kind]['bottom_gap_mm'] = [round(g, 3) for g in gaps]
+        checks.append('sheet: bottom gap adjusters raise the bottom roll from the 11 mm threading gap to the set gap (read out by '
+                      'the step, held while drawing and running); roll, stand, rods and clevises clear the frame, middle roll, '
+                      'wedge stops and sheet')
 
     elif kind == 'castfilm':
         teaching = meta['teaching']
@@ -365,6 +427,59 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
             ys.append(objects['GaugeHead'].matrix_world.translation.y)
         assert min(ys) < -.3 and max(ys) > .3, 'O-frame head traverses the web width'
         checks.append('castfilm: chill wrap, S-transfer, guide, dancer and winder directions; one surface speed; traversing gauge')
+        # Dancer: threaded slack it rests on its stops; taking up the tension lifts it to the working position, the
+        # film loop follows the roll at every pose (shape key keyed with the clip), the winder takes up the shortened
+        # loop, winding waits for it and the running line holds it there.
+        steps = {s['key']: s for s in meta['startup']['steps']}
+        startup = meta['startup']
+        assert steps['tension']['move'] == 'dancer' and steps['tension']['morph'] == 'dancer' and steps['tension']['needs'] == ['roll']
+        assert steps['winder']['needs'] == ['tension'] and 'tension' in steps['winder']['locks']
+        assert startup['pinned']['dancer'] == 1 and startup['pinned']['turret'] == 0
+        dancer, roll = objects['DancerCarrier'], objects['DancerRoll']
+        assert roll.parent == dancer and objects['DancerArm'].parent == dancer
+        film = [o.name for o in objects if o.get('thread_s') and o.name.startswith('CastFilmTrimmed')]
+        assert sum(1 for name in film if objects[name].get('morph') == 'dancer') >= 3
+        end = bpy.context.scene.frame_end
+        frame(end)
+        rest = roll.matrix_world.translation.copy()
+        heights = []
+        for f in (end, end//2, 0):
+            frame(f)
+            centre = roll.matrix_world.translation.copy()
+            heights.append(round((centre.z-rest.z)*1000, 2))
+            gap = min(math.hypot(p.x-centre.x, p.z-centre.z) for name in film for p in vertices(name))
+            assert rg-.0015 < gap < rg, ('film loop follows the dancer', f, gap)
+        close(-heights[2], teaching['dancer']['rise_mm'], .05)
+        assert heights[2] < heights[1] < 0, heights
+        close(steps['tension']['spin']['winder'][0], teaching['dancer']['take_up_mm']/(math.pi*mm['core']), 1e-3)
+        no_overlap(['DancerArm', 'DancerRoll stand'], ['DancerFrame', 'FilmGuideRoll_body', 'FilmGuideRoll stand', 'EdgeTrim', 'TurretFrame']+film,
+                   (0, end//2, end), 'castfilm dancer')
+        no_overlap(['DancerRoll_body'], ['DancerFrame', 'FilmGuideRoll_body', 'FilmGuideRoll stand', 'EdgeTrim'], (0, end//2, end), 'castfilm dancer roll')
+        reports[kind]['dancer_rise_mm'] = heights
+        checks.append('castfilm: the dancer rises 25 mm from its stops to the working position as the tension is taken up; the film '
+                      'loop follows it at every pose, winding waits for it, and arm, roll and stand clear the frame, guide roll, trim '
+                      'and film')
+        # Turret: the full roll swings down to the standby spindle and the empty core comes over the top to the winding
+        # position; the line keeps running; roll, core, arms and stands clear the frame, the dancer and the waiting film.
+        assert steps['turret']['move'] == 'turret' and steps['turret']['needs'] == ['winder'] and steps['turret']['once']
+        assert {'roll', 'screw', 'winder'} <= set(steps['turret']['spin'])
+        winder, spare = objects['Winder'], objects['SpareCore']
+        carrier = objects['TurretCarrier']
+        assert winder.parent == carrier and spare.parent == carrier
+        spacing = teaching['turret']['spindle_spacing_mm']/1000
+        frame(0)
+        wind_at, spare_at = winder.matrix_world.translation.copy(), Vector(bounds('SpareCore')[0]).lerp(Vector(bounds('SpareCore')[1]), .5)
+        close((spare_at-wind_at).length, spacing, 1e-4)
+        frame(end//2)
+        assert winder.matrix_world.translation.z < wind_at.z-spacing/2+1e-3, 'the full roll swings down first'
+        frame(end)
+        close((winder.matrix_world.translation-spare_at).length, 0, 1e-4)
+        close((Vector(bounds('SpareCore')[0]).lerp(Vector(bounds('SpareCore')[1]), .5)-wind_at).length, 0, 1e-4)
+        turning = ['TurretArms', 'SpareCore', 'Winder_body', 'Winder_core', 'Winder stand']
+        no_overlap(turning, ['TurretFrame', 'DancerFrame', 'DancerArm', 'DancerRoll_body', 'DancerRoll stand'], (0, end//4, end//2, 3*end//4, end), 'castfilm turret')
+        no_overlap(turning, film, (end//4, end//2, 3*end//4, end), 'castfilm turret and film')
+        checks.append('castfilm: the turret indexes 180 deg while the line runs - the full roll swings down to the standby spindle, the '
+                      'empty core comes over the top to the winding position; arms, rolls and cores clear the frame, dancer and film')
 
     elif kind == 'blownfilm':
         teaching = meta['teaching']
@@ -434,6 +549,96 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
         assert 'air' in steps['inflate']['needs'] and steps['air']['readout']['to'] == hot['air_setpoint_c']
         assert {'blower', 'heater', 'airflow', 'high-limit'} <= {w for item in hot['train'] for w in ('blower', 'heater', 'airflow', 'high-limit') if w in item}
         checks.append('blownfilm: hot air ring train (blower, airflow switch, inline heater, high-limit) feeds the ring; warm air rises from the lip; inflation waits for the ring at its set point')
+        # IBC: starts once the bubble stands at BUR 2 and before drawing; its stack fits inside the BUR 1 start-up tube
+        # and the BUR 2 bubble, and its supply and exhaust air stay inside the BUR 2 film; the unit and the bubble sensors
+        # clear the die, the hot air train, the tower and the bubble.
+        assert steps['ibc']['needs'] == ['inflate'] and steps['ibc']['reveal'] == ['ibc'] and 'ibc' in steps['haul']['needs']
+        assert 'ibc' in steps['haul']['locks'] and len(meta['spec']['ibc']['train']) >= 5
+        end = bpy.context.scene.frame_end
+        for value in (0, 1):
+            for name in bubble_segments:
+                objects[name].data.shape_keys.key_blocks['Inflated'].value = value
+            no_overlap(['IBCStack'], bubble_segments, (0,), 'IBC stack in the bubble (shape key %d)' % value)
+        r_die, r_bubble, flh = teaching['die_mm']/2000, teaching['bubble_mm']/2000, teaching['frost_line_mm']/1000
+
+        def bubble_r(h):
+            f = min(1.0, max(0.0, h/flh))
+            return r_die+(r_bubble-r_die)*f*f*(3-2*f)
+        ibc_markers = [o for o in objects if o.get('motion_group') == 'ibc']
+        assert len(ibc_markers) >= 30, len(ibc_markers)
+        deepest = 0
+        for f in range(0, end+1, 9):
+            frame(f)
+            for o in ibc_markers:
+                if o.scale.x > .5:
+                    p = o.matrix_world.translation
+                    h = p.z-z0
+                    assert 0 < h < teaching['collapsing_mm']/1000+teaching['frost_line_mm']/1000, (o.name, h)
+                    reach = math.hypot(p.x-cx, p.y)+.006
+                    assert reach < bubble_r(h)-.001, ('IBC air inside the film', o.name, f, reach, bubble_r(h))
+                    deepest = max(deepest, h)
+        assert deepest > teaching['frost_line_mm']/1000, deepest
+        no_overlap(['IBCUnit'], ['AnnularDie', 'HotAirRing', 'Tower', 'Extruder', 'LowerGuideRoll stand', 'WinderStand'], (0,), 'IBC unit')
+        no_overlap(['BubbleSensors'], bubble_segments, (0,), 'bubble sensors')
+        checks.append('blownfilm: IBC starts at BUR 2 before drawing; its stack fits inside the start-up tube and the bubble, supply '
+                      'and exhaust air stay inside the film past the frost line; unit and sensors clear the die, hot air train, tower and bubble')
+        # Oscillating haul-off: the frame turns on its slewing ring about the bubble axis from the centre to +90 deg, back
+        # through the centre to -90 deg; the nip, its carriage and cylinders, the collapsing frame and the collapsing part of
+        # the bubble ride it; the lay-flat above the nip twists back to the fixed guide roll. Over the sweep the turning
+        # parts clear the tower, deck, drive, guide roll and sensors.
+        assert steps['oscillate']['move'] == 'oscillate' and steps['oscillate']['needs'] == ['winder']
+        assert meta['startup']['pinned']['oscillate'] == 0
+        osc = teaching['oscillation']
+        assert osc['total_deg'] == 180 and osc['period_s'] == 120
+        haul_off = objects['HaulOffCarrier']
+        for name in ('NipLeft', 'NipRollCarriage', 'OscillatingFrame', 'CollapsingFrame'):
+            assert objects[name].parent == haul_off, name
+        turning_bubble = [name for name in bubble_segments if objects[name].parent == haul_off]
+        assert turning_bubble and all(objects[name]['thread_s'][1] > teaching['die_to_nip_mm']/1000-teaching['collapsing_mm']/1000
+                                      for name in turning_bubble)
+
+        def azimuth(f):
+            frame(f)
+            p = objects['NipLeft'].matrix_world.translation
+            return math.degrees(math.atan2(p.y, p.x-cx)), math.hypot(p.x-cx, p.y), p.z
+        a0, r0, z_0 = azimuth(0)
+        peak, half, last = round(end/3), end//2, end
+        for f, expected in ((peak, 90), (last, -90)):
+            a, r, z = azimuth(f)
+            close(r, r0, 1e-5)
+            close(z, z_0, 1e-5)
+            close((a-a0+180) % 360-180, expected, .05)
+        a, _, _ = azimuth(half)
+        theta = (a-a0+180) % 360-180
+        assert 30 < theta < 90, theta
+        # The rise above the nip, half-way through the step: each piece's width turns by its share of the frame angle,
+        # the full angle up to 62.5 mm above the nip, falling linearly to 0 at 200 mm (below the guide roll).
+        rise_pieces = sorted((o for o in objects if o.name.startswith('FlattenedFilmWebRise')), key=lambda o: o['thread_s'][0])
+        lo, hi = osc['twist_mm'][0]/1000, osc['twist_mm'][1]/1000
+        twist = []
+        for o in rise_pieces:
+            far = max(vertices(o.name), key=lambda p: math.hypot(p.x-cx, p.y))
+            phi = (math.degrees(math.atan2(far.y, far.x-cx))-90) % 180
+            phi = phi-180 if phi > 90 else phi
+            z = (o['thread_s'][0]+o['thread_s'][1])/2-teaching['die_to_nip_mm']/1000
+            share = min(1.0, max(0.0, (hi-z)/(hi-lo)))
+            assert abs(phi-share*theta) < .5, (o.name, phi, share, theta)
+            twist.append(round(phi, 2))
+        assert twist[0] == max(twist) and twist[-1] == min(twist) and abs(twist[-1]) < .5, twist
+        turning = ['OscillatingFrame', 'CollapsingFrame', 'NipLeft_body', 'NipLeft stand', 'NipRight_body', 'NipRight stand']
+        turning += [o.name for o in objects if o.name.startswith('Nip cylinder') and o.type == 'MESH']
+        fixed = ['Tower', 'OscillationDrive', 'TowerGuideRoll_body', 'TowerGuideRoll stand', 'BubbleSensors', 'HotAirRing']
+        sweep = (0, end//6, peak, half, 5*end//6, last)
+        no_overlap(turning, fixed, sweep, 'oscillating haul-off')
+        twisting = [o.name for o in rise_pieces if o.parent and o.parent.name.startswith('HaulOffTwist')]
+        assert len(twisting) >= 8, len(twisting)
+        no_overlap(twisting, ['NipLeft_body', 'NipRight_body', 'NipLeft stand', 'NipRight stand', 'TowerGuideRoll_body', 'TowerGuideRoll stand', 'Tower'],
+                   sweep, 'film twist above the nip')
+        no_overlap(['CollapsingFrame'], bubble_segments, (peak, last), 'collapsing frame and bubble')
+        reports[kind]['oscillation'] = {'peak_frame': peak, 'twisting_pieces': len(twisting), 'turning_bubble_segments': len(turning_bubble)}
+        checks.append('blownfilm: the oscillating haul-off turns the nip, carriage, cylinders, collapsing frame and collapsing bubble '
+                      '+90 then -90 deg about the bubble axis; the lay-flat above the nip twists back to the fixed guide roll; '
+                      'turning parts clear the tower, deck, drive, guide roll, sensors and bubble')
         checks.append('blownfilm: upward nip contacts, one surface speed, BUR 2 bubble inside the cage, lay-flat = pi D / 2, steady bubble')
 
     elif kind == 'blowmolding':

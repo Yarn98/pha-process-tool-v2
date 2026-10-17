@@ -37,6 +37,8 @@ try{
     const controls=await page.evaluate(kind=>PHAEquipmentModels[kind].controls,kind);
     const duration=await page.evaluate(kind=>PHAEquipmentModels[kind].duration,kind);
     const startup=await page.evaluate(kind=>PHAEquipmentModels[kind].startup||null,kind);
+    const teaching=await page.evaluate(kind=>PHAEquipmentModels[kind].teaching||{},kind);
+    const at=(snapshot,group,name)=>{const node=snapshot.nodes[group].find(node=>node.name===name);assert.ok(node,kind+' '+name+' node');return node.world;};
     // Start-up rigs need the clips their steps spin or move; other rigs one clip per control.
     const driven=startup?[...new Set(startup.steps.flatMap(step=>[step.move,...Object.keys(step.spin||{})]).filter(Boolean))]:controls.map(control=>control.key);
     for(const key of driven){
@@ -97,6 +99,32 @@ try{
         }
         const before=await state();
         await jog(page,panel,step.key,50);const mid=await state();
+        // The idle parts that now move, measured on their real GLB nodes (three.js Y up) half-way through the step.
+        if(kind==='sheet'&&step.key==='gap'){
+          const rise=(at(mid,'roll','BottomRoll')[1]-at(before,'roll','BottomRoll')[1])*1000,stroke=teaching.bottom_gap_mm.open-teaching.bottom_gap_mm.set;
+          assert.ok(Math.abs(rise-stroke/2)<.05,'sheet bottom roll rises half its gap stroke: '+rise);
+        }
+        if(kind==='castfilm'&&step.key==='tension'){
+          const rise=(at(mid,'roll','DancerRoll')[1]-at(before,'roll','DancerRoll')[1])*1000;
+          assert.ok(Math.abs(rise-teaching.dancer.rise_mm/2)<.3,'cast film dancer roll rises half its stroke: '+rise);
+        }
+        if(kind==='castfilm'&&step.key==='turret'){
+          // Half-way the turret has turned 90 deg: the full roll has swung down under the turret shaft.
+          const a=at(before,'winder','Winder'),b=at(mid,'winder','Winder'),half=teaching.turret.spindle_spacing_mm/2000;
+          assert.ok(Math.abs(b[0]-a[0]-half)<.002&&Math.abs(b[1]-a[1]+half)<.002,'cast film full roll swings down with the turret: '+JSON.stringify([a,b]));
+        }
+        if(kind==='blownfilm'&&step.key==='ibc'){
+          const axis=(at(before,'haul','NipLeft')[0]+at(before,'haul','NipRight')[0])/2,inside=teaching.bubble_mm/2000;
+          const shown=mid.nodes.ibc.filter(node=>node.visible&&node.scale[0]>.5);assert.ok(shown.length>10,'blown film IBC air shown');
+          for(const node of shown)assert.ok(Math.hypot(node.world[0]-axis,node.world[2])<inside,'IBC air inside the bubble: '+node.name);
+        }
+        if(kind==='blownfilm'&&step.key==='oscillate'){
+          // The nip turns about the bubble axis: same radius and height, a different bearing.
+          const axis=(at(before,'haul','NipLeft')[0]+at(before,'haul','NipRight')[0])/2,a=at(before,'haul','NipLeft'),b=at(mid,'haul','NipLeft');
+          const radius=p=>Math.hypot(p[0]-axis,p[2]),bearing=p=>Math.atan2(p[2],p[0]-axis)*180/Math.PI;
+          const turned=Math.abs(((bearing(b)-bearing(a))+540)%360-180);
+          assert.ok(Math.abs(radius(a)-radius(b))<5e-4&&Math.abs(a[1]-b[1])<5e-4&&turned>30&&turned<90,'blown film nip turns with the haul-off: '+turned);
+        }
         if(step.thread)assert.ok(Math.abs(mid.startup.front-(step.thread[0]+step.thread[1])/2)<1e-6,kind+'/'+step.key+' grows the product front: '+mid.startup.front);
         if(step.thread)assert.ok(mid.startup.shown>before.startup.shown,kind+'/'+step.key+' shows more product');
         for(const group of [step.move,...Object.keys(step.spin||{})].filter(Boolean))
@@ -112,6 +140,12 @@ try{
           assert.equal(await panel.locator(`[data-eq-value="${step.key}"]`).textContent(),expected,kind+'/'+step.key+' reads out '+expected);
         }
         await jog(page,panel,step.key,100);
+        if(kind==='blownfilm'&&step.key==='oscillate'){
+          // One reversal ends at the far side: the nip has turned 90 deg from the centre about the bubble axis.
+          const end=await state(),axis=(at(before,'haul','NipLeft')[0]+at(before,'haul','NipRight')[0])/2;
+          const bearing=p=>Math.atan2(p[2],p[0]-axis)*180/Math.PI,turned=Math.abs(((bearing(at(end,'haul','NipLeft'))-bearing(at(before,'haul','NipLeft')))+540)%360-180);
+          assert.ok(Math.abs(turned-teaching.oscillation.total_deg/2)<.5,'blown film haul-off reverses to the far side: '+turned);
+        }
         if(step.once){
           await jog(page,panel,step.key,20);const back=await state();
           assert.equal(back.target[step.key],100,kind+'/'+step.key+' cannot be reversed');assert.match(back.startup.notice,/되돌릴 수 없습니다/);
@@ -137,6 +171,10 @@ try{
       await panel.locator('[data-eq="manual"]').click();
       checks.push(kind+': start-up order with interlocks - the product grows from the die, the actuator closes on it, locks hold, '
         +(release?'the first cut frees a piece':'the wound roll grows')+', and the running line returns closed and fully threaded');
+      const idle={sheet:'the bottom gap adjusters raise the bottom roll half its stroke half-way through the gap step',
+        castfilm:'the dancer roll rises half its stroke with the tension, and the turret swings the full roll down under its shaft',
+        blownfilm:'IBC air shows inside the bubble, and the oscillating haul-off turns the nip about the bubble axis, to 90 deg at the end of the reversal'};
+      if(idle[kind])checks.push(kind+': '+idle[kind]+' (real GLB nodes)');
     }else{
       for(const control of controls){
         const before=(await page.evaluate(()=>__phaEquipmentTest())).nodes[control.key];

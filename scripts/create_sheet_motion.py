@@ -11,8 +11,10 @@ Pack B sheet base (grade C teaching values; output/research/pha-equipment-realis
 - two 15 mm edge-trim knives, 120 mm haul-off rolls and a winder on a 76 mm core (shown at 250 mm; the rpm
   falls as the roll grows to 500 mm).
 For the start-up sequence the top roll, its bearing blocks and rotary union ride a carriage that two hydraulic cylinders
-on a crosshead lower onto the sheet (30 mm gap for threading); the sheet is built in 100 mm segments tagged with their
-distance from the lip, and the wound roll grows from its core while winding starts.
+on a crosshead lower onto the sheet (30 mm gap for threading). The bottom roll rides a second carriage: on each side a
+gap adjuster (a vertical hydraulic cylinder under the bearing block and a spindle-set wedge stop under the middle roll's
+block) raises it from 11 mm to the set gap of the middle-bottom nip. The sheet is built in 100 mm segments tagged with
+their distance from the lip, and the wound roll grows from its core while winding starts.
 The model runs in real time at a 3 m/min line speed. Every roll turns at the same surface speed,
 n = 1000 v / (pi d), and the 250 mm stack rolls turn exactly once per loop.
 """
@@ -81,16 +83,21 @@ head = [kit.cylinder('Adapter', (.068, 0, AX), .055, .135, 'X', M['steel'], segm
 kit.join(head, 'AdapterAndFeedPipe')
 lip = kit.flat_die('Flat die', X_DIE, .50, .16, .12, AX, M)
 
-# 3-roll stack: frame, gap adjusters and rolls (all on one stack carriage)
+# 3-roll stack: frame and rolls
 frame = []
 for side in (-1, 1):
     y = side * (FACE / 2 + .17)
-    # Rear side frame is a plate; the operator side uses two posts so the rolls and the die stay visible.
-    frame += ([kit.box('Stack side frame', (X_S, y, (Z_T + R + .12) / 2), (.48, .05, Z_T + R + .12), M['paint'], bevel=.008)] if side > 0 else
-              [kit.box('Stack front post', (X_S + dx, y, (Z_T + R + .12) / 2), (.07, .05, Z_T + R + .12), M['paint'], bevel=.006)
-               for dx in (-.20, .20)])
-    frame += [kit.hydraulic_cylinder('Bottom gap adjuster', (X_S - .32, y, Z_B), (X_S - .14, y, Z_B), .03, .014, M)[0],
-              kit.box('Stack top rail', (X_S, y, Z_T + R + .10), (.47, .05, .04), M['paint'], bevel=.004),
+    # Rear side frame is a plate; the operator side uses two posts so the rolls and the die stay visible. The plate has a
+    # window round each roll's rotary union, tall enough for the top and bottom rolls' gap strokes.
+    if side > 0:
+        plate = kit.box('Stack side frame', (X_S, y, (Z_T + R + .12) / 2), (.48, .05, Z_T + R + .12), M['paint'], bevel=.008)
+        kit.subtract(plate, [kit.box('Union window', (X_S, y, (z0 + z1) / 2), (.09, .08, z1 - z0), M['paint'], bevel=0)
+                             for z0, z1 in ((Z_T - .045, Z_T + .075), (Z_M - .045, Z_M + .045), (Z_B - .055, Z_B + .045))])
+        frame.append(plate)
+    else:
+        frame += [kit.box('Stack front post', (X_S + dx, y, (Z_T + R + .12) / 2), (.07, .05, Z_T + R + .12), M['paint'], bevel=.006)
+                  for dx in (-.20, .20)]
+    frame += [kit.box('Stack top rail', (X_S, y, Z_T + R + .10), (.47, .05, .04), M['paint'], bevel=.004),
               kit.box('Gap cylinder post', (X_S, y, Z_T + .33), (.06, .05, .17), M['paint'], bevel=.004),
               kit.box('Stack rail', (X_S, y, .02), (.90, .06, .04), M['steel'])]
 frame.append(kit.box('Stack crossbeam', (X_S + .2, 0, Z_T + R + .12), (.08, FACE + .40, .08), M['paint']))
@@ -99,18 +106,52 @@ frame.append(kit.box('Stack drive', (X_S, FACE / 2 + .40, Z_M), (.30, .20, .30),
 kit.join(frame, 'StackFrame')
 top_roll = kit.roll('TopRoll', X_S, Z_T, R, FACE, M, 'roll', 1, FRAMES, -1)   # bottom surface moves +X at the first nip
 kit.roll('MiddleRoll', X_S, Z_M, R, FACE, M, 'roll', 1, FRAMES, 1)     # the web wraps its +X side, moving down
-kit.roll('BottomRoll', X_S, Z_B, R, FACE, M, 'roll', 1, FRAMES, -1)    # the web wraps its -X side, leaving along +X
+bottom_roll = kit.roll('BottomRoll', X_S, Z_B, R, FACE, M, 'roll', 1, FRAMES, -1, joint=False)   # the web wraps its -X side
+# The bottom roll's rotary union and hoses ride its gap carriage; its hoses fan out wider than the top and middle rolls'
+# hoses so that they stay clear of them over the stroke.
+jy = FACE / 2 + .14
+kit.join([bpy.data.objects['BottomRoll stand'], kit.cylinder('BottomRoll rotary union', (X_S, jy + .03, Z_B), .028, .07, 'Y', M['brass']),
+          kit.hose('BottomRoll supply', (X_S, jy + .06, Z_B + .01), (X_S - .28, jy + .20, .12), .012, M['hose_blue'], sag=.05),
+          kit.hose('BottomRoll return', (X_S, jy + .06, Z_B - .01), (X_S + .28, jy + .20, .12), .012, M['hose_red'], sag=.05)],
+         'BottomRoll stand')
 
 # Gap actuator: the top roll, its bearing blocks and rotary union ride a carriage that two hydraulic cylinders, hanging
 # from a crosshead over the stack, lower onto the sheet. For threading the gap stands 30 mm open.
 bpy.context.view_layer.update()
 nip = kit.carrier('TopRollCarriage')
 kit.mount([top_roll, bpy.data.objects['TopRoll stand']], nip)
-BLOCK_TOP = Z_T + (R * .9 + .06) / 2
+HALF_BLOCK = (R * .9 + .06) / 2
+BLOCK_TOP = Z_T + HALF_BLOCK
 for y in (-(FACE / 2 + .07), FACE / 2 + .07):
     kit.linked_cylinder('Top roll gap cylinder', (X_S, y, Z_T + .41), (X_S, y, Z_T + .25), (X_S, y, BLOCK_TOP), .035, .016, M, nip, inset=.05)
 OPEN = .03
 kit.actuate(nip, FRAMES, (0, 0, OPEN))
+
+# Bottom gap adjusters (both sides): the bottom roll, its bearing blocks and rotary union ride a second carriage. A vertical
+# hydraulic cylinder on a pedestal pushes each bearing block up against a wedge stop under the middle roll's block; a
+# spindle with a handwheel moves the wedge and so sets the middle-bottom gap. For threading the bottom roll stands 10 mm
+# low (11 mm gap); the step raises it to the 1 mm model gap (the lip-gap example; a real gap is set while watching the
+# gauge and is not the product thickness). Teaching values (grade C), not an OEM drawing.
+gap = kit.carrier('BottomRollCarriage', group='gap')
+kit.mount([bottom_roll, bpy.data.objects['BottomRoll stand']], gap)
+GAP_OPEN = .010
+GAP_MM = round((Z_M - Z_B - 2 * R) * 1000, 3)                 # middle-bottom gap with the carriage closed
+WEDGE_LO, WEDGE_HI = Z_B + HALF_BLOCK + .0003, Z_M - HALF_BLOCK - .0003
+Z_WEDGE = (WEDGE_LO + WEDGE_HI) / 2
+adjusters = []
+for y in (-(FACE / 2 + .07), FACE / 2 + .07):
+    kit.linked_cylinder('Bottom gap cylinder', (X_S, y, .14), (X_S, y, .40), (X_S, y, Z_B - HALF_BLOCK), .035, .016, M, gap, inset=.05)
+    adjusters += [kit.box('Bottom gap cylinder pedestal', (X_S, y, .07), (.16, .10, .14), M['paint_dark'], bevel=.006),
+                  kit.box('Bottom gap wedge', (X_S + .02, y, Z_WEDGE), (.10, .05, WEDGE_HI - WEDGE_LO), M['steel_dark'], bevel=.003),
+                  kit.cylinder('Bottom gap spindle', (X_S - .155, y, Z_WEDGE), .008, .25, 'X', M['steel'], segments=12),
+                  kit.box('Bottom gap spindle nut', (X_S - .10, y, Z_WEDGE), (.04, .03, .03), M['steel_dark'], bevel=.003),
+                  kit.box('Bottom gap scale', (X_S - .10, y, Z_WEDGE + .016), (.05, .02, .002), M['warning'], bevel=0),
+                  kit.ring('Bottom gap handwheel', X_S - .29, X_S - .28, .032, .04, (y, Z_WEDGE), M['black'], segments=24),
+                  kit.cylinder('Bottom gap handwheel hub', (X_S - .285, y, Z_WEDGE), .012, .02, 'X', M['steel_dark'], segments=16),
+                  kit.box('Bottom gap handwheel spoke', (X_S - .285, y, Z_WEDGE), (.006, .066, .006), M['black'], bevel=0),
+                  kit.box('Bottom gap handwheel spoke', (X_S - .285, y, Z_WEDGE), (.006, .006, .066), M['black'], bevel=0)]
+kit.join(adjusters, 'BottomGapAdjusters')
+kit.actuate(gap, FRAMES, (0, 0, -GAP_OPEN))
 
 # Roller table, edge trim, haul-off and winder
 for k, x in enumerate(TABLE):
@@ -176,13 +217,14 @@ SCREW_PER_M, STACK_PER_M = TURNS['screw'] / TRAVEL, 1000 / (math.pi * STACK_D)
 WIND = 2.0                                           # metres of sheet wound during the winding step (compressed growth)
 STARTUP, CONTROLS = kit.startup(
     ['실제 라인의 기동 순서입니다. 롤 갭을 연 상태에서 스크류가 용융 시트를 평다이 밖으로 밀어내 상단과 중단 롤 사이로 넣고, 유압 실린더로 '
-     '상단 롤을 내려 갭을 닫은 뒤 롤 스택을 돌려 시트를 S자로 감아 롤러 테이블, 트림, 인취를 거쳐 권취기까지 보내고 권취를 시작합니다. '
-     '실제 라인은 존과 롤 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 '
-     '보여줍니다.',
-     'The real start-up order: with the roll gap open, the screw pushes the melt sheet out of the flat die between the top '
-     'and middle rolls; the hydraulic cylinders lower the top roll to close the gap, the stack draws the sheet through its '
-     'S-wrap over the roller table, trim and haul-off to the winder, and winding starts. A real line only lets the screw '
-     'start once every zone and roll has reached its set point and soaked (cold-start protection); the model starts after that.'],
+     '상단 롤을 내려 갭을 닫고, 갭 조정기로 하단 롤을 올려 중단·하단 롤 갭을 맞춘 뒤 롤 스택을 돌려 시트를 S자로 감아 롤러 테이블, 트림, '
+     '인취를 거쳐 권취기까지 보내고 권취를 시작합니다. 실제 라인은 존과 롤 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 '
+     '기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.',
+     'The real start-up order: with the roll gaps open, the screw pushes the melt sheet out of the flat die between the top '
+     'and middle rolls; the hydraulic cylinders lower the top roll to close the gap, the gap adjusters raise the bottom roll '
+     'to set the middle-bottom gap, the stack draws the sheet through its S-wrap over the roller table, trim and haul-off to '
+     'the winder, and winding starts. A real line only lets the screw start once every zone and roll has reached its set '
+     'point and soaked (cold-start protection); the model starts after that.'],
     [kit.step('screw', ['압출 시작 · 스크류 회전', 'Start extruding · screw'],
               ['스크류를 돌려 용융 시트를 평다이에서 열린 상단·중단 롤 사이로 보내세요.',
                'Turn the screw to push the melt sheet from the flat die into the open gap between the top and middle rolls.'],
@@ -193,12 +235,20 @@ STARTUP, CONTROLS = kit.startup(
                'The sheet is between the rolls. Lower the top roll with the hydraulic cylinders to close the gap; the roll gap '
                'is not the product thickness and is set while watching the gauge.'],
               needs=['screw'], move='nip'),
+     kit.step('gap', ['하단 롤 갭 설정 · 갭 조정기', 'Set the bottom roll gap · gap adjusters'],
+              ['상단 갭이 닫혔습니다. 양쪽 갭 조정기의 유압 실린더로 하단 롤을 올려 쐐기 스토퍼에 붙이세요. 중단·하단 롤 갭이 11 mm에서 '
+               '모형의 1 mm까지 줄어듭니다. 쐐기 위치는 스핀들 핸들로 정하며, 실제 갭은 제품 두께와 같지 않고 두께를 보며 맞춥니다.',
+               'The top gap is closed. Raise the bottom roll with the hydraulic cylinders of both gap adjusters until its bearing '
+               'blocks rest on the wedge stops; the middle-bottom gap closes from 11 mm to the model\'s 1 mm. The spindle handwheel '
+               'sets the wedge; a real gap is not the product thickness and is set while watching the gauge.'],
+              needs=['nip'], move='gap',
+              readout={'from': round(GAP_MM + GAP_OPEN * 1000, 3), 'to': GAP_MM, 'unit': 'mm', 'digits': 1}),
      kit.step('roll', ['롤 스택 이송', 'Draw with the roll stack'],
-              ['갭이 닫혔습니다. 롤 스택을 돌려 시트를 S자로 감아 롤러 테이블, 트림, 인취를 거쳐 권취기까지 보내세요. 이송이 시작되면 갭을 '
-               '열 수 없습니다.',
-               'The gap is closed. Run the stack to draw the sheet through its S-wrap over the roller table, trim and haul-off '
-               'to the winder; the gap stays closed once drawing starts.'],
-              needs=['nip'], locks=['nip'], once=True, thread=[S_NIP, S_END],
+              ['두 갭이 닫혔습니다. 롤 스택을 돌려 시트를 S자로 감아 롤러 테이블, 트림, 인취를 거쳐 권취기까지 보내세요. 이송이 시작되면 '
+               '갭을 열 수 없습니다.',
+               'Both gaps are closed. Run the stack to draw the sheet through its S-wrap over the roller table, trim and haul-off '
+               'to the winder; the gaps stay closed once drawing starts.'],
+              needs=['gap'], locks=['nip', 'gap'], once=True, thread=[S_NIP, S_END],
               spin={'roll': [round((S_END - S_NIP) * STACK_PER_M, 4), 0], 'screw': [round((S_END - S_NIP) * SCREW_PER_M, 4), 0]}),
      kit.step('winder', ['권취 시작', 'Start winding'],
               ['시트가 권취 코어에 닿았습니다. 권취기를 돌려 감으세요. 모형은 76 mm 코어에서 250 mm 권취 롤까지를 압축해 보여줍니다.',
@@ -210,7 +260,7 @@ STARTUP, CONTROLS = kit.startup(
               wind={'node': 'Winder_body', 'core': round(CORE_D / WOUND_D, 4)})],
     ['기동 완료 · "자동 공정으로 돌아가기"를 누르면 정상 운전(3 m/min)을 재생합니다.',
      'Start-up complete. Choose "Return to cycle" to play steady running at 3 m/min.'],
-    LOOP)
+    LOOP, pinned={'nip': 1, 'gap': 1})
 centre = [(ext['x_rear'] + X_WIND + WR) / 2, .85, 0]
 META = {
     'id': 'sheet', 'duration': LOOP, 'frames': [0, FRAMES],
@@ -236,17 +286,24 @@ META = {
     'study': {'rpm': round(RPM['screw'], 1), 'speed': LINE_SPEED, 'diameter': STACK_D},
     'teaching': {'time_scale': 1, 'line_speed_m_min': LINE_SPEED, 'rpm': {key: round(value, 3) for key, value in RPM.items()},
                  'roll_mm': {'stack': STACK_D, 'table': TABLE_D, 'haul': HAUL_D, 'winder_now': WOUND_D, 'core': CORE_D},
+                 'bottom_gap_mm': {'open': round(GAP_MM + GAP_OPEN * 1000, 3), 'set': GAP_MM},
                  'loop_note': 'Real time: the 250 mm stack rolls turn once per loop; every roll keeps the same surface speed.'},
     'spec': {'basis': 'Pack B grade C teaching values; brand-neutral; not an OEM drawing or PHA setting',
              'screw_d_mm': 45, 'l_d': 30, 'flat_die_mm': '500 x 160 x 120', 'lip_gap_mm': 1.0, 'stack': '3 x 250 mm, face 600 mm',
              'web_path': 'S-wrap: top-middle nip, middle roll, middle-bottom nip, bottom roll', 'roller_table': '2000 mm, 80 mm rolls at 200 mm',
-             'trim_mm_each_side': 15, 'gap_threading_mm': OPEN * 1000, 'gap_cylinders': 2, 'haul_off_mm': HAUL_D, 'winder_core_mm': CORE_D, 'winder_max_mm': 500,
+             'trim_mm_each_side': 15, 'gap_threading_mm': OPEN * 1000, 'gap_cylinders': 2,
+             'bottom_gap_adjusters': {'per_side': 'vertical hydraulic cylinder under the bottom roll bearing block, wedge stop under the '
+                                                  'middle roll block, wedge spindle with handwheel and scale',
+                                      'threading_open_mm': GAP_OPEN * 1000, 'set_gap_mm': GAP_MM,
+                                      'note': 'model gap = lip-gap example; a real gap is set on the gauge and is not the product thickness',
+                                      'grade': 'C teaching values; not an OEM drawing'},
+             'haul_off_mm': HAUL_D, 'winder_core_mm': CORE_D, 'winder_max_mm': 500,
              'sources': 'output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md'},
 }
 
 floor = kit.floor('Floor', ext['x_rear'] - .3, X_WIND + .5, -.9, 1.0, M)
 kit.studio_world(.8, 'studio.exr')
-release = kit.hold_closed([nip])                     # the poster shows the running line
+release = kit.hold_closed([nip, gap])                # the poster shows the running line
 sc.frame_set(round(FRAMES * .4))
 bpy.context.view_layer.update()
 camera = kit.ortho_camera('Line camera', (centre[0] + 5, -10, 5.4), (centre[0], 0, .8), 8)

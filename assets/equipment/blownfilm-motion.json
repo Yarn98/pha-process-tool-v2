@@ -85,6 +85,20 @@
       ]
     },
     {
+      "key": "ibc",
+      "label": [
+        "IBC 기동 · 공급/배기",
+        "Start the IBC · supply and exhaust"
+      ],
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
+      "range": [
+        0,
+        11.291666666666666
+      ]
+    },
+    {
       "key": "haul",
       "label": [
         "닙롤 이송",
@@ -111,12 +125,26 @@
         0,
         11.291666666666666
       ]
+    },
+    {
+      "key": "oscillate",
+      "label": [
+        "오실레이팅 인취 · ±90° 반전",
+        "Oscillating haul-off · ±90° reversing"
+      ],
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
+      "range": [
+        0,
+        11.291666666666666
+      ]
     }
   ],
   "startup": {
     "intro": [
-      "실제 라인의 기동 순서입니다. 스크류가 튜브를 환형 다이 밖으로 밀어내면 작업자가 케이지와 접힘 프레임을 지나 닙롤까지 끌어 올리고, 닙을 닫아 튜브 위쪽을 막고, 열풍 에어링을 60 °C로 올린 뒤 다이 중앙으로 공기를 넣어 버블을 BUR 2까지 부풀리고, 닙롤로 접힌 필름을 권취기까지 보내 권취를 시작합니다. 실제 라인은 존 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.",
-      "The real start-up order: the screw pushes the tube out of the annular die, the operator pulls it up through the cage and collapsing frame to the nip rolls, the nip closes to seal the top of the tube, the hot air ring is brought to 60 °C, air through the die centre inflates the bubble to BUR 2, and the nip rolls draw the lay-flat film to the winder, where winding starts. A real line only lets the screw start once every zone has reached its set point and soaked (cold-start protection); the model starts after that."
+      "실제 라인의 기동 순서입니다. 스크류가 튜브를 환형 다이 밖으로 밀어내면 작업자가 케이지와 접힘 프레임을 지나 닙롤까지 끌어 올리고, 닙을 닫아 튜브 위쪽을 막고, 열풍 에어링을 60 °C로 올린 뒤 다이 중앙으로 공기를 넣어 버블을 BUR 2까지 부풀리고, IBC로 버블 안쪽 공기를 순환시키며 지름을 잡고, 닙롤로 접힌 필름을 권취기까지 보내 권취를 시작한 뒤 오실레이팅 인취를 돌립니다. 실제 라인은 존 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.",
+      "The real start-up order: the screw pushes the tube out of the annular die, the operator pulls it up through the cage and collapsing frame to the nip rolls, the nip closes to seal the top of the tube, the hot air ring is brought to 60 °C, air through the die centre inflates the bubble to BUR 2, the IBC circulates the air inside the bubble and holds its diameter, the nip rolls draw the lay-flat film to the winder, where winding starts, and the oscillating haul-off starts reversing. A real line only lets the screw start once every zone has reached its set point and soaked (cold-start protection); the model starts after that."
     ],
     "steps": [
       {
@@ -210,22 +238,48 @@
         "morph": "inflate"
       },
       {
+        "key": "ibc",
+        "label": [
+          "IBC 기동 · 공급/배기",
+          "Start the IBC · supply and exhaust"
+        ],
+        "hint": [
+          "버블이 BUR 2로 섰습니다. IBC 공급·배기 블로어를 켜세요. 공급 공기는 다이 중앙의 스택 노즐에서 나와 필름 안쪽을 따라 올라가며 열을 빼앗고, 데워진 공기는 스택 위 흡입구로 빠집니다. 케이지의 초음파 센서 3개가 버블 지름을 재고, 제어기가 배기량을 맞춰 BUR 2를 유지합니다. IBC 공기 온도는 PHA 근거가 없어 정하지 않았습니다(비결정성 CA1240PF TDS는 냉각 공기를 권장).",
+          "The bubble stands at BUR 2. Start the IBC supply and exhaust blowers: supply air leaves the nozzles of the stack in the die centre and sweeps up the inside of the film, taking heat away, and the warmed air is drawn into the stack top. Three ultrasonic sensors on the cage measure the bubble and the controller trims the exhaust to hold BUR 2. No IBC air temperature is set, for lack of a PHA source (the amorphous CA1240PF TDS recommends cooling air)."
+        ],
+        "needs": [
+          "inflate"
+        ],
+        "locks": [],
+        "once": false,
+        "spin": {
+          "ibc": [
+            3.4,
+            0
+          ]
+        },
+        "reveal": [
+          "ibc"
+        ]
+      },
+      {
         "key": "haul",
         "label": [
           "닙롤 이송",
           "Draw with the nip rolls"
         ],
         "hint": [
-          "버블이 섰습니다. 닙롤을 돌려 접힌 필름을 타워 위 가이드 롤을 지나 권취기까지 보내세요. 이송이 시작되면 모형은 닙, 에어링 온도, 버블 크기를 고정합니다.",
-          "The bubble stands. Run the nip rolls to draw the lay-flat film over the tower guide rolls to the winder; the model holds the nip, the air-ring temperature and the bubble size once drawing starts."
+          "IBC가 버블을 잡고 있습니다. 닙롤을 돌려 접힌 필름을 타워 위 가이드 롤을 지나 권취기까지 보내세요. 이송이 시작되면 모형은 닙, 에어링 온도, 버블 크기와 IBC를 고정합니다.",
+          "The IBC holds the bubble. Run the nip rolls to draw the lay-flat film over the tower guide rolls to the winder; the model holds the nip, the air-ring temperature, the bubble size and the IBC once drawing starts."
         ],
         "needs": [
-          "inflate"
+          "ibc"
         ],
         "locks": [
           "nip",
           "air",
-          "inflate"
+          "inflate",
+          "ibc"
         ],
         "once": true,
         "spin": {
@@ -276,6 +330,23 @@
           "node": "Winder_body",
           "core": 0.5067
         }
+      },
+      {
+        "key": "oscillate",
+        "label": [
+          "오실레이팅 인취 · ±90° 반전",
+          "Oscillating haul-off · ±90° reversing"
+        ],
+        "hint": [
+          "권취가 시작되었습니다. 오실레이팅 인취를 돌리세요. 닙롤, 실린더, 접힘 프레임을 실은 프레임이 데크의 선회 베어링 위에서 버블 축을 중심으로 좌우 90°씩(총 180°, 한 주기 120 s) 천천히 반전 회전하며, 버블 둘레의 두께 편차가 권취 롤 폭 전체로 퍼집니다. 슬라이더는 가운데 → +90° → −90°의 한 번 반전입니다. 실제 장치는 프레임 위 터닝 바가 필름 방향을 바로잡으며, 모형은 닙 위 필름의 비틀림으로 나타냅니다.",
+          "Winding has started. Start the oscillating haul-off: the frame that carries the nip rolls, their cylinders and the collapsing frame turns on a slewing ring on the deck, reversing 90° each way about the bubble axis (180° total, 120 s per cycle), so the bubble’s circumferential gauge bands spread across the width of the wound roll. The slider runs one reversal: centre, +90°, then -90°. A real haul-off straightens the film with turning bars on the frame; the model shows it as a twist of the film above the nip."
+        ],
+        "needs": [
+          "winder"
+        ],
+        "locks": [],
+        "once": false,
+        "move": "oscillate"
       }
     ],
     "done": [
@@ -283,7 +354,8 @@
       "Start-up complete. Choose \"Return to cycle\" to play steady running at 5 m/min."
     ],
     "pinned": {
-      "nip": 1
+      "nip": 1,
+      "oscillate": 0
     },
     "hidden": [
       "flow"
@@ -529,7 +601,8 @@
     "haul": 3,
     "winder": 2,
     "screw": 11,
-    "hotair": 1
+    "hotair": 1,
+    "ibc": 1
   },
   "study": {
     "rpm": 58.5,
@@ -560,6 +633,14 @@
       "core": 76.0
     },
     "air_ring_air_c": 60,
+    "oscillation": {
+      "total_deg": 180,
+      "period_s": 120,
+      "twist_mm": [
+        62.5,
+        200.0
+      ]
+    },
     "loop_note": "Real time: steady bubble (no breathing); the nip rolls turn three times per loop and the winder twice."
   },
   "spec": {
@@ -610,8 +691,31 @@
       "grade": "C teaching values; not an OEM drawing",
       "sources": "docs/research/pha-blown-film-hot-air-ring-20261017.md"
     },
-    "oscillating_haul_off": "optional, not shown",
-    "ibc": "optional, not shown",
+    "oscillating_haul_off": {
+      "type": "nip, carriage, cylinders and collapsing frame on a frame turning on a slewing ring (gear motor and pinion)",
+      "total_deg": 180,
+      "period_s": 120,
+      "film_above_nip": "twists back to the fixed guide roll between 62.5 and 200 mm above the nip (turning bars not modelled)",
+      "grade": "C teaching values (Pack B); not an OEM drawing"
+    },
+    "ibc": {
+      "train": [
+        "supply blower",
+        "die-centre supply channel",
+        "stack with nozzle ring",
+        "stack-top exhaust intake",
+        "exhaust blower",
+        "three ultrasonic bubble-diameter sensors on the cage",
+        "IBC controller (trims the exhaust)"
+      ],
+      "stack_mm": {
+        "od": 32.0,
+        "height": 250.0,
+        "nozzle_height": 50.0
+      },
+      "air_temperature": "not set (no PHA source); the amorphous CA1240PF TDS recommends cooling air for ring and IBC",
+      "grade": "C teaching values (Pack B: optional, separate supply and exhaust); not an OEM drawing"
+    },
     "winder": "76 mm core to 450 mm, two-ply lay-flat",
     "sources": "output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md"
   },
@@ -620,7 +724,9 @@
     "flow",
     "haul",
     "hotair",
+    "ibc",
     "nip",
+    "oscillate",
     "resin",
     "screw",
     "winder"

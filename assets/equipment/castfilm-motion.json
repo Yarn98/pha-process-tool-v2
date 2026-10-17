@@ -64,6 +64,20 @@
       ]
     },
     {
+      "key": "tension",
+      "label": [
+        "권취 장력 걸기 · 댄서",
+        "Take up the tension · dancer"
+      ],
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
+      "range": [
+        0,
+        7.541666666666667
+      ]
+    },
+    {
       "key": "winder",
       "label": [
         "권취 시작",
@@ -76,12 +90,26 @@
         0,
         7.541666666666667
       ]
+    },
+    {
+      "key": "turret",
+      "label": [
+        "권취 교체 · 터릿 180° 인덱싱",
+        "Change the roll · turret 180° index"
+      ],
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
+      "range": [
+        0,
+        7.541666666666667
+      ]
     }
   ],
   "startup": {
     "intro": [
-      "실제 라인의 기동 순서입니다. 스크류가 용융 커튼을 평다이 밖으로 밀어내 에어 갭을 지나 도는 칠 롤 위에 떨어뜨리면, 에어 나이프를 실린더로 밀어 넣어 커튼을 칠 롤에 밀착(pinning)시키고, 롤을 돌려 필름을 두께 측정, 트림, 댄서를 거쳐 권취기까지 보낸 뒤 권취를 시작합니다. 실제 라인은 존과 칠 롤 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.",
-      "The real start-up order: the screw pushes the melt curtain out of the flat die through the air gap onto the turning chill roll; the cylinders push the air knife in to pin the curtain to the roll, the rolls draw the film through the gauge, trim and dancer to the winder, and winding starts. A real line only lets the screw start once every zone and the chill roll have reached their set points and soaked (cold-start protection); the model starts after that."
+      "실제 라인의 기동 순서입니다. 스크류가 용융 커튼을 평다이 밖으로 밀어내 에어 갭을 지나 도는 칠 롤 위에 떨어뜨리면, 에어 나이프를 실린더로 밀어 넣어 커튼을 칠 롤에 밀착(pinning)시키고, 롤을 돌려 필름을 두께 측정, 트림, 댄서를 거쳐 권취기까지 보낸 뒤 장력을 걸어 댄서를 작동 위치로 올리고 권취를 시작합니다. 롤이 차면 터릿을 돌려 라인을 멈추지 않고 롤을 교체합니다. 실제 라인은 존과 칠 롤 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.",
+      "The real start-up order: the screw pushes the melt curtain out of the flat die through the air gap onto the turning chill roll; the cylinders push the air knife in to pin the curtain to the roll, the rolls draw the film through the gauge, trim and dancer to the winder, the tension lifts the dancer to its working position, and winding starts. When the roll is full, the turret changes it without stopping the line. A real line only lets the screw start once every zone and the chill roll have reached their set points and soaked (cold-start protection); the model starts after that."
     ],
     "steps": [
       {
@@ -144,18 +172,42 @@
         "once": true,
         "spin": {
           "roll": [
-            2.9694,
+            2.9215,
             0
           ],
           "screw": [
-            23.7495,
+            23.3663,
             0
           ]
         },
         "thread": [
           0.07961,
-          3.81109
+          3.75087
         ]
+      },
+      {
+        "key": "tension",
+        "label": [
+          "권취 장력 걸기 · 댄서",
+          "Take up the tension · dancer"
+        ],
+        "hint": [
+          "필름이 권취 코어에 닿았습니다. 권취기를 천천히 돌려 늘어진 필름을 감으세요. 장력이 생기면 댄서 롤이 하한 스토퍼에서 작동 위치까지 25 mm 올라오고, 필름 루프가 그만큼 짧아집니다. 이후에는 댄서 위치 센서가 권취 속도를 보정해 이 위치를 유지하며, 장력이 변하면 댄서가 오르내려 받아냅니다.",
+          "The film has reached the winder core. Turn the winder slowly to take up the slack. As the tension builds, the dancer roll rises 25 mm from its lower stops to the working position and the film loop shortens with it. From then on the dancer position sensor trims the winder speed to hold that position, and the dancer rises or falls to absorb tension changes."
+        ],
+        "needs": [
+          "roll"
+        ],
+        "locks": [],
+        "once": false,
+        "spin": {
+          "winder": [
+            0.144,
+            0
+          ]
+        },
+        "move": "dancer",
+        "morph": "dancer"
       },
       {
         "key": "winder",
@@ -164,13 +216,15 @@
           "Start winding"
         ],
         "hint": [
-          "필름이 권취 코어에 닿았습니다. 권취기를 돌려 감으세요. 모형은 76 mm 코어에서 200 mm 권취 롤까지를 압축해 보여줍니다.",
-          "The film has reached the winder core. Turn the winder to wind it; the model compresses the growth from the 76 mm core to a 200 mm roll."
+          "댄서가 작동 위치에 섰습니다. 권취기를 돌려 감으세요. 모형은 76 mm 코어에서 200 mm 권취 롤까지를 압축해 보여줍니다.",
+          "The dancer stands at its working position. Turn the winder to wind the film; the model compresses the growth from the 76 mm core to a 200 mm roll."
         ],
         "needs": [
-          "roll"
+          "tension"
         ],
-        "locks": [],
+        "locks": [
+          "tension"
+        ],
         "once": true,
         "spin": {
           "winder": [
@@ -190,6 +244,39 @@
           "node": "Winder_body",
           "core": 0.38
         }
+      },
+      {
+        "key": "turret",
+        "label": [
+          "권취 교체 · 터릿 180° 인덱싱",
+          "Change the roll · turret 180° index"
+        ],
+        "hint": [
+          "권취 롤이 찼습니다. 라인을 멈추지 않고 터릿을 180° 돌려, 다 감긴 롤은 아래로 돌아 대기 위치로 가고 빈 코어는 위로 넘어와 권취 위치에 서게 하세요. 실제 권취기는 이때 새 코어에 필름을 붙이고 잘라 넘깁니다. 모형은 절단·전사를 생략하므로 필름 끝은 새 코어 위에서 기다립니다.",
+          "The roll is full. Without stopping the line, index the turret 180°: the full roll swings down to the standby position and the empty core comes over the top to the winding position. A real winder now lays the film onto the new core and cuts it; the model leaves out the cut and transfer, so the film end waits above the new core."
+        ],
+        "needs": [
+          "winder"
+        ],
+        "locks": [
+          "winder"
+        ],
+        "once": true,
+        "spin": {
+          "roll": [
+            0.7958,
+            0
+          ],
+          "screw": [
+            6.3646,
+            0
+          ],
+          "winder": [
+            1.5915,
+            0
+          ]
+        },
+        "move": "turret"
       }
     ],
     "done": [
@@ -197,7 +284,9 @@
       "Start-up complete. Choose \"Return to cycle\" to play steady running at 10 m/min."
     ],
     "pinned": {
-      "nip": 1
+      "nip": 1,
+      "dancer": 1,
+      "turret": 0
     },
     "hidden": [
       "flow"
@@ -447,6 +536,17 @@
       "winder_now": 200.0,
       "core": 76.0
     },
+    "dancer": {
+      "arm_mm": 240.0,
+      "swing_deg": 6.0,
+      "rise_mm": 25.09,
+      "take_up_mm": 34.37
+    },
+    "turret": {
+      "spindle_spacing_mm": 400.0,
+      "index_deg": 180,
+      "index_film_m": 1.0
+    },
     "loop_note": "Real time: the 400 mm chill roll turns once per loop and the 200 mm rolls twice; one surface speed."
   },
   "spec": {
@@ -462,17 +562,33 @@
     "chill_wrap_deg": 180,
     "gauge": "traversing O-frame 700 mm",
     "edge_trim": true,
-    "winder": "76 mm core to 500 mm, dancer with load cells",
+    "winder": "76 mm core to 500 mm on a two-spindle turret, with a dancer",
+    "dancer": {
+      "type": "pivot arm with the roll in a film loop, position sensor on the pivot shaft, rubber lower stops",
+      "arm_mm": 240.0,
+      "threading_to_working_deg": 6.0,
+      "control": "the position sensor trims the winder speed to hold the working position",
+      "grade": "C teaching values; not an OEM drawing"
+    },
+    "turret": {
+      "type": "two spindles on two turret arms, index gear motor",
+      "spindle_spacing_mm": 400.0,
+      "index_deg": 180,
+      "transfer": "cut and transfer to the new core not modelled",
+      "grade": "C teaching values; not an OEM drawing"
+    },
     "sources": "output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md"
   },
   "blender": "5.2.1 LTS",
   "groups": [
+    "dancer",
     "flow",
     "gauge",
     "nip",
     "resin",
     "roll",
     "screw",
+    "turret",
     "winder"
   ]
 }

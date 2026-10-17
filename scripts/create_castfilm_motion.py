@@ -7,11 +7,14 @@ Pack B cast-film base (grade C teaching values; output/research/pha-equipment-re
 - the melt curtain falls freely through an 80 mm air gap onto a 400 mm chill roll with a 600 mm face and is
   pinned by a 550 mm air knife;
 - the film wraps the chill roll for 180 deg and transfers to a 200 mm second roll, then a 200 mm downstream roll;
-- a traversing O-frame thickness gauge (700 mm) and edge trim follow, then a dancer and a winder on a 76 mm
-  core (shown at 200 mm; the rpm falls as the roll grows to 500 mm).
+- a traversing O-frame thickness gauge (700 mm) and edge trim follow, then a dancer and a two-spindle turret winder on
+  76 mm cores (shown at 200 mm; the rpm falls as the roll grows to 500 mm).
 For the start-up sequence the air knife and its hose ride a slide that two pneumatic cylinders push radially in to the
 chill roll (50 mm back for threading); the film is built in segments tagged with their distance from the lip, and the
-wound roll grows from its core while winding starts.
+wound roll grows from its core while winding starts. The dancer roll hangs in a film loop on a 240 mm pivot arm: threaded
+slack it rests on its stops, and taking up the tension lifts it 6 deg (25 mm) to its working position while the loop
+follows it (shape key). The turret then indexes 180 deg to change the full roll for an empty core without stopping the line
+(cut and transfer not modelled). Dancer and turret sizes are teaching values (grade C), not an OEM drawing.
 The model runs in real time at a 10 m/min line speed. The 400 mm chill roll turns once per loop and the 200 mm
 rolls twice; every roll keeps the same surface speed, n = 1000 v / (pi d).
 """
@@ -156,17 +159,71 @@ trim += [kit.cylinder('Trim suction', (X_TRIM + .08, side * (TRIMMED / 2 + .01),
 kit.join(trim, 'EdgeTrim')
 kit.roll('FilmGuideRoll', X_TRIM + .2, Z_EXIT - T / 2 - RG, RG, .56, M, 'roll', turns_of(GUIDE_D), FRAMES, 1, mat=M['steel'], joint=False)
 dancer_z = Z_EXIT - .20
-kit.roll('DancerRoll', X_DANCER, dancer_z, RG, .56, M, 'roll', turns_of(GUIDE_D), FRAMES, -1, mat=M['steel'], joint=False)
-kit.join([kit.box('Dancer arm', (X_DANCER - .1, side * .34, dancer_z + .02), (.24, .02, .03), M['paint_accent']) for side in (-1, 1)]
-         + [kit.cylinder('Dancer load cell', (X_DANCER - .22, side * .34, dancer_z + .02), .025, .03, 'Y', M['steel']) for side in (-1, 1)],
-         'DancerArm')
+dancer_roll = kit.roll('DancerRoll', X_DANCER, dancer_z, RG, .56, M, 'roll', turns_of(GUIDE_D), FRAMES, -1, mat=M['steel'], joint=False)
+
+
+def bearing_ring(name, center, y, r_in, r_out, width, mat):
+    """Bearing housing (hollow, axis along Y) round a pivot shaft that turns inside it."""
+    ring = kit.ring(name, -width / 2, width / 2, r_in, r_out, (0, 0), mat, segments=32)
+    ring.rotation_euler.z = math.pi / 2               # the ring axis (local X) along world Y
+    ring.location = (center.x, y, center.z)
+    return ring
+
+
+# Dancer (teaching values, grade C): the dancer roll hangs in a loop of the film on a pivot arm, 240 mm from a pivot shaft
+# that turns in bearing housings on two posts. Film tension lifts the roll against its load; a position sensor on the
+# pivot trims the winder speed to hold the working position. Threaded slack, the arm rests on rubber stops 6 deg (25 mm at
+# the roll) lower; taking up the tension raises it to the working position, and the film loop follows the roll.
+ARM, DANCER_SWING = .24, math.radians(6)
+P_D = Vector((X_DANCER - ARM, 0, dancer_z))
+dancer_arm = [kit.cylinder('Dancer pivot shaft', (P_D.x, 0, P_D.z), .015, .85, 'Y', M['steel'], segments=20)]
+for y in (-.38, .38):
+    dancer_arm.append(kit.box('Dancer arm', ((P_D.x - .02 + X_DANCER + .03) / 2, y, P_D.z), (ARM + .05, .02, .04), M['paint_accent'], bevel=.003))
+kit.join(dancer_arm, 'DancerArm')
+STOP_X = P_D.x + .16
+# Rubber stop (15 mm radius) top: the tilted arm underside at the stop's far edge, less 0.5 mm.
+stop_top = P_D.z - (STOP_X + .015 - P_D.x) * math.tan(DANCER_SWING) - .02 / math.cos(DANCER_SWING) - .0005
+dancer_frame = []
+for y in (-.415, .415):
+    dancer_frame += [bearing_ring('Dancer pivot housing', P_D, y, .0155, .035, .03, M['steel_dark']),
+                     kit.box('Dancer post', (P_D.x, y, (P_D.z - .035) / 2), (.06, .03, P_D.z - .035), M['paint']),
+                     kit.box('Dancer stop post', (STOP_X, y * .38 / .415, (stop_top - .02) / 2), (.03, .03, stop_top - .02), M['paint']),
+                     kit.cylinder('Dancer stop', (STOP_X, y * .38 / .415, stop_top - .01), .015, .02, 'Z', M['rubber'], segments=16)]
+dancer_frame.append(kit.cylinder('Dancer position sensor', (P_D.x, -.45, P_D.z), .022, .04, 'Y', M['black'], segments=20))
+kit.join(dancer_frame, 'DancerFrame')
+bpy.context.view_layer.update()
+dancer = kit.carrier('DancerCarrier', group='dancer')
+kit.mount([dancer_roll, bpy.data.objects['DancerRoll stand'], bpy.data.objects['DancerArm']], dancer)
+kit.turn_about(dancer, FRAMES, P_D, 'Y', lambda f: DANCER_SWING * (1 - f))     # slack on the stops -> working position
+
+# Two-spindle turret winder (teaching values, grade C): the winding spindle and a spare core sit 400 mm apart on two
+# turret arms that turn about a shaft between them. A full roll is changed without stopping the line: the turret indexes
+# 180 deg, the full roll swings down to the standby position and the empty core comes over the top to the winding position.
 wind_z = Z_EXIT - .02
 winder = kit.roll('Winder', X_WIND, wind_z - RW, RW, TRIMMED + .02, M, 'winder', 2, FRAMES, 1, mat=M['film'], marks=3, joint=False)
 kit.join([kit.cylinder('Winder core', (0, 0, 0), CORE_D / 2000, TRIMMED + .14, 'X', M['core'], segments=32)], 'Winder_core').parent = winder
-kit.join([kit.box('Turret arm', (X_WIND + .15, side * .40, wind_z - RW), (.55, .05, .10), M['paint'], bevel=.006) for side in (-1, 1)]
-         + [kit.box('Turret stand', (X_WIND + .15, side * .40, (wind_z - RW) / 2), (.12, .06, wind_z - RW), M['paint']) for side in (-1, 1)]
-         + [kit.cylinder('Spare core', (X_WIND + .40, 0, wind_z - RW), CORE_D / 2000, TRIMMED + .14, 'Y', M['core'])],
-         'WinderTurret')
+SPACING = .40
+P_T = Vector((X_WIND + SPACING / 2, 0, wind_z - RW))
+X_SPARE = X_WIND + SPACING
+turret = [kit.cylinder('Turret shaft', (P_T.x, 0, P_T.z), .03, .86, 'Y', M['steel'], segments=24)]
+for side in (-1, 1):
+    turret += [kit.box('Turret arm', (P_T.x, side * .355, P_T.z), (SPACING + .22, .03, .10), M['paint_accent'], bevel=.006),
+               kit.cylinder('Turret hub', (P_T.x, side * .3775, P_T.z), .05, .015, 'Y', M['steel_dark'], segments=24),
+               kit.box('Spare chuck block', (X_SPARE, side * .30, P_T.z), (.10, .08, .10), M['steel_dark'], bevel=.006)]
+kit.join(turret, 'TurretArms')
+kit.join([kit.cylinder('Spare core', (X_SPARE, 0, P_T.z), CORE_D / 2000, TRIMMED + .14, 'Y', M['core'], segments=32)], 'SpareCore')
+turret_frame = [kit.box('Turret base', (P_T.x, 0, .015), (.20, .98, .03), M['paint_dark'], bevel=.004)]
+for side in (-1, 1):
+    turret_frame += [bearing_ring('Turret bearing housing', P_T, side * .42, .0305, .06, .06, M['steel_dark']),
+                     kit.box('Turret post', (P_T.x, side * .42, (P_T.z - .06 + .03) / 2), (.08, .06, P_T.z - .06 - .03), M['paint'])]
+turret_frame += [kit.cylinder('Turret index gearbox', (P_T.x, .485, P_T.z), .05, .07, 'Y', M['paint_accent'], segments=24),
+                 kit.motor('Turret index motor', (0, 0, 0), .045, .14, 1, M)]
+turret_frame[-1].location, turret_frame[-1].rotation_euler.z = (P_T.x, .61, P_T.z), -math.pi / 2
+kit.join(turret_frame, 'TurretFrame')
+bpy.context.view_layer.update()
+turret_carrier = kit.carrier('TurretCarrier', group='turret')
+kit.mount([winder, bpy.data.objects['Winder stand'], bpy.data.objects['TurretArms'], bpy.data.objects['SpareCore']], turret_carrier)
+kit.turn_about(turret_carrier, FRAMES, P_T, 'Y', lambda f: -math.pi * kit.smoothstep(f))   # winding spindle down and away
 
 # Film path: curtain -> landing on the chill roll -> 180 deg wrap (+X side) -> transfer under the second roll ->
 # over the third roll -> gauge -> trim -> guide roll -> dancer -> winder
@@ -181,10 +238,46 @@ S_LAND = kit.path_length(path[:2])
 S_TRIM = kit.path_length(path)
 kit.thread_web('CastFilmWeb', kit.path_slice(path, 0, S_LAND), WIDTH, T * 2, M['film'], step=.04)
 kit.thread_web('CastFilmWebDrawn', kit.path_slice(path, S_LAND, S_TRIM), WIDTH, T * 2, M['film'], s_from=S_LAND)
-after = [Vector((X_TRIM + .2, 0, Z_EXIT)), Vector((X_DANCER - RG - T / 2, 0, dancer_z + .02))]
-after += kit.arc_xz(X_DANCER, dancer_z, RG + T / 2, 180, 270, 8)[1:]
-after += [Vector((X_DANCER + .15, 0, dancer_z - RG)), Vector((X_WIND, 0, wind_z))]
-kit.thread_web('CastFilmTrimmed', after, TRIMMED, T * 2, M['film'], s_from=S_TRIM)
+
+
+def cross_tangent(c1, r1, c2, r2, sense):
+    """Internal tangent for a web that leaves circle 1 (centre c1, radius r1, XZ plane) and lands on circle 2 turning
+    the other way: ``sense`` +1 leaves circle 1 clockwise in this view (its top moving +X), -1 anticlockwise. Returns the
+    leaving and landing points."""
+    d = c2 - c1
+    a, b = (d.z, -d.x) if sense > 0 else (-d.z, d.x)
+    rho = math.hypot(a, b)
+    for phi in (math.atan2(b, a) + math.acos((r1 + r2) / rho), math.atan2(b, a) - math.acos((r1 + r2) / rho)):
+        u = Vector((math.cos(phi), 0, math.sin(phi)))
+        n = Vector((-u.z, 0, u.x)) * sense
+        leave, land = c1 + n * r1, c2 - n * r2
+        if (land - leave).dot(u) > 0:
+            return leave, land
+    raise ValueError('no internal tangent')
+
+
+# After the trim the film runs over the guide roll, down into a loop round the dancer's underside and up onto the left of
+# the winding roll; both free spans are tangents between the rolls. The dancer part of the path also has its slack pose
+# (the arm on its stops), and the trimmed film carries a shape key from that pose to the working one.
+degrees = lambda p, c: math.degrees(math.atan2(p.z - c.z, p.x - c.x))
+rf = RG + T / 2
+G, DN, WC = Vector((X_TRIM + .2, 0, Z_EXIT - T / 2 - RG)), Vector((X_DANCER, 0, dancer_z)), Vector((X_WIND, 0, wind_z - RW))
+g_leave, d_land = cross_tangent(G, rf, DN, rf, 1)
+d_leave, w_land = cross_tangent(DN, rf, WC, RW + T / 2, -1)
+guide_arc = kit.arc_xz(G.x, G.z, rf, 90, degrees(g_leave, G), 8)
+dancer_arc = kit.arc_xz(DN.x, DN.z, rf, degrees(d_land, DN) % 360, degrees(d_leave, DN) % 360, 12)
+after = guide_arc + dancer_arc + [w_land]
+slack = Matrix.Rotation(DANCER_SWING, 3, 'Y')
+slack_after = guide_arc + [P_D + slack @ (p - P_D) for p in dancer_arc] + [w_land]
+TAKE_UP = kit.path_length(slack_after) - kit.path_length(after)      # film the winder takes up as the dancer rises
+film_keys = []
+for segment in kit.thread_web_keyed('CastFilmTrimmed', after, slack_after, TRIMMED, T * 2, M['film'], 'dancer', 'Tensioned', s_from=S_TRIM):
+    if segment.data.shape_keys:
+        block = segment.data.shape_keys.key_blocks['Tensioned']
+        for frame, value in ((0, 0.0), (FRAMES, 1.0)):      # follows the dancer clip in Blender (and in still exports)
+            block.value = value
+            block.keyframe_insert('value', frame=frame)
+        film_keys.append(block)
 S_END = S_TRIM + kit.path_length(after)
 
 marks = [Vector((p.x, -WIDTH / 2 + .02, p.z)) for p in path[1:]]
@@ -204,15 +297,17 @@ kit.bake_linear()
 # Start-up: screw and roll turns follow the steady line ratios (8 screw turns per chill-roll turn of 1.257 m).
 SCREW_PER_M, CHILL_PER_M = TURNS['screw'] / TRAVEL, 1000 / (math.pi * CHILL_D)
 WIND = 3.0                                           # metres of film wound during the winding step (compressed growth)
+INDEX_M = 1.0                                        # metres of film the line runs while the turret indexes (about 6 s)
 STARTUP, CONTROLS = kit.startup(
     ['실제 라인의 기동 순서입니다. 스크류가 용융 커튼을 평다이 밖으로 밀어내 에어 갭을 지나 도는 칠 롤 위에 떨어뜨리면, 에어 나이프를 '
-     '실린더로 밀어 넣어 커튼을 칠 롤에 밀착(pinning)시키고, 롤을 돌려 필름을 두께 측정, 트림, 댄서를 거쳐 권취기까지 보낸 뒤 권취를 '
-     '시작합니다. 실제 라인은 존과 칠 롤 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 '
-     '그 이후부터 보여줍니다.',
+     '실린더로 밀어 넣어 커튼을 칠 롤에 밀착(pinning)시키고, 롤을 돌려 필름을 두께 측정, 트림, 댄서를 거쳐 권취기까지 보낸 뒤 장력을 걸어 '
+     '댄서를 작동 위치로 올리고 권취를 시작합니다. 롤이 차면 터릿을 돌려 라인을 멈추지 않고 롤을 교체합니다. 실제 라인은 존과 칠 롤 '
+     '온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.',
      'The real start-up order: the screw pushes the melt curtain out of the flat die through the air gap onto the turning '
      'chill roll; the cylinders push the air knife in to pin the curtain to the roll, the rolls draw the film through the '
-     'gauge, trim and dancer to the winder, and winding starts. A real line only lets the screw start once every zone and '
-     'the chill roll have reached their set points and soaked (cold-start protection); the model starts after that.'],
+     'gauge, trim and dancer to the winder, the tension lifts the dancer to its working position, and winding starts. When '
+     'the roll is full, the turret changes it without stopping the line. A real line only lets the screw start once every '
+     'zone and the chill roll have reached their set points and soaked (cold-start protection); the model starts after that.'],
     [kit.step('screw', ['압출 시작 · 스크류 회전', 'Start extruding · screw'],
               ['스크류를 돌려 용융 커튼을 평다이에서 에어 갭을 지나 칠 롤 위 착지선까지 내려보내세요.',
                'Turn the screw to let the melt curtain fall from the flat die through the air gap onto the landing line of '
@@ -231,17 +326,36 @@ STARTUP, CONTROLS = kit.startup(
                'to the winder; the air knife stays in once drawing starts.'],
               needs=['nip'], locks=['nip'], once=True, thread=[S_LAND, S_END],
               spin={'roll': [round((S_END - S_LAND) * CHILL_PER_M, 4), 0], 'screw': [round((S_END - S_LAND) * SCREW_PER_M, 4), 0]}),
+     kit.step('tension', ['권취 장력 걸기 · 댄서', 'Take up the tension · dancer'],
+              ['필름이 권취 코어에 닿았습니다. 권취기를 천천히 돌려 늘어진 필름을 감으세요. 장력이 생기면 댄서 롤이 하한 스토퍼에서 작동 '
+               '위치까지 25 mm 올라오고, 필름 루프가 그만큼 짧아집니다. 이후에는 댄서 위치 센서가 권취 속도를 보정해 이 위치를 유지하며, '
+               '장력이 변하면 댄서가 오르내려 받아냅니다.',
+               'The film has reached the winder core. Turn the winder slowly to take up the slack. As the tension builds, the '
+               'dancer roll rises 25 mm from its lower stops to the working position and the film loop shortens with it. From '
+               'then on the dancer position sensor trims the winder speed to hold that position, and the dancer rises or falls '
+               'to absorb tension changes.'],
+              needs=['roll'], move='dancer', morph='dancer', spin={'winder': [round(TAKE_UP * 1000 / (math.pi * CORE_D), 4), 0]}),
      kit.step('winder', ['권취 시작', 'Start winding'],
-              ['필름이 권취 코어에 닿았습니다. 권취기를 돌려 감으세요. 모형은 76 mm 코어에서 200 mm 권취 롤까지를 압축해 보여줍니다.',
-               'The film has reached the winder core. Turn the winder to wind it; the model compresses the growth from the '
-               '76 mm core to a 200 mm roll.'],
-              needs=['roll'], once=True,
+              ['댄서가 작동 위치에 섰습니다. 권취기를 돌려 감으세요. 모형은 76 mm 코어에서 200 mm 권취 롤까지를 압축해 보여줍니다.',
+               'The dancer stands at its working position. Turn the winder to wind the film; the model compresses the growth '
+               'from the 76 mm core to a 200 mm roll.'],
+              needs=['tension'], locks=['tension'], once=True,
               spin={'winder': [round(WIND * 1000 / (math.pi * (CORE_D + WOUND_D) / 2), 4), 0], 'roll': [round(WIND * CHILL_PER_M, 4), 0],
                     'screw': [round(WIND * SCREW_PER_M, 4), 0]},
-              wind={'node': 'Winder_body', 'core': round(CORE_D / WOUND_D, 4)})],
+              wind={'node': 'Winder_body', 'core': round(CORE_D / WOUND_D, 4)}),
+     kit.step('turret', ['권취 교체 · 터릿 180° 인덱싱', 'Change the roll · turret 180° index'],
+              ['권취 롤이 찼습니다. 라인을 멈추지 않고 터릿을 180° 돌려, 다 감긴 롤은 아래로 돌아 대기 위치로 가고 빈 코어는 위로 넘어와 권취 '
+               '위치에 서게 하세요. 실제 권취기는 이때 새 코어에 필름을 붙이고 잘라 넘깁니다. 모형은 절단·전사를 생략하므로 필름 끝은 새 '
+               '코어 위에서 기다립니다.',
+               'The roll is full. Without stopping the line, index the turret 180°: the full roll swings down to the standby '
+               'position and the empty core comes over the top to the winding position. A real winder now lays the film onto '
+               'the new core and cuts it; the model leaves out the cut and transfer, so the film end waits above the new core.'],
+              needs=['winder'], locks=['winder'], once=True, move='turret',
+              spin={'roll': [round(INDEX_M * CHILL_PER_M, 4), 0], 'screw': [round(INDEX_M * SCREW_PER_M, 4), 0],
+                    'winder': [round(INDEX_M * 1000 / (math.pi * WOUND_D), 4), 0]})],
     ['기동 완료 · "자동 공정으로 돌아가기"를 누르면 정상 운전(10 m/min)을 재생합니다.',
      'Start-up complete. Choose "Return to cycle" to play steady running at 10 m/min.'],
-    LOOP)
+    LOOP, pinned={'nip': 1, 'dancer': 1, 'turret': 0})
 centre = [(ext['x_rear'] + X_WIND + .5) / 2, 1.0, 0]
 META = {
     'id': 'castfilm', 'duration': LOOP, 'frames': [0, FRAMES],
@@ -266,17 +380,27 @@ META = {
                  'rpm': {key: round(value, 3) for key, value in RPM.items()},
                  'roll_mm': {'chill': CHILL_D, 'second': SECOND_D, 'third': THIRD_D, 'guide': GUIDE_D, 'winder_now': WOUND_D,
                              'core': CORE_D},
+                 'dancer': {'arm_mm': ARM * 1000, 'swing_deg': round(math.degrees(DANCER_SWING), 3),
+                            'rise_mm': round(ARM * math.sin(DANCER_SWING) * 1000, 2), 'take_up_mm': round(TAKE_UP * 1000, 2)},
+                 'turret': {'spindle_spacing_mm': SPACING * 1000, 'index_deg': 180, 'index_film_m': INDEX_M},
                  'loop_note': 'Real time: the 400 mm chill roll turns once per loop and the 200 mm rolls twice; one surface speed.'},
     'spec': {'basis': 'Pack B grade C teaching values; brand-neutral; not an OEM drawing or PHA setting',
              'screw_d_mm': 45, 'l_d': 30, 'die_width_mm': 500, 'air_gap_mm': 80, 'rolls_mm': '400 / 200 / 200, face 600',
              'pinning': 'air knife 550 mm', 'air_knife_retract_mm': OPEN * 1000, 'air_knife_cylinders': 2, 'chill_wrap_deg': 180, 'gauge': 'traversing O-frame 700 mm', 'edge_trim': True,
-             'winder': '76 mm core to 500 mm, dancer with load cells',
+             'winder': '76 mm core to 500 mm on a two-spindle turret, with a dancer',
+             'dancer': {'type': 'pivot arm with the roll in a film loop, position sensor on the pivot shaft, rubber lower stops',
+                        'arm_mm': ARM * 1000, 'threading_to_working_deg': round(math.degrees(DANCER_SWING), 3),
+                        'control': 'the position sensor trims the winder speed to hold the working position',
+                        'grade': 'C teaching values; not an OEM drawing'},
+             'turret': {'type': 'two spindles on two turret arms, index gear motor', 'spindle_spacing_mm': SPACING * 1000,
+                        'index_deg': 180, 'transfer': 'cut and transfer to the new core not modelled',
+                        'grade': 'C teaching values; not an OEM drawing'},
              'sources': 'output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md'},
 }
 
 floor = kit.floor('Floor', ext['x_rear'] - .3, X_WIND + .7, -1.1, 1.0, M)
 kit.studio_world(.8, 'studio.exr')
-release = kit.hold_closed([nip])                     # the poster shows the running line
+release = kit.hold_closed([nip, dancer, turret_carrier], keys=film_keys)    # the poster shows the running line
 sc.frame_set(round(FRAMES * .4))
 bpy.context.view_layer.update()
 camera = kit.ortho_camera('Line camera', (centre[0] + 5, -10, 5.4), (centre[0], 0, .9), 8)

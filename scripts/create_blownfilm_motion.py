@@ -14,9 +14,12 @@ A steady bubble does not breathe, so the running bubble keeps its BUR 2 shape at
 right nip roll rides a carriage that two pneumatic cylinders close onto the film (40 mm open for threading), the bubble
 segments carry a shape key from the BUR 1 start-up tube to BUR 2, and the wound roll grows from its core. The air ring is a
 hot air ring: blower, airflow switch, inline heater, insulated hoses, plenum sensor, PID controller and high-limit, set to
-the in-house 60 C for semi-crystalline PHA so that the film crystallizes before the nip and does not block. An oscillating haul-off
-is optional and not shown, and no PHA BUR or frost-line range is implied. The model runs in real time at
-5 m/min: the nip rolls turn three times per loop and the winder twice.
+the in-house 60 C for semi-crystalline PHA so that the film crystallizes before the nip and does not block. IBC supplies air
+through a stack on the die mandrel and draws it back into the stack top, balanced on three ultrasonic bubble sensors (no IBC
+air temperature is set). The oscillating haul-off reverses the nip and collapsing frame +-90 deg on a slewing ring (Pack B:
+180 deg total, 120 s period); the film above the nip twists back to the fixed guide roll in place of turning bars. No PHA
+BUR or frost-line range is implied. The model runs in real time at 5 m/min: the nip rolls turn three times per loop and the
+winder twice.
 """
 import json
 import math
@@ -43,7 +46,7 @@ FRAMES = round(3 * math.pi * NIP_D / 1000 / V * FPS)
 LOOP = FRAMES / FPS
 TRAVEL = V * LOOP
 turns_of = lambda d_mm: TRAVEL / (math.pi * d_mm / 1000)
-TURNS = {'haul': 3, 'winder': 2, 'screw': 11, 'hotair': 1}      # hotair: warm-air markers, one sweep per loop
+TURNS = {'haul': 3, 'winder': 2, 'screw': 11, 'hotair': 1, 'ibc': 1}   # hotair, ibc: air markers, one sweep per loop
 for _d, _t in ((NIP_D, 3), (WOUND_D, 2)):
     assert abs(turns_of(_d) - _t) / _t < .006, (_d, turns_of(_d))
 RPM = {'nip': 1000 * LINE_SPEED / (math.pi * NIP_D), 'winder_at_150': 1000 * LINE_SPEED / (math.pi * WOUND_D),
@@ -132,6 +135,48 @@ hot += [kit.hose('Heater power cable', (0, Y_AIR + .05, Z_HEATER + .14), (.20, .
         kit.hose('Plenum sensor cable', (X_D, .095, Z_DIE + .08), (.30, .93, .97), .004, M['cable'], sag=.06)]
 kit.join(hot, 'HotAirRing')
 
+# IBC, internal bubble cooling (optional in Pack B with separate supply and exhaust; grade C teaching values): a supply
+# blower sends air up through the die into a stack on the mandrel, out of a nozzle ring low in the bubble and up along
+# the inside of the film; an exhaust blower draws the warmed air back into the stack top and out through the die. Three
+# ultrasonic sensors on the cage measure the bubble, and the IBC controller trims the exhaust to hold the diameter (BUR 2).
+# The model sets no IBC air temperature: there is no PHA source for one.
+IBC_R, IBC_TOP, IBC_NOZZLE = .016, .25, .05
+ibc = [kit.cylinder('IBC stack', (X_D, 0, Z_DIE + IBC_TOP / 2), IBC_R, IBC_TOP, 'Z', M['stainless'], segments=32),
+       kit.cylinder('IBC supply nozzle ring', (X_D, 0, Z_DIE + IBC_NOZZLE), .022, .02, 'Z', M['steel_dark'], segments=32),
+       kit.cylinder('IBC exhaust intake', (X_D, 0, Z_DIE + IBC_TOP + .008), .021, .016, 'Z', M['steel_dark'], segments=32)]
+for k in range(8):
+    a = TAU * k / 8
+    ibc.append(kit.between('IBC supply nozzle', (X_D + .02 * math.cos(a), .02 * math.sin(a), Z_DIE + IBC_NOZZLE),
+                           (X_D + .029 * math.cos(a), .029 * math.sin(a), Z_DIE + IBC_NOZZLE), .004, M['steel_dark'], segments=10))
+kit.join(ibc, 'IBCStack')
+X_IBC, Y_IBC = X_D + .20, .80
+unit = [kit.box('IBC blower base', (X_IBC + .15, Y_IBC, .04), (.62, .30, .08), M['paint_dark'], bevel=.006),
+        kit.cylinder('IBC supply blower', (X_IBC, Y_IBC, .20), .12, .10, 'Y', M['paint_accent'], segments=40),
+        kit.cylinder('IBC exhaust blower', (X_IBC + .30, Y_IBC, .20), .12, .10, 'Y', M['paint_accent'], segments=40),
+        kit.box('IBC supply label', (X_IBC, Y_IBC - .051, .26), (.08, .002, .03), M['hose_blue'], bevel=0),
+        kit.box('IBC exhaust label', (X_IBC + .30, Y_IBC - .051, .26), (.08, .002, .03), M['hose_red'], bevel=0),
+        kit.tube_path('IBC supply duct', [(X_IBC, Y_IBC, .32), (X_IBC, Y_IBC - .10, .45), (X_D - .06, .40, .45), (X_D - .06, .155, .45)], .03,
+                      M['hose_blue']),
+        kit.tube_path('IBC exhaust duct', [(X_IBC + .30, Y_IBC, .32), (X_IBC + .30, Y_IBC - .10, .30), (X_D + .06, .40, .30), (X_D + .06, .155, .30)],
+                      .03, M['hose_red']),
+        kit.box('IBC controller', (X_IBC + .15, Y_IBC + .25, 1.0), (.24, .10, .28), M['paint'], bevel=.008),
+        kit.box('IBC controller display', (X_IBC + .15, Y_IBC + .199, 1.04), (.13, .004, .07), M['screen'], bevel=0),
+        kit.box('IBC controller stand', (X_IBC + .15, Y_IBC + .25, .43), (.05, .05, .86), M['paint_dark'])]
+for blower_x in (X_IBC, X_IBC + .30):               # supply and exhaust blower motors behind their volutes
+    motor = kit.motor('IBC blower motor', (0, 0, 0), .07, .16, 1, M)
+    motor.location, motor.rotation_euler.z = (blower_x, Y_IBC + .16, .20), -math.pi / 2
+    unit.append(motor)
+kit.join(unit, 'IBCUnit')
+Z_SENSOR = Z_DIE + FLH + .25                         # lowest cage ring
+sensors = []
+for a in (math.radians(90), math.radians(210), math.radians(330)):
+    radial = Vector((math.cos(a), math.sin(a), 0))
+    sensors += [kit.between('Bubble diameter sensor', Vector((X_D, 0, Z_SENSOR)) + radial * .118, Vector((X_D, 0, Z_SENSOR)) + radial * .148, .012,
+                            M['black'], segments=16),
+                kit.between('Bubble diameter sensor bracket', Vector((X_D, 0, Z_SENSOR)) + radial * .106, Vector((X_D, 0, Z_SENSOR)) + radial * .12, .004,
+                            M['stainless'], segments=8)]
+kit.join(sensors, 'BubbleSensors')
+
 
 # Bubble: neck and draw-down to the frost line, steady diameter in the cage, then an elliptical collapse to the
 # lay-flat at the nip (the circumference is held constant through the collapsing frame).
@@ -171,6 +216,7 @@ def section_ring(h, bur):
 # bubble, set to 1: the running line shows BUR 2 and the start-up inflates it after the nip closes.
 S_NIP = Z_NIP - Z_DIE
 cuts = sorted({0, len(heights) - 1} | {min(range(len(heights)), key=lambda i: abs(heights[i] - k * .1)) for k in range(1, 25)})
+collapsing = []                                     # segments reaching above the collapsing frame's lower end
 for k, (i0, i1) in enumerate(zip(cuts, cuts[1:])):
     bm = bmesh.new()
     rings = [[bm.verts.new(p) for p in section_ring(h, 1.0)] for h in heights[i0:i1 + 1]]
@@ -186,14 +232,20 @@ for k, (i0, i1) in enumerate(zip(cuts, cuts[1:])):
     inflated.value = 1.0
     segment['morph'] = 'inflate'
     kit.thread_mark(segment, heights[i0], heights[i1])
+    if heights[i1] > Z_COLLAPSE - Z_DIE + 1e-9:
+        collapsing.append(segment)
 
-# Tower, cage, collapsing frame, nip, guide rolls and winder
+# Tower and cage. The tower deck has a square opening for the bubble and the turning collapsing frame.
+DECK_TOP = Z_NIP - .23
+OPENING = .25                                        # half-size of the deck opening
 tower = []
 for dx in (-.45, .45):
     for dy in (-.45, .45):
         tower.append(kit.box('Tower column', (X_D + dx, dy, (Z_NIP + .35) / 2), (.08, .08, Z_NIP + .35), M['paint'], bevel=.006))
-tower += [kit.box('Tower platform', (X_D, 0, Z_NIP - .25), (1.0, 1.0, .04), M['paint_dark']),
-          kit.box('Tower top', (X_D, 0, Z_NIP + .35), (1.0, 1.0, .06), M['paint'])]
+for side in (-1, 1):
+    tower += [kit.box('Tower deck', (X_D, side * (OPENING + .5) / 2, DECK_TOP - .02), (1.0, .5 - OPENING, .04), M['paint_dark']),
+              kit.box('Tower deck', (X_D + side * (OPENING + .5) / 2, 0, DECK_TOP - .02), (.5 - OPENING, 2 * OPENING, .04), M['paint_dark'])]
+tower.append(kit.box('Tower top', (X_D, 0, Z_NIP + .35), (1.0, 1.0, .06), M['paint']))
 for side in (-1, 1):
     tower.append(kit.box('Platform rail', (X_D, side * .5, Z_NIP + .25), (1.0, .03, .03), M['warning']))
 for z in [Z_DIE + FLH + .25 + .3 * k for k in range(4)]:
@@ -204,32 +256,76 @@ for k in range(6):
     a = TAU * k / 6
     tower.append(kit.box('Cage post', (X_D + (CAGE_R + .016) * math.cos(a), (CAGE_R + .016) * math.sin(a), Z_DIE + FLH + .70),
                          (.012, .012, 1.0), M['stainless']))
-for side in (-1, 1):                                # collapsing frame slats converge on the nip
-    x0, x1 = X_D + side * (BUBBLE_R + .01), X_D + side * (NIP_D / 2000 + .004)
-    for k in range(6):
-        y = -LAYFLAT / 2 + LAYFLAT * k / 5
-        tower.append(kit.between('Collapsing slat', (x0, y, Z_COLLAPSE), (x1, y, Z_NIP - .06), .006, M['brass']))
-    tower.append(kit.between('Collapsing frame rail', (x0, -.20, Z_COLLAPSE), (x1, -.20, Z_NIP - .06), .01, M['paint_dark']))
-    tower.append(kit.between('Collapsing frame rail', (x0, .20, Z_COLLAPSE), (x1, .20, Z_NIP - .06), .01, M['paint_dark']))
 kit.join(tower, 'Tower')
+
+
+def vertical_ring(name, z0, z1, r_in, r_out, mat, segments=64):
+    """Ring about the bubble axis between heights z0 and z1."""
+    ring = kit.ring(name, 0, z1 - z0, r_in, r_out, (0, 0), mat, segments=segments)
+    ring.rotation_euler.y = -math.pi / 2
+    ring.location = (X_D, 0, z0)
+    return ring
+
+
 RN = NIP_D / 2000
 # The film rises between the rolls: the left roll's +X side and the right roll's -X side both move up.
-kit.roll('NipLeft', X_D - RN - T, Z_NIP, RN, .35, M, 'haul', 3, FRAMES, -1, mat=M['rubber'], joint=False)
+nip_left = kit.roll('NipLeft', X_D - RN - T, Z_NIP, RN, .35, M, 'haul', 3, FRAMES, -1, mat=M['rubber'], joint=False)
 nip_right = kit.roll('NipRight', X_D + RN + T, Z_NIP, RN, .35, M, 'haul', 3, FRAMES, 1, mat=M['chrome'], joint=False)
-# Nip actuator: the right (chrome) roll and its bearing blocks ride a carriage that two pneumatic cylinders, on brackets
-# standing on the tower platform, push onto the film; for threading the nip stands 40 mm open.
+# Nip actuator: the right (chrome) roll and its bearing blocks ride a carriage on two rails, pushed onto the film by two
+# pneumatic cylinders on brackets; for threading the nip stands 40 mm open.
 bpy.context.view_layer.update()
 nip = kit.carrier('NipRollCarriage')
 kit.mount([nip_right, bpy.data.objects['NipRight stand']], nip)
 X_R = X_D + RN + T
-nip_brackets = []
-for y in (-(.35 / 2 + .07), .35 / 2 + .07):
-    kit.linked_cylinder('Nip cylinder', (X_R + .26, y, Z_NIP), (X_R + .14, y, Z_NIP), (X_R + .0525, y, Z_NIP), .025, .01, M, nip, inset=.03)
-    nip_brackets += [kit.box('Nip cylinder bracket', (X_R + .27, y, Z_NIP), (.02, .07, .07), M['steel_dark'], bevel=.003),
-                     kit.box('Nip cylinder bracket post', (X_R + .27, y, Z_NIP - .13), (.03, .03, .195), M['steel_dark'], bevel=.002)]
-kit.join(nip_brackets, 'NipCylinderBrackets')
+Y_FRAME = .35 / 2 + .07                              # bearing-block line of the nip rolls
+nip_cylinders = []
+for y in (-Y_FRAME, Y_FRAME):
+    nip_cylinders.append(kit.linked_cylinder('Nip cylinder', (X_R + .26, y, Z_NIP), (X_R + .14, y, Z_NIP), (X_R + .0525, y, Z_NIP), .025, .01, M, nip,
+                                             inset=.03)[0])
 OPEN = .04
 kit.actuate(nip, FRAMES, (OPEN, 0, 0))
+
+# Oscillating haul-off (Pack B: 180 deg total, 120 s period; grade C teaching values): the nip rolls, their carriage and
+# cylinders and the collapsing frame stand on a frame that turns on a slewing ring on the tower deck, driven by a gear
+# motor through a pinion on the ring's gear rim. Reversing +-90 deg about the bubble axis spreads the bubble's
+# circumferential gauge bands across the width of the wound roll. The bubble between the frost line and the collapsing
+# frame twists with it (it is round there, so the model turns only the collapsing part), and the lay-flat between the nip
+# and the first guide roll twists back to the fixed guide (a real haul-off does this with turning bars on the frame).
+OSC = math.radians(90)
+frame_parts = [vertical_ring('Oscillation slewing ring outer race', DECK_TOP + .0005, DECK_TOP + .04, .3005, .36, M['steel']),
+               vertical_ring('Oscillation gear rim', DECK_TOP + .005, DECK_TOP + .035, .36, .375, M['steel_dark']),
+               vertical_ring('Oscillating frame base', DECK_TOP + .0405, DECK_TOP + .06, .3005, .45, M['paint_accent'])]
+BEAM_Z = DECK_TOP + .07                              # frame beams on the base, one under each bearing-block line
+for y in (-Y_FRAME, Y_FRAME):
+    frame_parts += [kit.box('Oscillating frame beam', (X_D, y, BEAM_Z), (.64, .04, .02), M['paint_accent'], bevel=.003),
+                    kit.box('Nip roll post', (X_D - RN - T, y, (BEAM_Z + .01 + Z_NIP - .0525) / 2), (.04, .04, Z_NIP - .0525 - BEAM_Z - .01),
+                            M['paint_accent'], bevel=.003),
+                    kit.box('Nip carriage rail', (X_D + .115, y, Z_NIP - .0635), (.21, .03, .02), M['steel'], bevel=.002),
+                    kit.box('Nip carriage rail post', (X_D + .21, y, (BEAM_Z + .01 + Z_NIP - .0735) / 2), (.03, .03, Z_NIP - .0735 - BEAM_Z - .01),
+                            M['paint_accent'], bevel=.002),
+                    kit.box('Nip cylinder bracket', (X_R + .27, y, Z_NIP), (.02, .07, .07), M['steel_dark'], bevel=.003),
+                    kit.box('Nip cylinder bracket post', (X_R + .27, y, (BEAM_Z + .01 + Z_NIP - .035) / 2), (.03, .03, Z_NIP - .035 - BEAM_Z - .01),
+                            M['steel_dark'], bevel=.002)]
+kit.join(frame_parts, 'OscillatingFrame')
+collapse = []                                        # collapsing frame slats converge on the nip; rails hang from the base
+for side in (-1, 1):
+    x0, x1 = X_D + side * (BUBBLE_R + .01), X_D + side * (RN + .004)
+    for k in range(6):
+        y = -LAYFLAT / 2 + LAYFLAT * k / 5
+        collapse.append(kit.between('Collapsing slat', (x0, y, Z_COLLAPSE), (x1, y, Z_NIP - .06), .006, M['brass']))
+    for y in (-.20, .20):
+        collapse.append(kit.between('Collapsing frame rail', (x0, y, Z_COLLAPSE), (x1, y, Z_NIP - .06), .01, M['paint_dark']))
+        f = (DECK_TOP + .05 - Z_COLLAPSE) / (Z_NIP - .06 - Z_COLLAPSE)
+        hang = Vector((x0 + (x1 - x0) * f, y, DECK_TOP + .05))
+        out = Vector((hang.x - X_D, hang.y, 0)).normalized() * .33
+        collapse.append(kit.between('Collapsing frame hanger', hang, (X_D + out.x, out.y, DECK_TOP + .05), .008, M['paint_dark']))
+kit.join(collapse, 'CollapsingFrame')
+drive_at = Vector((math.cos(math.radians(20)), math.sin(math.radians(20)), 0))
+kit.join([vertical_ring('Oscillation slewing ring inner race', DECK_TOP, DECK_TOP + .04, .26, .2995, M['steel_dark']),
+          kit.cylinder('Oscillation drive pinion', (X_D + .3905 * drive_at.x, .3905 * drive_at.y, DECK_TOP + .02), .015, .03, 'Z', M['steel_dark']),
+          kit.cylinder('Oscillation drive motor', (X_D + .50 * drive_at.x, .50 * drive_at.y, DECK_TOP + .05), .035, .10, 'Z', M['paint_accent']),
+          kit.between('Oscillation drive gearbox', (X_D + .3905 * drive_at.x, .3905 * drive_at.y, DECK_TOP + .015),
+                      (X_D + .50 * drive_at.x, .50 * drive_at.y, DECK_TOP + .015), .02, M['paint'], segments=16)], 'OscillationDrive')
 RG = GUIDE_D / 2000
 # The lay-flat rises from the nip tangent to the first top guide, runs across the tower top to the second guide,
 # drops outside the tower columns, wraps under the lower guide and runs to the winder.
@@ -247,15 +343,50 @@ kit.join([kit.cylinder('Winder core', (0, 0, 0), CORE_D / 2000, LAYFLAT + .12, '
 kit.join([kit.box('Winder stand', (X_W, side * .25, winder.location.z / 2), (.12, .05, winder.location.z), M['paint']) for side in (-1, 1)]
          + [kit.box('Winder motor', (X_W, .36, winder.location.z), (.16, .14, .16), M['paint_accent'], bevel=.008)], 'WinderStand')
 
-# Lay-flat film: up out of the nip, over the top guide, down the tower, round the lower guide, to the winder.
+# Lay-flat film: up out of the nip, over the top guide, down the tower, round the lower guide, to the winder. The rise from
+# the nip to the first guide is built in 6.25 mm pieces so that it can twist smoothly with the oscillating haul-off.
 top = Vector((X_D, 0, Z_NIP))
 path = [top, Vector((X_D, 0, top_guide[1]))]
 path += kit.arc_xz(top_guide[0], top_guide[1], RG + T / 2, 180, 90, 8)[1:]
 path += kit.arc_xz(top_guide2[0], top_guide2[1], RG + T / 2, 90, 0, 8)
 path += kit.arc_xz(low_guide[0], low_guide[1], RG + T / 2, 180, 270, 8)
 path += [Vector((X_W, 0, FILM_Z))]
-kit.thread_web('FlattenedFilmWeb', path, LAYFLAT, T * 2, M['film'], s_from=S_NIP)
+RISE = top_guide[1] - Z_NIP
+rise_pieces = kit.thread_web('FlattenedFilmWebRise', path[:2], LAYFLAT, T * 2, M['film'], step=.00625, s_from=S_NIP)
+kit.thread_web('FlattenedFilmWeb', path[1:], LAYFLAT, T * 2, M['film'], s_from=S_NIP + RISE)
 S_END = S_NIP + kit.path_length(path)
+
+# The oscillating frame carries the nip, its carriage and cylinders, the collapsing frame, the collapsing part of the
+# bubble and the lay-flat just above the nip rolls. Higher up, the rise twists back: each piece between 62.5 mm (clear
+# of the nip rolls) and 200 mm (below the first guide roll) turns with its own share of the frame angle, falling to 0.
+TWIST = (.0625, .20)
+bpy.context.view_layer.update()
+haul_off = kit.carrier('HaulOffCarrier', group='oscillate')
+kit.mount([nip_left, bpy.data.objects['NipLeft stand'], nip, *nip_cylinders, bpy.data.objects['OscillatingFrame'],
+           bpy.data.objects['CollapsingFrame'], *collapsing], haul_off)
+
+
+def oscillation(f):
+    """Haul-off angle over the step: from the centre to +90 deg, then reversing through the centre to -90 deg, starting,
+    reversing and stopping gently (one sweep of the 120 s, 180 deg total reversing cycle)."""
+    if f <= 1 / 3:
+        return OSC * kit.smoothstep(3 * f)
+    return OSC * (1 - 2 * kit.smoothstep((f - 1 / 3) * 1.5))
+
+
+twist_carriers = []
+for k, piece in enumerate(rise_pieces):
+    z = (piece['thread_s'][0] + piece['thread_s'][1]) / 2 - S_NIP
+    share = min(1.0, max(0.0, (TWIST[1] - z) / (TWIST[1] - TWIST[0])))
+    if share == 1.0:
+        kit.mount([piece], haul_off)
+    elif share > 0:
+        twist = kit.carrier('HaulOffTwist%02d' % k, group='oscillate')
+        kit.mount([piece], twist)
+        kit.turn_about(twist, FRAMES, (X_D, 0, 0), 'Z', lambda f, share=share: share * oscillation(f))
+        twist['share'] = round(share, 5)
+        twist_carriers.append(twist)
+kit.turn_about(haul_off, FRAMES, (X_D, 0, 0), 'Z', oscillation)
 
 # Flow markers: pellets, melt in the screw, film meridian lines up the bubble, then along the lay-flat film
 pellets = kit.catmull([(ext['throat_x'], 0, AX + .75), (ext['throat_x'], 0, AX + .35), (ext['throat_x'], 0, AX + .06)], 6)
@@ -283,6 +414,26 @@ for k, theta in enumerate((math.pi, math.pi / 2)):
         rise.append(Vector((X_D + r_x * math.sin(theta), r_y * math.cos(theta), Z_DIE + h)))
     length = kit.path_length(rise)
     kit.ride('HotAirMarker%s' % 'AB'[k], rise, 10, length / 10, 3 * length, M['hot_air'], .007, FRAMES, group='hotair')
+# IBC air inside the BUR 2 bubble (group "ibc"): supply air (blue) leaves the nozzle ring, spreads to 12 mm inside the film
+# and sweeps up it to 300 mm past the frost line; exhaust air (violet) turns in from the upper bubble and is drawn down
+# into the stack top. Three sweeps per loop (illustrative speed), on meridians between the warm-air markers outside.
+M['ibc_supply'] = kit.material('Air / IBC supply (marker)', '#3E8EDE', 0, .4, alpha=.75)
+M['ibc_exhaust'] = kit.material('Air / IBC exhaust (marker)', '#9B6FD0', 0, .4, alpha=.75)
+inside = lambda h: min(bubble_section(h)) - .012
+for k, theta in enumerate((math.pi * .75, math.pi * 1.25)):
+    up = []
+    for h in [IBC_NOZZLE + (FLH + .30 - IBC_NOZZLE) * i / 40 for i in range(41)]:
+        s = kit.smoothstep((h - IBC_NOZZLE) / .07)
+        r = .03 * (1 - s) + inside(h) * s
+        up.append(Vector((X_D + r * math.sin(theta), r * math.cos(theta), Z_DIE + h)))
+    length = kit.path_length(up)
+    kit.ride('IBCSupplyMarker%s' % 'AB'[k], up, 10, length / 10, 3 * length, M['ibc_supply'], .006, FRAMES, group='ibc')
+for k, theta in enumerate((math.pi, math.pi / 2)):
+    down = [Vector((X_D + r * math.sin(theta), r * math.cos(theta), Z_DIE + h))
+            for r, h in [(inside(.66), .66), (.05, .54), (.035, .42), (.02, .32), (0, IBC_TOP + .024)]]
+    down = kit.catmull(down, 8)
+    length = kit.path_length(down)
+    kit.ride('IBCExhaustMarker%s' % 'AB'[k], down, 8, length / 8, 3 * length, M['ibc_exhaust'], .006, FRAMES, group='ibc')
 
 kit.cabinet('Control cabinet', (ext['x_rear'] - .2, .45, 0), (ext['x_rear'] + .6, .85, 1.90), M)
 kit.stack_light('Stack light', (ext['x_rear'] + .2, .65, 1.90), M)
@@ -296,14 +447,15 @@ SCREW_PER_M, NIP_PER_M = TURNS['screw'] / TRAVEL, 1000 / (math.pi * NIP_D)
 WIND = 2.0                                           # metres of lay-flat wound during the winding step (compressed growth)
 STARTUP, CONTROLS = kit.startup(
     ['실제 라인의 기동 순서입니다. 스크류가 튜브를 환형 다이 밖으로 밀어내면 작업자가 케이지와 접힘 프레임을 지나 닙롤까지 끌어 올리고, '
-     '닙을 닫아 튜브 위쪽을 막고, 열풍 에어링을 60 °C로 올린 뒤 다이 중앙으로 공기를 넣어 버블을 BUR 2까지 부풀리고, 닙롤로 접힌 '
-     '필름을 권취기까지 보내 권취를 시작합니다. 실제 라인은 존 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 '
-     '이후부터 보여줍니다.',
+     '닙을 닫아 튜브 위쪽을 막고, 열풍 에어링을 60 °C로 올린 뒤 다이 중앙으로 공기를 넣어 버블을 BUR 2까지 부풀리고, IBC로 버블 안쪽 '
+     '공기를 순환시키며 지름을 잡고, 닙롤로 접힌 필름을 권취기까지 보내 권취를 시작한 뒤 오실레이팅 인취를 돌립니다. 실제 라인은 존 '
+     '온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.',
      'The real start-up order: the screw pushes the tube out of the annular die, the operator pulls it up through the cage '
      'and collapsing frame to the nip rolls, the nip closes to seal the top of the tube, the hot air ring is brought to '
-     '60 °C, air through the die centre inflates the bubble to BUR 2, and the nip rolls draw the lay-flat film to the winder, where winding starts. A real '
-     'line only lets the screw start once every zone has reached its set point and soaked (cold-start protection); the '
-     'model starts after that.'],
+     '60 °C, air through the die centre inflates the bubble to BUR 2, the IBC circulates the air inside the bubble and holds '
+     'its diameter, the nip rolls draw the lay-flat film to the winder, where winding starts, and the oscillating haul-off '
+     'starts reversing. A real line only lets the screw start once every zone has reached its set point and soaked '
+     '(cold-start protection); the model starts after that.'],
     [kit.step('screw', ['압출 시작 · 스크류 회전', 'Start extruding · screw'],
               ['스크류를 돌려 튜브를 환형 다이에서 케이지와 접힘 프레임을 지나 열린 닙롤까지 올리세요. 실제로는 작업자가 튜브 끝을 묶어 위로 '
                '끌어 올립니다.',
@@ -334,12 +486,21 @@ STARTUP, CONTROLS = kit.startup(
                'The nip seals the tube. Blow air through the die centre to inflate the bubble to BUR 2 (160 mm bubble, 251 mm '
                'lay-flat); no PHA BUR or frost-line range is established.'],
               needs=['nip', 'air'], morph='inflate'),
+     kit.step('ibc', ['IBC 기동 · 공급/배기', 'Start the IBC · supply and exhaust'],
+              ['버블이 BUR 2로 섰습니다. IBC 공급·배기 블로어를 켜세요. 공급 공기는 다이 중앙의 스택 노즐에서 나와 필름 안쪽을 따라 올라가며 '
+               '열을 빼앗고, 데워진 공기는 스택 위 흡입구로 빠집니다. 케이지의 초음파 센서 3개가 버블 지름을 재고, 제어기가 배기량을 맞춰 '
+               'BUR 2를 유지합니다. IBC 공기 온도는 PHA 근거가 없어 정하지 않았습니다(비결정성 CA1240PF TDS는 냉각 공기를 권장).',
+               'The bubble stands at BUR 2. Start the IBC supply and exhaust blowers: supply air leaves the nozzles of the stack '
+               'in the die centre and sweeps up the inside of the film, taking heat away, and the warmed air is drawn into the '
+               'stack top. Three ultrasonic sensors on the cage measure the bubble and the controller trims the exhaust to hold '
+               'BUR 2. No IBC air temperature is set, for lack of a PHA source (the amorphous CA1240PF TDS recommends cooling air).'],
+              needs=['inflate'], spin={'ibc': [3.4, 0]}, reveal=['ibc']),
      kit.step('haul', ['닙롤 이송', 'Draw with the nip rolls'],
-              ['버블이 섰습니다. 닙롤을 돌려 접힌 필름을 타워 위 가이드 롤을 지나 권취기까지 보내세요. 이송이 시작되면 모형은 닙, 에어링 온도, '
-               '버블 크기를 고정합니다.',
-               'The bubble stands. Run the nip rolls to draw the lay-flat film over the tower guide rolls to the winder; the '
-               'model holds the nip, the air-ring temperature and the bubble size once drawing starts.'],
-              needs=['inflate'], locks=['nip', 'air', 'inflate'], once=True, thread=[S_NIP, S_END],
+              ['IBC가 버블을 잡고 있습니다. 닙롤을 돌려 접힌 필름을 타워 위 가이드 롤을 지나 권취기까지 보내세요. 이송이 시작되면 모형은 닙, '
+               '에어링 온도, 버블 크기와 IBC를 고정합니다.',
+               'The IBC holds the bubble. Run the nip rolls to draw the lay-flat film over the tower guide rolls to the winder; '
+               'the model holds the nip, the air-ring temperature, the bubble size and the IBC once drawing starts.'],
+              needs=['ibc'], locks=['nip', 'air', 'inflate', 'ibc'], once=True, thread=[S_NIP, S_END],
               spin={'haul': [round((S_END - S_NIP) * NIP_PER_M, 4), 0], 'screw': [round((S_END - S_NIP) * SCREW_PER_M, 4), 0]}),
      kit.step('winder', ['권취 시작', 'Start winding'],
               ['필름이 권취 코어에 닿았습니다. 권취기를 돌려 두 겹 레이플랫을 감으세요. 모형은 76 mm 코어에서 150 mm 권취 롤까지를 압축해 '
@@ -349,10 +510,21 @@ STARTUP, CONTROLS = kit.startup(
               needs=['haul'], once=True,
               spin={'winder': [round(WIND * 1000 / (math.pi * (CORE_D + WOUND_D) / 2), 4), 0], 'haul': [round(WIND * NIP_PER_M, 4), 0],
                     'screw': [round(WIND * SCREW_PER_M, 4), 0]},
-              wind={'node': 'Winder_body', 'core': round(CORE_D / WOUND_D, 4)})],
+              wind={'node': 'Winder_body', 'core': round(CORE_D / WOUND_D, 4)}),
+     kit.step('oscillate', ['오실레이팅 인취 · ±90° 반전', 'Oscillating haul-off · ±90° reversing'],
+              ['권취가 시작되었습니다. 오실레이팅 인취를 돌리세요. 닙롤, 실린더, 접힘 프레임을 실은 프레임이 데크의 선회 베어링 위에서 버블 축을 '
+               '중심으로 좌우 90°씩(총 180°, 한 주기 120 s) 천천히 반전 회전하며, 버블 둘레의 두께 편차가 권취 롤 폭 전체로 퍼집니다. 슬라이더는 '
+               '가운데 → +90° → −90°의 한 번 반전입니다. 실제 장치는 프레임 위 터닝 바가 필름 방향을 바로잡으며, 모형은 닙 위 필름의 비틀림으로 '
+               '나타냅니다.',
+               'Winding has started. Start the oscillating haul-off: the frame that carries the nip rolls, their cylinders and the '
+               'collapsing frame turns on a slewing ring on the deck, reversing 90° each way about the bubble axis (180° total, '
+               '120 s per cycle), so the bubble’s circumferential gauge bands spread across the width of the wound roll. The '
+               'slider runs one reversal: centre, +90°, then -90°. A real haul-off straightens the film with turning bars on the '
+               'frame; the model shows it as a twist of the film above the nip.'],
+              needs=['winder'], move='oscillate')],
     ['기동 완료 · "자동 공정으로 돌아가기"를 누르면 정상 운전(5 m/min)을 재생합니다.',
      'Start-up complete. Choose "Return to cycle" to play steady running at 5 m/min.'],
-    LOOP)
+    LOOP, pinned={'nip': 1, 'oscillate': 0})
 centre = [(ext['x_rear'] + X_W + .3) / 2, 1.9, 0]
 META = {
     'id': 'blownfilm', 'duration': LOOP, 'frames': [0, FRAMES],
@@ -378,6 +550,7 @@ META = {
                  'cage_inside_mm': CAGE_R * 2000, 'rpm': {key: round(value, 3) for key, value in RPM.items()},
                  'roll_mm': {'nip': NIP_D, 'guide': GUIDE_D, 'winder_now': WOUND_D, 'core': CORE_D},
                  'air_ring_air_c': AIR_SETPOINT,
+                 'oscillation': {'total_deg': round(math.degrees(2 * OSC)), 'period_s': 120, 'twist_mm': [TWIST[0] * 1000, TWIST[1] * 1000]},
                  'loop_note': 'Real time: steady bubble (no breathing); the nip rolls turn three times per loop and the winder twice.'},
     'spec': {'basis': 'Pack B grade C teaching values; brand-neutral; not an OEM drawing or a PHA BUR or frost-line setting',
              'screw_d_mm': 40, 'l_d': 30, 'die_mm': 80, 'air_ring_od_mm': 240, 'bur': BUR, 'layflat_mm': round(LAYFLAT * 1000, 1),
@@ -398,13 +571,24 @@ META = {
                  'not_for': 'amorphous A1000P (no crystallization; CJ film TDS CA1240PF uses chilled air and IBC)',
                  'grade': 'C teaching values; not an OEM drawing',
                  'sources': 'docs/research/pha-blown-film-hot-air-ring-20261017.md'},
-             'oscillating_haul_off': 'optional, not shown', 'ibc': 'optional, not shown', 'winder': '76 mm core to 450 mm, two-ply lay-flat',
+             'oscillating_haul_off': {
+                 'type': 'nip, carriage, cylinders and collapsing frame on a frame turning on a slewing ring (gear motor and pinion)',
+                 'total_deg': round(math.degrees(2 * OSC)), 'period_s': 120,
+                 'film_above_nip': 'twists back to the fixed guide roll between 62.5 and 200 mm above the nip (turning bars not modelled)',
+                 'grade': 'C teaching values (Pack B); not an OEM drawing'},
+             'ibc': {
+                 'train': ['supply blower', 'die-centre supply channel', 'stack with nozzle ring', 'stack-top exhaust intake',
+                           'exhaust blower', 'three ultrasonic bubble-diameter sensors on the cage', 'IBC controller (trims the exhaust)'],
+                 'stack_mm': {'od': IBC_R * 2000, 'height': IBC_TOP * 1000, 'nozzle_height': IBC_NOZZLE * 1000},
+                 'air_temperature': 'not set (no PHA source); the amorphous CA1240PF TDS recommends cooling air for ring and IBC',
+                 'grade': 'C teaching values (Pack B: optional, separate supply and exhaust); not an OEM drawing'},
+             'winder': '76 mm core to 450 mm, two-ply lay-flat',
              'sources': 'output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md'},
 }
 
 floor = kit.floor('Floor', ext['x_rear'] - .3, X_W + .5, -.9, 1.0, M)
 kit.studio_world(.8, 'studio.exr')
-release = kit.hold_closed([nip])                     # the poster shows the running line
+release = kit.hold_closed([nip, haul_off] + twist_carriers)    # the poster shows the running line
 sc.frame_set(round(FRAMES * .4))
 bpy.context.view_layer.update()
 camera = kit.ortho_camera('Line camera', (centre[0] + 5, -10, 6.5), (centre[0], 0, 1.8), 8)

@@ -961,6 +961,58 @@ def thread_web(name, path, width, thickness, mat, step=.1, s_from=0.0, extra_fro
     return parts
 
 
+def path_slice_pair(path, alt, s0, s1):
+    """path_slice of ``path`` between arc lengths ``s0`` and ``s1`` with the matching points of ``alt``, a second pose
+    of the same polyline (equal vertex count): every point sits at the same segment fraction in both poses."""
+    path, alt = [Vector(p) for p in path], [Vector(p) for p in alt]
+    assert len(path) == len(alt), (len(path), len(alt))
+
+    def at(s):
+        for i, (a, b) in enumerate(zip(path, path[1:])):
+            length = (b - a).length
+            if s <= length or i == len(path) - 2:
+                f = min(1.0, s / max(length, 1e-9))
+                return a.lerp(b, f), alt[i].lerp(alt[i + 1], f)
+            s -= length
+
+    first, last = at(s0), at(s1)
+    points, others, s = [first[0]], [first[1]], 0.0
+    for i, (a, b) in enumerate(zip(path, path[1:])):
+        s += (b - a).length
+        if s0 + 1e-9 < s < s1 - 1e-9:
+            points.append(b.copy())
+            others.append(alt[i + 1].copy())
+    return points + [last[0]], others + [last[1]]
+
+
+def thread_web_keyed(name, path, alt, width, thickness, mat, family, key, step=.1, s_from=0.0):
+    """Tagged web segments (see thread_web) whose mesh is the ``alt`` pose of the path with a shape key ``key`` (value
+    1) to the ``path`` pose, for a web that follows a moving roll (e.g. a dancer). Segments that differ between the
+    poses join the morph ``family`` the start-up drives; the arc lengths (``thread_s``) are those of ``path``."""
+    path = [Vector(p) for p in path]
+    total = path_length(path)
+    count = max(1, round(total / step))
+    breaks = [total * k / count for k in range(count + 1)]
+    parts = []
+    for k, (s0, s1) in enumerate(zip(breaks, breaks[1:])):
+        points, others = path_slice_pair(path, alt, s0, s1)
+        segment = web('%s%03d' % (name, k), others, width, thickness, mat)
+        if max((a - b).length for a, b in zip(points, others)) > 1e-7:
+            target = web(name + ' pose', points, width, thickness, mat)
+            segment.shape_key_add(name='Basis')
+            block = segment.shape_key_add(name=key, from_mix=False)
+            for vertex, source in zip(block.data, target.data.vertices):
+                vertex.co = source.co
+            block.value = 1.0
+            segment['morph'] = family
+            mesh = target.data
+            bpy.data.objects.remove(target, do_unlink=True)
+            bpy.data.meshes.remove(mesh)
+        thread_mark(segment, s_from + s0, s_from + s1)
+        parts.append(segment)
+    return parts
+
+
 def carrier(name, group='nip'):
     """Empty at the world origin carrying the moving half of an actuator; parts reparented to it keep their pose."""
     return empty(name, (0, 0, 0), group=group, size=.05)
@@ -981,6 +1033,31 @@ def actuate(owner, frames, open_offset):
     owner['open_offset'] = [round(v, 5) for v in open_offset]
 
 
+def turn_about(owner, frames, center, axis, angle_of):
+    """Key a carrier at the world origin so that everything mounted on it turns about the world ``axis`` ('X', 'Y' or
+    'Z') through ``center``: ``angle_of(f)`` is the angle (rad) at the clip fraction f = frame / frames. Every frame
+    holds the rotation R and the location center - R center, so the carrier stays an origin carrier, at identity
+    wherever the angle is 0 (the rest pose that the player pins and a still render holds)."""
+    center = Vector(center)
+    index = 'XYZ'.index(axis)
+    for frame in range(frames + 1):
+        angle = angle_of(frame / frames)
+        owner.rotation_euler = (0, 0, 0)
+        owner.rotation_euler[index] = angle
+        owner.location = center - Matrix.Rotation(angle, 3, axis) @ center
+        owner.keyframe_insert('location', frame=frame)
+        owner.keyframe_insert('rotation_euler', index=index, frame=frame)
+    # Not named 'pivot': three.js r185 GLTFLoader reads a node's extras.pivot as its own pivot pattern and moves the node.
+    owner['turn_center'] = [round(v, 5) for v in center]
+    owner['turn_axis'] = axis
+
+
+def smoothstep(x):
+    """0 -> 1 with zero slope at both ends (indexing and reversing drives start and stop gently)."""
+    x = min(1.0, max(0.0, x))
+    return x * x * (3 - 2 * x)
+
+
 def action_fcurves(action):
     """Every F-curve of an action (layered actions in Blender 4.4+, plain actions before)."""
     curves = [curve for layer in getattr(action, 'layers', []) for strip in layer.strips
@@ -988,14 +1065,20 @@ def action_fcurves(action):
     return curves or list(getattr(action, 'fcurves', []))
 
 
-def hold_closed(owners, hide=()):
-    """For a still render of the running line: mute the actuator carriers at rest (closed) and hide start-up-only
-    objects. Returns a function that undoes both before the rig is saved and exported."""
+def hold_closed(owners, hide=(), keys=()):
+    """For a still render of the running line: mute the actuator carriers at rest (closed, or at identity for a
+    carrier keyed by turn_about), hold the shape-key blocks ``keys`` at their running value 1 and hide start-up-only
+    objects. Returns a function that undoes all three before the rig is saved and exported."""
     curves = [curve for owner in owners for curve in action_fcurves(owner.animation_data.action)]
+    curves += [curve for block in keys for curve in action_fcurves(block.id_data.animation_data.action)
+               if curve.data_path == 'key_blocks["%s"].value' % block.name]
     for curve in curves:
         curve.mute = True
     for owner in owners:
         owner.location = (0, 0, 0)
+        owner.rotation_euler = (0, 0, 0)
+    for block in keys:
+        block.value = 1.0
     for obj in hide:
         obj.hide_render = True
 
