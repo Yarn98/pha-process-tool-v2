@@ -1,9 +1,9 @@
 {
   "format": 1,
   "artifact": "single-file/PHA-Process-Single.html",
-  "bytes": 69833421,
-  "sha256": "bdaa38a7a1854e44f7fc9d4fbdcd77a89537521142aa9b081d0ae634bbb28935",
-  "source_sha256": "7c281aca46e6a07fd793237bbf9c0a6133fc880d15507819e152a3139b0cc45a",
+  "bytes": 69833039,
+  "sha256": "b997462968e28ac8910a754481d3dee34a71c231696e462f8bc5b79a89dbadea",
+  "source_sha256": "be21276c693650b806157216d72342673d4ccb132bc2db656a302a4445b9bf36",
   "hash_basis": "SHA-256 of UTF-8 text normalized to LF; binary bytes unchanged. Artifact bytes and hash use LF.",
   "embedded_assets": 155,
   "embedded_glbs": 26,
@@ -1051,8 +1051,8 @@
       "path": "equipment-models.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
-      "bytes": 115067,
-      "sha256": "1c70a7b19544c0111f1ceaef2195f9d1853eabfee3807fdb538a62690c79cb25"
+      "bytes": 114685,
+      "sha256": "fc7ff6c5d0f95480dc5df19864c204c7a9d0feac8545b1ba2872ff0326af711f"
     },
     {
       "path": "equipment-motion.js",
