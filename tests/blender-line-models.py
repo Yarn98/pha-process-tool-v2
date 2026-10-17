@@ -394,6 +394,20 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
         close(max(math.hypot(p.x-cx, p.y) for p in row)*2, teaching['die_mm']/1000, 1e-3)
         tube.data.shape_keys.key_blocks['Inflated'].value = 1
         checks.append('blownfilm: the start-up tube (shape key 0) keeps the die diameter and inflates to the BUR 2 bubble (shape key 1)')
+        # Hot air ring: the heated train is present, warm-air markers rise from the ring lip, and the bubble is only
+        # inflated once the ring runs at its set point.
+        hot = meta['spec']['hot_air_ring']
+        assert 'HotAirRing' in objects and hot['air_setpoint_c'] == teaching['air_ring_air_c']
+        markers = [o for o in objects if o.get('motion_group') == 'hotair']
+        assert len(markers) >= 20, len(markers)
+        frame(bpy.context.scene.frame_start)
+        lowest = min(o.matrix_world.translation.z for o in markers if o.scale.x > .5)
+        ring_top = bounds('AnnularDie')[1][2]                 # the air ring is the top of the die assembly
+        assert 0 < lowest-ring_top < .1, (lowest, ring_top)
+        steps = {s['key']: s for s in meta['startup']['steps']}
+        assert 'air' in steps['inflate']['needs'] and steps['air']['readout']['to'] == hot['air_setpoint_c']
+        assert {'blower', 'heater', 'airflow', 'high-limit'} <= {w for item in hot['train'] for w in ('blower', 'heater', 'airflow', 'high-limit') if w in item}
+        checks.append('blownfilm: hot air ring train (blower, airflow switch, inline heater, high-limit) feeds the ring; warm air rises from the lip; inflation waits for the ring at its set point')
         checks.append('blownfilm: upward nip contacts, one surface speed, BUR 2 bubble inside the cage, lay-flat = pi D / 2, steady bubble')
 
     elif kind == 'blowmolding':

@@ -51,6 +51,26 @@
       ]
     },
     {
+      "key": "air",
+      "label": [
+        "열풍 에어링 기동 · 60 °C",
+        "Start the hot air ring · 60 °C"
+      ],
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
+      "range": [
+        0,
+        11.291666666666666
+      ],
+      "readout": {
+        "from": 25,
+        "to": 60,
+        "unit": "°C",
+        "digits": 1
+      }
+    },
+    {
       "key": "inflate",
       "label": [
         "버블 팽창 · BUR 1→2",
@@ -95,8 +115,8 @@
   ],
   "startup": {
     "intro": [
-      "실제 라인의 기동 순서입니다. 스크류가 튜브를 환형 다이 밖으로 밀어내면 작업자가 케이지와 접힘 프레임을 지나 닙롤까지 끌어 올리고, 닙을 닫아 튜브 위쪽을 막은 뒤 다이 중앙으로 공기를 넣어 버블을 BUR 2까지 부풀리고, 닙롤로 접힌 필름을 권취기까지 보내 권취를 시작합니다. 실제 라인은 존 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.",
-      "The real start-up order: the screw pushes the tube out of the annular die, the operator pulls it up through the cage and collapsing frame to the nip rolls, the nip closes to seal the top of the tube, air through the die centre inflates the bubble to BUR 2, and the nip rolls draw the lay-flat film to the winder, where winding starts. A real line only lets the screw start once every zone has reached its set point and soaked (cold-start protection); the model starts after that."
+      "실제 라인의 기동 순서입니다. 스크류가 튜브를 환형 다이 밖으로 밀어내면 작업자가 케이지와 접힘 프레임을 지나 닙롤까지 끌어 올리고, 닙을 닫아 튜브 위쪽을 막고, 열풍 에어링을 60 °C로 올린 뒤 다이 중앙으로 공기를 넣어 버블을 BUR 2까지 부풀리고, 닙롤로 접힌 필름을 권취기까지 보내 권취를 시작합니다. 실제 라인은 존 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.",
+      "The real start-up order: the screw pushes the tube out of the annular die, the operator pulls it up through the cage and collapsing frame to the nip rolls, the nip closes to seal the top of the tube, the hot air ring is brought to 60 °C, air through the die centre inflates the bubble to BUR 2, and the nip rolls draw the lay-flat film to the winder, where winding starts. A real line only lets the screw start once every zone has reached its set point and soaked (cold-start protection); the model starts after that."
     ],
     "steps": [
       {
@@ -141,6 +161,37 @@
         "move": "nip"
       },
       {
+        "key": "air",
+        "label": [
+          "열풍 에어링 기동 · 60 °C",
+          "Start the hot air ring · 60 °C"
+        ],
+        "hint": [
+          "블로어를 켜고 인라인 히터로 에어링 공기를 60 °C까지 올리세요. 히터는 블로어가 돌고 풍량 스위치가 풍량을 확인해야 켜지며, 과열 차단기가 따로 지킵니다. 60 °C는 반결정성 PHA(S1000P)의 사내 운전 기준으로, 프로스트 라인 위에서 결정화를 앞당겨 닙과 권취 롤에서의 융착(블로킹)을 막습니다. 문헌의 PHB 전체 결정화 반감기 최소(60–70 °C)와 같은 범위이며, 2–5 mol% 4HB에 대한 측정값은 공개되어 있지 않습니다. 비결정성 A1000P에는 해당하지 않습니다.",
+          "Start the blower and let the inline heater bring the ring air to 60 °C. The heater can only switch on while the blower runs and the airflow switch confirms flow, and an independent high-limit guards it. 60 °C is the in-house practice for semi-crystalline PHA (S1000P): it speeds crystallization above the frost line so the film does not fuse (block) in the nip or on the winder. It matches the 60–70 °C minimum of the overall crystallization half-time reported for PHB; no value has been published for 2–5 mol% 4HB. It does not apply to amorphous A1000P."
+        ],
+        "needs": [
+          "screw"
+        ],
+        "locks": [],
+        "once": false,
+        "spin": {
+          "hotair": [
+            3.4,
+            0
+          ]
+        },
+        "reveal": [
+          "hotair"
+        ],
+        "readout": {
+          "from": 25,
+          "to": 60,
+          "unit": "°C",
+          "digits": 1
+        }
+      },
+      {
         "key": "inflate",
         "label": [
           "버블 팽창 · BUR 1→2",
@@ -151,7 +202,8 @@
           "The nip seals the tube. Blow air through the die centre to inflate the bubble to BUR 2 (160 mm bubble, 251 mm lay-flat); no PHA BUR or frost-line range is established."
         ],
         "needs": [
-          "nip"
+          "nip",
+          "air"
         ],
         "locks": [],
         "once": false,
@@ -164,14 +216,15 @@
           "Draw with the nip rolls"
         ],
         "hint": [
-          "버블이 섰습니다. 닙롤을 돌려 접힌 필름을 타워 위 가이드 롤을 지나 권취기까지 보내세요. 이송이 시작되면 모형은 닙과 버블 크기를 고정합니다.",
-          "The bubble stands. Run the nip rolls to draw the lay-flat film over the tower guide rolls to the winder; the model holds the nip and the bubble size once drawing starts."
+          "버블이 섰습니다. 닙롤을 돌려 접힌 필름을 타워 위 가이드 롤을 지나 권취기까지 보내세요. 이송이 시작되면 모형은 닙, 에어링 온도, 버블 크기를 고정합니다.",
+          "The bubble stands. Run the nip rolls to draw the lay-flat film over the tower guide rolls to the winder; the model holds the nip, the air-ring temperature and the bubble size once drawing starts."
         ],
         "needs": [
           "inflate"
         ],
         "locks": [
           "nip",
+          "air",
           "inflate"
         ],
         "once": true,
@@ -325,8 +378,8 @@
         "Barrel & die"
       ],
       "tool": [
-        "냉각 공기",
-        "Cooling air"
+        "에어링 공기",
+        "Air-ring air"
       ]
     },
     "zones": [
@@ -475,7 +528,8 @@
   "turns": {
     "haul": 3,
     "winder": 2,
-    "screw": 11
+    "screw": 11,
+    "hotair": 1
   },
   "study": {
     "rpm": 58.5,
@@ -505,6 +559,7 @@
       "winder_now": 150.0,
       "core": 76.0
     },
+    "air_ring_air_c": 60,
     "loop_note": "Real time: steady bubble (no breathing); the nip rolls turn three times per loop and the winder twice."
   },
   "spec": {
@@ -522,6 +577,39 @@
     "nip_mm": "100, face 350",
     "nip_threading_open_mm": 40.0,
     "nip_cylinders": 2,
+    "hot_air_ring": {
+      "train": [
+        "inlet filter",
+        "centrifugal blower (VFD)",
+        "airflow (differential pressure) switch",
+        "inline electric heater",
+        "insulated manifold and four insulated hoses",
+        "dual-lip air ring with plenum sensor",
+        "PID controller (SCR)",
+        "independent manual-reset high-limit"
+      ],
+      "air_setpoint_c": 60,
+      "setpoint_basis": "In-house practice for semi-crystalline P(3HB-co-4HB) (S1000P), given by the user on 2026-10-17. Literature context: PHB overall crystallization half-time minimum about 30 s at 60-70 C (Macromolecules 59:379, 2026); PHBH crystallizes fastest when cooled to 50-70 C (US 10030117); spherulite growth peaks at 75-90 C for PHB/PHBV; no published value for 2-5 mol% 4HB.",
+      "air_flow_m3_h": [
+        150,
+        300
+      ],
+      "heater_kw": 6,
+      "heater_sizing": "P = Q rho cp dT (20 -> 60 C) plus 25-50 % losses",
+      "high_limit_c": [
+        80,
+        90
+      ],
+      "interlocks": [
+        "heater only with blower running and airflow switch made",
+        "independent manual-reset high-limit",
+        "blower run-on after the heater stops",
+        "E-stop"
+      ],
+      "not_for": "amorphous A1000P (no crystallization; CJ film TDS CA1240PF uses chilled air and IBC)",
+      "grade": "C teaching values; not an OEM drawing",
+      "sources": "docs/research/pha-blown-film-hot-air-ring-20261017.md"
+    },
     "oscillating_haul_off": "optional, not shown",
     "ibc": "optional, not shown",
     "winder": "76 mm core to 450 mm, two-ply lay-flat",
@@ -531,6 +619,7 @@
   "groups": [
     "flow",
     "haul",
+    "hotair",
     "nip",
     "resin",
     "screw",

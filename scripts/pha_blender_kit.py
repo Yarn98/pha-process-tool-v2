@@ -1032,14 +1032,17 @@ def linked_cylinder(name, cap, end, attach, bore_r, rod_r, mats, owner, inset=No
 
 
 def step(key, label, hint, needs=(), locks=(), once=False, spin=None, move=None, thread=None, release=None, wind=None,
-         morph=None):
+         morph=None, reveal=None, readout=None):
     """One start-up step for the player: a 0-100 % slider that is enabled once every step in ``needs`` is complete and
     stops ``locks`` from changing after it starts. ``spin`` turns groups ({group: [turns at 100 %, phase turns]}),
     ``move`` drives an actuator clip, ``thread`` grows the product front from s0 to s1 (m), ``release`` frees a cut piece,
-    ``wind`` grows a wound roll from its core and ``morph`` drives a shape-key family (0 -> 1). ``once`` steps cannot be
-    reversed (the screw does not suck melt back; a drawn product does not return)."""
+    ``wind`` grows a wound roll from its core and ``morph`` drives a shape-key family (0 -> 1). ``reveal`` lists marker
+    groups that appear once the step starts (e.g. hot-air flow) and ``readout`` shows the slider as a value
+    ({from, to, unit, digits}) instead of %. ``once`` steps cannot be reversed (the screw does not suck melt back; a
+    drawn product does not return)."""
     entry = {'key': key, 'label': label, 'hint': hint, 'needs': list(needs), 'locks': list(locks), 'once': bool(once)}
-    for field, value in (('spin', spin), ('move', move), ('thread', thread), ('release', release), ('wind', wind), ('morph', morph)):
+    for field, value in (('spin', spin), ('move', move), ('thread', thread), ('release', release), ('wind', wind), ('morph', morph),
+                         ('reveal', reveal), ('readout', readout)):
         if value is not None:
             entry[field] = value
     if thread is not None:
@@ -1051,7 +1054,8 @@ def startup(intro, steps, done, duration, pinned=None, hidden=('flow',), follow=
     """Start-up metadata plus the matching manual controls (one 0-100 % slider per step, in order)."""
     meta = {'intro': intro, 'steps': steps, 'done': done, 'pinned': pinned or {'nip': 1}, 'hidden': list(hidden),
             'follow': follow or {'resin': 'screw'}}
-    controls = [{'key': s['key'], 'label': s['label'], 'max': 100, 'unit': '%', 'step': .1, 'range': [0, duration]} for s in steps]
+    controls = [{'key': s['key'], 'label': s['label'], 'max': 100, 'unit': '%', 'step': .1, 'range': [0, duration],
+                 **({'readout': s['readout']} if 'readout' in s else {})} for s in steps]
     return meta, controls
 
 

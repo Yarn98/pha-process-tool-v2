@@ -17,6 +17,7 @@
     "castfilm: chill wrap, S-transfer, guide, dancer and winder directions; one surface speed; traversing gauge",
     "blownfilm: start-up - product segments tile the path from the die, thread steps chain, actuators key open to closed, and cylinder rods stay on axis inside their bodies through the stroke",
     "blownfilm: the start-up tube (shape key 0) keeps the die diameter and inflates to the BUR 2 bubble (shape key 1)",
+    "blownfilm: hot air ring train (blower, airflow switch, inline heater, high-limit) feeds the ring; warm air rises from the lip; inflation waits for the ring at its set point",
     "blownfilm: upward nip contacts, one surface speed, BUR 2 bubble inside the cage, lay-flat = pi D / 2, steady bubble",
     "blowmolding: continuous parison, capture, knife, 300 mm shuttle, 50 mm pin, 160 mm opening, bottle morph from the parison and conveyor take-out",
     "blowmolding: clamp rods ride the mould halves from their cylinders and the shuttle rod from its cylinder through the full strokes",
@@ -170,10 +171,11 @@
       ]
     },
     "blownfilm": {
-      "objects": 166,
+      "objects": 187,
       "motion_groups": [
         "flow",
         "haul",
+        "hotair",
         "nip",
         "resin",
         "screw",

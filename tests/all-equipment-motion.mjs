@@ -103,6 +103,14 @@ try{
           assert.notDeepEqual(mid.nodes[group].map(node=>[node.world,node.rotation]),before.nodes[group].map(node=>[node.world,node.rotation]),kind+'/'+step.key+' moves the real '+group+' nodes');
         if(step.morph)assert.ok(mid.startup.morph[step.morph].every(value=>Math.abs(value-.5)<1e-6),kind+'/'+step.key+' drives the '+step.morph+' shape keys');
         if(step.wind)assert.ok(mid.startup.wind[0].scale[1]>step.wind.core&&mid.startup.wind[0].scale[1]<1,kind+'/'+step.key+' grows the wound roll');
+        for(const group of step.reveal||[]){
+          assert.ok(before.nodes[group].every(node=>!node.visible),kind+'/'+group+' hidden until '+step.key+' starts');
+          assert.ok(mid.nodes[group].every(node=>node.visible||node.scale[0]<.01),kind+'/'+group+' shown once '+step.key+' runs');
+        }
+        if(step.readout){
+          const r=step.readout,expected=(r.from+(r.to-r.from)*.5).toFixed(r.digits??0)+' '+r.unit;
+          assert.equal(await panel.locator(`[data-eq-value="${step.key}"]`).textContent(),expected,kind+'/'+step.key+' reads out '+expected);
+        }
         await jog(page,panel,step.key,100);
         if(step.once){
           await jog(page,panel,step.key,20);const back=await state();

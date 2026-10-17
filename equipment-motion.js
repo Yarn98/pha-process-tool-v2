@@ -117,6 +117,7 @@
       if(step.release&&asset.nodes[step.release.node])asset.nodes[step.release.node].visible=false;
       if(step.wind&&asset.nodes[step.wind.node])asset.nodes[step.wind.node].scale.set(1,1,1);
       if(step.morph)asset.morphs[step.morph]?.forEach(mesh=>{mesh.morphTargetInfluences[0]=1;});
+      for(const key of step.reveal||[])asset.members[key]?.forEach(node=>{node.visible=true;});
     }
   }
   function startupPose(){
@@ -141,6 +142,7 @@
       }
       if(step.wind&&asset.nodes[step.wind.node]){const k=step.wind.core+(1-step.wind.core)*p;asset.nodes[step.wind.node].scale.set(1,k,k);}
       if(step.morph)asset.morphs[step.morph]?.forEach(mesh=>{mesh.morphTargetInfluences[0]=p;});
+      for(const key of step.reveal||[])asset.members[key]?.forEach(node=>{node.visible=p>0;});   // e.g. warm air once the ring runs
     }
   }
   function pose(){
@@ -209,7 +211,9 @@
     const progress=host.querySelector('[data-eq="progress"]');progress.value=String(state.time/meta.duration*100);progress.setAttribute('aria-valuetext',text(meta.stages[phase]));
     for(const key of ['play','speed','progress'])host.querySelector('[data-eq="'+key+'"]').disabled=!state.ready||manual;
     for(const control of meta.controls){
-      const input=host.querySelector('[data-eq-axis="'+control.key+'"]'),value=state.actual[control.key].toFixed(control.unit==='°'?0:1)+control.unit;
+      // A readout shows the step as a value (e.g. air-ring air 25 -> 60 °C) instead of %.
+      const r=control.readout,input=host.querySelector('[data-eq-axis="'+control.key+'"]');
+      const value=r?(r.from+(r.to-r.from)*state.actual[control.key]/100).toFixed(r.digits??0)+' '+r.unit:state.actual[control.key].toFixed(control.unit==='°'?0:1)+control.unit;
       input.disabled=!state.ready||!enabled(control.key);input.value=String(state.target[control.key]);input.setAttribute('aria-valuetext',value);
       host.querySelector('[data-eq-value="'+control.key+'"]').textContent=value;
     }
