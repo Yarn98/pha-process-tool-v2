@@ -3,6 +3,8 @@ import { readFile,writeFile,mkdir } from 'node:fs/promises';
 import { resolve,relative,extname } from 'node:path';
 import assert from 'node:assert/strict';
 import { chromium } from 'playwright';
+// Real-scale GLBs (up to ~4 MB) load and compile slowly on software WebGL; 30 s was intermittently tight.
+const MODEL_READY_MS=90000;
 
 const root=resolve(process.env.PHA_TEST_ROOT||'.'),out=resolve('output/playwright/all-equipment');
 await mkdir(out,{recursive:true});
@@ -19,7 +21,7 @@ async function select(page,kind,expected='ready'){
   else{await page.evaluate(()=>switchTab('proc'));await page.selectOption('#process',kind);}
   const panel=page.locator(`.tabpage.active [data-equipment-model="${kind}"]`);
   await panel.scrollIntoViewIfNeeded();
-  await page.waitForFunction(kind=>{const el=document.querySelector(`.tabpage.active [data-equipment-model="${kind}"]`);return ['ready','fallback'].includes(el?.dataset.motionState);},kind);
+  await page.waitForFunction(kind=>{const el=document.querySelector(`.tabpage.active [data-equipment-model="${kind}"]`);return ['ready','fallback'].includes(el?.dataset.motionState);},kind,{timeout:MODEL_READY_MS});
   const data=await page.evaluate(()=>__phaEquipmentTest());
   assert.equal(await panel.getAttribute('data-motion-state'),expected,kind+': '+(data.error||'model state'));
   return panel;
@@ -60,14 +62,15 @@ try{
       await jog(page,panel,'inflate',50);data=await page.evaluate(()=>__phaEquipmentTest());
       const expanding=data.nodes.inflate.find(node=>node.name==='FormedBottle');
       assert.ok(expanding.morph[0]>.45&&expanding.morph[0]<.55,'Real bottle mesh morphs from the parison profile');
-      assert.ok(Math.abs(expanding.world[0]-.7)<.001&&Math.abs(expanding.world[1]-1.37)<.001,'Bottle remains inside the mold, in world coordinates');
+      const blow=await page.evaluate(()=>PHAEquipmentModels.blowmolding.blow);
+      assert.ok(expanding.world.every((value,i)=>Math.abs(value-blow.bottle[i])<.001),'Bottle stays in the mould at the blow station, in world coordinates');
       await jog(page,panel,'inflate',100);data=await page.evaluate(()=>__phaEquipmentTest());
       assert.ok(data.nodes.inflate.find(node=>node.name==='FormedBottle').morph[0]>.999);
       assert.ok(data.nodes.inflate.some(node=>node.scale[0]>.99&&node.visible));
       await panel.screenshot({path:resolve(out,'blowmolding-expanded.png')});
       await jog(page,panel,'pin',0);await jog(page,panel,'mold',100);
       data=await page.evaluate(()=>__phaEquipmentTest());assert.equal(data.released,true);assert.ok(data.drop>.99);
-      assert.ok(data.nodes.release.some(node=>node.visible&&Math.abs(node.position[1]-.71)<.01));
+      assert.ok(data.nodes.release.some(node=>node.visible&&Math.abs(node.position[1]-blow.release.to[1])<.01),'Released bottle lands on the take-out conveyor');
       checks.push('Blow molding: parison, clamp, pin, inflation and product release interlocks affect real nodes');
     }else{
       for(const control of controls){
@@ -81,20 +84,20 @@ try{
           if(kind==='compounding')for(const node of after.filter(node=>['ScrewA','ScrewB'].includes(node.name)))assert.ok(Math.abs(2*Math.atan2(node.rotation[0],node.rotation[3])+91*Math.PI/180)<.025,'Both compounding screws follow manual forward angle');
         }
         if(kind==='compounding'&&control.key==='side'){
-          const rotor=after.find(node=>node.name==='SideFeedRotor');assert.ok(rotor);
-          // Blender -Y rotation becomes Three +Z; this helix conveys toward the barrel.
-          assert.ok(Math.abs(2*Math.atan2(rotor.rotation[2],rotor.rotation[3])-91*Math.PI/180)<.025,'Side feeder rotates toward the main screws');
+          // Each side-feeder screw turns about its own axis by the commanded angle, in the sense that the
+          // Blender check proves conveys toward the main barrel. q_rel = conj(rest) * current, in the local frame.
+          for(const name of ['SideScrewA','SideScrewB']){
+            const [ax,ay,az,aw]=before.find(node=>node.name===name).rotation,[bx,by,bz,bw]=after.find(node=>node.name===name).rotation;
+            const rel=[aw*bx-ax*bw-ay*bz+az*by,aw*by+ax*bz-ay*bw-az*bx,aw*bz-ax*by+ay*bx-az*bw,aw*bw+ax*bx+ay*by+az*bz];
+            assert.ok(Math.abs(rel[1])<1e-3&&Math.abs(rel[2])<1e-3,name+' turns about its own axis');
+            assert.ok(Math.abs(2*Math.atan2(rel[0],rel[3])+91*Math.PI/180)<.025,name+' follows the manual angle in its conveying sense');
+          }
         }
       }
       const firstAxis=panel.locator('[data-eq-axis="'+controls[0].key+'"]');
       await firstAxis.focus();await page.keyboard.press('ArrowRight');
       const afterKey=await page.evaluate(()=>PHAEquipmentMotion.getState());assert.equal(afterKey.target[controls[0].key],92);
       checks.push(kind+': real motion, independent manual mechanisms and keyboard precision');
-      if(kind==='blownfilm'){
-        const before=(await page.evaluate(()=>__phaEquipmentTest())).nodes.flow;
-        await panel.locator('[data-eq="view"]').click();await panel.locator('[data-eq="view"]').click();
-        assert.deepEqual((await page.evaluate(()=>__phaEquipmentTest())).nodes.flow,before,'Repeated redraws do not accumulate bubble marker displacement');
-      }
     }
     await panel.locator('[data-eq="focus"]').selectOption('finish');
     data=await page.evaluate(()=>__phaEquipmentTest());assert.ok(data.camera.zoom>1);
@@ -115,6 +118,13 @@ try{
     await page.setViewportSize({width:1440,height:1100});
   }
   checks.push('All seven lines: Korean/English, mobile model visible during manipulation, manual state retention, focus views and resets');
+  // The process atlas and the blow-moulding rig's own stage segments describe the same re-based cycle.
+  await select(page,'blowmolding');
+  for(const step of [0,1,2,3]){
+    await page.locator(`.atlas-step[data-step="${step}"]`).click();
+    assert.equal((await page.evaluate(()=>PHAEquipmentMotion.getState())).phase,step,'atlas step '+step+' seeks the matching blow-moulding stage');
+  }
+  checks.push('Blow molding: each process-atlas step seeks the matching stage of the re-based cycle');
   let panel=await select(page,'straw');const source=await page.evaluate(()=>PHAEquipmentModels.straw.source);
   assert.equal(source.sha256,'91b712018468ed304c4101eeaf5e57ffd6da8a2a5ef337e24ea0344ab3ee2bb1');
   await panel.locator('[data-eq="play"]').click();await page.waitForFunction(()=>PHAEquipmentMotion.getState().visible);

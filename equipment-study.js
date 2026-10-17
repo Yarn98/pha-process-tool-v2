@@ -13,8 +13,9 @@
     straw:['Straw Optimizer v2의 Unreal 환형 다이 이미지입니다. 스크린 팩, 맨드렐과 중공 출구를 보여줍니다.','Unreal annular-die image from Straw Optimizer v2: screen pack, mandrel and hollow outlet.']
   };
   function mount(host,{kind,locale,start,stop,pause}){
-    const en=locale==='en',t=(ko,english)=>en?english:ko;
-    if(!saved.has(kind))saved.set(kind,{photo:false,open:false,drive:kind==='blowmolding'?'travel':'screw',rpm:30,speed:6,diameter:200,pitch:kind==='straw'?200:3,stroke:100,velocity:50,scale:.1});
+    const en=locale==='en',t=(ko,english)=>en?english:ko,model=window.PHAEquipmentModels?.[kind];
+    // A rig may carry its own worked example (e.g. the compounding line's feed roll and pellet length).
+    if(!saved.has(kind))saved.set(kind,{photo:false,open:false,drive:kind==='blowmolding'?'travel':'screw',rpm:30,speed:6,diameter:200,pitch:kind==='straw'?200:3,stroke:100,velocity:50,scale:.1,...model?.study});
     const state=saved.get(kind);
     const choices=kind==='blowmolding'?[['travel','금형 이동','Mold travel']]:[
       ['screw','스크류 회전','Screw rotation'],
@@ -27,7 +28,7 @@
     bar.innerHTML=`<div role="group" aria-label="${t('설비 보기 방식','Equipment view')}"><button type="button" data-study-view="model">${t('3D 조작','Interactive 3D')}</button><button type="button" data-study-view="photo">${t('Unreal 상세 이미지','Unreal detail')}</button></div><span>${t('설비 구조 살펴보기','Equipment inspection')}</span>`;
     host.prepend(bar);
     const figure=document.createElement('figure');figure.className='study-photo';figure.hidden=true;
-    figure.innerHTML=`<img src="assets/equipment/unreal/${kind}.webp?v=25" width="1600" height="900" decoding="async" alt="${descriptions[kind][en?1:0]}"><figcaption><span>${descriptions[kind][en?1:0]}</span><small>${t('Blender 형상 · Unreal 조명/재질 · 설명용 설비','Blender geometry · Unreal lighting/materials · Illustrative equipment')}</small></figcaption>`;
+    figure.innerHTML=`<img src="assets/equipment/unreal/${kind}.webp?v=26" width="1600" height="900" decoding="async" alt="${descriptions[kind][en?1:0]}"><figcaption><span>${descriptions[kind][en?1:0]}</span><small>${t('Blender 형상 · Unreal 조명/재질 · 설명용 설비','Blender geometry · Unreal lighting/materials · Illustrative equipment')}</small></figcaption>`;
     bar.after(figure);
     const panel=document.createElement('details');panel.className='equipment-study';panel.open=state.open;
     panel.innerHTML=`<summary>${t('회전수·속도 계산과 동작 확인','Calculate motion and inspect operation')}</summary><p class="study-basis">${t('예제 입력값입니다. 실측값으로 바꿔 비교하세요. 이 계산은 생산 조건을 추천하지 않습니다.','Example inputs. Replace them with measured values to compare. These calculations do not recommend production conditions.')}</p><div class="study-fields"><label>${t('확인할 동작','Mechanism')}<select data-study-drive>${choices.map(([key,ko,english])=>`<option value="${key}">${t(ko,english)}</option>`).join('')}</select></label>${[
@@ -56,7 +57,7 @@
       const required=linear?['stroke','velocity']:motion==='screw'?['rpm']:cut?['speed','pitch']:['speed','diameter'];
       panel.querySelectorAll('[data-study-field]').forEach(label=>label.hidden=!required.includes(label.dataset.studyField));
       const valid=[...required,'scale'].every(key=>{const input=panel.querySelector(`[data-study-input="${key}"]`);return input.value.trim()!==''&&input.checkValidity()&&Number.isFinite(Number(input.value));});
-      const edges=kind==='straw'?1:4;
+      const edges=model?.cut_edges??(kind==='straw'?1:4);
       let value=valid?(linear?PHAKinematics.travel(state.stroke,state.velocity):motion==='screw'?state.rpm:cut?PHAKinematics.cuts(state.speed,state.pitch)/edges:PHAKinematics.rpm(state.speed,state.diameter)):null;
       if(value!==null&&!Number.isFinite(value))value=null;
       drive=value===null?null:{group:motion==='screw'&&kind==='injection'?'rotation':motion,type:linear?'travel':'spin',rpm:linear?0:value,seconds:linear?value:0,scale:state.scale};

@@ -2,12 +2,16 @@
 
 Run only in the dedicated PHAEquipment project via render-equipment.ps1.
 All meshes are illustrative Blender equipment, not OEM or CFD measurements.
+Material slots use the Principled values exported from Blender when the export record has them
+(models built with scripts/pha_blender_kit.py); older records fall back to the name palette.
+Only the kinds listed in exports-requested.json are rendered.
 """
 import hashlib
 import itertools
 import json
 import math
 from pathlib import Path
+import re
 import time
 import traceback
 import unreal
@@ -19,6 +23,10 @@ actors = unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
 editor = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem)
 levels = unreal.get_editor_subsystem(unreal.LevelEditorSubsystem)
 exports = json.loads((OUT / 'exports.json').read_text(encoding='utf-8'))
+requested_file = OUT / 'exports-requested.json'
+if requested_file.exists():
+    requested = json.loads(requested_file.read_text(encoding='utf-8'))
+    exports = [record for record in exports if record['kind'] in requested]
 results = []
 PALETTE = {
     'steel': ((.50, .57, .57), .82, .27),
@@ -34,6 +42,36 @@ PALETTE = {
     'glass': ((.35, .58, .53), .05, .2),
     'floor': ((.13, .18, .18), .1, .6),
 }
+ALIASES = {'polycarbonate': 'glass', 'grey': 'gray'}
+
+
+def slot_key(name):
+    return re.sub('[^a-z0-9]', '', name.lower())
+
+
+def exported_material(kind, index, spec):
+    """Material from the exported Blender Principled values (linear colour, metallic, roughness, alpha)."""
+    path = ASSETS + '/M_%s_%02d' % (kind, index)
+    if unreal.EditorAssetLibrary.does_asset_exist(path):
+        unreal.EditorAssetLibrary.delete_asset(path)
+    asset = unreal.AssetToolsHelpers.get_asset_tools().create_asset('M_%s_%02d' % (kind, index), ASSETS,
+                                                                     unreal.Material, unreal.MaterialFactoryNew())
+    lib = unreal.MaterialEditingLibrary
+    rgb = lib.create_material_expression(asset, unreal.MaterialExpressionConstant3Vector, -300, 0)
+    rgb.set_editor_property('constant', unreal.LinearColor(*spec['color'], 1))
+    lib.connect_material_property(rgb, '', unreal.MaterialProperty.MP_BASE_COLOR)
+    values = [(spec['metallic'], unreal.MaterialProperty.MP_METALLIC), (spec['roughness'], unreal.MaterialProperty.MP_ROUGHNESS)]
+    if spec['alpha'] < .999:
+        asset.set_editor_property('blend_mode', unreal.BlendMode.BLEND_TRANSLUCENT)
+        values.append((max(spec['alpha'], .05), unreal.MaterialProperty.MP_OPACITY))
+    for row, (value, prop) in enumerate(values):
+        node = lib.create_material_expression(asset, unreal.MaterialExpressionConstant, -300, 140 + row * 100)
+        node.set_editor_property('r', value)
+        lib.connect_material_property(node, '', prop)
+    asset.set_editor_property('two_sided', True)
+    lib.recompile_material(asset)
+    unreal.EditorAssetLibrary.save_loaded_asset(asset)
+    return asset
 
 
 def material(key):
@@ -99,9 +137,17 @@ def build(record):
     actor.set_actor_scale3d(unreal.Vector(scale, scale, scale))
     center, extent = actor.get_actor_bounds(False)
     actor.set_actor_location(unreal.Vector(-center.x, -center.y, -center.z + extent.z + 5), False, False)
+    specs = {slot_key(name): spec for name, spec in record.get('materials', {}).items()}
     for index, slot in enumerate(meshes[0].static_materials):
-        name = str(slot.material_slot_name).lower()
-        key = next((k for k in sorted(PALETTE, key=len, reverse=True) if k in name), 'steel')
+        name = str(slot.material_slot_name)
+        spec = specs.get(slot_key(name))
+        if spec:
+            actor.static_mesh_component.set_material(index, exported_material(record['kind'], index, spec))
+            continue
+        lowered = name.lower()
+        for alias, key in ALIASES.items():
+            lowered = lowered.replace(alias, key)
+        key = next((k for k in sorted(PALETTE, key=len, reverse=True) if k in lowered), 'steel')
         actor.static_mesh_component.set_material(index, material(key))
     floor = actors.spawn_actor_from_object(unreal.load_asset('/Engine/BasicShapes/Cube.Cube'), unreal.Vector(0, 0, -1))
     floor.set_actor_scale3d(unreal.Vector(40, 40, .02))

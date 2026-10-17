@@ -5,6 +5,8 @@ import {resolve,relative,extname} from 'node:path';
 import {createHash} from 'node:crypto';
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright';
+// Real-scale GLBs (up to ~4 MB) load and compile slowly on software WebGL; 30 s was intermittently tight.
+const MODEL_READY_MS=90000;
 
 const root=resolve(process.env.PHA_TEST_ROOT||'.');
 const mime={'.html':'text/html','.js':'text/javascript','.css':'text/css','.webp':'image/webp','.png':'image/png','.json':'application/json','.glb':'model/gltf-binary'};
@@ -19,7 +21,7 @@ async function select(page,kind){
   if(['compounding','straw'].includes(kind))await page.evaluate(k=>switchTab(k),kind);
   else{await page.evaluate(()=>switchTab('proc'));await page.selectOption('#process',kind);}
   const panel=page.locator(kind==='injection'?'#injectionMotion':`.tabpage.active [data-equipment-model="${kind}"]`);
-  await panel.waitFor();await page.waitForFunction(kind=>document.querySelector(kind==='injection'?'#injectionMotion':`.tabpage.active [data-equipment-model="${kind}"]`)?.dataset.motionState==='ready',kind);
+  await panel.waitFor();await page.waitForFunction(kind=>document.querySelector(kind==='injection'?'#injectionMotion':`.tabpage.active [data-equipment-model="${kind}"]`)?.dataset.motionState==='ready',kind,{timeout:MODEL_READY_MS});
   await panel.evaluate(el=>el.scrollIntoView({block:'nearest',behavior:'instant'}));
   if(!await panel.locator('.equipment-study').evaluate(el=>el.open))await panel.locator('.equipment-study summary').click();
   return panel;

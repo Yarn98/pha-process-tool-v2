@@ -3,6 +3,8 @@ import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {resolve,relative,extname} from 'node:path';
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright';
+// Real-scale GLBs (up to ~4 MB) load and compile slowly on software WebGL; 30 s was intermittently tight.
+const MODEL_READY_MS=90000;
 
 const root=resolve(process.env.PHA_TEST_ROOT||'.'),out=resolve('output/playwright/equipment-study');
 await mkdir(out,{recursive:true});
@@ -18,7 +20,7 @@ async function select(page,kind,ready=true){
   if(['compounding','straw'].includes(kind))await page.evaluate(k=>switchTab(k),kind);
   else{await page.evaluate(()=>switchTab('proc'));await page.selectOption('#process',kind);}
   const panel=page.locator(kind==='injection'?'#injectionMotion':`.tabpage.active [data-equipment-model="${kind}"]`);
-  await page.waitForFunction(kind=>{const el=kind==='injection'?document.querySelector('#injectionMotion'):document.querySelector(`.tabpage.active [data-equipment-model="${kind}"]`);return ['ready','fallback'].includes(el?.dataset.motionState);},kind);
+  await page.waitForFunction(kind=>{const el=kind==='injection'?document.querySelector('#injectionMotion'):document.querySelector(`.tabpage.active [data-equipment-model="${kind}"]`);return ['ready','fallback'].includes(el?.dataset.motionState);},kind,{timeout:MODEL_READY_MS});
   await panel.evaluate(el=>el.scrollIntoView({block:'nearest',behavior:'instant'}));
   assert.equal(await panel.getAttribute('data-motion-state'),ready?'ready':'fallback');return panel;
 }
@@ -95,7 +97,10 @@ try{
   await fields(panel,{diameter:200});
   await fields(panel,{scale:1});await panel.locator('[data-study-run]').click();await page.waitForFunction(()=>PHAEquipmentMotion.getState().study?.elapsed>.12);await panel.locator('[data-study-stop]').click();
   const cast=await data(page,'castfilm'),guide=cast.nodes.roll.find(n=>n.name==='FilmGuideRoll');
-  const guideAngle=2*Math.acos(Math.min(1,Math.abs(guide.rotation[3]))),expectedGuide=Math.acos(Math.cos(cast.study.angle*Math.PI/180*.70/.29));
+  // Rolls turn about their own axis from a rest pose turned 90 deg about the vertical: q_rel = conj(rest) * q.
+  const s45=Math.SQRT1_2,[x,y,z,w]=guide.rotation,rel=[s45*x-s45*z,s45*y-s45*w,s45*z+s45*x,s45*w+s45*y];
+  const mm=await page.evaluate(()=>PHAEquipmentModels.castfilm.teaching.roll_mm);
+  const guideAngle=2*Math.acos(Math.min(1,Math.abs(rel[3]))),expectedGuide=Math.acos(Math.cos(cast.study.angle*Math.PI/180*mm.chill/mm.guide));
   assert.ok(Math.abs(guideAngle-expectedGuide)<.025,'Smaller guide roll turns faster at the same surface speed');
   panel=await select(page,'injection');await panel.locator('[data-study-drive]').selectOption('travel');await fields(panel,{stroke:10,velocity:20,scale:1});await panel.locator('[data-study-run]').click();
   await page.waitForFunction(()=>PHAInjectionMotion.getState().study?.elapsed>=.5);

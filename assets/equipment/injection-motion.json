@@ -1,27 +1,49 @@
 {
-  "generator": "Blender 5.2.0 LTS",
+  "generator": "Blender 5.2.1 LTS",
   "fps": 24,
-  "duration_seconds": 14,
-  "timing_basis": "illustrative playback only",
-  "stages": [
-    0,
-    4,
-    6,
-    10
+  "duration_seconds": 14.0,
+  "example_cycle_seconds": 30,
+  "sweep_seconds": 1.0,
+  "timing_basis": "steady teaching cycle (30 s example compressed to 14 s); not production settings",
+  "stage_starts": [
+    4.43,
+    1.17,
+    2.1,
+    11.67
   ],
-  "scene": "Injection cycle cutaway",
-  "addon_used": {
-    "name": "BoltFactory",
-    "version": "0.7.1",
-    "source": "https://extensions.blender.org/add-ons/boltfactory/"
-  },
+  "scene": "Injection moulding machine (1600 kN class, teaching model)",
   "rig_controller": "MachineControls",
-  "stroke_basis": "normalized educational travel, not OEM dimensions",
+  "library": "scripts/pha_blender_kit.py",
+  "stroke_basis": "real-scale proportions in metres; (A) one public catalogue, (C) teaching judgement",
+  "machine": {
+    "class": "1600 kN-class five-point double toggle (illustrative)",
+    "screw_d_m": 0.04,
+    "screw_ld": 20.5,
+    "compression_ratio_approx": 2.41,
+    "tie_bar_clear_m": 0.485,
+    "tie_bar_d_m": 0.09,
+    "platen_m": 0.715,
+    "opening_stroke_m": 0.435,
+    "mould_height_m": 0.35,
+    "ejector_stroke_used_m": 0.06,
+    "injection_stroke_m": 0.16,
+    "axis_height_m": 1.2,
+    "bed_height_m": 0.76,
+    "heater_zones": [
+      "Z1",
+      "Z2",
+      "Z3",
+      "nozzle"
+    ],
+    "sources": "output/research/pha-equipment-realism-20261017/pack-a-answer-notes.md"
+  },
   "mechanisms": [
-    "screw rotation/retraction",
-    "axial injection",
-    "pellet/runner motion and cavity filling",
-    "closed-mold cooling",
-    "mold opening/ejector/closing"
+    "five-point double toggle (driver + damped-track links)",
+    "crosshead and clamp cylinder",
+    "screw rotation only while dosing; retraction against back pressure; separate decompression",
+    "sliding check ring (open while dosing, seated while filling)",
+    "axial injection and hold with cushion",
+    "nozzle touch and optional sprue break",
+    "mould opening/ejector/part drop through the base chute to a tote"
   ]
 }

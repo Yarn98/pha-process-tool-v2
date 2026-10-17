@@ -2,17 +2,25 @@
 window.PHAEquipmentModels = {
   "extrusion": {
     "id": "extrusion",
-    "duration": 12,
+    "duration": 10.0,
+    "frames": [
+      0,
+      240
+    ],
     "poster": "assets/equipment/extrusion-motion-poster.png",
     "model": "assets/equipment/extrusion-motion.glb",
     "center": [
-      -0.5,
-      1.6,
+      1.7725000000000002,
+      0.95,
       0
     ],
     "span": [
-      11.6,
-      4.2
+      8.955,
+      2.4
+    ],
+    "zoom": [
+      0.7,
+      12
     ],
     "controls": [
       {
@@ -26,7 +34,7 @@ window.PHAEquipmentModels = {
         "step": 1,
         "range": [
           0,
-          12
+          10.0
         ]
       },
       {
@@ -40,35 +48,35 @@ window.PHAEquipmentModels = {
         "step": 0.1,
         "range": [
           0,
-          12
+          10.0
         ]
       },
       {
         "key": "haul",
         "label": [
-          "인취 롤 회전각",
-          "Haul-off roll rotation angle"
+          "벨트 인취 풀리 회전각",
+          "Belt haul-off pulley angle"
         ],
         "max": 720,
         "unit": "°",
         "step": 1,
         "range": [
           0,
-          12
+          10.0
         ]
       },
       {
         "key": "cutter",
         "label": [
-          "절단날 회전각",
-          "Cutter rotation angle"
+          "플라잉 톱 사이클 위치",
+          "Flying saw cycle position"
         ],
         "max": 360,
         "unit": "°",
         "step": 1,
         "range": [
           0,
-          12
+          10.0
         ]
       }
     ],
@@ -80,8 +88,8 @@ window.PHAEquipmentModels = {
           "Whole line"
         ],
         "center": [
-          -0.5,
-          1.6,
+          1.7725000000000002,
+          0.95,
           0
         ],
         "zoom": 1
@@ -89,28 +97,41 @@ window.PHAEquipmentModels = {
       {
         "key": "screw",
         "label": [
-          "스크류·공급",
-          "Screw & feed"
+          "스크류·배럴",
+          "Screw & barrel"
         ],
         "center": [
-          -3.1,
-          1.65,
+          -0.7,
+          1.0,
           0
         ],
-        "zoom": 2.1
+        "zoom": 3.2
       },
       {
         "key": "finish",
         "label": [
-          "성형·후단",
-          "Forming & downstream"
+          "인취·절단",
+          "Haul-off & saw"
         ],
         "center": [
-          2.4,
-          1.6,
+          3.9,
+          0.95,
           0
         ],
-        "zoom": 2.0
+        "zoom": 3.0
+      },
+      {
+        "key": "die",
+        "label": [
+          "다이·교정조",
+          "Die & calibration"
+        ],
+        "center": [
+          0.4,
+          1.0,
+          0
+        ],
+        "zoom": 5
       }
     ],
     "stages": [
@@ -119,18 +140,58 @@ window.PHAEquipmentModels = {
         "Feed & melt"
       ],
       [
-        "다이·성형",
-        "Die & forming"
+        "다이·교정",
+        "Die & calibration"
       ],
       [
         "냉각·인취",
         "Cool & haul off"
       ],
       [
-        "제품·배출",
-        "Product & discharge"
+        "절단·배출",
+        "Cut & discharge"
       ]
     ],
+    "turns": {
+      "screw": 10,
+      "haul": 2,
+      "cutter": 1
+    },
+    "cut_edges": 1,
+    "study": {
+      "rpm": 60.0,
+      "speed": 3.0,
+      "diameter": 80.0,
+      "pitch": 500.0
+    },
+    "teaching": {
+      "time_scale": 1,
+      "rpm": {
+        "screw": 60.0,
+        "haul": 11.937,
+        "cutter": 6.0
+      },
+      "line_speed_m_min": 3.0,
+      "cut_length_mm": 500.0,
+      "pulley_mm": 80.0,
+      "loop_note": "Real time: one cut per 10 s loop; the pulleys turn a whole number of times per loop (within 0.6 %)."
+    },
+    "spec": {
+      "basis": "Pack B grade C teaching values; brand-neutral; not an OEM drawing or PHA setting",
+      "screw_d_mm": 45,
+      "l_d": 30,
+      "heating_zones": 5,
+      "shaft_height_mm": 1000,
+      "adapter_mm": 135,
+      "profile": "tube 32 mm OD",
+      "bath_m": 2.5,
+      "haul_off_contact_mm": 500,
+      "belt_width_mm": 100,
+      "saw_travel_mm": 200.0,
+      "cut_length_mm": 500.0,
+      "run_out_mm": 1500,
+      "sources": "output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md"
+    },
     "blender": "5.2.1 LTS",
     "groups": [
       "cutter",
@@ -141,17 +202,25 @@ window.PHAEquipmentModels = {
   },
   "compounding": {
     "id": "compounding",
-    "duration": 12,
+    "duration": 25.125,
+    "frames": [
+      0,
+      603
+    ],
     "poster": "assets/equipment/compounding-motion-poster.png",
     "model": "assets/equipment/compounding-motion.glb",
     "center": [
-      -0.5,
-      1.6,
+      2.45,
+      0.95,
       0
     ],
     "span": [
-      11.6,
-      4.2
+      8.6,
+      2.5
+    ],
+    "zoom": [
+      0.7,
+      14
     ],
     "controls": [
       {
@@ -165,7 +234,7 @@ window.PHAEquipmentModels = {
         "step": 1,
         "range": [
           0,
-          12
+          25.125
         ]
       },
       {
@@ -179,7 +248,7 @@ window.PHAEquipmentModels = {
         "step": 1,
         "range": [
           0,
-          12
+          25.125
         ]
       },
       {
@@ -193,35 +262,35 @@ window.PHAEquipmentModels = {
         "step": 0.1,
         "range": [
           0,
-          12
+          25.125
         ]
       },
       {
         "key": "haul",
         "label": [
-          "인취 롤 회전각",
-          "Haul-off roll rotation angle"
+          "피드 롤 회전각",
+          "Feed roll rotation angle"
         ],
         "max": 720,
         "unit": "°",
         "step": 1,
         "range": [
           0,
-          12
+          25.125
         ]
       },
       {
         "key": "cutter",
         "label": [
-          "절단날 회전각",
-          "Cutter rotation angle"
+          "커터 로터 회전각",
+          "Cutter rotor rotation angle"
         ],
         "max": 360,
         "unit": "°",
         "step": 1,
         "range": [
           0,
-          12
+          25.125
         ]
       }
     ],
@@ -233,8 +302,8 @@ window.PHAEquipmentModels = {
           "Whole line"
         ],
         "center": [
-          -0.5,
-          1.6,
+          2.45,
+          0.95,
           0
         ],
         "zoom": 1
@@ -242,28 +311,41 @@ window.PHAEquipmentModels = {
       {
         "key": "screw",
         "label": [
-          "스크류·공급",
-          "Screw & feed"
+          "스크류·배럴",
+          "Screws & barrel"
         ],
         "center": [
-          -3.1,
-          1.65,
+          0.64,
+          1.0,
           0
         ],
-        "zoom": 2.1
+        "zoom": 5.5
       },
       {
         "key": "finish",
         "label": [
-          "성형·후단",
-          "Forming & downstream"
+          "수조·펠릿타이저",
+          "Bath & pelletiser"
         ],
         "center": [
-          2.4,
-          1.6,
+          3.9,
+          0.95,
           0
         ],
-        "zoom": 2.0
+        "zoom": 2.2
+      },
+      {
+        "key": "cutter",
+        "label": [
+          "피드 롤·커터",
+          "Feed rolls & cutter"
+        ],
+        "center": [
+          4.41,
+          1.0,
+          0
+        ],
+        "zoom": 9
       }
     ],
     "stages": [
@@ -284,6 +366,144 @@ window.PHAEquipmentModels = {
         "Die & pelletize"
       ]
     ],
+    "turns": {
+      "screw": 5,
+      "side": 2.5,
+      "haul": 1,
+      "cutter": 10.5
+    },
+    "cut_edges": 8,
+    "study": {
+      "rpm": 120.0,
+      "speed": 6.0,
+      "diameter": 80.0,
+      "pitch": 3.0
+    },
+    "teaching": {
+      "time_scale": 0.1,
+      "rpm": {
+        "screw": 120.0,
+        "side": 60.0,
+        "haul": 23.87,
+        "cutter": 250.0
+      },
+      "line_speed_m_min": 6.0,
+      "pellet_mm": 3.0,
+      "feed_roll_mm": 80.0,
+      "loop_note": "Each drive turns a whole number of symmetric steps per loop (within 0.6 % of the scaled speed)."
+    },
+    "spec": {
+      "basis": "Pack B grade C teaching values; brand-neutral; not an OEM drawing or PHA setting",
+      "screw_d_mm": 32,
+      "l_d": 40,
+      "barrel_blocks": 10,
+      "centre_distance_mm": 26.32,
+      "do_di": 1.55,
+      "shaft_height_mm": 1000,
+      "elements": [
+        [
+          "C",
+          128,
+          48
+        ],
+        [
+          "C",
+          128,
+          32
+        ],
+        [
+          "C",
+          64,
+          32
+        ],
+        [
+          "KB",
+          32,
+          45
+        ],
+        [
+          "KB",
+          32,
+          45
+        ],
+        [
+          "C",
+          128,
+          48
+        ],
+        [
+          "C",
+          128,
+          48
+        ],
+        [
+          "C",
+          96,
+          32
+        ],
+        [
+          "KB",
+          32,
+          45
+        ],
+        [
+          "KB",
+          32,
+          45
+        ],
+        [
+          "KB",
+          32,
+          90
+        ],
+        [
+          "C",
+          64,
+          32
+        ],
+        [
+          "KB",
+          32,
+          90
+        ],
+        [
+          "L",
+          32,
+          16
+        ],
+        [
+          "C",
+          64,
+          32
+        ],
+        [
+          "C",
+          128,
+          48
+        ],
+        [
+          "C",
+          64,
+          32
+        ],
+        [
+          "C",
+          64,
+          16
+        ]
+      ],
+      "feed": "loss-in-weight, B1",
+      "atmospheric_vent": "B4",
+      "side_feeder": "B5",
+      "vacuum_vent": "B9",
+      "strand_holes": "6 x 3 mm, 12 mm pitch",
+      "bath_m": 2.0,
+      "feed_roll_mm": 80.0,
+      "rotor_mm": 100,
+      "rotor_blades": 8,
+      "classifier_mm": "700 x 400",
+      "sources": "output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md"
+    },
     "blender": "5.2.1 LTS",
     "groups": [
       "cutter",
@@ -295,17 +515,25 @@ window.PHAEquipmentModels = {
   },
   "sheet": {
     "id": "sheet",
-    "duration": 12,
+    "duration": 15.708333333333334,
+    "frames": [
+      0,
+      377
+    ],
     "poster": "assets/equipment/sheet-motion-poster.png",
     "model": "assets/equipment/sheet-motion.glb",
     "center": [
-      -0.5,
-      1.6,
+      0.752,
+      0.85,
       0
     ],
     "span": [
-      11.6,
-      4.2
+      6.814,
+      2.4
+    ],
+    "zoom": [
+      0.7,
+      12
     ],
     "controls": [
       {
@@ -319,7 +547,7 @@ window.PHAEquipmentModels = {
         "step": 1,
         "range": [
           0,
-          12
+          15.708333333333334
         ]
       },
       {
@@ -333,27 +561,27 @@ window.PHAEquipmentModels = {
         "step": 0.1,
         "range": [
           0,
-          12
+          15.708333333333334
         ]
       },
       {
         "key": "roll",
         "label": [
-          "냉각 롤 회전각",
-          "Cooling roll rotation angle"
+          "3롤 스택 회전각 (250 mm)",
+          "3-roll stack angle (250 mm)"
         ],
         "max": 720,
         "unit": "°",
         "step": 1,
         "range": [
           0,
-          12
+          15.708333333333334
         ]
       },
       {
         "key": "winder",
         "label": [
-          "권취축 회전각",
+          "권취 롤 회전각",
           "Winder rotation angle"
         ],
         "max": 360,
@@ -361,7 +589,7 @@ window.PHAEquipmentModels = {
         "step": 1,
         "range": [
           0,
-          12
+          15.708333333333334
         ]
       }
     ],
@@ -373,8 +601,8 @@ window.PHAEquipmentModels = {
           "Whole line"
         ],
         "center": [
-          -0.5,
-          1.6,
+          0.752,
+          0.85,
           0
         ],
         "zoom": 1
@@ -382,28 +610,41 @@ window.PHAEquipmentModels = {
       {
         "key": "screw",
         "label": [
-          "스크류·공급",
-          "Screw & feed"
+          "스크류·배럴",
+          "Screw & barrel"
         ],
         "center": [
-          -3.1,
-          1.65,
+          -0.7,
+          1.0,
           0
         ],
-        "zoom": 2.1
+        "zoom": 3.2
+      },
+      {
+        "key": "stack",
+        "label": [
+          "평다이·3롤 스택",
+          "Flat die & 3-roll stack"
+        ],
+        "center": [
+          0.48400000000000004,
+          0.75,
+          0
+        ],
+        "zoom": 4.5
       },
       {
         "key": "finish",
         "label": [
-          "성형·후단",
-          "Forming & downstream"
+          "트림·인취·권취",
+          "Trim, haul-off & winder"
         ],
         "center": [
-          1.4,
-          2.1,
+          3.234,
+          0.55,
           0
         ],
-        "zoom": 2.0
+        "zoom": 3
       }
     ],
     "stages": [
@@ -412,18 +653,63 @@ window.PHAEquipmentModels = {
         "Feed & melt"
       ],
       [
-        "다이·성형",
-        "Die & forming"
+        "평다이·롤 접촉",
+        "Flat die & roll contact"
       ],
       [
         "냉각·인취",
         "Cool & haul off"
       ],
       [
-        "제품·배출",
-        "Product & discharge"
+        "트림·권취",
+        "Trim & wind"
       ]
     ],
+    "turns": {
+      "roll": 1,
+      "winder": 1,
+      "screw": 10
+    },
+    "study": {
+      "rpm": 38.2,
+      "speed": 3.0,
+      "diameter": 250.0
+    },
+    "teaching": {
+      "time_scale": 1,
+      "line_speed_m_min": 3.0,
+      "rpm": {
+        "stack": 3.82,
+        "table": 11.937,
+        "haul": 7.958,
+        "winder_at_250": 3.82,
+        "winder_at_500": 1.91,
+        "screw": 38.196
+      },
+      "roll_mm": {
+        "stack": 250.0,
+        "table": 80.0,
+        "haul": 120.0,
+        "winder_now": 250.0,
+        "core": 76.0
+      },
+      "loop_note": "Real time: the 250 mm stack rolls turn once per loop; every roll keeps the same surface speed."
+    },
+    "spec": {
+      "basis": "Pack B grade C teaching values; brand-neutral; not an OEM drawing or PHA setting",
+      "screw_d_mm": 45,
+      "l_d": 30,
+      "flat_die_mm": "500 x 160 x 120",
+      "lip_gap_mm": 1.0,
+      "stack": "3 x 250 mm, face 600 mm",
+      "web_path": "S-wrap: top-middle nip, middle roll, middle-bottom nip, bottom roll",
+      "roller_table": "2000 mm, 80 mm rolls at 200 mm",
+      "trim_mm_each_side": 15,
+      "haul_off_mm": 120.0,
+      "winder_core_mm": 76.0,
+      "winder_max_mm": 500,
+      "sources": "output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md"
+    },
     "blender": "5.2.1 LTS",
     "groups": [
       "flow",
@@ -434,17 +720,25 @@ window.PHAEquipmentModels = {
   },
   "castfilm": {
     "id": "castfilm",
-    "duration": 12,
+    "duration": 7.541666666666667,
+    "frames": [
+      0,
+      181
+    ],
     "poster": "assets/equipment/castfilm-motion-poster.png",
     "model": "assets/equipment/castfilm-motion.glb",
     "center": [
-      -0.5,
-      1.6,
+      0.4225000000000001,
+      1.0,
       0
     ],
     "span": [
-      11.6,
-      4.2
+      6.754999999999999,
+      2.6
+    ],
+    "zoom": [
+      0.7,
+      12
     ],
     "controls": [
       {
@@ -458,7 +752,7 @@ window.PHAEquipmentModels = {
         "step": 1,
         "range": [
           0,
-          12
+          7.541666666666667
         ]
       },
       {
@@ -472,27 +766,27 @@ window.PHAEquipmentModels = {
         "step": 0.1,
         "range": [
           0,
-          12
+          7.541666666666667
         ]
       },
       {
         "key": "roll",
         "label": [
-          "냉각 롤 회전각",
-          "Chill roll rotation angle"
+          "칠 롤 회전각 (400 mm)",
+          "Chill roll angle (400 mm)"
         ],
         "max": 720,
         "unit": "°",
         "step": 1,
         "range": [
           0,
-          12
+          7.541666666666667
         ]
       },
       {
         "key": "winder",
         "label": [
-          "권취축 회전각",
+          "권취 롤 회전각",
           "Winder rotation angle"
         ],
         "max": 360,
@@ -500,7 +794,7 @@ window.PHAEquipmentModels = {
         "step": 1,
         "range": [
           0,
-          12
+          7.541666666666667
         ]
       }
     ],
@@ -512,8 +806,8 @@ window.PHAEquipmentModels = {
           "Whole line"
         ],
         "center": [
-          -0.5,
-          1.6,
+          0.4225000000000001,
+          1.0,
           0
         ],
         "zoom": 1
@@ -521,28 +815,41 @@ window.PHAEquipmentModels = {
       {
         "key": "screw",
         "label": [
-          "스크류·공급",
-          "Screw & feed"
+          "스크류·배럴",
+          "Screw & barrel"
         ],
         "center": [
-          -3.1,
-          1.65,
+          -1.0,
+          1.55,
           0
         ],
-        "zoom": 2.1
+        "zoom": 3.2
+      },
+      {
+        "key": "chill",
+        "label": [
+          "다이·에어 갭·칠 롤",
+          "Die, air gap & chill roll"
+        ],
+        "center": [
+          0.55,
+          1.0990384493975585,
+          0
+        ],
+        "zoom": 4.5
       },
       {
         "key": "finish",
         "label": [
-          "성형·후단",
-          "Forming & downstream"
+          "게이지·트림·권취",
+          "Gauge, trim & winder"
         ],
         "center": [
-          1.4,
-          2.1,
+          2.5,
+          0.39783844939755847,
           0
         ],
-        "zoom": 2.0
+        "zoom": 3
       }
     ],
     "stages": [
@@ -551,21 +858,69 @@ window.PHAEquipmentModels = {
         "Feed & melt"
       ],
       [
-        "다이·성형",
-        "Die & forming"
+        "에어 갭·칠 롤 고정",
+        "Air gap & pinning"
       ],
       [
-        "냉각·인취",
-        "Cool & haul off"
+        "냉각·두께 측정",
+        "Cool & gauge"
       ],
       [
-        "제품·배출",
-        "Product & discharge"
+        "트림·권취",
+        "Trim & wind"
       ]
     ],
+    "turns": {
+      "roll": 1,
+      "winder": 2,
+      "screw": 8
+    },
+    "study": {
+      "rpm": 63.6,
+      "speed": 10.0,
+      "diameter": 400.0
+    },
+    "teaching": {
+      "time_scale": 1,
+      "line_speed_m_min": 10.0,
+      "air_gap_mm": 80.0,
+      "landing_deg": 100,
+      "rpm": {
+        "chill": 7.958,
+        "second": 15.915,
+        "winder_at_76": 41.883,
+        "winder_at_200": 15.915,
+        "winder_at_500": 6.366,
+        "screw": 63.646
+      },
+      "roll_mm": {
+        "chill": 400.0,
+        "second": 200.0,
+        "third": 200.0,
+        "guide": 100.0,
+        "winder_now": 200.0,
+        "core": 76.0
+      },
+      "loop_note": "Real time: the 400 mm chill roll turns once per loop and the 200 mm rolls twice; one surface speed."
+    },
+    "spec": {
+      "basis": "Pack B grade C teaching values; brand-neutral; not an OEM drawing or PHA setting",
+      "screw_d_mm": 45,
+      "l_d": 30,
+      "die_width_mm": 500,
+      "air_gap_mm": 80,
+      "rolls_mm": "400 / 200 / 200, face 600",
+      "pinning": "air knife 550 mm",
+      "chill_wrap_deg": 180,
+      "gauge": "traversing O-frame 700 mm",
+      "edge_trim": true,
+      "winder": "76 mm core to 500 mm, dancer with load cells",
+      "sources": "output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md"
+    },
     "blender": "5.2.1 LTS",
     "groups": [
       "flow",
+      "gauge",
       "roll",
       "screw",
       "winder"
@@ -573,17 +928,26 @@ window.PHAEquipmentModels = {
   },
   "blownfilm": {
     "id": "blownfilm",
-    "duration": 12,
+    "duration": 11.291666666666666,
+    "frames": [
+      0,
+      271
+    ],
     "poster": "assets/equipment/blownfilm-motion-poster.png",
     "model": "assets/equipment/blownfilm-motion.glb",
     "center": [
-      -0.5,
-      2.8,
+      -0.044999999999999846,
+      1.9,
       0
     ],
     "span": [
-      11.6,
-      6.7
+      4.79,
+      4.1
+    ],
+    "heightRatio": 0.62,
+    "zoom": [
+      0.7,
+      12
     ],
     "controls": [
       {
@@ -597,7 +961,7 @@ window.PHAEquipmentModels = {
         "step": 1,
         "range": [
           0,
-          12
+          11.291666666666666
         ]
       },
       {
@@ -611,21 +975,7 @@ window.PHAEquipmentModels = {
         "step": 0.1,
         "range": [
           0,
-          12
-        ]
-      },
-      {
-        "key": "bubble",
-        "label": [
-          "버블 형상 조절",
-          "Bubble shape adjustment"
-        ],
-        "max": 100,
-        "unit": "%",
-        "step": 0.1,
-        "range": [
-          0,
-          12
+          11.291666666666666
         ]
       },
       {
@@ -639,13 +989,13 @@ window.PHAEquipmentModels = {
         "step": 1,
         "range": [
           0,
-          12
+          11.291666666666666
         ]
       },
       {
         "key": "winder",
         "label": [
-          "권취축 회전각",
+          "권취 롤 회전각",
           "Winder rotation angle"
         ],
         "max": 360,
@@ -653,7 +1003,7 @@ window.PHAEquipmentModels = {
         "step": 1,
         "range": [
           0,
-          12
+          11.291666666666666
         ]
       }
     ],
@@ -665,8 +1015,8 @@ window.PHAEquipmentModels = {
           "Whole line"
         ],
         "center": [
-          -0.5,
-          2.8,
+          -0.044999999999999846,
+          1.9,
           0
         ],
         "zoom": 1
@@ -674,28 +1024,41 @@ window.PHAEquipmentModels = {
       {
         "key": "screw",
         "label": [
-          "스크류·공급",
-          "Screw & feed"
+          "스크류·배럴",
+          "Screw & barrel"
         ],
         "center": [
-          -3.1,
-          1.65,
+          -0.6,
+          1.0,
           0
         ],
-        "zoom": 2.1
+        "zoom": 3.2
+      },
+      {
+        "key": "die",
+        "label": [
+          "환형 다이·에어링·동결선",
+          "Annular die, air ring & frost line"
+        ],
+        "center": [
+          0.55,
+          1.25,
+          0
+        ],
+        "zoom": 5
       },
       {
         "key": "finish",
         "label": [
-          "버블·닙롤",
-          "Bubble & nip"
+          "접힘·닙롤",
+          "Collapse & nip"
         ],
         "center": [
-          0.25,
-          3.1,
+          0.55,
+          3.25,
           0
         ],
-        "zoom": 1.7
+        "zoom": 3.5
       }
     ],
     "stages": [
@@ -704,8 +1067,8 @@ window.PHAEquipmentModels = {
         "Melt feed"
       ],
       [
-        "버블 성형",
-        "Bubble forming"
+        "버블 성형·동결선",
+        "Bubble & frost line"
       ],
       [
         "냉각·인취",
@@ -716,10 +1079,61 @@ window.PHAEquipmentModels = {
         "Collapse & wind"
       ]
     ],
-    "heightRatio": 0.64,
+    "turns": {
+      "haul": 3,
+      "winder": 2,
+      "screw": 11
+    },
+    "study": {
+      "rpm": 58.5,
+      "speed": 5.0,
+      "diameter": 100.0
+    },
+    "teaching": {
+      "time_scale": 1,
+      "line_speed_m_min": 5.0,
+      "bur": 2.0,
+      "die_mm": 80.0,
+      "bubble_mm": 160.0,
+      "layflat_mm": 251.3,
+      "frost_line_mm": 320.0,
+      "die_to_nip_mm": 2500,
+      "collapsing_mm": 700,
+      "cage_inside_mm": 200.0,
+      "rpm": {
+        "nip": 15.915,
+        "winder_at_150": 10.61,
+        "winder_at_450": 3.537,
+        "screw": 58.45
+      },
+      "roll_mm": {
+        "nip": 100.0,
+        "guide": 100.0,
+        "winder_now": 150.0,
+        "core": 76.0
+      },
+      "loop_note": "Real time: steady bubble (no breathing); the nip rolls turn three times per loop and the winder twice."
+    },
+    "spec": {
+      "basis": "Pack B grade C teaching values; brand-neutral; not an OEM drawing or a PHA BUR or frost-line setting",
+      "screw_d_mm": 40,
+      "l_d": 30,
+      "die_mm": 80,
+      "air_ring_od_mm": 240,
+      "bur": 2.0,
+      "layflat_mm": 251.3,
+      "frost_line_mm": 320,
+      "cage_inside_mm": 200,
+      "die_to_nip_mm": 2500,
+      "collapsing_mm": 700,
+      "nip_mm": "100, face 350",
+      "oscillating_haul_off": "optional, not shown",
+      "ibc": "optional, not shown",
+      "winder": "76 mm core to 450 mm, two-ply lay-flat",
+      "sources": "output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md"
+    },
     "blender": "5.2.1 LTS",
     "groups": [
-      "bubble",
       "flow",
       "haul",
       "screw",
@@ -728,17 +1142,25 @@ window.PHAEquipmentModels = {
   },
   "blowmolding": {
     "id": "blowmolding",
-    "duration": 12,
+    "duration": 12.0,
+    "frames": [
+      0,
+      288
+    ],
     "poster": "assets/equipment/blowmolding-motion-poster.png",
     "model": "assets/equipment/blowmolding-motion.glb",
     "center": [
-      -0.7,
-      2.35,
+      -0.3949999999999998,
+      1.05,
       0
     ],
     "span": [
-      11.6,
-      6.1
+      4.1899999999999995,
+      2.3
+    ],
+    "zoom": [
+      0.7,
+      14
     ],
     "controls": [
       {
@@ -752,7 +1174,7 @@ window.PHAEquipmentModels = {
         "step": 0.1,
         "range": [
           0,
-          3
+          12.0
         ]
       },
       {
@@ -765,8 +1187,8 @@ window.PHAEquipmentModels = {
         "unit": "%",
         "step": 0.1,
         "range": [
-          4,
-          3
+          12.0,
+          11.5
         ]
       },
       {
@@ -779,8 +1201,8 @@ window.PHAEquipmentModels = {
         "unit": "%",
         "step": 0.1,
         "range": [
-          4,
-          4.6
+          0.5,
+          1.0
         ]
       },
       {
@@ -793,21 +1215,30 @@ window.PHAEquipmentModels = {
         "unit": "%",
         "step": 0.1,
         "range": [
-          4.6,
-          6
+          1.0,
+          1.5
         ]
       }
     ],
+    "initial": {
+      "parison": 0,
+      "mold": 100,
+      "pin": 0,
+      "inflate": 0
+    },
+    "turns": {
+      "screw": 12
+    },
     "views": [
       {
         "key": "all",
         "label": [
-          "전체 라인",
-          "Whole line"
+          "전체 설비",
+          "Whole machine"
         ],
         "center": [
-          -0.7,
-          2.35,
+          -0.3949999999999998,
+          1.05,
           0
         ],
         "zoom": 1
@@ -815,15 +1246,15 @@ window.PHAEquipmentModels = {
       {
         "key": "screw",
         "label": [
-          "스크류·공급",
-          "Screw & feed"
+          "스크류·배럴",
+          "Screw & barrel"
         ],
         "center": [
-          -3.1,
-          1.65,
+          -0.6,
+          1.5,
           0
         ],
-        "zoom": 2.1
+        "zoom": 3.2
       },
       {
         "key": "finish",
@@ -832,36 +1263,177 @@ window.PHAEquipmentModels = {
           "Mold & blow pin"
         ],
         "center": [
-          0.7,
-          2.3,
+          0.35,
+          1.215,
+          0.15
+        ],
+        "zoom": 4.5
+      },
+      {
+        "key": "head",
+        "label": [
+          "패리슨 헤드",
+          "Parison head"
+        ],
+        "center": [
+          0.35,
+          1.34,
           0
         ],
-        "zoom": 1.9
+        "zoom": 6
       }
     ],
     "stages": [
       [
-        "패리슨 토출",
-        "Extrude parison"
+        "용융·헤드",
+        "Melt & head"
       ],
       [
-        "금형 닫힘·팽창",
-        "Close & inflate"
+        "패리슨·금형 닫힘",
+        "Parison & capture"
       ],
       [
-        "냉각",
-        "Cool"
+        "금형·공기 팽창",
+        "Mould & inflate"
       ],
       [
-        "핀 복귀·제품 배출",
-        "Retract & discharge"
+        "냉각·트리밍",
+        "Cool & trim"
       ]
     ],
-    "initial": {
-      "parison": 0,
-      "mold": 100,
-      "pin": 0,
-      "inflate": 0
+    "stage_segments": [
+      [
+        0.0,
+        1.5,
+        2
+      ],
+      [
+        1.5,
+        9.0,
+        3
+      ],
+      [
+        9.0,
+        10.25,
+        0
+      ],
+      [
+        10.25,
+        12.0,
+        1
+      ]
+    ],
+    "stage_starts": [
+      9.3,
+      11.0,
+      1.25,
+      7.8
+    ],
+    "blow": {
+      "shuttle": {
+        "head": 9.5,
+        "station": 2.5
+      },
+      "release": {
+        "from": [
+          0.35,
+          1.135,
+          0.3
+        ],
+        "to": [
+          0.35,
+          0.818,
+          0.56
+        ]
+      },
+      "air": [
+        1.0,
+        7.0
+      ],
+      "bottle": [
+        0.35,
+        1.135,
+        0.3
+      ]
+    },
+    "timeline": {
+      "cut_shuttle": [
+        0.0,
+        0.5
+      ],
+      "pin_in": [
+        0.5,
+        1.0
+      ],
+      "inflate": [
+        1.0,
+        1.5
+      ],
+      "hold_cool": [
+        1.5,
+        6.5
+      ],
+      "exhaust": [
+        6.5,
+        7.0
+      ],
+      "pin_out_open": [
+        7.0,
+        7.5
+      ],
+      "take_out": [
+        7.5,
+        8.2
+      ],
+      "return": [
+        8.2,
+        9.0
+      ],
+      "parison": [
+        9.0,
+        11.5
+      ],
+      "capture": [
+        11.5,
+        12.0
+      ]
+    },
+    "timeline_offset_s": 3.0,
+    "teaching": {
+      "time_scale": 1,
+      "cycle_s": 12.0,
+      "parison_mm": {
+        "od": 25.0,
+        "length": 240.0
+      },
+      "mould_mm": "180 x 220 x 200",
+      "opening_mm": 160.0,
+      "shuttle_mm": 300.0,
+      "pin_stroke_mm": 50.0,
+      "knife_travel_mm": 80,
+      "bottle_mm": {
+        "height": 180.0,
+        "body_d": 65.0,
+        "neck_d": 28.0
+      },
+      "loop_note": "Pack B 12 s teaching timeline re-based at the parison cut (Pack B time = model time + 3 s)."
+    },
+    "spec": {
+      "basis": "Pack B grade C teaching values; brand-neutral; not an OEM drawing or PHA blow-moulding setting",
+      "screw_d_mm": 40,
+      "l_d": 30,
+      "extruder_axis_mm": 1500,
+      "head_mm": "180 x 220",
+      "outlet_mm": 25,
+      "container": "180 mm tall, 65 mm body",
+      "mould_mm": "180 x 220 x 200",
+      "opening_mm": 160,
+      "shuttle_mm": 300,
+      "blow_pin_stroke_mm": 50,
+      "knife_travel_mm": 80,
+      "flash": "separate top and bottom flash on the bottle",
+      "variants_not_shown": "dual shuttle (mirrored second clamp), accumulator head, rotary wheel",
+      "sources": "output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md"
     },
     "blender": "5.2.1 LTS",
     "groups": [
@@ -872,7 +1444,8 @@ window.PHAEquipmentModels = {
       "parison",
       "pin",
       "release",
-      "screw"
+      "screw",
+      "shuttle"
     ]
   },
   "straw": {

@@ -1,12 +1,15 @@
-/* Shared, local Blender GLB viewer for seven educational process lines. */
+/* Local Blender GLB player for seven educational process lines; the stage comes from machine-viewer.js. */
 (function(){
   'use strict';
-  const VERSION='?v=25',VENDOR='./vendor/three-0.185.1/';
+  const VERSION='?v=26',viewer=()=>window.PHAMachineViewer;
   const reduced=matchMedia('(prefers-reduced-motion: reduce)'),saved=new Map(),cache=new Map();
-  let host=null,meta=null,state=null,asset=null,engine=null,imports=null,onStage=()=>{};
-  let locale='ko',token=0,raf=0,lastTick=0,resizeObserver=null,intersectionObserver=null,studyPanel=null;
+  let host=null,meta=null,state=null,asset=null,engine=null,enginePending=null,onStage=()=>{};
+  let locale='ko',token=0,raf=0,lastTick=0,unwatch=null,studyPanel=null,pendingPaint=0;
   const t=(ko,en)=>locale==='en'?en:ko,text=pair=>pair[locale==='en'?1:0];
   const clamp=(value,min,max)=>Math.min(max,Math.max(min,value));
+  // Whole turns a spin clip makes per loop: from the rig metadata, else the older rigs' two turns
+  // (one for winders, cutters and the straw line).
+  const turnsOf=key=>meta.turns?.[key]??(meta.id==='straw'||key==='winder'||key==='cutter'?1:2);
   window.phaSyncMachineOverlay=()=>document.body.classList.toggle('pha-machine-manual',!!document.querySelector('.tabpage.active :is(.equipment-motion,.injection-motion):not(.is-study-photo) .motion-manual:not([hidden]),.tabpage.active .equipment-study[open]'));
 
   function initial(definition){
@@ -36,59 +39,54 @@
     }
   }
   function pose(){
-    if(meta.id==='blownfilm')asset.members.flow?.forEach(node=>{
-      if(node.userData.phaFlowZ!==undefined)node.position.z=node.userData.phaFlowZ;
-    });
     for(const [key,group] of asset.groups){
       let second=state.time;
       if(state.mode==='study'){
         const drive=state.study;
-        const turns=meta.id==='straw'||key==='winder'||key==='cutter'?1:2;
-        second=drive?.type==='spin'&&key===drive.group?(drive.angle/360/turns%1)*group.duration:0;
+        second=drive?.type==='spin'&&key===drive.group?(drive.angle/360/turnsOf(key)%1)*group.duration:0;
       }
       if(state.mode==='manual'||state.mode==='study'&&state.study?.type==='travel'){
         const control=meta.controls.find(c=>c.key===key);
-        second=control?control.range[0]+(control.range[1]-control.range[0])*state.actual[key]/control.max:0;
+        // Angles of rigs with metadata turns map through those turns; other controls span their range.
+        second=!control?0:meta.turns?.[key]&&control.unit==='°'?(state.actual[key]/360/meta.turns[key]%1)*group.duration
+          :control.range[0]+(control.range[1]-control.range[0])*state.actual[key]/control.max;
       }
       group.mixer.setTime(clamp(second,0,group.duration-.00001));
     }
-    // The smaller guide roll follows the same surface speed as the primary roll.
-    if(state.mode==='study'&&state.study?.group==='roll'&&asset.guide){
-      const guide=asset.guide;
-      guide.mixer.setTime((state.study.angle/720*guide.ratio%1)*guide.duration);
-    }
     if(meta.id==='blowmolding'){
-      const nodes=asset.nodes,a=state.actual;
+      // Shuttle positions, take-out drop and blow-air window come from the rig metadata (meta.blow).
+      const nodes=asset.nodes,a=state.actual,blow=meta.blow;
       for(const name of ['ParisonLength','InflatedBody','ReleasedBottle'])if(nodes[name])nodes[name].visible=true;
       if(state.mode==='manual'||state.mode==='study'){
-        const bodyReady=a.inflate>.01||(a.pin>99&&a.parison>99&&a.mold<.1);
-        nodes.ParisonLength.visible=!bodyReady&&!state.released;
+        // Once the closed mould holds a full parison it is cut and shuttled to the blow station.
+        const captured=(a.mold<.1&&a.parison>99.99)||a.pin>.01||a.inflate>.01||state.released;
+        asset.groups.get('shuttle')?.mixer.setTime(captured?blow.shuttle.station:blow.shuttle.head);
+        nodes.ParisonLength.visible=!captured;
         nodes.ParisonLength.scale.set(1,Math.max(.001,a.parison/100),1);
-        nodes.InflatedBody.visible=bodyReady&&!state.released;
+        nodes.InflatedBody.visible=captured&&!state.released;
         nodes.InflatedBody.scale.set(1,1,1);
         nodes.ReleasedBottle.visible=state.released;
         nodes.ReleasedBottle.scale.set(1,1,1);
-        const f=state.drop*state.drop*(3-2*state.drop);
-        nodes.ReleasedBottle.position.set(.7+.3*f,1.37-.66*f,0);
+        const f=state.drop*state.drop*(3-2*state.drop),[x0,y0,z0]=blow.release.from,[x1,y1,z1]=blow.release.to;
+        nodes.ReleasedBottle.position.set(x0+(x1-x0)*f,y0+(y1-y0)*f,z0+(z1-z0)*f);
         asset.members.air?.forEach(node=>{node.visible=a.inflate>0&&a.pin>99;});
-      }else asset.members.air?.forEach(node=>{node.visible=state.time>=4.6&&state.time<6.5;});
-    }
-    if(meta.id==='blownfilm'){
-      const fraction=state.mode==='manual'?state.actual.bubble/100:state.time/meta.duration;
-      asset.members.flow?.forEach(node=>{
-        if(!node.name.startsWith('BubbleFlowMarker'))return;
-        const h=node.position.y;
-        const envelope=h<2?clamp((h-1.08)/.92,0,1):h>4.45?clamp((4.85-h)/.40,0,1):1;
-        node.userData.phaFlowZ=node.position.z;
-        node.position.z=node.userData.phaFlowZ*(1+.32*fraction*envelope);
-      });
+      }else asset.members.air?.forEach(node=>{node.visible=state.time>=blow.air[0]&&state.time<blow.air[1];});
     }
   }
-  function paint(){
+  // frameTime marks a playback frame; its following tick measures the frame cost.
+  function paint(frameTime){
     if(!engine||!asset||!host?.isConnected)return;
-    pose();engine.scene.updateMatrixWorld(true);engine.renderer.render(engine.scene,engine.camera);state.frames++;
+    pose();engine.scene.updateMatrixWorld(true);engine.governor.render(engine.camera,frameTime||performance.now(),!!frameTime);state.frames++;
   }
-  function stage(){return Math.min(3,Math.floor(state.time/meta.duration*4));}
+  // Orbit drags fire many change events; draw at most once per animation frame.
+  function paintSoon(){if(!pendingPaint)pendingPaint=requestAnimationFrame(()=>{pendingPaint=0;paint();});}
+  // A rig with a non-uniform cycle (blow moulding) states its own stage segments and seek times; continuous
+  // lines split the loop into four equal parts.
+  function stage(){
+    const segment=meta.stage_segments?.find(([a,b])=>state.time>=a&&state.time<b);
+    return segment?segment[2]:Math.min(3,Math.floor(state.time/meta.duration*4));
+  }
+  function stageStart(index){return meta.stage_starts?meta.stage_starts[index]:index*meta.duration/4+.25;}
   function update(){
     if(!host||!state)return;
     const manual=state.mode==='manual',phase=stage();
@@ -118,7 +116,7 @@
     if(layoutChanged&&state.ready)resize();
     if(state.mode==='cycle')onStage(phase);
   }
-  function stopStudy(){if(!state)return;state.studyPlaying=false;stop();studyPanel?.clearStatus();}
+  function stopStudy(){if(!state)return;state.studyPlaying=false;stop();studyPanel?.clearStatus();if(state.mode==='study')paint();}
   function leaveStudy(){if(state.mode==='study'){stopStudy();state.mode='cycle';}}
   function startStudy(drive){
     stopStudy();state.playing=false;state.mode='study';state.study={...drive,angle:0,elapsed:0};state.studyPlaying=drive.type==='travel'||drive.rpm>0;
@@ -137,8 +135,11 @@
   }
   function tick(now){
     raf=0;if(!canRun()){lastTick=0;return;}
+    engine.governor.observe(now);
     if(lastTick){const dt=Math.min((now-lastTick)/1000,.10);if(state.mode==='study')advanceStudy(dt);else if(state.mode==='manual')manualStep(dt);else state.time=(state.time+dt*state.speed)%meta.duration;}
-    lastTick=now;paint();update();if(canRun())raf=requestAnimationFrame(tick);else lastTick=0;
+    // Time and pose follow the wall clock every tick; only drawing is skipped while the governor
+    // protects input handling.
+    lastTick=now;if(engine.governor.due(now)){paint(now);update();}else{pose();engine.scene.updateMatrixWorld(true);}if(canRun())raf=requestAnimationFrame(tick);else{lastTick=0;paint();update();}
   }
   function seek(second){stopStudy();state.mode='cycle';state.playing=false;state.time=clamp(second,0,meta.duration-.001);stop();paint();update();}
   function resetManual(){
@@ -158,59 +159,34 @@
     const compact=(state.mode==='manual'||host.classList.contains('is-study-open'))&&matchMedia('(max-width:760px)').matches;
     const height=Math.round(compact?Math.min(width*.55,220):width*(width<480?.72:meta.heightRatio||.5));viewport.style.height=height+'px';
     engine.renderer.setSize(width,height,false);
-    const ratio=width/height,vertical=Math.max(meta.span[1],meta.span[0]/ratio)*1.08;
-    Object.assign(engine.camera,{left:-vertical*ratio/2,right:vertical*ratio/2,top:vertical/2,bottom:-vertical/2});
-    engine.camera.updateProjectionMatrix();paint();
+    viewer().frameOrtho(engine.camera,width,height,meta.span[0],meta.span[1],1.08);paint();
   }
   async function ensureEngine(){
     if(engine)return;
-    if(!imports)imports=Promise.all([import('three'),import(VENDOR+'examples/jsm/loaders/GLTFLoader.js'),import(VENDOR+'examples/jsm/controls/OrbitControls.js')]);
-    const [THREE,{GLTFLoader},{OrbitControls}]=await imports;
+    enginePending||=viewer().createStage({ground:true,exposure:1.08,zoom:[.7,6],polar:[.20,Math.PI/1.95],onContextLost:()=>fallback()});
+    const stage=await enginePending;
     if(engine)return;
-    const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'low-power'});
-    renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setClearColor(0xebe7dc);renderer.outputColorSpace=THREE.SRGBColorSpace;
-    renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.10;
-    const scene=new THREE.Scene();scene.add(new THREE.HemisphereLight(0xfff7e8,0x788579,2.6));
-    for(const [position,color,intensity] of [[[-2,8,7],0xfff6e7,3],[[5,5,-4],0xe4eeff,2]]){const light=new THREE.DirectionalLight(color,intensity);light.position.set(...position);scene.add(light);}
-    const camera=new THREE.OrthographicCamera(-7,7,3.5,-3.5,.01,150),controls=new OrbitControls(camera,renderer.domElement);
-    controls.enablePan=false;controls.enableDamping=false;controls.minZoom=.7;controls.maxZoom=6;controls.minPolarAngle=.20;controls.maxPolarAngle=Math.PI/1.95;
-    controls.addEventListener('change',()=>{if(!canRun())paint();});
-    renderer.domElement.setAttribute('role','img');renderer.domElement.addEventListener('webglcontextlost',event=>{event.preventDefault();fallback();});
-    engine={THREE,renderer,scene,camera,controls,loader:new GLTFLoader()};
+    stage.controls.addEventListener('change',()=>{if(!canRun())paintSoon();});
+    stage.governor=viewer().createGovernor(stage,{onQualityChange:()=>resize()});
+    engine=stage;
   }
   async function load(definition){
     if(cache.has(definition.id)){const entry=cache.get(definition.id);cache.delete(definition.id);cache.set(definition.id,entry);return entry;}
-    const gltf=await engine.loader.loadAsync('./'+definition.model+VERSION);
-    const nodes={},byId=new Map(),members={},tracks={};
-    gltf.scene.traverse(node=>{nodes[node.name]=node;byId.set(node.name,node);byId.set(node.uuid,node);if(node.userData.motion_group)(members[node.userData.motion_group]||=[]).push(node);});
-    for(const clip of gltf.animations)for(const track of clip.tracks){
-      let node=byId.get(engine.THREE.PropertyBinding.parseTrackName(track.name).nodeName);
-      while(node&&!node.userData.motion_group)node=node.parent;
-      if(node)(tracks[node.userData.motion_group]||=[]).push(track);
-    }
-    const groups=new Map();
-    for(const [key,list] of Object.entries(tracks)){
-      const clip=new engine.THREE.AnimationClip(key,-1,list),mixer=new engine.THREE.AnimationMixer(gltf.scene);
-      mixer.clipAction(clip).play();groups.set(key,{mixer,duration:clip.duration,tracks:list.length});
-    }
+    const gltf=await engine.loader.loadAsync('./'+definition.model+VERSION),THREE=engine.THREE;
+    viewer().prepareModel(gltf.scene);
+    const nodes={},members={};
+    gltf.scene.traverse(node=>{nodes[node.name]=node;if(node.userData.motion_group)(members[node.userData.motion_group]||=[]).push(node);});
+    const groups=viewer().groupClips(THREE,gltf.scene,gltf.animations);
     const missing=definition.controls.filter(control=>!groups.has(control.key)).map(control=>control.key);
     if(missing.length)throw new Error('Missing Blender mechanism animation: '+missing.join(', '));
-    let guide=null;
-    const guideDefinition={sheet:['SheetGuideRoll',.46/.29],castfilm:['FilmGuideRoll',.70/.29]}[definition.id];
-    if(guideDefinition){
-      const list=(tracks.roll||[]).filter(track=>engine.THREE.PropertyBinding.parseTrackName(track.name).nodeName===guideDefinition[0]);
-      if(list.length){const clip=new engine.THREE.AnimationClip('studyGuide',-1,list),mixer=new engine.THREE.AnimationMixer(gltf.scene);mixer.clipAction(clip).play();guide={mixer,duration:clip.duration,ratio:guideDefinition[1]};}
-    }
-    const loaded={model:gltf.scene,groups,nodes,members,guide};cache.set(definition.id,loaded);return loaded;
+    const loaded={model:gltf.scene,groups,nodes,members};cache.set(definition.id,loaded);return loaded;
   }
   function trimCache(){
     while(cache.size>2){
       const entry=[...cache].find(([,value])=>value!==asset);if(!entry)break;
       const [key,old]=entry;
       old.groups.forEach(group=>group.mixer.stopAllAction());
-      old.guide?.mixer.stopAllAction();
-      const geometries=new Set(),materials=new Set();old.model.traverse(node=>{if(node.geometry)geometries.add(node.geometry);if(node.material)(Array.isArray(node.material)?node.material:[node.material]).forEach(mat=>materials.add(mat));});
-      geometries.forEach(item=>item.dispose());materials.forEach(item=>item.dispose());cache.delete(key);
+      viewer().disposeModel(old.model);cache.delete(key);
     }
   }
   function fallback(){
@@ -222,7 +198,7 @@
     host.querySelectorAll('.study-viewbar button,.equipment-study input,.equipment-study select,.equipment-study [data-study-stop]').forEach(el=>el.disabled=false);studyPanel?.refresh();
   }
   function detach(){
-    token++;stopStudy();stop();if(state)state.visible=false;resizeObserver?.disconnect();intersectionObserver?.disconnect();
+    token++;stopStudy();stop();if(state)state.visible=false;unwatch?.();unwatch=null;
     engine?.renderer.domElement.remove();host=null;onStage=()=>{};window.phaSyncMachineOverlay();
   }
   async function mount(element,options={}){
@@ -240,7 +216,11 @@
     host.querySelector('.motion-toolbar').addEventListener('change',leaveStudy,true);
     try{
       await ensureEngine();const loaded=await load(definition);if(current!==token||!host?.isConnected){trimCache();return;}
-      if(asset?.model)engine.scene.remove(asset.model);asset=loaded;engine.scene.add(asset.model);trimCache();state.ready=true;
+      if(asset?.model)engine.scene.remove(asset.model);asset=loaded;engine.scene.add(asset.model);viewer().fitShadows(engine,asset.model);
+      await viewer().warm(engine,asset.model);engine.governor.reset();if(current!==token||!host?.isConnected)return;
+      trimCache();state.ready=true;
+      // Real-scale rigs (32 mm twin screws, 80 mm feed rolls) need closer inspection than the teaching-scale lines.
+      [engine.controls.minZoom,engine.controls.maxZoom]=meta.zoom||[.7,6];
       host.querySelector('.motion-viewport').appendChild(engine.renderer.domElement);host.querySelector('.motion-viewport').hidden=false;host.querySelector('.motion-poster').hidden=true;host.querySelector('.motion-load').hidden=true;host.dataset.motionState='ready';
       engine.renderer.domElement.setAttribute('aria-label',t('설비 부품과 수지 이동을 보여주는 조작 가능한 3D 모델','Interactive 3D equipment model showing mechanisms and polymer movement'));
       host.querySelectorAll('button,input,select').forEach(element=>element.disabled=false);
@@ -258,8 +238,8 @@
         if(state.mode!=='manual'||!enabled(control.key)||!Number.isFinite(value)){update();return;}
         state.target[control.key]=clamp(value,0,control.max);if(reduced.matches){manualStep(10);paint();}else schedule();update();
       });
-      host.querySelectorAll('[data-eq-stage]').forEach(button=>button.onclick=()=>seek(Number(button.dataset.eqStage)*meta.duration/4+.25));
-      resizeObserver=new ResizeObserver(resize);resizeObserver.observe(host);intersectionObserver=new IntersectionObserver(entries=>{state.visible=!!entries[0]?.isIntersecting;schedule();},{threshold:.01});intersectionObserver.observe(host);
+      host.querySelectorAll('[data-eq-stage]').forEach(button=>button.onclick=()=>seek(stageStart(Number(button.dataset.eqStage))));
+      unwatch=viewer().watch(host,{onResize:resize,onVisible:visible=>{state.visible=visible;schedule();},threshold:.01});
       if(prior!==meta.id||!engine.camera.position.lengthSq())resetView(state.focus);resize();paint();update();
     }catch(error){if(current===token){state.error=String(error);fallback();}}
   }
@@ -273,10 +253,11 @@
   document.addEventListener('visibilitychange',schedule);
   window.addEventListener('pha-language-change',()=>requestAnimationFrame(syncSurface));
   reduced.addEventListener('change',event=>{if(event.matches&&state){state.playing=false;stopStudy();stop();if(state.mode==='manual'){manualStep(10);paint();}update();}});
-  window.PHAEquipmentMotion={mount,detach,syncSurface,seekStage(index){if(meta&&index>=0&&index<4)seek(index*meta.duration/4+.25);},getState(){return state?{...state,kind:meta.id,actual:{...state.actual},target:{...state.target}}:null;}};
+  window.PHAEquipmentMotion={mount,detach,syncSurface,seekStage(index){if(meta&&index>=0&&index<4)seek(stageStart(index));},getState(){return state?{...state,kind:meta.id,actual:{...state.actual},target:{...state.target}}:null;}};
   if(['localhost','127.0.0.1'].includes(location.hostname))window.__phaEquipmentTest=()=>({
     ...window.PHAEquipmentMotion.getState(),cached:[...cache.keys()],groups:asset?Object.fromEntries([...asset.groups].map(([key,group])=>[key,{duration:group.duration,tracks:group.tracks}])):{},
     nodes:asset?Object.fromEntries(Object.entries(asset.members).map(([group,nodes])=>[group,nodes.map(node=>({name:node.name,position:node.position.toArray(),world:node.getWorldPosition(new engine.THREE.Vector3()).toArray(),rotation:node.quaternion.toArray(),scale:node.scale.toArray(),visible:node.visible,morph:node.morphTargetInfluences||null}))])):{},
-    camera:engine?{zoom:engine.camera.zoom,target:engine.controls.target.toArray()}:null
+    camera:engine?{zoom:engine.camera.zoom,target:engine.controls.target.toArray()}:null,
+    quality:engine?{level:engine.governor.level,cost:engine.governor.cost}:null
   });
 })();

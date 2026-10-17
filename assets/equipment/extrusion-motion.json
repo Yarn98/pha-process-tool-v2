@@ -1,16 +1,24 @@
 {
   "id": "extrusion",
-  "duration": 12,
+  "duration": 10.0,
+  "frames": [
+    0,
+    240
+  ],
   "poster": "assets/equipment/extrusion-motion-poster.png",
   "model": "assets/equipment/extrusion-motion.glb",
   "center": [
-    -0.5,
-    1.6,
+    1.7725000000000002,
+    0.95,
     0
   ],
   "span": [
-    11.6,
-    4.2
+    8.955,
+    2.4
+  ],
+  "zoom": [
+    0.7,
+    12
   ],
   "controls": [
     {
@@ -24,7 +32,7 @@
       "step": 1,
       "range": [
         0,
-        12
+        10.0
       ]
     },
     {
@@ -38,35 +46,35 @@
       "step": 0.1,
       "range": [
         0,
-        12
+        10.0
       ]
     },
     {
       "key": "haul",
       "label": [
-        "인취 롤 회전각",
-        "Haul-off roll rotation angle"
+        "벨트 인취 풀리 회전각",
+        "Belt haul-off pulley angle"
       ],
       "max": 720,
       "unit": "°",
       "step": 1,
       "range": [
         0,
-        12
+        10.0
       ]
     },
     {
       "key": "cutter",
       "label": [
-        "절단날 회전각",
-        "Cutter rotation angle"
+        "플라잉 톱 사이클 위치",
+        "Flying saw cycle position"
       ],
       "max": 360,
       "unit": "°",
       "step": 1,
       "range": [
         0,
-        12
+        10.0
       ]
     }
   ],
@@ -78,8 +86,8 @@
         "Whole line"
       ],
       "center": [
-        -0.5,
-        1.6,
+        1.7725000000000002,
+        0.95,
         0
       ],
       "zoom": 1
@@ -87,28 +95,41 @@
     {
       "key": "screw",
       "label": [
-        "스크류·공급",
-        "Screw & feed"
+        "스크류·배럴",
+        "Screw & barrel"
       ],
       "center": [
-        -3.1,
-        1.65,
+        -0.7,
+        1.0,
         0
       ],
-      "zoom": 2.1
+      "zoom": 3.2
     },
     {
       "key": "finish",
       "label": [
-        "성형·후단",
-        "Forming & downstream"
+        "인취·절단",
+        "Haul-off & saw"
       ],
       "center": [
-        2.4,
-        1.6,
+        3.9,
+        0.95,
         0
       ],
-      "zoom": 2.0
+      "zoom": 3.0
+    },
+    {
+      "key": "die",
+      "label": [
+        "다이·교정조",
+        "Die & calibration"
+      ],
+      "center": [
+        0.4,
+        1.0,
+        0
+      ],
+      "zoom": 5
     }
   ],
   "stages": [
@@ -117,18 +138,58 @@
       "Feed & melt"
     ],
     [
-      "다이·성형",
-      "Die & forming"
+      "다이·교정",
+      "Die & calibration"
     ],
     [
       "냉각·인취",
       "Cool & haul off"
     ],
     [
-      "제품·배출",
-      "Product & discharge"
+      "절단·배출",
+      "Cut & discharge"
     ]
   ],
+  "turns": {
+    "screw": 10,
+    "haul": 2,
+    "cutter": 1
+  },
+  "cut_edges": 1,
+  "study": {
+    "rpm": 60.0,
+    "speed": 3.0,
+    "diameter": 80.0,
+    "pitch": 500.0
+  },
+  "teaching": {
+    "time_scale": 1,
+    "rpm": {
+      "screw": 60.0,
+      "haul": 11.937,
+      "cutter": 6.0
+    },
+    "line_speed_m_min": 3.0,
+    "cut_length_mm": 500.0,
+    "pulley_mm": 80.0,
+    "loop_note": "Real time: one cut per 10 s loop; the pulleys turn a whole number of times per loop (within 0.6 %)."
+  },
+  "spec": {
+    "basis": "Pack B grade C teaching values; brand-neutral; not an OEM drawing or PHA setting",
+    "screw_d_mm": 45,
+    "l_d": 30,
+    "heating_zones": 5,
+    "shaft_height_mm": 1000,
+    "adapter_mm": 135,
+    "profile": "tube 32 mm OD",
+    "bath_m": 2.5,
+    "haul_off_contact_mm": 500,
+    "belt_width_mm": 100,
+    "saw_travel_mm": 200.0,
+    "cut_length_mm": 500.0,
+    "run_out_mm": 1500,
+    "sources": "output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md"
+  },
   "blender": "5.2.1 LTS",
   "groups": [
     "cutter",
