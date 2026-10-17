@@ -60,7 +60,7 @@ const PRECACHE_URLS = [
   ...['injection','extrusion','sheet','castfilm','blownfilm','blowmolding','compounding','straw'].map(kind=>'./assets/equipment/unreal/'+kind+'.webp'+ASSET_V),
   ...['extrusion','compounding','sheet','castfilm','blownfilm','blowmolding','straw'].flatMap(kind=>[
     './assets/equipment/'+kind+'-motion.glb'+ASSET_V,
-    './assets/equipment/'+kind+'-motion-poster.'+(kind==='straw'?'webp':'png')+ASSET_V
+    './assets/equipment/'+kind+'-motion-poster.png'+ASSET_V
   ]),
   './assets/equipment/injection-motion.glb' + ASSET_V,
   './assets/equipment/injection-motion-poster.png' + ASSET_V,

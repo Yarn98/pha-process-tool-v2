@@ -7,9 +7,8 @@
   let locale='ko',token=0,raf=0,lastTick=0,unwatch=null,studyPanel=null,pendingPaint=0,chart=null;
   const t=(ko,en)=>locale==='en'?en:ko,text=pair=>pair[locale==='en'?1:0];
   const clamp=(value,min,max)=>Math.min(max,Math.max(min,value));
-  // Whole turns a spin clip makes per loop: from the rig metadata, else the older rigs' two turns
-  // (one for winders, cutters and the straw line).
-  const turnsOf=key=>meta.turns?.[key]??(meta.id==='straw'||key==='winder'||key==='cutter'?1:2);
+  // Whole turns a spin clip makes per loop, as every rig declares them (meta.turns).
+  const turnsOf=key=>meta.turns?.[key]??1;
   window.phaSyncMachineOverlay=()=>document.body.classList.toggle('pha-machine-manual',!!document.querySelector('.tabpage.active :is(.equipment-motion,.injection-motion):not(.is-study-photo) .motion-manual:not([hidden]),.tabpage.active .equipment-study[open]'));
 
   function initial(definition){
