@@ -1,20 +1,24 @@
 {
-  "status": "sent_awaiting_answer",
+  "status": "completed_answer_summarized",
   "vendor": "chatgpt",
   "requested_model": "Pro",
   "observed_composer_label": "Pro",
   "project": "PHA 가공 조건",
+  "conversation_title": "PHA 에어링 근거 조사",
   "conversation_url": "https://chatgpt.com/g/g-p-67ac788743b88191b7ebf6f1377c1361-pha-gagong-jogeon/c/6ad38c2e-6ad8-83ee-be9f-cf2e39e36d22",
   "conversation_id": "6ad38c2e-6ad8-83ee-be9f-cf2e39e36d22",
   "send_count": 1,
   "sent_observed_on": "2026-10-17",
-  "timestamp_note": "Send time is a local observation, not a provider timestamp.",
+  "observed_processing_time": "42m 50s",
+  "timestamp_note": "Times are local observations, not provider timestamps.",
   "attachment": null,
   "send_method": "Claude in Chrome connector; prompt pasted into the project composer and verified by SHA-256 before sending",
   "prompt_file": "provider_prompt.txt",
   "prompt_utf16_characters": 3066,
   "prompt_sha256": "79F8DFC734F0FB446D033FC9EE9FB441AEC5D04666F90AC01437D24403490BF7",
   "data_disclosure": "Only summary values already published in the public repository; no lot names or file paths.",
-  "retrieval_rule": "Poll this conversation; do not resend. Do not treat pending state as a completed answer.",
-  "answer_file": "provider_answer.md"
+  "provider_outputs": ["chat answer (about 11,200 characters)", "PHA_airring_60C_evidence_20261017.xlsx"],
+  "answer_file": "provider_answer_summary.md",
+  "verbatim_capture": "not saved locally: the Chrome connector withholds text containing links, and the Chrome machine could not reach this PC's loopback capture form",
+  "retrieval_rule": "Do not resend. The full answer and spreadsheet remain in the conversation."
 }
