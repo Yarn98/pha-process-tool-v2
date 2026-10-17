@@ -136,8 +136,8 @@ S1000P, A1000P, CA1180P, CB0104A, CB0400A, CA1165A, CA1670P, CA1680P, CA1270P의
 | compounding-guide.js / straw-guide.js | 공정 참고 가이드 |
 | assets/equipment/ | 8개 공정의 GLB·편집 원본·대체 포스터, 기존 PNG 보존 |
 | scripts/render_equipment.py | 설비도 재생성 |
-| scripts/pha_blender_kit.py / scripts/create_<kind>_motion.py | 공용 Blender 부품·재질과 7개 실제 비율 설비(사출·컴파운딩·압출·시트·캐스트·블로운·블로우) 제작 |
-| scripts/create_line_models.py | Straw Optimizer 원본의 조작 모델 변환, equipment-models.js 생성 |
+| scripts/pha_blender_kit.py / scripts/create_<kind>_motion.py | 공용 Blender 부품·재질·온도 존·근접 시점과 8개 실제 비율 설비(사출·컴파운딩·압출·시트·캐스트·블로운·블로우·스트로) 제작 |
+| scripts/create_line_models.py | 공용 조작 스키마, equipment-models.js 생성 |
 | assets/flash-example.png | 생성 플래시 형상 |
 | functions/ 및 배포 설정 | 기존 접근 게이트·API 프록시 |
 
@@ -161,13 +161,14 @@ blender --background --factory-startup --python scripts/create_injection_motion.
 
 일반 압출·시트·캐스트 필름·블로운 필름·압출 블로우 성형은 **공정 조건**에서, 이축 컴파운딩·스트로는 각 전용 탭에서 같은 재생·관찰·직접 조작 기능을 사용합니다. 스크류, 사이드 피더, 롤, 권취축, 벨트, 절단날과 수지 표시를 부품별로 조작합니다. 블로우 성형은 패리슨 토출 → 금형 닫힘 → 핀 삽입 → 팽창 → 핀 복귀 → 금형 개방·배출 순서를 연결합니다.
 
-스트로는 `D:/My_PJT/Application/straw-optimizer-v2`의 작업 중 Blender 설비를 복사해 중공 다이·수조·벨트·절단기 구조를 차용했습니다. 이 프로젝트의 복사본에 조작과 절단물 배출을 추가했으며, 원본의 출처·스냅샷 해시를 보존했습니다. 나머지 6개 라인은 조사 팩(Pack B)의 교육용 치수로 실제 비율에 맞춰 다시 제작했습니다(조사 노트: `output/research/pha-equipment-realism-20261017/`). [전체 설비의 조작·출처·검증 기록](docs/ALL_EQUIPMENT_MOTION_20260906.md), [실제 비율 재제작](docs/REALISTIC_EQUIPMENT_HMI_20261017.md).
+7개 라인 모두 조사 팩(Pack B)의 교육용 치수로 실제 비율에 맞춰 다시 제작했습니다(조사 노트: `output/research/pha-equipment-realism-20261017/`). 스트로는 D50 압출기 → 4열 튜브 헤드 → 진공 사이징조 → 4 m 냉각 수조 → 벨트 인취 → 회전 커터 라인입니다(12 m/min, 200 mm). 이전에 차용한 Straw Optimizer v2 원본은 출처 기록으로 `assets/equipment/sources/`에 남겼습니다.
+
+모든 설비에 **온도 표시**가 있습니다. 공정 조건 양식(압출·시트·캐스트·블로운·블로우) 또는 패널 입력칸(컴파운딩·스트로)의 설정값을 3D 존에 색으로 칠하고, 빗금은 미입력, 굵은 테두리는 참고 범위 밖입니다. 스트로는 CB0400A 자료와 비교합니다. 블로우 성형에는 장비별 **사이클 차트**가 있고, 형체·셔틀·블로우 핀 실린더 로드가 움직이는 부품에 연결됩니다. 관찰 부위마다 근접 시점이 있습니다. [전체 설비의 조작·출처·검증 기록](docs/ALL_EQUIPMENT_MOTION_20260906.md), [실제 비율 재제작](docs/REALISTIC_EQUIPMENT_HMI_20261017.md), [사출기 수준 맞춤](docs/INJECTION_LEVEL_LINES_20261017.md).
 
 ```powershell
-# 설비별 실제 비율 모델 (compounding, extrusion, sheet, castfilm, blownfilm, blowmolding)
+# 설비별 실제 비율 모델 (compounding, extrusion, sheet, castfilm, blownfilm, blowmolding, straw); 각 스크립트가 equipment-models.js도 갱신
 blender --background --factory-startup --python-exit-code 1 --python scripts/create_sheet_motion.py
-# 스트로 변환과 equipment-models.js 생성
-blender --background --factory-startup --python-exit-code 1 --python scripts/create_line_models.py
+blender --background --factory-startup --python-exit-code 1 --python scripts/create_straw_motion.py
 blender --background --factory-startup --python-exit-code 1 --python tests/blender-line-models.py
 ```
 
@@ -177,7 +178,7 @@ blender --background --factory-startup --python-exit-code 1 --python tests/blend
 
 이력·배치·템플릿·물성은 브라우저 로컬 저장소에, 일부 사진은 IndexedDB와 별도 localStorage 갤러리에 저장합니다. 기기 간 자동 동기화되지 않습니다. JSON/CSV로 백업하세요. 업데이트를 위해 웹사이트 데이터를 지우면 현장 기록도 삭제될 수 있습니다.
 
-서비스워커는 HTML network-first, 버전 자산 precache를 사용합니다. v=26 / pha-cache-v26-realistic-equipment. 첫 정상 로드와 캐시 준비 후 로컬 자료·8개 기존 설비·16개 결함 모형 및 새 두 벤트 모형의 3D 조작·계산을 사용할 수 있습니다. 외부 TARS API와 CDN Chart.js는 오프라인에서 제한됩니다. file://보다 로컬 HTTP 실행을 권장합니다.
+서비스워커는 HTML network-first, 버전 자산 precache를 사용합니다. v=27 / pha-cache-v27-injection-level-lines. 첫 정상 로드와 캐시 준비 후 로컬 자료·8개 기존 설비·16개 결함 모형 및 새 두 벤트 모형의 3D 조작·계산을 사용할 수 있습니다. 외부 TARS API와 CDN Chart.js는 오프라인에서 제한됩니다. file://보다 로컬 HTTP 실행을 권장합니다.
 
 기존 체크리스트·시험 로그는 유지합니다. 의미가 바뀐 컴파운딩 체크 두 항목은 새 키를 사용하며, 이전 완료 표시는 과거 기록으로 남깁니다.
 
