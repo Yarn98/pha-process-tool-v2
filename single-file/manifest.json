@@ -1,9 +1,9 @@
 {
   "format": 1,
   "artifact": "single-file/PHA-Process-Single.html",
-  "bytes": 68615782,
-  "sha256": "453acfe60ac6b705e520ccc96841c1dd85978785b3baea1850576f2ecade26cc",
-  "source_sha256": "bfbee702edaf6642d78128bc5a6f3f0b29f46bb56747a4051d998afc55847568",
+  "bytes": 69832189,
+  "sha256": "3674b915b1d5ba1b61c1da6667eab1cbcb01460b0a122258ce4c35ce2ff673ec",
+  "source_sha256": "239ec1bb5e25cbcd1a4657c7646cf7bd67ee9ec2b70de23a899ed9e6c4d22ec7",
   "hash_basis": "SHA-256 of UTF-8 text normalized to LF; binary bytes unchanged. Artifact bytes and hash use LF.",
   "embedded_assets": 155,
   "embedded_glbs": 26,
@@ -50,15 +50,15 @@
       "path": "assets/equipment/blownfilm-motion-poster.png",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 964601,
-      "sha256": "640d8b22efd46432968937f0698b1d0e8a66d9b35a1d45a2a4bab075278751a7"
+      "bytes": 980356,
+      "sha256": "0a268861a554df3a2a7f945a094dfee1a4af36053a25e1253c1f8ee6d774057c"
     },
     {
       "path": "assets/equipment/blownfilm-motion.glb",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 2465920,
-      "sha256": "79019843ef509f4820d31670bc93f10bccbbb7deedf93bd9667231d7631b3b5e"
+      "bytes": 3164856,
+      "sha256": "d764cb1b4b1067011fa0ef1944466c382680d680638ae5f9039026f6419b1aec"
     },
     {
       "path": "assets/equipment/blownfilm.png",
@@ -71,15 +71,15 @@
       "path": "assets/equipment/castfilm-motion-poster.png",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 1002039,
-      "sha256": "9d43d274306c2eb1fc99362f286fa41c592451978bbd59ea655c2bc3da6ff7c3"
+      "bytes": 1019108,
+      "sha256": "4e37bdde7bb6d40432baeb11c80fb85608929cfe4576bd8038edf719f56a5d52"
     },
     {
       "path": "assets/equipment/castfilm-motion.glb",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 1686108,
-      "sha256": "bb1f3e49f9817d63fd40fccfe9867436879dec713c49b5ac09b0ad87d1ba2665"
+      "bytes": 1824348,
+      "sha256": "560a5821cbb6d635e3bbd906dcb5c6db567726698fd37ae92c823213568060dd"
     },
     {
       "path": "assets/equipment/castfilm.png",
@@ -155,15 +155,15 @@
       "path": "assets/equipment/sheet-motion-poster.png",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 1010472,
-      "sha256": "9f5573d8a4ece88576fe53540dc03770292f048d89fe57d1f56fab1ea2cbd99d"
+      "bytes": 1010906,
+      "sha256": "f9abe1db83bedac2c248a8b38c9672f295f4ddff4a2482217a3807f22fe3fc58"
     },
     {
       "path": "assets/equipment/sheet-motion.glb",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 2010040,
-      "sha256": "20ec87de4caf3a7746b38106e983fa5d2dd703948812a016f5916031d5299387"
+      "bytes": 2038092,
+      "sha256": "8b8b773e916d1c2b85e99b73884d40c7395beb87b00e3572fa1fa98ac9798f59"
     },
     {
       "path": "assets/equipment/sheet.png",
@@ -204,15 +204,15 @@
       "path": "assets/equipment/unreal/blownfilm.webp",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 44478,
-      "sha256": "596ce6eb61d2fc22bae4b5428918f725a5068c6ad2185ec5b9de31c222def31b"
+      "bytes": 46816,
+      "sha256": "25fb15bac7adb6ebd7d366eff6d54425347b1b66cc9ce6859c089a600813f32e"
     },
     {
       "path": "assets/equipment/unreal/castfilm.webp",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 45818,
-      "sha256": "ee2bf8b4b3cf667f77991e741e69a68af82adea4798111965c3a963826037e70"
+      "bytes": 48346,
+      "sha256": "c60bbb41551e908cf96330858c041809954d130c1550bf6ba487fb85b9dfd5d9"
     },
     {
       "path": "assets/equipment/unreal/compounding.webp",
@@ -239,8 +239,8 @@
       "path": "assets/equipment/unreal/sheet.webp",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 51750,
-      "sha256": "4774dd923dee974671e89d931febf5981557137534d926795e562d4feb81e64e"
+      "bytes": 51824,
+      "sha256": "504dd9f66c1822b9f8300a7b9fec1364d9735301bf315c37a2fb53a237d15d7a"
     },
     {
       "path": "assets/equipment/unreal/straw.webp",
@@ -1051,22 +1051,22 @@
       "path": "equipment-models.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
-      "bytes": 102000,
-      "sha256": "d2b110fc627e2f3e4e4fb3585a8e6a08a7295b1e8593b0864bd04740b1e4f697"
+      "bytes": 113835,
+      "sha256": "e619c3b57b942dfc786871ab545df0bee05cff761d4adac782c6c1e728b6c055"
     },
     {
       "path": "equipment-motion.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 37408,
-      "sha256": "c2b85d7b2613ff5741afc776b1f8cd3ec84ed0f01607dcf51b8e4505fe187051"
+      "sha256": "366b72e3bec726893691a9066561e34c888e48eb51906e2caebb1e36c1a6f9b6"
     },
     {
       "path": "equipment-study.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 11252,
-      "sha256": "7de179e1e6d8996a3fde8790e9845e7f835a81f1442e7a91c81812e83b2ccc5b"
+      "sha256": "65e97ae008aec41cdc959e23093fc11aee31f39c80fbd494fab767052a1f556b"
     },
     {
       "path": "flash-guide-data.js",
@@ -1087,14 +1087,14 @@
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 26424,
-      "sha256": "a7492ea7907b14b43d1dd503e35977459ab45505bde6eafa7e17139156cff2e9"
+      "sha256": "345887f10851e30d67a3168fa3b9ae16d6a31e5c44c74a90f0928af038dfd669"
     },
     {
       "path": "flash-mold-viewer.js",
       "role": "module",
       "encoding": "utf8-lf",
       "bytes": 3913,
-      "sha256": "2f5e11d8500fc34d5eff0cceb2fe8f3d15984d3af679a8ffc24dab751347533c"
+      "sha256": "735673869f2cc36eb164029cbc740c92114b556802f0a1e2496fe24be18f1256"
     },
     {
       "path": "glossary.js",
@@ -1136,14 +1136,14 @@
       "role": "entry",
       "encoding": "utf8-lf",
       "bytes": 326871,
-      "sha256": "49194fbed5aa647851b449f9000d6647d171f6727acefbf193d5b2d268014288"
+      "sha256": "046b8ac7374bfa0b0641ed31f0e34d8a21d1af5a2ffbcbd43285e5330a0379cc"
     },
     {
       "path": "injection-motion.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 31162,
-      "sha256": "95c1c8be42db9658beead09eba42be206f68139ccc9358a15c861d01a5228041"
+      "sha256": "f8be89f78f9ab795605e89ccb36e7f7aca991efb491e6df8d8b5422ca85a9f1b"
     },
     {
       "path": "machine-viewer.js",
@@ -1269,7 +1269,7 @@
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 25655,
-      "sha256": "c5f8cc0bd318a175040cac50bbc33fa4515aae0cf083475a60034c5c5db67a68"
+      "sha256": "4a0d933f75f890311be22d4efdb21c1e7964f8f73bc2ad98f538b9db1e5092b1"
     },
     {
       "path": "vendor/chart-4.4.0/LICENSE",
@@ -1367,7 +1367,7 @@
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 6811,
-      "sha256": "3fdaacd3bebe1bbcd2643e2205d48d7c6d837a674cc0a0b769f0173c41133c79"
+      "sha256": "ce7e1405162f39b057d2dab55d2cae724a57eb63c0d4dafe5ebc848a9f0bec5c"
     }
   ]
 }
