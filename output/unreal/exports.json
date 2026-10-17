@@ -640,11 +640,11 @@
     "blender": "5.2.1 LTS",
     "source": "assets/equipment/sheet-motion.blend",
     "frame": 55,
-    "source_sha256": "4959f23f0fb4e8549891ccf0e26383e52b8f17b2c28d7c611c5c77e584c788a8",
+    "source_sha256": "2b0fd8270e431a9641aba8712efa4266f54ecbf2c77c94b4a18351be86487829",
     "fbx": "output/unreal/fbx/sheet.fbx",
-    "fbx_sha256": "69796564c3859f359898f1fd818d0e81e6541182c890c6660d9a39865062d11a",
-    "objects": 138,
-    "vertices": 23120,
+    "fbx_sha256": "a9fa8cc5ac61e8bce0af0cff169d290f89ccdb6c7a21e449cadaacbeec21b003",
+    "objects": 143,
+    "vertices": 23490,
     "materials": {
       "Paint / anthracite base": {
         "color": [
@@ -942,12 +942,12 @@
     "kind": "castfilm",
     "blender": "5.2.1 LTS",
     "source": "assets/equipment/castfilm-motion.blend",
-    "frame": 55,
-    "source_sha256": "e88ef4a0f18549de4fb390ea04804162bf78c1458b295d82a1840195a4df892b",
+    "frame": 0,
+    "source_sha256": "5b8b8c201a1c7fadfeb0a9d87044c50ed01f01bba04238aded23378af3e3aa99",
     "fbx": "output/unreal/fbx/castfilm.fbx",
-    "fbx_sha256": "9e5762e340867e7c25cc9ecc23f19283ef8346d6bc2af30c6bd65f292132211b",
-    "objects": 108,
-    "vertices": 20944,
+    "fbx_sha256": "9c52bfad07d49f7836798491fbff27832a844cd22377f59a020406a854220f61",
+    "objects": 110,
+    "vertices": 22468,
     "materials": {
       "Paint / anthracite base": {
         "color": [
@@ -1245,12 +1245,12 @@
     "kind": "blownfilm",
     "blender": "5.2.1 LTS",
     "source": "assets/equipment/blownfilm-motion.blend",
-    "frame": 55,
-    "source_sha256": "e26fc98bc5065b40323f28bbacac6494c4047036961ea3339f81f8c3136b0786",
+    "frame": 0,
+    "source_sha256": "2f248591673678d911a8289fa0260a0afa48445d6c41848f03599ccc285055db",
     "fbx": "output/unreal/fbx/blownfilm.fbx",
-    "fbx_sha256": "6d900b900154b51ce3f135dd6bc2021ab26658a5acd61af76de31341b94ed9b5",
-    "objects": 178,
-    "vertices": 30268,
+    "fbx_sha256": "6b4dc9008ad3edea56905dd2de77b111187f73cbd0c2e547277f2a592a4c521b",
+    "objects": 256,
+    "vertices": 34940,
     "materials": {
       "Paint / anthracite base": {
         "color": [
@@ -1462,6 +1462,26 @@
         "roughness": 0.7,
         "alpha": 1.0
       },
+      "Hose / cooling supply blue": {
+        "color": [
+          0.02624,
+          0.11444,
+          0.34191
+        ],
+        "metallic": 0.0,
+        "roughness": 0.6,
+        "alpha": 1.0
+      },
+      "Hose / cooling return red": {
+        "color": [
+          0.39157,
+          0.04231,
+          0.0319
+        ],
+        "metallic": 0.0,
+        "roughness": 0.6,
+        "alpha": 1.0
+      },
       "Polymer / film (translucent)": {
         "color": [
           0.04817,
@@ -1551,6 +1571,26 @@
         "metallic": 0.0,
         "roughness": 0.4,
         "alpha": 0.7
+      },
+      "Air / IBC supply (marker)": {
+        "color": [
+          0.04817,
+          0.2705,
+          0.73046
+        ],
+        "metallic": 0.0,
+        "roughness": 0.4,
+        "alpha": 0.75
+      },
+      "Air / IBC exhaust (marker)": {
+        "color": [
+          0.32778,
+          0.15896,
+          0.63076
+        ],
+        "metallic": 0.0,
+        "roughness": 0.4,
+        "alpha": 0.75
       }
     }
   },

@@ -18,8 +18,10 @@ ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / 'output/unreal/fbx'
 OUT.mkdir(parents=True, exist_ok=True)
 KINDS = ['injection', 'extrusion', 'sheet', 'castfilm', 'blownfilm', 'blowmolding', 'compounding', 'straw']
-# Still frames: the injection steady cycle at 13.3 s shows the open mould, toggle and ejected part.
-FRAMES = {'injection': 319, 'blowmolding': 165}
+# Still frames: the injection steady cycle at 13.3 s shows the open mould, toggle and ejected part. Cast film and blown
+# film use frame 0, where the turret winder and the oscillating haul-off stand at their running position (their start-up
+# clips turn them away from it over the rest of the loop).
+FRAMES = {'injection': 319, 'blowmolding': 165, 'castfilm': 0, 'blownfilm': 0}
 # Web staging only: the Unreal studio has its own ground, and a 3 m-wider floor would shrink the camera fit.
 STAGING = {'Floor'}
 requested = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else KINDS
