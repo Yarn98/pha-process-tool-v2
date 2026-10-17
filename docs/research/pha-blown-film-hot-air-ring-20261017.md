@@ -4,40 +4,98 @@
 
 근거 등급:
 - A: 원문이 직접 말한 내용
-- B: 공학 관계식으로 유도한 값
+- B: 그림 판독이나 공학 관계식으로 유도한 값
 - C: 추론 또는 교육용 가정
 
-**접근 한계.** 이번 환경에서는 원문 페이지를 열 수 없었습니다(WebFetch DNS 실패, 프록시 403). 아래 인용은 검색 결과에 노출된 초록과 특허·자료 발췌를 그대로 옮긴 것입니다. 교육 자료로 수치를 확정하기 전에 원문을 확인하세요.
+열람 수준: [원문]은 전문·특허 전문·TDS PDF를 직접 확인, [초록+그림]은 초록과 공개 그림, [초록]은 초록이나 검색 발췌만입니다.
 
-## 1. 결정화 속도가 최대가 되는 온도
+**개정 (2026-10-17, PC 환경).** 첫 판은 원문을 열 수 없는 환경에서 검색 발췌로 썼습니다. 이 판은 원문을 다시 확인하고, 사내 DSC 실측 요약 수치와 P(3HB-co-4HB) 문헌을 더했습니다. 첫 판의 틀린 서술 두 가지를 고쳤습니다. "4HB 2–10 mol%의 공개 측정값 없음"과 "에어링 공기 온도를 명시한 특허·TDS 없음"입니다.
 
-| 고분자 | 측정 항목 | 최대가 되는 온도 | 근거 |
+## 0. 결론
+
+| 주장 | 등급 |
+|---|---|
+| 사내 S1000P 시료(4HB 3.3–5.3 %)의 60 °C 반결정화 시간은 7–28 s였다 | A (사내 측정, 프로토콜 미기록) |
+| 일부 P(3HB-co-4HB) 시료는 고분자 온도 약 60 °C에서 전체 결정화가 가장 빠르다 | A/B (출처별) |
+| S1000P의 전체 결정화 최적 온도가 약 60 °C다 | C (문헌 시료에서 제품으로의 추론) |
+| S1000P 블로운 필름의 에어링 공기 설정은 60 °C가 적절하다 | C (사내 운전 기준, 공개 공정 검증 없음) |
+
+- 60 °C는 결정화 자료와 맞는 사내 기준입니다. 다만 최적 온도는 4HB 함량과 용융 이력에 따라 달라집니다. 4HB 2.1 mol% 시료는 60–90 °C에서 거의 평탄했습니다.
+- 공기 온도는 필름 온도와 다릅니다. 반결정화 시간 t½은 블로킹이 없어지는 시간이 아닙니다.
+- 공개된 PHBV·PHBH 블로운 필름 실시예는 20–30 °C의 냉각 공기를 썼습니다. 반면 따뜻한 칠롤(55–75 °C)로 결정화를 앞당긴 사례는 CJ TDS를 포함해 여럿 있습니다.
+
+## 1. 사내 실측 (DSC)
+
+- 사내 DSC 데이터에는 60 °C 등온 반결정화 시간이 1st/2nd peak로 나뉘어 기록되어 있습니다.
+- 용융 온도, 유지 시간, 60 °C까지의 냉각 속도는 기록되어 있지 않습니다. 결정화도 Xc 실측값도 없습니다.
+
+핵제·필러 없는 S1000P (중복 제거, 일부):
+
+| 4HB % | Tc 냉각 (°C) | t½ @60 °C (min, 1st/2nd) |
+|---|---|---|
+| 3.3 | 89.1 / 59.0 | 0.46 |
+| 3.6 | 91.4 | 0.42 |
+| 4.1 | 104.2 / 58.8 | 0.12 |
+| 4.5 | 95.9 | 0.37 |
+| 5.1 | 82.2 / 58.3 | 0.41 / 1.40 |
+| 5.3 | 76.9 | 0.43 / 0.94 |
+
+- 같은 날 평가한 세 시료(4HB 3.3·4.1·5.1 %)에는 냉각 중 58–59 °C(onset 약 62 °C)에 두 번째 발열이 있습니다.
+- 핵제를 넣은 S1000P는 Tc가 108–122 °C로 올라가고, t½(60)이 0 또는 음수입니다. 음수는 시간 원점(60 °C 도달)보다 먼저 반결정화가 지났다는 뜻으로 보입니다(C).
+- 사내 t½(60)은 메모리를 지운 첨가제 없는 문헌 시료의 60 °C 값(1.75–6.3 min)보다 4–50배 짧습니다. 원인 후보(C):
+  - 낮은 용융 온도로 인한 자기핵생성
+  - 첨가제
+  - 60 °C 도달 전에 결정화가 시작됨
+- 공정 조건과 결과를 짝지은 사내 데이터는 사출 금형 온도(40/60/70 °C, 조건당 n=1)뿐입니다. 에어링·칠롤 데이터는 없습니다.
+
+## 2. 결정화 속도가 최대가 되는 온도 (문헌)
+
+| 고분자 | 측정 항목 | 결과 | 근거 |
 |---|---|---|---|
-| PHB | 구정 성장 속도 G (약 4 µm/s) | 80–90 °C | A: "The maximum growth rate of P3HB spherulites is about 4 μm/s at temperatures of 80–90 °C." [Macromolecules 59(1):379 (2026)](https://pmc.ncbi.nlm.nih.gov/articles/PMC12805640/) |
-| PHB | 전체 결정화 반감기 t½ (최소 약 30 s) | 60–70 °C | A: "a minimum of about 30 s at 60–70 °C" (FSC·DSC 등온, 용융에서 냉각) [같은 논문](https://pubs.acs.org/mamobx/article/59/1/379/5089866/Homogeneous-Crystal-Nucleation-of-Poly-3) |
-| PHBV | G | 약 80 °C (353 K) | A: [Peng et al., Eur Polym J (2003)](https://research.polyu.edu.hk/en/publications/isothermal-crystallization-of-poly3-hydroxybutyrate-co-3-hydroxyv/) |
-| PHBV | 결정화 속도 | 88 °C | A: [Wang et al., J Appl Polym Sci 117:838 (2010)](https://pure.psu.edu/en/publications/miscibility-crystallization-kinetics-and-mechanical-properties-of/) |
-| PHBHHx (PHBH) | 냉각 후 결정화가 가장 잘 진행되는 온도 | 50–70 °C | A: "crystallization tends to most proceed when the cooling temperature after heat-melting is 50° C. to 70° C." [US 10030117](https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/10030117), [US 9340659](https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/9340659) |
-| P(3HB-co-4HB), 4HB 2–10 mol% | 최대 온도 | 공개 측정값을 찾지 못함 | A(정성): 구정 성장 속도는 4HB 함량과 결정화 온도에 크게 좌우되며, 4HB가 늘수록 Tm·Tg·결정화도가 낮아집니다. [Wen et al., JTAC (2012)](https://link.springer.com/article/10.1007/s10973-011-1768-2) |
+| P(3HB-co-4HB)와 그 혼합물 (CJ제일제당 공저) | 등온 결정화 | 초록: 혼합물도 copolymer처럼 "optimum crystallization ... around 60 °C". 80 °C에서는 핵이 적어 구정이 크고 느림. 그림 판독(B): 10 mol% t½ 40/50/60/70/80 °C = 4.7/2.4/1.75/2.55/4.2 min | A [초록] [Zhang, Jang, Jung, Lee, Kang, Macromol Res 31:443 (2023)](https://doi.org/10.1007/s13233-023-00115-y) |
+| P(3HB-co-4HB) 2.1 / 10 mol% | 등온 t½, 용융 온도 영향 | 190 °C 용융 시 2.1 mol%는 60–90 °C에서 거의 평탄하고 최소는 약 80 °C(B). 용융 온도를 180 → 200 °C로 올리면 열분해로 결정화가 크게 느려짐(A) | [초록+그림] [Zhang 외, Macromol Res 32:1 (2023)](https://doi.org/10.1007/s13233-023-00205-x) |
+| P(3HB-co-4HB) 5 mol% | 등온 결정화 속도 | 60 °C에서 최대, t½ 약 2.9 min. 피팅 최대는 약 58–60 °C | B [초록+그림] [Lu, Wen, Yang, J Mater Sci 46:1281 (2011)](https://doi.org/10.1007/s10853-010-4912-7) |
+| P(3HB-co-4HB) 5.9–8.9 mol% | 등온 t½ | 200 °C에서 3 min 용융해 메모리를 지운 조건. 9 mol%는 45–65 °C에 넓은 최소(약 6 min) | A(조건)/B(값) [원문] [Geeraert 외, ACS Appl Polym Mater 7:8798 (2025)](https://doi.org/10.1021/acsapm.5c01493) |
+| P(3HB-co-4HB) 0–20 mol% | 구정 성장 속도 G | G 최대 온도: PHB 약 88 °C, 5 % 약 85 °C, 10 % 약 75–80 °C. 4HB가 늘면 낮아짐 | B [초록+그림] [Wen 외, JTAC 109:959 (2012)](https://doi.org/10.1007/s10973-011-1768-2) |
+| PHB | 전체 결정화 반감기 t½ | 최소 약 30 s @60–70 °C. 첨가제 없는 PHB, 195 °C 평형 용융체, FSC·DSC | A [원문] [Jariyavidyanont 외, Macromolecules 59:379 (2026)](https://pmc.ncbi.nlm.nih.gov/articles/PMC12805640/) |
+| PHB | G | 최대는 90 °C에서 약 3.2 µm/s (200 °C에서 1 min 용융, POM). 위 2026 논문의 "4 µm/s @80–90 °C"는 서론의 2차 인용 | A [원문] [Majerczak & Liggat, J Appl Polym Sci (2023)](https://doi.org/10.1002/app.54469) |
+| PHBV | 최적 결정화 온도 | 대체로 35–85 °C, 특히 50–70 °C (DSC) | A [원문] US 6111006 |
+| PHBH | 냉각 후 결정화 | "50–70 °C로 냉각할 때 가장 잘 진행"은 특허 배경의 서술이고 실험 데이터는 없음. 특허는 이 좁은 창을 첨가제로 20–80 °C까지 넓히는 내용 | A(문장) [원문] US 10030117, US 9340659 |
 
-PHB는 핵생성이 낮은 온도에서 빨라서 전체 결정화 속도의 최대(t½ 최소, 60–70 °C)가 구정 성장 속도의 최대(80–90 °C)보다 낮습니다(B). 60 °C는 전체 결정화 속도 기준으로는 PHB·PHBH 자료와 같은 범위입니다. 구정 성장 속도 기준은 아니며, S1000P(4HB 2–5 mol%)에 대한 공개 측정값은 없습니다(C).
+- PHB와 저함량 4HB 공중합체에서는 전체 결정화 속도의 최대(약 60–70 °C)가 G의 최대(약 80–90 °C)보다 낮습니다. 낮은 온도에서 핵생성이 빨라지기 때문입니다(A, Zhang 2023 초록과 Jariyavidyanont 2026).
+- 비교를 위한 경험식: Okui의 Tmax ≈ (Tg + Tm)/2는 G의 최대 온도를 추정하는 식입니다. PHB에서는 실측보다 10–15 K 높게 나옵니다. S1000P(TDS Tg −6~0 °C)에 적용하면 G 최대는 약 70–85 °C로 추정됩니다. PHB의 G 최대와 전체 속도 최대 사이 차이(약 20 K)를 그대로 옮기면 전체 속도 최대는 약 50–65 °C입니다(B/C). 직접 측정을 대신하지 않습니다.
+- S1000P TDS에는 냉각 권장값이 없고 4HB 함량도 적혀 있지 않습니다(A, [TDS](https://cjbiomaterials.com/wp-content/uploads/2024/03/CJBMS-TDS-S1000P.pdf)). 앱의 "4HB 약 2–5 mol%"는 사내 정보입니다.
 
-권장 확인 방법은 S1000P 등온 DSC입니다. 175–180 °C에서 1–3 min 용융한 뒤(분해와 용융 기억 때문에 짧게) 빠르게 냉각하고, 30–100 °C 각 온도에서 t½를 구해 결정화 온도에 대해 그립니다. POM으로 G도 측정합니다.
+## 3. PHA 필름 냉각 온도 사례
 
-핵제(BN, cyanuric acid 등)는 P34HB의 결정화를 빠르게 합니다(A, [US 7718720](https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/7718720)). 같은 공기 온도라도 핵제와 용융 온도·체류시간에 따라 결과가 달라집니다.
+### 3-1. 블로운 필름 냉각 공기
 
-## 2. PHA 블로운 필름의 융착·블로킹
+| 출처 | 고분자 | 내용 | 근거 |
+|---|---|---|---|
+| Safta EP0736563A1 (1995, 취하) | PHBV 8 % HV + 가소제 + 핵제 | 공기 25 °C 이하, 바람직하게 약 20 °C. 따뜻한 공기는 냉각 부족과 점착을 일으킨다고 씀. 결정화 시간은 높이 4–6 m 타워로 확보. 캐스트 필름은 칠롤 약 65 °C | A [원문] [EP0736563A1](https://patents.google.com/patent/EP0736563A1/en) |
+| Kaneka US 11053386 B2 | PHBH | 인플레이션 냉각 공기 30 °C, 냉각 롤 40 °C | A [원문] |
+| CJ CA1240PF TDS | 비결정성 A1000P + PLA + CaCO3 | 에어링과 IBC에 chilled air 권장. 비결정성이라 열풍으로 결정화하지 않으므로 S1000P 조건이 아님(C) | A [원문] [TDS](https://cjbiomaterials.com/wp-content/uploads/2024/03/CJBMS-TDS-CA1240PF.pdf) |
+| P&G US 6825285 B2 | PHBHx 6.1 mol% + i-PHB 2 %, 실험실 마이크로압출기 | "Hot air is blown over the space located above the film blowing die" — 더 높은 Tc에 도달하려는 목적. 공기 온도 수치 없음. 용융 온도를 150–155 °C로 낮추자 프로스트 라인이 생기고 점착이 줄었음 | A(정성) [원문] [US 6825285](https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/6825285) |
+| Metabolix US 6620869, US 7208535 | PHBV + BN 핵제 | 잔류 점착으로 튜브가 붙으며, 풍량·두께·버블 높이를 조절해 충분히 결정화시키라는 정성 서술. 수조 50–60 °C는 펠릿용 | A(정성) [원문] |
+| Metabolix EP2291429B1 | PHB + 고함량 4HB 블렌드 | dual-lip 에어링, low-stalk 버블. 공기 온도 없음. 블로운 필름은 결정화가 덜 끝날 수 있어 80–140 °C 후어닐링 제시 | A [원문] [EP2291429B1](https://patents.google.com/patent/EP2291429B1/en) |
 
-- A: 잔류 점착으로 접힌 튜브가 서로 붙습니다. "Residual tack of the PHA can cause the tubular film to stick to itself after it has been cooled and collapsed for winding." [US 7208535](https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/7208535)
-- A: 버블 냉각을 조절해 충분히 결정화시켜 블로킹을 막습니다. "The cooling rate (air flow), thickness, diameter and height of the bubble are adjusted so that the PHA tubular film is sufficiently crystalline to ... prevent sticking and blocking." [US 6620869](https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/6620869)
-- A: 다이 위에 열풍을 불어 결정화 온도를 높인 실험 예가 있습니다. "Hot air is blown over the space located above the film blowing die in order to reach a higher crystallization temperature Tc." 다만 발췌에는 공기 온도 수치가 없습니다. [US 6825285](https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/6825285)
-- A: 상용 라인은 dual-lip 에어링과 low-stalk 버블을 씁니다. [EP2291429B1](https://patents.google.com/patent/EP2291429B1/en)
-- A: 핵제를 넣은 PHB/PHBV 캐스트 필름에서는 칠 롤 60 °C가 최적화한 조건이었습니다. 접촉 냉각이므로 공기와 같지는 않습니다. [Thellen et al. (2008)](https://dx.doi.org/10.1007/s10924-008-0079-6)
-- 비결정성 PHA는 사정이 반대입니다. CJ의 비결정성 PHA/PLA 필름 등급 CA1240PF TDS는 에어링과 IBC에 냉각 공기를 권장합니다. 비결정성 A1000P는 열풍으로 결정화되지 않으므로 이 조건이 해당하지 않습니다(C). [TDS](https://cjbiomaterials.com/wp-content/uploads/2024/03/CJBMS-TDS-CA1240PF.pdf)
+가온한 에어링 공기의 온도를 수치로 밝힌 PHA 블로운 필름 자료는 찾지 못했습니다. 60 °C는 사내 운전 기준입니다.
 
-PHA 필름의 에어링 공기 온도 범위를 명시한 특허 청구항이나 TDS는 찾지 못했습니다. 60 °C는 사용자 사내 운전 기준으로 표시합니다.
+### 3-2. 따뜻한 접촉 냉각 (칠롤·금형)
 
-## 3. 열풍 에어링 장비 구성
+| 출처 | 내용 | 근거 |
+|---|---|---|
+| CJ CB0500A·CB0504A TDS (2026-03), S1000P + A1000P(+CaCO3) 종이 압출코팅 | 결정화를 빠르게 하려면 칠롤이 따뜻해야 하며 이상 온도는 65–75 °C. 다이 출구 용융 185 °C 미만 | A [원문] [TDS](https://cjbiomaterials.com/wp-content/uploads/2026/05/TDS_PHACT_CB0500A-and-CB0504A.pdf) |
+| CJ CB0104A TDS, S1000P + A1000P + CaCO3 사출 | 금형 60–70 °C, 이형이 어려우면 70 °C | A [원문] [TDS](https://cjbiomaterials.com/wp-content/uploads/2025/03/TDS-CB0104A.pdf) |
+| Monsanto US 6111006 (PHBV) | 칠롤을 최적 결정화 온도 ±20 °C로 설정, 실시예 60 °C | A [원문] |
+| Kaneka US 9340659 (PHBH) | T-다이 시트 칠롤 60 °C | A [원문] |
+| Thellen 외 (2008) | 핵제 PHB·PHBV 캐스트 필름 칠롤 60 °C로 최적화 | A [초록] [doi](https://doi.org/10.1007/s10924-008-0079-6) |
+| EP2291429B1 Ex.35 | 캐스팅롤 약 55 °C (고함량 4HB 블렌드) | A [원문] |
+
+- 반대 전략도 있습니다. Zeneca US 5534616은 칠롤을 4–12 °C로 차갑게 해 핵을 많이 만든 뒤, IR로 약 80 °C까지 다시 가열해 구정을 키웁니다(A).
+- 칠롤은 접촉 냉각이라 공기 냉각과 같지 않습니다. CJ의 65–75 °C 권장도 S1000P + A1000P 압출코팅 조성에 관한 값이며, neat S1000P 블로운 필름에 그대로 옮길 수 없습니다(C).
+
+## 4. 열풍 에어링 장비 구성
 
 상용 "가열 에어링" 카탈로그 제품은 찾지 못했습니다. 실제로는 표준 dual-lip 에어링에 블로어 → 인라인 히터 → 단열 덕트를 연결해 구성합니다(C).
 
@@ -71,24 +129,24 @@ P = Q·ρ·c_p·ΔT로 계산했습니다. 가정은 ρ = 1.20 kg/m³, c_p = 1.0
 
 산업 경험식 "다이 지름 1 inch당 50–150 CFM"([SPE](https://extrusion.4spe.org/wp-content/uploads/2019/01/Vol10-02-01-Blown-Film-Cooling-Air-Parameters-SPE-Extrusion-Division-1-0-Wiki.pdf))을 80 mm 다이에 적용하면 270–800 m³/h입니다. 실험실 링에는 과대한 값입니다(B).
 
-## 4. 왜 따뜻한 공기가 도움이 되는가, 그리고 대가
+## 5. 따뜻한 공기의 효과와 대가
 
-- 40 µm 필름의 열 시정수는 약 1–2 s입니다(B). 프로스트 라인 위의 필름은 주변 공기 온도를 금방 따라갑니다.
-- 모형의 프로스트 라인에서 닙까지는 2.18 m입니다. 2 m/min이면 약 65 s, 5 m/min이면 26 s, 10 m/min이면 13 s가 걸립니다(B). PHB의 최소 t½(약 30 s, 60–70 °C)와 같은 규모라서, 닙에 닿기 전에 결정화 최적 온도 근처에 머무는 것이 중요합니다(B/C).
-- 대가는 냉각 능력 감소입니다. 다이 출구에서 용융체와 공기의 온도차가 약 150 K에서 약 110 K로 줄어 냉각 능력이 25–30 % 낮아집니다(B). 프로스트 라인이 올라가거나 토출을 줄여야 할 수 있습니다.
+- 40 µm 필름의 열 시정수는 약 1–2 s입니다(B). 시정수 한 번에 공기와의 온도차는 약 63 %만 줄어듭니다. 필름이 공기 온도에 가깝게 머물려면 그 공기에 계속 둘러싸여 있어야 합니다(B).
+- 냉각이 빠를수록 결정화는 낮은 온도로 밀립니다. 10 °C/min DSC의 Tc(사내 77–110 °C)는 필름 냉각(수십 K/s)에는 그대로 적용되지 않습니다(A: Kwon 외, Polymer(Korea) 46:661 (2022), 2.1 mol%에서 냉각 10 → 50 °C/min일 때 Tc 95.5 → 73.3 °C).
+- 모형의 프로스트 라인에서 닙까지는 2.18 m입니다. 2 m/min이면 약 65 s, 5 m/min이면 26 s, 10 m/min이면 13 s가 걸립니다(B).
+  - 사내 t½(60)인 7–28 s는 이 시간 안에 들어갑니다.
+  - 메모리를 지운 문헌 시료의 60 °C t½(1.75–6.3 min)은 이보다 깁니다.
+  - 실제 라인이 어느 쪽에 가까운지는 용융 이력에 달려 있습니다(C).
+- t½은 진행될 결정화의 절반에 도달하는 시간입니다. 결정화도 50 %나 표면 비점착을 뜻하지 않습니다.
+- 대가는 냉각 능력 감소입니다. 다이 출구에서 용융체와 공기의 온도차가 약 150 K에서 약 110 K로 줄어 냉각 능력이 25–30 % 낮아집니다(B). 프로스트 라인이 올라가거나 토출을 줄여야 할 수 있습니다. Safta 특허는 같은 이유로 25 °C 이하의 공기와 높은 타워를 택했습니다(A).
 - 에어링 공기는 버블 아래쪽만 감쌉니다. 닙까지 60 °C 근처를 유지하려면 보온 커버나 가열 타워가 추가로 필요할 수 있습니다(C).
-- 용융 온도는 낮게 유지합니다(약 150–175 °C). 높은 용융 온도는 결정화를 늦춥니다. A: [Janchai et al. (2023)](https://www.nature.com/articles/s41598-023-27595-3), [Zhang et al., Macromol Res (2023)](https://link.springer.com/article/10.1007/s13233-023-00205-x)
+- 용융 온도는 낮게 유지합니다(약 150–175 °C, S1000P TDS 145–175 °C). 높은 용융 온도는 핵을 지우고 분해를 일으켜 결정화를 늦춥니다. A: [Zhang 외 (2023)](https://doi.org/10.1007/s13233-023-00205-x), [Janchai 외 (2023)](https://www.nature.com/articles/s41598-023-27595-3), US 6825285.
 
-## 확인된 것, 사내 기준, 미확인 항목
+## 6. 미확인 항목
 
-- **확인됨:**
-  - PHB의 전체 결정화 반감기 최소는 60–70 °C, 구정 성장 최대는 80–90 °C입니다.
-  - PHBH는 50–70 °C로 냉각할 때 가장 잘 결정화됩니다.
-  - PHA 필름은 잔류 점착으로 블로킹되며, 냉각 조건을 조절해 결정화시켜 막습니다.
-  - 히터는 풍량 없이 켜면 안 됩니다.
-- **사내 기준 (사용자 제공):** S1000P 블로운 필름의 에어링 공기는 60 °C입니다.
-- **미확인:**
-  - 4HB 2–5 mol% P3HB4HB의 결정화 속도 최대 온도
-  - PHA 블로운 필름의 공개된 에어링 온도
-  - 에어링만으로 닙까지 충분히 결정화되는지
-  - 블로어·히터 용량(교육용 추정)
+- 가온한 에어링 공기의 온도를 밝힌 PHA 블로운 필름 공개 자료
+- S1000P의 4HB 함량 공개값
+- 사내 t½ 측정 프로토콜(용융 온도·유지 시간·냉각 속도)과 다른 등온 온도의 t½
+- 에어링만으로 닙까지 충분히 결정화되는지, 블로킹이 실제로 줄어드는지
+- 블로운 필름의 실측 냉각 속도. 위 값은 추정입니다.
+- 블로어·히터 용량. 교육용 추정입니다.
