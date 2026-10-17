@@ -9,6 +9,9 @@ pack-b-answer-notes.md):
 - a tube profile die feeding a 2.5 m vacuum calibration and cooling bath;
 - a belt haul-off with 500 mm contact and 100 mm wide belts;
 - a flying saw (200 mm travel, 500 mm cut length) and a 1.5 m run-out table.
+For the start-up sequence the upper belt rides a carriage on two guide columns that two pneumatic cylinders lower onto
+the profile (45 mm lift for threading), and the profile is built in 100 mm segments tagged with their distance from the
+die so the player can grow it out of the die.
 The model runs in real time: 3 m/min line speed (6 cuts/min, one cut per 10 s loop) and a 60 rpm teaching
 screw speed.
 """
@@ -112,16 +115,20 @@ haul = [kit.box('Haul-off frame', ((HAUL[0] + HAUL[1]) / 2, .02, AX - .32), (.80
         kit.box('Haul-off housing', ((HAUL[0] + HAUL[1]) / 2, .19, AX), (.80, .02, .55), M['paint'], bevel=.006),
         kit.box('Haul-off cover', ((HAUL[0] + HAUL[1]) / 2, .02, AX + .29), (.80, .38, .02), M['paint'], bevel=.006),
         kit.guard_panel('Haul-off guard', HAUL[0] - .1, HAUL[1] + .1, AX - .25, AX + .27, -.15, M, handle=True),
-        kit.box('Haul-off gearmotor', (HAUL[1] - .05, .30, AX), (.14, .18, .14), M['paint_accent'], bevel=.008),
-        kit.cylinder('Belt pressure cylinder', ((HAUL[0] + HAUL[1]) / 2, 0, AX + .21), .02, .10, 'Z', M['chrome'])]
+        kit.box('Haul-off gearmotor', (HAUL[1] - .05, .30, AX), (.14, .18, .14), M['paint_accent'], bevel=.008)]
 for x in (HAUL[0] + .05, HAUL[1] - .05):
     for y in (-.13, .13):
         haul.append(kit.box('Haul-off leg', (x, y, (AX - .34) / 2), (.04, .04, AX - .34), M['paint_dark']))
+for x in (HAUL[0] + .03, HAUL[1] - .03):            # the upper belt carriage slides on two rear guide columns
+    haul.append(kit.cylinder('Upper belt guide column', (x, .12, AX + .18), .009, .20, 'Z', M['chrome'], segments=16))
 kit.join(haul, 'HaulOffFrame')
+upper = []                                          # parts on the upper belt carriage (closed pose)
 for side, z in (('Lower', AX - PROFILE_R - PULLEY_R - .004), ('Upper', AX + PROFILE_R + PULLEY_R + .004)):
-    kit.join([kit.box('Belt %s top run' % side, ((HAUL[0] + HAUL[1]) / 2, 0, z + PULLEY_R + .002), (HAUL[1] - HAUL[0], .10, .004), M['belt'], bevel=0),
-              kit.box('Belt %s bottom run' % side, ((HAUL[0] + HAUL[1]) / 2, 0, z - PULLEY_R - .002), (HAUL[1] - HAUL[0], .10, .004), M['belt'], bevel=0)],
-             'Belt' + side)
+    belt = kit.join([kit.box('Belt %s top run' % side, ((HAUL[0] + HAUL[1]) / 2, 0, z + PULLEY_R + .002), (HAUL[1] - HAUL[0], .10, .004), M['belt'], bevel=0),
+                     kit.box('Belt %s bottom run' % side, ((HAUL[0] + HAUL[1]) / 2, 0, z - PULLEY_R - .002), (HAUL[1] - HAUL[0], .10, .004), M['belt'], bevel=0)],
+                    'Belt' + side)
+    if side == 'Upper':
+        upper.append(belt)
     # Lower belt: its top run moves +X (positive turn about +Y); upper belt: its bottom run moves +X.
     sign = 1 if side == 'Lower' else -1
     for x, end in ((HAUL[0], 'In'), (HAUL[1], 'Out')):
@@ -131,6 +138,8 @@ for side, z in (('Lower', AX - PROFILE_R - PULLEY_R - .004), ('Upper', AX + PROF
                  kit.box('Pulley mark', (0, 0, PULLEY_R * .7), (.112, .012, .012), M['warning'], bevel=0)]
         kit.join(parts, 'BeltPulley%s%s_body' % (side, end)).parent = owner
         kit.spin(owner, 'haul', TURNS['haul'], FRAMES, sign=sign)
+        if side == 'Upper':
+            upper.append(owner)
 # Belt cleats ride the loop at line speed (seamless: 0.5 m per loop, 50 mm pitch)
 for side, z in (('Lower', AX - PROFILE_R - PULLEY_R - .004), ('Upper', AX + PROFILE_R + PULLEY_R + .004)):
     r = PULLEY_R + .004
@@ -142,6 +151,27 @@ for side, z in (('Lower', AX - PROFILE_R - PULLEY_R - .004), ('Upper', AX + PROF
     # 50 mm cleat pitch divides the 0.5 m advanced per loop, so the loop is seamless; the < 50 mm remainder
     # of the belt length is the hidden gap of ride().
     kit.ride('BeltCleat' + side, loop, math.ceil(kit.path_length(loop) / .05), .05, CUT, M['warning'], .004, FRAMES, group='haul')
+    if side == 'Upper':
+        upper += [obj for obj in sc.objects if obj.name.startswith('BeltCleatUpper')]
+# Upper belt carriage: frame bars on the pulley axles, a pressure beam and guide bushings carry the upper belt, its pulleys and cleats.
+# Two pneumatic cylinders under the cover push the beam down; for threading the carriage stands 45 mm higher.
+Z_UPPER = AX + PROFILE_R + PULLEY_R + .004
+BEAM_Z = Z_UPPER + PULLEY_R + .018                  # pressure beam centre, 14 mm above the upper belt's top run
+upper += [kit.box('Upper belt frame bar', ((HAUL[0] + HAUL[1]) / 2, y, Z_UPPER), (HAUL[1] - HAUL[0] + .04, .008, .028),
+                  M['steel'], bevel=.002) for y in (-.062, .062)]
+upper += [kit.box('Upper belt pressure beam', ((HAUL[0] + HAUL[1]) / 2, .03, BEAM_Z), (HAUL[1] - HAUL[0] - .04, .19, .02), M['paint_accent'], bevel=.003)]
+upper += [kit.ring('Upper belt guide bushing', BEAM_Z - .02, BEAM_Z + .02, .0092, .016, (0, 0), M['steel_dark'], segments=16)
+          for _ in range(2)]
+for bushing, x in zip(upper[-2:], (HAUL[0] + .03, HAUL[1] - .03)):
+    bushing.rotation_euler.y = -math.pi / 2         # ring axis X -> Z
+    bushing.location = (x, .12, 0)
+bpy.context.view_layer.update()
+nip = kit.carrier('UpperBeltCarriage')
+kit.mount(upper, nip)
+for x in (HAUL[0] + .12, HAUL[1] - .12):
+    kit.linked_cylinder('Belt pressure cylinder', (x, 0, AX + .285), (x, 0, AX + .19), (x, 0, BEAM_Z + .01), .02, .008, M, nip, inset=.03)
+OPEN = .045
+kit.actuate(nip, FRAMES, (0, 0, OPEN))
 
 # Flying saw: the carriage clamps the profile, travels 200 mm with it while the blade plunges, then returns.
 saw = kit.empty('SawCarriage', (SAW_X0, 0, AX), group='cutter')
@@ -184,8 +214,19 @@ saw_base = [kit.box('Saw rail', (SAW_X0 + .1, 0, AX - .15), (.50, .30, .02), M['
 kit.join(saw_base, 'SawBase')
 
 # Profile: continuous from the die to the saw; cut pieces ride the run-out table and tip into the tray.
+# The profile is built in 100 mm segments tagged with their distance from the die tip, so the start-up sequence can
+# grow it out of the die; the last 500 mm (past the cut position) exist only until the first cut.
 profile_end = SAW_X0 + SAW_TRAVEL / 2
-kit.cylinder('Profile', ((DIE[1] + profile_end) / 2 + .01, 0, AX), PROFILE_R, profile_end - DIE[1] - .02, 'X', M['polymer'], segments=32)
+X_TIP = DIE[1] + .02
+S_CUT = profile_end - X_TIP
+S_NIP = HAUL[0] + .10 - X_TIP                       # front 100 mm inside the belts, where they can grip it
+S_END = S_CUT + CUT
+profile = kit.thread_tubes('Profile', [[(X_TIP, 0, AX), (profile_end, 0, AX)]], PROFILE_R, M['polymer'], segments=32)
+extra = kit.thread_tubes('ProfileLead', [[(profile_end, 0, AX), (profile_end + CUT, 0, AX)]], PROFILE_R, M['polymer'],
+                         s_from=S_CUT, extra_from=S_CUT, segments=32)
+first_piece = kit.cylinder('FirstPiece', (0, 0, 0), PROFILE_R, CUT - .004, 'X', M['polymer'], segments=32)
+first_piece.location = (profile_end + CUT / 2, 0, AX)
+FIRST_PATH = [(profile_end + CUT / 2, 0, AX), (RUNOUT[1] - .25, 0, AX), (RUNOUT[1] - .25, -.30, .62)]
 runout = [kit.box('Run-out table', ((RUNOUT[0] + RUNOUT[1]) / 2, 0, AX - PROFILE_R - .02), (RUNOUT[1] - RUNOUT[0], .20, .02), M['stainless']),
           kit.box('Run-out tray', (RUNOUT[1] - .4, -.32, .45), (.80, .30, .25), M['paint_dark'])]
 for x in (RUNOUT[0] + .1, RUNOUT[1] - .1):
@@ -215,9 +256,10 @@ for i in range(pieces):
         piece.keyframe_insert('scale', frame=frame)
 # Flow markers: pellets into the throat, melt along the screw channel, surface marks on the profile
 feed = kit.catmull([(ext['throat_x'], 0, AX + .75), (ext['throat_x'], 0, AX + .35), (ext['throat_x'], 0, AX + .06)], 6)
-kit.ride('FeedPellet', feed, 8, kit.path_length(feed) / 8, 2 * kit.path_length(feed), M['pellet'], .005, FRAMES, 'pellet')
+kit.ride('FeedPellet', feed, 8, kit.path_length(feed) / 8, 2 * kit.path_length(feed), M['pellet'], .005, FRAMES, 'pellet', group='resin')
 melt = [Vector((ext['throat_x'], 0, AX + D * .42)), Vector((ADAPTER[0] - .01, 0, AX + D * .42))]
-kit.ride('MeltMarker', melt, 12, kit.path_length(melt) / 12, 2 * kit.path_length(melt) / 12, M['polymer_marker'], .006, FRAMES)
+kit.ride('MeltMarker', melt, 12, kit.path_length(melt) / 12, 2 * kit.path_length(melt) / 12, M['polymer_marker'], .006, FRAMES,
+         group='resin')
 surface = [Vector((DIE[1] + .03, -PROFILE_R - .001, AX)), Vector((profile_end - .02, -PROFILE_R - .001, AX))]
 count = math.ceil(kit.path_length(surface) / CUT)
 kit.ride('ProfileMark', surface, count, CUT, CUT, M['polymer_marker'], .005, FRAMES)
@@ -230,16 +272,46 @@ kit.hmi_pedestal('Operator panel', (ext['x_rear'] + .3, -.70, 0), (ext['x_rear']
 kit.bake_linear()
 sc.timeline_markers.new('Saw clamps and travels with the profile', frame=start)
 
-control = lines.control
 centre = [(ext['x_rear'] + RUNOUT[1]) / 2, .95, 0]
+# Start-up: screw and haul-off turns follow the steady line ratios (60 rpm at 3 m/min = 20 screw turns per metre).
+SCREW_PER_M, HAUL_PER_M = RPM['screw'] / LINE_SPEED, 1000 / (math.pi * PULLEY_D)
+STARTUP, CONTROLS = kit.startup(
+    ['실제 라인의 기동 순서입니다. 스크류가 압출물을 다이 밖으로 밀어내면 작업자가 교정조와 수조를 지나 인취까지 끌어 넣고, '
+     '인취 벨트를 닫아 제품을 물린 뒤 절단기 너머로 보내 첫 절단을 합니다. 실제 라인은 존 온도가 설정값에 도달하고 균열(soak) 시간이 '
+     '지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.',
+     'The real start-up order: the screw pushes the extrudate out of the die, the operator leads it through the calibrator '
+     'and bath into the haul-off, the belts close on it and draw it past the saw for the first cut. A real line only lets the '
+     'screw start once every zone has reached its set point and soaked (cold-start protection); the model starts after that.'],
+    [kit.step('screw', ['압출 시작 · 스크류 회전', 'Start extruding · screw'],
+              ['스크류를 돌려 압출물을 다이에서 교정조와 냉각 수조를 지나 인취 벨트 사이까지 보내세요. 실제로는 작업자가 손으로 끌어 넣습니다.',
+               'Turn the screw to push the extrudate from the die through the calibrator and bath into the haul-off belts; '
+               'on a real line the operator leads it by hand.'],
+              once=True, spin={'screw': [round(S_NIP * SCREW_PER_M, 4), 0]}, thread=[0, S_NIP]),
+     kit.step('nip', ['인취 벨트 닫힘 · 가압 실린더', 'Close the belts · pressure cylinders'],
+              ['압출물이 벨트 사이에 들어왔습니다. 가압 실린더로 상부 벨트를 내려 제품을 무세요.',
+               'The extrudate is between the belts. Lower the upper belt with the pressure cylinders to grip it.'],
+              needs=['screw'], move='nip'),
+     kit.step('haul', ['인취 이송', 'Haul-off draw'],
+              ['벨트가 제품을 물었습니다. 인취를 돌려 제품을 플라잉 톱 너머 배출대까지 보내세요. 인취가 시작되면 벨트를 열 수 없습니다.',
+               'The belts grip the profile. Run the haul-off to draw it past the flying saw onto the run-out table; the belts '
+               'stay closed once hauling starts.'],
+              needs=['nip'], locks=['nip'], once=True, thread=[S_NIP, S_END],
+              spin={'haul': [round((S_END - S_NIP) * HAUL_PER_M, 4), 0], 'screw': [round((S_END - S_NIP) * SCREW_PER_M, 4), 0]}),
+     kit.step('cutter', ['첫 절단 · 플라잉 톱', 'First cut · flying saw'],
+              ['제품이 배출대에 올라왔습니다. 플라잉 톱 한 사이클로 첫 절단을 하세요. 톱은 제품을 물고 같은 속도로 이동하며 자릅니다.',
+               'The profile is on the run-out table. Run one flying-saw cycle for the first cut; the saw clamps the profile and '
+               'travels with it while it cuts.'],
+              needs=['haul'], once=True, move='cutter', spin={'haul': [TURNS['haul'], 0], 'screw': [TURNS['screw'], 0]},
+              release={'node': 'FirstPiece', 'at': round(saw['cut_frame'] / FRAMES, 5), 'cut_s': round(S_CUT, 5),
+                       'path': [kit.three(p) for p in FIRST_PATH]})],
+    ['기동 완료 · "자동 공정으로 돌아가기"를 누르면 정상 운전(3 m/min)을 재생합니다.',
+     'Start-up complete. Choose "Return to cycle" to play steady running at 3 m/min.'],
+    LOOP)
 META = {
     'id': 'extrusion', 'duration': LOOP, 'frames': [0, FRAMES],
     'poster': 'assets/equipment/extrusion-motion-poster.png', 'model': 'assets/equipment/extrusion-motion.glb',
     'center': centre, 'span': [RUNOUT[1] - ext['x_rear'] + .6, 2.4], 'zoom': [.7, 12],
-    'controls': [control('screw', '스크류 회전각', 'Screw rotation angle', time_range=[0, LOOP]),
-                 control('flow', '수지 표시 위치', 'Resin marker position', 100, '%', [0, LOOP]),
-                 control('haul', '벨트 인취 풀리 회전각', 'Belt haul-off pulley angle', time_range=[0, LOOP]),
-                 control('cutter', '플라잉 톱 사이클 위치', 'Flying saw cycle position', 360, time_range=[0, LOOP])],
+    'controls': CONTROLS, 'startup': STARTUP,
     # Close-ups look down into the operator-side cutaway or along the downstream equipment (like the injection machine).
     'views': [{'key': 'all', 'label': ['전체 라인', 'Whole line'], 'center': centre, 'zoom': 1},
               kit.camera_view('screw', ['스크류·배럴 단면', 'Screw & barrel cutaway'], (-.7, 0, AX), (1.2, -6.0, 5.2), 3.4),
@@ -261,23 +333,26 @@ META = {
              'screw_d_mm': 45, 'l_d': 30, 'heating_zones': 4, 'shaft_height_mm': 1000, 'adapter_mm': 135,
              'profile': 'tube 32 mm OD', 'bath_m': 2.5, 'haul_off_contact_mm': 500, 'belt_width_mm': 100,
              'saw_travel_mm': SAW_TRAVEL * 1000, 'cut_length_mm': CUT * 1000, 'run_out_mm': 1500,
+             'threading_lift_mm': OPEN * 1000, 'pressure_cylinders': 2,
              'sources': 'output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md'},
 }
 
 floor = kit.floor('Floor', ext['x_rear'] - .3, RUNOUT[1] + .2, -.9, 1.0, M)
 kit.studio_world(.8, 'studio.exr')
+release = kit.hold_closed([nip], extra + [first_piece])     # the poster shows the running line
 sc.frame_set(round(FRAMES * .5))
 bpy.context.view_layer.update()
 camera = kit.ortho_camera('Line camera', (centre[0] + 5, -10, 5.4), (centre[0], 0, .85), 8)
 orientation = camera.rotation_euler.to_matrix()
 right, up = orientation.col[0], orientation.col[1]
-corners = [obj.matrix_world @ Vector(c) for obj in sc.objects if obj.type == 'MESH' and obj is not floor for c in obj.bound_box]
+corners = [obj.matrix_world @ Vector(c) for obj in sc.objects if obj.type == 'MESH' and obj is not floor and not obj.hide_render for c in obj.bound_box]
 xs, ys = [p.dot(right) for p in corners], [p.dot(up) for p in corners]
 camera.location += right * ((min(xs) + max(xs)) / 2 - camera.location.dot(right)) + up * ((min(ys) + max(ys)) / 2 - camera.location.dot(up))
 camera.data.ortho_scale = max(max(xs) - min(xs), (max(ys) - min(ys)) * 16 / 9) * 1.06
 kit.area_light('Key light', (centre[0] - 2.5, -5, 6), (centre[0], 0, .8), 1500, 6)
 kit.area_light('Rim light', (centre[0] + 2.5, 4, 5), (centre[0], 0, .8), 650, 5, (.9, .95, 1))
 kit.render_still(OUT / 'extrusion-motion-poster.png', 1280, 720, samples=48)
+release()
 for obj in [floor, camera] + [o for o in sc.objects if o.type == 'LIGHT']:
     bpy.data.objects.remove(obj, do_unlink=True)
 sc.frame_set(0)

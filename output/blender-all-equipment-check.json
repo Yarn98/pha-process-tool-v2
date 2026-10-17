@@ -2,6 +2,7 @@
   "status": "pass",
   "blender": "5.2.1 LTS",
   "checks": [
+    "extrusion: start-up - product segments tile the path from the die, thread steps chain, actuators key open to closed, and cylinder rods stay on axis inside their bodies through the stroke",
     "extrusion: signed screw rotation matches the helix and conveys toward the die (+X)",
     "extrusion: both belt runs that grip the profile move downstream; pulley speed = 1000 v / (pi d)",
     "extrusion: flying saw moves with the profile at line speed while cutting; one 500 mm cut per loop",
@@ -21,13 +22,20 @@
   ],
   "models": {
     "extrusion": {
-      "objects": 115,
+      "objects": 169,
       "motion_groups": [
         "cutter",
         "flow",
         "haul",
+        "nip",
+        "resin",
         "screw"
       ],
+      "startup": {
+        "segments": 42,
+        "carriers": 1,
+        "rods": 2
+      },
       "screw_direction": [
         {
           "node": "Extruder screw",

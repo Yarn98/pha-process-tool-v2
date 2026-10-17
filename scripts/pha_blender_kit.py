@@ -884,6 +884,176 @@ def camera_view(key, label, target, offset=None, zoom=1.0):
     return view
 
 
+# ------------------------------------------------------------------ start-up (threading) sequence
+# Continuous lines start the way real ones do: the screw pushes the extrudate out of the die and the operator leads it
+# to the haul-off, an actuator closes the nip on it, and the haul-off draws it on to the cutter or the winder. The player
+# (equipment-motion.js) grows the product along its path, moves the actuator carrier and refuses steps out of order:
+# - product segments carry 'thread_s' = [s0, s1], their span in metres along the product path from the die lip;
+#   'thread_extra' segments lie beyond the first cut and exist only until that cut;
+# - an actuator carrier (motion group 'nip' unless stated) is keyed open at frame 0 and closed at the last frame;
+#   its cylinder rods are children of the carrier, so the exposed rod length follows the stroke.
+
+def three(v):
+    """Blender Z-up point as a glTF/three.js Y-up list."""
+    return [round(v[0], 5), round(v[2], 5), round(-v[1], 5)]
+
+
+def thread_mark(obj, s0, s1, extra=False):
+    """Tag a product segment with its arc-length span from the die lip."""
+    obj['thread_s'] = [round(s0, 5), round(s1, 5)]
+    if extra:
+        obj['thread_extra'] = 1
+    return obj
+
+
+def split_path(path, step):
+    """Consecutive chunks of about ``step`` arc length along a polyline: [(s0, s1, points)], ends shared exactly."""
+    path = [Vector(p) for p in path]
+    total = path_length(path)
+    count = max(1, round(total / step))
+    breaks = [total * k / count for k in range(count + 1)]
+    chunks = []
+    for s0, s1 in zip(breaks, breaks[1:]):
+        points = [point_at(path, s0)]
+        s = 0.0                                   # vertices strictly inside (s0, s1) keep curved paths curved
+        for a, b in zip(path, path[1:]):
+            s += (b - a).length
+            if s0 + 1e-9 < s < s1 - 1e-9:
+                points.append(b.copy())
+        points.append(point_at(path, s1))
+        chunks.append((s0, s1, points))
+    return chunks
+
+
+def thread_tubes(name, paths, radius, mat, step=.1, s_from=0.0, extra_from=None, r_in=None, curved=False,
+                 segments=24):
+    """Product strands (profile, strands, straws) built as segments of about ``step`` along parallel ``paths`` of equal
+    length; segment k joins the k-th piece of every path and is tagged with its span (``s_from`` at the path start).
+    Straight paths along X use solid cylinders, or hollow tubes when ``r_in`` is given; ``curved`` paths sweep a circle."""
+    paths = [[Vector(p) for p in path] for path in paths]
+    chunked = [split_path(path, step) for path in paths]
+    parts = []
+    for k, (s0, s1, _) in enumerate(chunked[0]):
+        pieces = []
+        for points, chunks in zip(paths, chunked):
+            if curved:
+                pieces.append(tube_path(name + ' piece', chunks[k][2], radius, mat, resolution=1, bevel_resolution=1))
+            else:
+                a, b = point_at(points, s0), point_at(points, s1)
+                if r_in is not None:
+                    pieces.append(ring(name + ' piece', a.x, b.x, r_in, radius, (a.y, a.z), mat, segments=segments))
+                else:
+                    pieces.append(between(name + ' piece', a, b, radius, mat, segments=segments))
+        segment = join(pieces, '%s%03d' % (name, k))
+        thread_mark(segment, s_from + s0, s_from + s1, extra_from is not None and s_from + s0 >= extra_from - 1e-6)
+        parts.append(segment)
+    return parts
+
+
+def thread_web(name, path, width, thickness, mat, step=.1, s_from=0.0, extra_from=None):
+    """Sheet or film along ``path`` (see web) as tagged segments of about ``step`` arc length."""
+    parts = []
+    for k, (s0, s1, points) in enumerate(split_path(path, step)):
+        segment = web('%s%03d' % (name, k), points, width, thickness, mat)
+        thread_mark(segment, s_from + s0, s_from + s1, extra_from is not None and s_from + s0 >= extra_from - 1e-6)
+        parts.append(segment)
+    return parts
+
+
+def carrier(name, group='nip'):
+    """Empty at the world origin carrying the moving half of an actuator; parts reparented to it keep their pose."""
+    return empty(name, (0, 0, 0), group=group, size=.05)
+
+
+def mount(objects, owner):
+    """Reparent ``objects`` to a carrier (built in the closed pose), keeping their world transforms."""
+    for obj in objects:
+        if obj is not None:
+            reparent(obj, owner)
+
+
+def actuate(owner, frames, open_offset):
+    """Key the carrier open (translated by ``open_offset``) at frame 0 and closed (at rest) at ``frames``."""
+    for frame, offset in ((0, open_offset), (frames, (0, 0, 0))):
+        owner.location = offset
+        owner.keyframe_insert('location', frame=frame)
+    owner['open_offset'] = [round(v, 5) for v in open_offset]
+
+
+def action_fcurves(action):
+    """Every F-curve of an action (layered actions in Blender 4.4+, plain actions before)."""
+    curves = [curve for layer in getattr(action, 'layers', []) for strip in layer.strips
+              for bag in strip.channelbags for curve in bag.fcurves]
+    return curves or list(getattr(action, 'fcurves', []))
+
+
+def hold_closed(owners, hide=()):
+    """For a still render of the running line: mute the actuator carriers at rest (closed) and hide start-up-only
+    objects. Returns a function that undoes both before the rig is saved and exported."""
+    curves = [curve for owner in owners for curve in action_fcurves(owner.animation_data.action)]
+    for curve in curves:
+        curve.mute = True
+    for owner in owners:
+        owner.location = (0, 0, 0)
+    for obj in hide:
+        obj.hide_render = True
+
+    def release():
+        for curve in curves:
+            curve.mute = False
+        for obj in hide:
+            obj.hide_render = False
+    return release
+
+
+def linked_cylinder(name, cap, end, attach, bore_r, rod_r, mats, owner, inset=None):
+    """Pneumatic or hydraulic cylinder: the body is fixed from ``cap`` to ``end``; the rod runs from ``inset`` inside the
+    body out through ``end`` to a clevis at ``attach`` on the carrier ``owner`` (all in the closed pose). The rod and
+    clevis ride with the carrier. The rod records the body ends ('bore', world) for the linkage checks."""
+    cap, end, attach = Vector(cap), Vector(end), Vector(attach)
+    axis = (end - cap).normalized()
+    length = (end - cap).length
+    inset = length * .3 if inset is None else inset
+    assert abs((attach - end).normalized().dot(axis) - 1) < 1e-6, (name, 'rod must leave along the cylinder axis')
+    side = axis.orthogonal().normalized() * bore_r * 1.25
+    body = join([between(name + ' barrel', cap + axis * length * .06, end - axis * length * .06, bore_r, mats['paint_accent'], segments=24),
+                 between(name + ' cap', cap, cap + axis * length * .1, bore_r * 1.22, mats['steel_dark'], segments=24),
+                 between(name + ' head', end - axis * length * .1, end, bore_r * 1.22, mats['steel_dark'], segments=24),
+                 between(name + ' port', cap + axis * length * .2, cap + axis * length * .2 + side, bore_r * .22, mats['brass'], segments=10),
+                 between(name + ' port', end - axis * length * .2, end - axis * length * .2 + side, bore_r * .22, mats['brass'], segments=10)],
+                name)
+    rod = between(name + ' rod', end - axis * inset, attach, rod_r, mats['chrome'], segments=16)
+    rod['bore'] = [[round(v, 5) for v in cap], [round(v, 5) for v in end]]
+    rod['rod_r'] = rod_r
+    clevis = between(name + ' clevis', attach - axis * rod_r * 1.5, attach + axis * rod_r * 1.5, rod_r * 2.2, mats['steel_dark'], segments=6)
+    mount([rod, clevis], owner)
+    return body, rod
+
+
+def step(key, label, hint, needs=(), locks=(), once=False, spin=None, move=None, thread=None, release=None, wind=None,
+         morph=None):
+    """One start-up step for the player: a 0-100 % slider that is enabled once every step in ``needs`` is complete and
+    stops ``locks`` from changing after it starts. ``spin`` turns groups ({group: [turns at 100 %, phase turns]}),
+    ``move`` drives an actuator clip, ``thread`` grows the product front from s0 to s1 (m), ``release`` frees a cut piece,
+    ``wind`` grows a wound roll from its core and ``morph`` drives a shape-key family (0 -> 1). ``once`` steps cannot be
+    reversed (the screw does not suck melt back; a drawn product does not return)."""
+    entry = {'key': key, 'label': label, 'hint': hint, 'needs': list(needs), 'locks': list(locks), 'once': bool(once)}
+    for field, value in (('spin', spin), ('move', move), ('thread', thread), ('release', release), ('wind', wind), ('morph', morph)):
+        if value is not None:
+            entry[field] = value
+    if thread is not None:
+        entry['thread'] = [round(thread[0], 5), round(thread[1], 5)]
+    return entry
+
+
+def startup(intro, steps, done, duration, pinned=None, hidden=('flow',), follow=None):
+    """Start-up metadata plus the matching manual controls (one 0-100 % slider per step, in order)."""
+    meta = {'intro': intro, 'steps': steps, 'done': done, 'pinned': pinned or {'nip': 1}, 'hidden': list(hidden),
+            'follow': follow or {'resin': 'screw'}}
+    controls = [{'key': s['key'], 'label': s['label'], 'max': 100, 'unit': '%', 'step': .1, 'range': [0, duration]} for s in steps]
+    return meta, controls
+
+
 PROCESS_HEAT_NOTE = ['공정 조건에 입력한 존 설정값을 색으로 표시합니다. 실측·용융온도가 아니며, 존 번호는 호퍼 쪽부터 다이 방향입니다. '
                      '참고 범위는 선택한 그레이드의 근거 또는 사용자 수정 범위입니다. 굵은 테두리는 범위 밖, 빗금은 미입력입니다.',
                      'Colours show the zone set points entered under process conditions, not measured or melt temperatures; zones are '

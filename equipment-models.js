@@ -26,22 +26,22 @@ window.PHAEquipmentModels = {
       {
         "key": "screw",
         "label": [
-          "스크류 회전각",
-          "Screw rotation angle"
+          "압출 시작 · 스크류 회전",
+          "Start extruding · screw"
         ],
-        "max": 720,
-        "unit": "°",
-        "step": 1,
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
         "range": [
           0,
           10.0
         ]
       },
       {
-        "key": "flow",
+        "key": "nip",
         "label": [
-          "수지 표시 위치",
-          "Resin marker position"
+          "인취 벨트 닫힘 · 가압 실린더",
+          "Close the belts · pressure cylinders"
         ],
         "max": 100,
         "unit": "%",
@@ -54,12 +54,12 @@ window.PHAEquipmentModels = {
       {
         "key": "haul",
         "label": [
-          "벨트 인취 풀리 회전각",
-          "Belt haul-off pulley angle"
+          "인취 이송",
+          "Haul-off draw"
         ],
-        "max": 720,
-        "unit": "°",
-        "step": 1,
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
         "range": [
           0,
           10.0
@@ -68,18 +68,161 @@ window.PHAEquipmentModels = {
       {
         "key": "cutter",
         "label": [
-          "플라잉 톱 사이클 위치",
-          "Flying saw cycle position"
+          "첫 절단 · 플라잉 톱",
+          "First cut · flying saw"
         ],
-        "max": 360,
-        "unit": "°",
-        "step": 1,
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
         "range": [
           0,
           10.0
         ]
       }
     ],
+    "startup": {
+      "intro": [
+        "실제 라인의 기동 순서입니다. 스크류가 압출물을 다이 밖으로 밀어내면 작업자가 교정조와 수조를 지나 인취까지 끌어 넣고, 인취 벨트를 닫아 제품을 물린 뒤 절단기 너머로 보내 첫 절단을 합니다. 실제 라인은 존 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.",
+        "The real start-up order: the screw pushes the extrudate out of the die, the operator leads it through the calibrator and bath into the haul-off, the belts close on it and draw it past the saw for the first cut. A real line only lets the screw start once every zone has reached its set point and soaked (cold-start protection); the model starts after that."
+      ],
+      "steps": [
+        {
+          "key": "screw",
+          "label": [
+            "압출 시작 · 스크류 회전",
+            "Start extruding · screw"
+          ],
+          "hint": [
+            "스크류를 돌려 압출물을 다이에서 교정조와 냉각 수조를 지나 인취 벨트 사이까지 보내세요. 실제로는 작업자가 손으로 끌어 넣습니다.",
+            "Turn the screw to push the extrudate from the die through the calibrator and bath into the haul-off belts; on a real line the operator leads it by hand."
+          ],
+          "needs": [],
+          "locks": [],
+          "once": true,
+          "spin": {
+            "screw": [
+              58.9,
+              0
+            ]
+          },
+          "thread": [
+            0,
+            2.945
+          ]
+        },
+        {
+          "key": "nip",
+          "label": [
+            "인취 벨트 닫힘 · 가압 실린더",
+            "Close the belts · pressure cylinders"
+          ],
+          "hint": [
+            "압출물이 벨트 사이에 들어왔습니다. 가압 실린더로 상부 벨트를 내려 제품을 무세요.",
+            "The extrudate is between the belts. Lower the upper belt with the pressure cylinders to grip it."
+          ],
+          "needs": [
+            "screw"
+          ],
+          "locks": [],
+          "once": false,
+          "move": "nip"
+        },
+        {
+          "key": "haul",
+          "label": [
+            "인취 이송",
+            "Haul-off draw"
+          ],
+          "hint": [
+            "벨트가 제품을 물었습니다. 인취를 돌려 제품을 플라잉 톱 너머 배출대까지 보내세요. 인취가 시작되면 벨트를 열 수 없습니다.",
+            "The belts grip the profile. Run the haul-off to draw it past the flying saw onto the run-out table; the belts stay closed once hauling starts."
+          ],
+          "needs": [
+            "nip"
+          ],
+          "locks": [
+            "nip"
+          ],
+          "once": true,
+          "spin": {
+            "haul": [
+              5.1725,
+              0
+            ],
+            "screw": [
+              26.0,
+              0
+            ]
+          },
+          "thread": [
+            2.945,
+            4.245
+          ]
+        },
+        {
+          "key": "cutter",
+          "label": [
+            "첫 절단 · 플라잉 톱",
+            "First cut · flying saw"
+          ],
+          "hint": [
+            "제품이 배출대에 올라왔습니다. 플라잉 톱 한 사이클로 첫 절단을 하세요. 톱은 제품을 물고 같은 속도로 이동하며 자릅니다.",
+            "The profile is on the run-out table. Run one flying-saw cycle for the first cut; the saw clamps the profile and travels with it while it cuts."
+          ],
+          "needs": [
+            "haul"
+          ],
+          "locks": [],
+          "once": true,
+          "spin": {
+            "haul": [
+              2,
+              0
+            ],
+            "screw": [
+              10,
+              0
+            ]
+          },
+          "move": "cutter",
+          "release": {
+            "node": "FirstPiece",
+            "at": 0.2,
+            "cut_s": 3.745,
+            "path": [
+              [
+                4.35,
+                1.0,
+                0
+              ],
+              [
+                5.7,
+                1.0,
+                0
+              ],
+              [
+                5.7,
+                0.62,
+                0.3
+              ]
+            ]
+          }
+        }
+      ],
+      "done": [
+        "기동 완료 · \"자동 공정으로 돌아가기\"를 누르면 정상 운전(3 m/min)을 재생합니다.",
+        "Start-up complete. Choose \"Return to cycle\" to play steady running at 3 m/min."
+      ],
+      "pinned": {
+        "nip": 1
+      },
+      "hidden": [
+        "flow"
+      ],
+      "follow": {
+        "resin": "screw"
+      }
+    },
     "views": [
       {
         "key": "all",
@@ -330,6 +473,8 @@ window.PHAEquipmentModels = {
       "saw_travel_mm": 200.0,
       "cut_length_mm": 500.0,
       "run_out_mm": 1500,
+      "threading_lift_mm": 45.0,
+      "pressure_cylinders": 2,
       "sources": "output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md"
     },
     "blender": "5.2.1 LTS",
@@ -337,6 +482,8 @@ window.PHAEquipmentModels = {
       "cutter",
       "flow",
       "haul",
+      "nip",
+      "resin",
       "screw"
     ]
   },

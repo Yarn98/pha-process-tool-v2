@@ -148,6 +148,48 @@ def web_clearance(web, rolls):
         assert minimum > radius-.005, (web, name, minimum, radius)
 
 
+def startup_checks(kind, meta, objects):
+    """Start-up sequence: the product segments tile their path from the die lip, the thread steps chain end to end,
+    each actuator carrier is keyed from its open offset to rest, and every linked cylinder rod stays on its body's axis
+    with its inner end inside the body through the whole stroke."""
+    steps = meta['startup']['steps']
+    chain = [s['thread'] for s in steps if 'thread' in s]
+    assert chain and chain[0][0] == 0, (kind, chain)
+    for a, b in zip(chain, chain[1:]):
+        close(a[1], b[0], 1e-5)
+    segments = sorted((obj['thread_s'][0], obj['thread_s'][1], obj) for obj in objects if obj.get('thread_s'))
+    assert segments and segments[0][0] == 0, kind
+    for (_, s1, _), (s0, _, _) in zip(segments, segments[1:]):
+        close(s1, s0, 1e-4)
+    close(segments[-1][1], chain[-1][1], 1e-4)
+    release = next((s['release'] for s in steps if 'release' in s), None)
+    for s0, _, obj in segments:
+        extra = bool(obj.get('thread_extra'))
+        assert extra == (release is not None and 'cut_s' in release and s0 >= release['cut_s']-1e-6), (kind, obj.name, s0)
+    if release:
+        assert release['node'] in objects, (kind, release['node'])
+    carriers = [obj for obj in objects if obj.get('open_offset')]
+    end = bpy.context.scene.frame_end
+    for owner in carriers:
+        frame(0)
+        close((owner.location-Vector(owner['open_offset'])).length, 0, 1e-6)
+        frame(end)
+        close(owner.location.length, 0, 1e-6)
+    rods = [obj for obj in objects if obj.get('bore')]
+    assert all(rod.parent in carriers for rod in rods), kind
+    for f in (0, end//2, end):
+        frame(f)
+        for rod in rods:
+            cap, tip = Vector(rod['bore'][0]), Vector(rod['bore'][1])
+            axis, length = (tip-cap).normalized(), (tip-cap).length
+            points = vertices(rod.name)
+            along = [(p-cap).dot(axis) for p in points]
+            off = max(((p-cap)-axis*(p-cap).dot(axis)).length for p in points)
+            assert 0 < min(along) < length and max(along) > length, (kind, rod.name, f, min(along), max(along), length)
+            assert off < rod['rod_r']*1.01+1e-5, (kind, rod.name, f, off)
+    return len(segments), len(carriers), len(rods)
+
+
 for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blowmolding', 'straw'):
     bpy.ops.wm.open_mainfile(filepath=str(ROOT/'assets/equipment'/f'{kind}-motion.blend'))
     objects = bpy.data.objects
@@ -155,9 +197,20 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
     assert all(math.isfinite(value) for obj in objects for value in (*obj.location, *obj.scale))
     meta = json.loads((ROOT/'assets/equipment'/f'{kind}-motion.json').read_text(encoding='utf-8'))
     groups = {obj.get('motion_group') for obj in objects if obj.get('motion_group')}
-    assert {control['key'] for control in meta['controls']} <= groups
+    if meta.get('startup'):
+        driven = {s['move'] for s in meta['startup']['steps'] if 'move' in s} | {g for s in meta['startup']['steps'] for g in s.get('spin', {})}
+        assert driven <= groups, (kind, driven-groups)
+        segments, carriers, rods = startup_checks(kind, meta, objects)
+        startup_report = {'segments': segments, 'carriers': carriers, 'rods': rods}
+        checks.append(kind+': start-up - product segments tile the path from the die, thread steps chain, actuators key '
+                      'open to closed, and cylinder rods stay on axis inside their bodies through the stroke')
+    else:
+        startup_report = None
+        assert {control['key'] for control in meta['controls']} <= groups
     assert bpy.context.scene.frame_end-bpy.context.scene.frame_start == round(meta['duration']*24)
     reports[kind] = {'objects': len(objects), 'motion_groups': sorted(groups)}
+    if startup_report:
+        reports[kind]['startup'] = startup_report
 
     if kind == 'extrusion':
         turns, teaching = meta['turns'], meta['teaching']
