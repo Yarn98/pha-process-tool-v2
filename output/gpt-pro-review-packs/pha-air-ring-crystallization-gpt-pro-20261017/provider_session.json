@@ -1,0 +1,20 @@
+{
+  "status": "sent_awaiting_answer",
+  "vendor": "chatgpt",
+  "requested_model": "Pro",
+  "observed_composer_label": "Pro",
+  "project": "PHA 가공 조건",
+  "conversation_url": "https://chatgpt.com/g/g-p-67ac788743b88191b7ebf6f1377c1361-pha-gagong-jogeon/c/6ad38c2e-6ad8-83ee-be9f-cf2e39e36d22",
+  "conversation_id": "6ad38c2e-6ad8-83ee-be9f-cf2e39e36d22",
+  "send_count": 1,
+  "sent_observed_on": "2026-10-17",
+  "timestamp_note": "Send time is a local observation, not a provider timestamp.",
+  "attachment": null,
+  "send_method": "Claude in Chrome connector; prompt pasted into the project composer and verified by SHA-256 before sending",
+  "prompt_file": "provider_prompt.txt",
+  "prompt_utf16_characters": 3066,
+  "prompt_sha256": "79F8DFC734F0FB446D033FC9EE9FB441AEC5D04666F90AC01437D24403490BF7",
+  "data_disclosure": "Only summary values already published in the public repository; no lot names or file paths.",
+  "retrieval_rule": "Poll this conversation; do not resend. Do not treat pending state as a completed answer.",
+  "answer_file": "provider_answer.md"
+}
