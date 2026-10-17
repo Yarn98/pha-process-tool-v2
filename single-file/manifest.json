@@ -1,9 +1,9 @@
 {
   "format": 1,
   "artifact": "single-file/PHA-Process-Single.html",
-  "bytes": 68302767,
-  "sha256": "c106625ebb4a6f0233e9c4b1d9bb23b44282da0dd19abdf4f700c30efff23afc",
-  "source_sha256": "9859c5844ca634267a36736c6e302b83201568e0592fb7675bb1774d90057954",
+  "bytes": 68614377,
+  "sha256": "995db2248febb47a9d5ce7ee6ed305a11c1931f66cf1d5dda1466ae38bc67c41",
+  "source_sha256": "d7d039891cb38b9c76c5bcd362e7ecda307ae8cc4581d9b23b1a9eae8500b87e",
   "hash_basis": "SHA-256 of UTF-8 text normalized to LF; binary bytes unchanged. Artifact bytes and hash use LF.",
   "embedded_assets": 155,
   "embedded_glbs": 26,
@@ -50,15 +50,15 @@
       "path": "assets/equipment/blownfilm-motion-poster.png",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 960345,
-      "sha256": "9b949138c9100a5708c914ba3d092d7de55999a5a9755d18cd5cee97e67b2cf2"
+      "bytes": 964601,
+      "sha256": "640d8b22efd46432968937f0698b1d0e8a66d9b35a1d45a2a4bab075278751a7"
     },
     {
       "path": "assets/equipment/blownfilm-motion.glb",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 2239772,
-      "sha256": "8e06ff4baba798345d654d5abc1a83fdb09600b1e0d09cd6bbd8e7f7c6f27e90"
+      "bytes": 2465920,
+      "sha256": "79019843ef509f4820d31670bc93f10bccbbb7deedf93bd9667231d7631b3b5e"
     },
     {
       "path": "assets/equipment/blownfilm.png",
@@ -1051,15 +1051,15 @@
       "path": "equipment-models.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
-      "bytes": 98036,
-      "sha256": "b33431b157fdb88076312dc1aac581fc284139937ef70a767333e5a4f7b45b6d"
+      "bytes": 101995,
+      "sha256": "79bb84515fbb6fbcc5f1950ffde473b451e1b91adf6cd51d1cb679f37b22f0c8"
     },
     {
       "path": "equipment-motion.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
-      "bytes": 36969,
-      "sha256": "63dc9294b06611f2b928269a5b0adeb8a206eabcb423972d55d6faf3d601f0bf"
+      "bytes": 37408,
+      "sha256": "5691f146d2876b8d6ba9e82915559e8bba5224554801e250c74b5324e36217ab"
     },
     {
       "path": "equipment-study.js",
@@ -1135,8 +1135,8 @@
       "path": "index.html",
       "role": "entry",
       "encoding": "utf8-lf",
-      "bytes": 326868,
-      "sha256": "376a5c09b6d948e70e17da749b8c05f00d6788e8b1666206b2edb3915a3ea1b9"
+      "bytes": 326871,
+      "sha256": "e49857361529b12424995012d1e8a3af2061af5b36528eb7257f17879c96e872"
     },
     {
       "path": "injection-motion.js",
@@ -1191,8 +1191,8 @@
       "path": "process-evidence.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
-      "bytes": 14902,
-      "sha256": "4246bdf17a1ae9cb3e60260c7cb4fd997b958c4882fbe8951325e22f550e5e92"
+      "bytes": 14903,
+      "sha256": "330f4c2ebe6cb0aa8ca77743d4dff4651c8e1cc63ec125b5563ffd86faf63404"
     },
     {
       "path": "scripts/build-single-file.cjs",
