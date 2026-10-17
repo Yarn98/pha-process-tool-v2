@@ -556,9 +556,24 @@ META = {
                  control('haul', '피드 롤 회전각', 'Feed roll rotation angle', time_range=[0, LOOP]),
                  control('cutter', '커터 로터 회전각', 'Cutter rotor rotation angle', 360, time_range=[0, LOOP])],
     'views': [{'key': 'all', 'label': ['전체 라인', 'Whole line'], 'center': [2.45, .95, 0], 'zoom': 1},
-              {'key': 'screw', 'label': ['스크류·배럴', 'Screws & barrel'], 'center': [.64, 1.0, 0], 'zoom': 5.5},
-              {'key': 'finish', 'label': ['수조·펠릿타이저', 'Bath & pelletiser'], 'center': [3.9, .95, 0], 'zoom': 2.2},
-              {'key': 'cutter', 'label': ['피드 롤·커터', 'Feed rolls & cutter'], 'center': [FEED_X + .05, 1.0, 0], 'zoom': 9}],
+              kit.camera_view('screw', ['스크류·배럴 단면', 'Screws & barrel cutaway'], (.64, 0, AX), (1.0, -5.0, 5.2), 6),
+              kit.camera_view('finish', ['수조·펠릿타이저', 'Bath & pelletiser'], (3.9, 0, .95), (1.5, -6.0, 2.5), 2.2),
+              kit.camera_view('cutter', ['피드 롤·커터', 'Feed rolls & cutter'], (FEED_X + .05, 0, 1.0), (1.0, -6.0, 1.5), 9)],
+    # No established compounding temperature profile exists (see the zone table), so block set points are typed
+    # into the panel, kept in this browser and shown without a reference band.
+    'heat': {'input': 'panel', 'reference': None,
+             'title': ['배럴 블록·다이 설정 온도 (여기서 입력)', 'Barrel block and die set points (enter here)'],
+             'note': ['이축 컴파운딩의 그레이드별 온도 근거는 확립되지 않아 참고 범위를 표시하지 않습니다. 장비 도면과 그레이드 TDS로 각 블록을 대응한 뒤 '
+                      '설정값을 입력하면 색으로 비교합니다. 입력값은 이 브라우저에만 저장되며 실측 온도가 아닙니다. B1은 수냉 공급부입니다.',
+                      'No grade-specific temperature basis is established for twin-screw compounding, so no reference band is shown. '
+                      'Map each block with the machine drawing and grade TDS, then enter set points to compare them by colour. Entries '
+                      'stay in this browser and are not measured temperatures. B1 is the water-cooled feed block.'],
+             'scale_labels': {'melt': ['배럴 블록·다이', 'Barrel blocks & die'], 'tool': ['냉각', 'Cooling']},
+             'zones': [kit.heat_box('B%d' % (i + 1), 'B%d' % (i + 1), ['B%d' % (i + 1), 'B%d' % (i + 1)],
+                                    (i * BLOCK + .004, Y_B + BORE + .003, AX - BLOCK_H / 2 - .003), ((i + 1) * BLOCK - .004, BLOCK_W / 2 + .004, AX + BLOCK_H / 2 + .003))
+                       for i in range(1, 10)]
+             + [kit.heat_band('adapter', 'die', ['어댑터·다이', 'Adapter & die'], X_END + .005, X_END + .091, .072, AX, full=True),
+                kit.heat_box('die', 'die', ['어댑터·다이', 'Adapter & die'], (X_END + .094, -.083, AX - .046), (X_END + .188, .083, AX + .046), half=False)]},
     'stages': [['공급·이송', 'Feed & convey'], ['용융·혼합', 'Melt & mix'], ['탈가스', 'Devolatilization'],
                ['다이·펠릿 절단', 'Die & pelletize']],
     'turns': TURNS, 'cut_edges': EDGES,

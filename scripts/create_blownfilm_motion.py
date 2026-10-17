@@ -67,7 +67,7 @@ M = kit.palette()
 M['film'] = kit.material('Polymer / film (translucent)', '#3E8C5A', 0, .15, alpha=.42)
 M['core'] = kit.material('Paper / winder core', '#B89A6A', 0, .85)
 
-ext = kit.single_screw_extruder('Extruder', D, 30, 0.0, AX, M, FRAMES, TURNS['screw'])
+ext = kit.single_screw_extruder('Extruder', D, 30, 0.0, AX, M, FRAMES, TURNS['screw'], zones=4)   # schema zone1-zone4
 
 # Annular die: side-fed spiral-mandrel body on a stand, lip ring and air ring
 die = [kit.cylinder('Annular die body', (X_D, 0, Z_DIE - .14), .11, .26, 'Z', M['steel'], segments=48),
@@ -215,9 +215,15 @@ META = {
                  control('haul', '닙롤 회전각', 'Nip roll rotation angle', time_range=[0, LOOP]),
                  control('winder', '권취 롤 회전각', 'Winder rotation angle', 360, time_range=[0, LOOP])],
     'views': [{'key': 'all', 'label': ['전체 라인', 'Whole line'], 'center': centre, 'zoom': 1},
-              {'key': 'screw', 'label': ['스크류·배럴', 'Screw & barrel'], 'center': [-.6, AX, 0], 'zoom': 3.2},
-              {'key': 'die', 'label': ['환형 다이·에어링·동결선', 'Annular die, air ring & frost line'], 'center': [X_D, Z_DIE + .2, 0], 'zoom': 5},
-              {'key': 'finish', 'label': ['접힘·닙롤', 'Collapse & nip'], 'center': [X_D, Z_NIP - .3, 0], 'zoom': 3.5}],
+              kit.camera_view('screw', ['스크류·배럴 단면', 'Screw & barrel cutaway'], (-.6, 0, AX), (1.2, -6.0, 5.2), 3.4),
+              kit.camera_view('die', ['환형 다이·에어링·동결선', 'Annular die, air ring & frost line'], (X_D, 0, Z_DIE + .15), (1.5, -6.0, 3.0), 5),
+              kit.camera_view('finish', ['접힘·닙롤', 'Collapse & nip'], (X_D, 0, Z_NIP - .3), (1.5, -6.0, 2.0), 3.5)],
+    'heat': {'input': 'process', 'reference': 'process',
+             'title': ['배럴·다이 존 온도 (입력한 설정값)', 'Barrel and die zone temperatures (entered set points)'],
+             'note': kit.PROCESS_HEAT_NOTE, 'scale_labels': {'melt': ['배럴·다이', 'Barrel & die'], 'tool': ['냉각 공기', 'Cooling air']},
+             'zones': kit.extruder_heat(ext, ['zone1', 'zone2', 'zone3', 'zone4'])
+             + [kit.heat_vband('die', 'die', ['환형 다이', 'Annular die'], X_D, 0, Z_DIE - .27, Z_DIE - .01, .125, full=True),
+                kit.heat_vband('air', 'airTemp', ['에어링 공기', 'Air-ring air'], X_D, 0, Z_DIE + .002, Z_DIE + .052, .128, group='tool', full=True)]},
     'stages': [['용융 공급', 'Melt feed'], ['버블 성형·동결선', 'Bubble & frost line'], ['냉각·인취', 'Cool & haul off'],
                ['접힘·권취', 'Collapse & wind']],
     'turns': TURNS,

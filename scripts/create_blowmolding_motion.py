@@ -89,7 +89,7 @@ M['bottle'] = kit.material('Polymer / bottle (translucent)', '#3E8C5A', 0, .18, 
 M['flash'] = kit.material('Polymer / flash', '#2F6B45', 0, .4)
 M['air'] = kit.material('Air / blow marker', '#8FC8E8', 0, .2, alpha=.7)
 
-ext = kit.single_screw_extruder('Extruder', D, 30, X_E, AX, M, FRAMES, 12)   # 60 rpm teaching speed
+ext = kit.single_screw_extruder('Extruder', D, 30, X_E, AX, M, FRAMES, 12, zones=3)   # 60 rpm; schema zone1-zone3
 
 # Head: 90 deg adapter into a 180 x 220 mm parison head with a 25 mm outlet
 head = [kit.cylinder('Adapter', (.06, 0, AX), .045, .12, 'X', M['steel'], segments=32),
@@ -288,9 +288,32 @@ META = {
     'initial': {'parison': 0, 'mold': 100, 'pin': 0, 'inflate': 0},
     'turns': {'screw': 12},
     'views': [{'key': 'all', 'label': ['전체 설비', 'Whole machine'], 'center': centre, 'zoom': 1},
-              {'key': 'screw', 'label': ['스크류·배럴', 'Screw & barrel'], 'center': [-.6, AX, 0], 'zoom': 3.2},
-              {'key': 'finish', 'label': ['금형·블로우 핀', 'Mold & blow pin'], 'center': three((X_H, -SHUTTLE / 2, z_m)), 'zoom': 4.5},
-              {'key': 'head', 'label': ['패리슨 헤드', 'Parison head'], 'center': three((X_H, 0, Z_OUT)), 'zoom': 6}],
+              kit.camera_view('screw', ['스크류·배럴 단면', 'Screw & barrel cutaway'], (-.6, 0, AX), (1.2, -6.0, 5.2), 3.4),
+              kit.camera_view('finish', ['금형·블로우 핀', 'Mold & blow pin'], (X_H, -SHUTTLE / 2, z_m), (1.2, -6.0, 2.5), 4.5),
+              kit.camera_view('head', ['패리슨 헤드', 'Parison head'], (X_H, 0, Z_OUT), (1.2, -6.0, 2.0), 6)],
+    'heat': {'input': 'process', 'reference': 'process',
+             'title': ['배럴·다이 존 온도 (입력한 설정값)', 'Barrel and die zone temperatures (entered set points)'],
+             'note': kit.PROCESS_HEAT_NOTE, 'scale_labels': {'melt': ['배럴·다이', 'Barrel & die'], 'tool': ['금형', 'Mould']},
+             'zones': kit.extruder_heat(ext, ['zone1', 'zone2', 'zone3'])
+             + [kit.heat_vband('head', 'head', ['패리슨 헤드', 'Parison head'], X_H, 0, Z_HEAD_TOP - .22, Z_HEAD_TOP, .104, full=True),
+                kit.heat_vband('die', 'die', ['다이 부싱', 'Die bushing'], X_H, 0, Z_OUT, Z_OUT + .02, .036, full=True)]
+             # Mould halves: the block behind the cavity (beyond the body radius) so the cut section stays readable.
+             + [kit.heat_box('mold_' + side, 'mold', ['금형', 'Mould'], (x0, BODY_R + .008, z_m - MOULD_H / 2 - .002), (x1, MOULD_W / 2 + .003, z_m + MOULD_H / 2 + .002),
+                             group='tool', parent=name)
+                for side, name, x0, x1 in (('a', 'MoldLeft', X_H - MOULD_HALF - .002, X_H - .001), ('b', 'MoldRight', X_H + .001, X_H + MOULD_HALF + .002))]},
+    # Cycle chart: one lane per actuator on the re-based 12 s timeline; the parison grows through the whole cycle.
+    'lanes': [{'key': key, 'ko': ko, 'en': en} for key, ko, en in (('head', '헤드·패리슨', 'Head & parison'), ('clamp', '형체부', 'Clamp'),
+              ('shuttle', '셔틀', 'Shuttle'), ('pin', '블로우 핀', 'Blow pin'), ('takeout', '취출', 'Take-out'))],
+    'steps': [[0.0, .4, '패리슨 절단', 'Parison cut', 'head'], [.4, LOOP, '패리슨 연속 성장', 'Parison grows continuously', 'head'],
+              [0.0, T['pin_out_open'][0], '금형 닫힘 유지', 'Mould closed', 'clamp'],
+              [T['pin_out_open'][0], T['pin_out_open'][1], '형개', 'Mould opening', 'clamp'],
+              [T['pin_out_open'][1], T['capture'][0], '열림 대기', 'Open, waiting', 'clamp'],
+              [T['capture'][0], T['capture'][1], '금형 닫힘·포획', 'Close & capture', 'clamp'],
+              [T['cut_shuttle'][0], T['cut_shuttle'][1], '블로우 위치로 이동', 'Shuttle to blow station', 'shuttle'],
+              [T['return'][0], T['return'][1], '헤드 아래로 복귀', 'Return under the head', 'shuttle'],
+              [T['pin_in'][0], T['pin_in'][1], '핀 삽입', 'Pin in', 'pin'], [T['inflate'][0], T['inflate'][1], '팽창', 'Inflate', 'pin'],
+              [T['hold_cool'][0], T['hold_cool'][1], '보압·냉각', 'Hold & cool', 'pin'], [T['exhaust'][0], T['exhaust'][1], '배기', 'Exhaust', 'pin'],
+              [T['pin_out_open'][0], 7.25, '핀 복귀', 'Pin out', 'pin'], [T['take_out'][0], T['take_out'][1], '취출·컨베이어', 'Take-out to conveyor', 'takeout']],
     # Stage names match the process atlas (melt & head, parison, mould & inflate, cool & trim); the segments
     # map them onto the re-based cycle and the starts are where an atlas step seeks.
     'stages': [['용융·헤드', 'Melt & head'], ['패리슨·금형 닫힘', 'Parison & capture'], ['금형·공기 팽창', 'Mould & inflate'],

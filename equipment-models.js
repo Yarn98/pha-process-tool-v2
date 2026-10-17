@@ -97,15 +97,38 @@ window.PHAEquipmentModels = {
       {
         "key": "screw",
         "label": [
-          "스크류·배럴",
-          "Screw & barrel"
+          "스크류·배럴 단면",
+          "Screw & barrel cutaway"
         ],
         "center": [
           -0.7,
           1.0,
           0
         ],
-        "zoom": 3.2
+        "zoom": 3.4,
+        "position": [
+          0.5,
+          6.2,
+          6.0
+        ]
+      },
+      {
+        "key": "die",
+        "label": [
+          "다이·교정조",
+          "Die & calibration"
+        ],
+        "center": [
+          0.3,
+          1.0,
+          0
+        ],
+        "zoom": 6,
+        "position": [
+          1.8,
+          4.0,
+          6.0
+        ]
       },
       {
         "key": "finish",
@@ -118,22 +141,139 @@ window.PHAEquipmentModels = {
           0.95,
           0
         ],
-        "zoom": 3.0
-      },
-      {
-        "key": "die",
-        "label": [
-          "다이·교정조",
-          "Die & calibration"
-        ],
-        "center": [
-          0.4,
-          1.0,
-          0
-        ],
-        "zoom": 5
+        "zoom": 4,
+        "position": [
+          5.4,
+          3.95,
+          6.0
+        ]
       }
     ],
+    "heat": {
+      "input": "process",
+      "reference": "process",
+      "title": [
+        "배럴·다이 존 온도 (입력한 설정값)",
+        "Barrel and die zone temperatures (entered set points)"
+      ],
+      "note": [
+        "공정 조건에 입력한 존 설정값을 색으로 표시합니다. 실측·용융온도가 아니며, 존 번호는 호퍼 쪽부터 다이 방향입니다. 참고 범위는 선택한 그레이드의 근거 또는 사용자 수정 범위입니다. 굵은 테두리는 범위 밖, 빗금은 미입력입니다.",
+        "Colours show the zone set points entered under process conditions, not measured or melt temperatures; zones are numbered from the hopper toward the die. Reference bands come from the selected grade source or your edits; a heavy outline marks values outside the band and hatching marks missing values."
+      ],
+      "scale_labels": {
+        "melt": [
+          "배럴·다이",
+          "Barrel & die"
+        ],
+        "tool": [
+          "냉각",
+          "Cooling"
+        ]
+      },
+      "zones": [
+        {
+          "key": "Z1",
+          "field": "zone1",
+          "label": [
+            "존 1",
+            "Zone 1"
+          ],
+          "group": "melt",
+          "shape": "half_band",
+          "x": [
+            -1.27035,
+            -1.02465
+          ],
+          "r": 0.0615,
+          "center": [
+            1.0,
+            0.0
+          ],
+          "parent": null
+        },
+        {
+          "key": "Z2",
+          "field": "zone2",
+          "label": [
+            "존 2",
+            "Zone 2"
+          ],
+          "group": "melt",
+          "shape": "half_band",
+          "x": [
+            -0.95535,
+            -0.70965
+          ],
+          "r": 0.0615,
+          "center": [
+            1.0,
+            0.0
+          ],
+          "parent": null
+        },
+        {
+          "key": "Z3",
+          "field": "zone3",
+          "label": [
+            "존 3",
+            "Zone 3"
+          ],
+          "group": "melt",
+          "shape": "half_band",
+          "x": [
+            -0.64035,
+            -0.39465
+          ],
+          "r": 0.0615,
+          "center": [
+            1.0,
+            0.0
+          ],
+          "parent": null
+        },
+        {
+          "key": "Z4",
+          "field": "zone4",
+          "label": [
+            "존 4",
+            "Zone 4"
+          ],
+          "group": "melt",
+          "shape": "half_band",
+          "x": [
+            -0.32535,
+            -0.07965
+          ],
+          "r": 0.0615,
+          "center": [
+            1.0,
+            0.0
+          ],
+          "parent": null
+        },
+        {
+          "key": "die",
+          "field": "die",
+          "label": [
+            "다이",
+            "Die"
+          ],
+          "group": "melt",
+          "shape": "half_band",
+          "x": [
+            0.145,
+            0.325
+          ],
+          "r": 0.078,
+          "center": [
+            1.0,
+            0.0
+          ],
+          "parent": null,
+          "full": true
+        }
+      ]
+    },
     "stages": [
       [
         "공급·용융",
@@ -180,7 +320,7 @@ window.PHAEquipmentModels = {
       "basis": "Pack B grade C teaching values; brand-neutral; not an OEM drawing or PHA setting",
       "screw_d_mm": 45,
       "l_d": 30,
-      "heating_zones": 5,
+      "heating_zones": 4,
       "shaft_height_mm": 1000,
       "adapter_mm": 135,
       "profile": "tube 32 mm OD",
@@ -311,15 +451,20 @@ window.PHAEquipmentModels = {
       {
         "key": "screw",
         "label": [
-          "스크류·배럴",
-          "Screws & barrel"
+          "스크류·배럴 단면",
+          "Screws & barrel cutaway"
         ],
         "center": [
           0.64,
           1.0,
           0
         ],
-        "zoom": 5.5
+        "zoom": 6,
+        "position": [
+          1.64,
+          6.2,
+          5.0
+        ]
       },
       {
         "key": "finish",
@@ -332,7 +477,12 @@ window.PHAEquipmentModels = {
           0.95,
           0
         ],
-        "zoom": 2.2
+        "zoom": 2.2,
+        "position": [
+          5.4,
+          3.45,
+          6.0
+        ]
       },
       {
         "key": "cutter",
@@ -345,9 +495,269 @@ window.PHAEquipmentModels = {
           1.0,
           0
         ],
-        "zoom": 9
+        "zoom": 9,
+        "position": [
+          5.41,
+          2.5,
+          6.0
+        ]
       }
     ],
+    "heat": {
+      "input": "panel",
+      "reference": null,
+      "title": [
+        "배럴 블록·다이 설정 온도 (여기서 입력)",
+        "Barrel block and die set points (enter here)"
+      ],
+      "note": [
+        "이축 컴파운딩의 그레이드별 온도 근거는 확립되지 않아 참고 범위를 표시하지 않습니다. 장비 도면과 그레이드 TDS로 각 블록을 대응한 뒤 설정값을 입력하면 색으로 비교합니다. 입력값은 이 브라우저에만 저장되며 실측 온도가 아닙니다. B1은 수냉 공급부입니다.",
+        "No grade-specific temperature basis is established for twin-screw compounding, so no reference band is shown. Map each block with the machine drawing and grade TDS, then enter set points to compare them by colour. Entries stay in this browser and are not measured temperatures. B1 is the water-cooled feed block."
+      ],
+      "scale_labels": {
+        "melt": [
+          "배럴 블록·다이",
+          "Barrel blocks & die"
+        ],
+        "tool": [
+          "냉각",
+          "Cooling"
+        ]
+      },
+      "zones": [
+        {
+          "key": "B2",
+          "field": "B2",
+          "label": [
+            "B2",
+            "B2"
+          ],
+          "group": "melt",
+          "shape": "box",
+          "parent": null,
+          "min": [
+            0.132,
+            0.937,
+            -0.074
+          ],
+          "max": [
+            0.252,
+            1.063,
+            -0.03276
+          ]
+        },
+        {
+          "key": "B3",
+          "field": "B3",
+          "label": [
+            "B3",
+            "B3"
+          ],
+          "group": "melt",
+          "shape": "box",
+          "parent": null,
+          "min": [
+            0.26,
+            0.937,
+            -0.074
+          ],
+          "max": [
+            0.38,
+            1.063,
+            -0.03276
+          ]
+        },
+        {
+          "key": "B4",
+          "field": "B4",
+          "label": [
+            "B4",
+            "B4"
+          ],
+          "group": "melt",
+          "shape": "box",
+          "parent": null,
+          "min": [
+            0.388,
+            0.937,
+            -0.074
+          ],
+          "max": [
+            0.508,
+            1.063,
+            -0.03276
+          ]
+        },
+        {
+          "key": "B5",
+          "field": "B5",
+          "label": [
+            "B5",
+            "B5"
+          ],
+          "group": "melt",
+          "shape": "box",
+          "parent": null,
+          "min": [
+            0.516,
+            0.937,
+            -0.074
+          ],
+          "max": [
+            0.636,
+            1.063,
+            -0.03276
+          ]
+        },
+        {
+          "key": "B6",
+          "field": "B6",
+          "label": [
+            "B6",
+            "B6"
+          ],
+          "group": "melt",
+          "shape": "box",
+          "parent": null,
+          "min": [
+            0.644,
+            0.937,
+            -0.074
+          ],
+          "max": [
+            0.764,
+            1.063,
+            -0.03276
+          ]
+        },
+        {
+          "key": "B7",
+          "field": "B7",
+          "label": [
+            "B7",
+            "B7"
+          ],
+          "group": "melt",
+          "shape": "box",
+          "parent": null,
+          "min": [
+            0.772,
+            0.937,
+            -0.074
+          ],
+          "max": [
+            0.892,
+            1.063,
+            -0.03276
+          ]
+        },
+        {
+          "key": "B8",
+          "field": "B8",
+          "label": [
+            "B8",
+            "B8"
+          ],
+          "group": "melt",
+          "shape": "box",
+          "parent": null,
+          "min": [
+            0.9,
+            0.937,
+            -0.074
+          ],
+          "max": [
+            1.02,
+            1.063,
+            -0.03276
+          ]
+        },
+        {
+          "key": "B9",
+          "field": "B9",
+          "label": [
+            "B9",
+            "B9"
+          ],
+          "group": "melt",
+          "shape": "box",
+          "parent": null,
+          "min": [
+            1.028,
+            0.937,
+            -0.074
+          ],
+          "max": [
+            1.148,
+            1.063,
+            -0.03276
+          ]
+        },
+        {
+          "key": "B10",
+          "field": "B10",
+          "label": [
+            "B10",
+            "B10"
+          ],
+          "group": "melt",
+          "shape": "box",
+          "parent": null,
+          "min": [
+            1.156,
+            0.937,
+            -0.074
+          ],
+          "max": [
+            1.276,
+            1.063,
+            -0.03276
+          ]
+        },
+        {
+          "key": "adapter",
+          "field": "die",
+          "label": [
+            "어댑터·다이",
+            "Adapter & die"
+          ],
+          "group": "melt",
+          "shape": "half_band",
+          "x": [
+            1.285,
+            1.371
+          ],
+          "r": 0.072,
+          "center": [
+            1.0,
+            0.0
+          ],
+          "parent": null,
+          "full": true
+        },
+        {
+          "key": "die",
+          "field": "die",
+          "label": [
+            "어댑터·다이",
+            "Adapter & die"
+          ],
+          "group": "melt",
+          "shape": "box",
+          "parent": null,
+          "min": [
+            1.374,
+            0.954,
+            -0.083
+          ],
+          "max": [
+            1.468,
+            1.046,
+            0.083
+          ]
+        }
+      ]
+    },
     "stages": [
       [
         "공급·이송",
@@ -610,15 +1020,20 @@ window.PHAEquipmentModels = {
       {
         "key": "screw",
         "label": [
-          "스크류·배럴",
-          "Screw & barrel"
+          "스크류·배럴 단면",
+          "Screw & barrel cutaway"
         ],
         "center": [
           -0.7,
           1.0,
           0
         ],
-        "zoom": 3.2
+        "zoom": 3.4,
+        "position": [
+          0.5,
+          6.2,
+          6.0
+        ]
       },
       {
         "key": "stack",
@@ -627,11 +1042,16 @@ window.PHAEquipmentModels = {
           "Flat die & 3-roll stack"
         ],
         "center": [
-          0.48400000000000004,
-          0.75,
+          0.484,
+          0.78,
           0
         ],
-        "zoom": 4.5
+        "zoom": 4.5,
+        "position": [
+          0.984,
+          1.68,
+          8.0
+        ]
       },
       {
         "key": "finish",
@@ -644,9 +1064,213 @@ window.PHAEquipmentModels = {
           0.55,
           0
         ],
-        "zoom": 3
+        "zoom": 3,
+        "position": [
+          4.734,
+          3.05,
+          6.0
+        ]
       }
     ],
+    "heat": {
+      "input": "process",
+      "reference": "process",
+      "title": [
+        "배럴·다이 존 온도 (입력한 설정값)",
+        "Barrel and die zone temperatures (entered set points)"
+      ],
+      "note": [
+        "공정 조건에 입력한 존 설정값을 색으로 표시합니다. 실측·용융온도가 아니며, 존 번호는 호퍼 쪽부터 다이 방향입니다. 참고 범위는 선택한 그레이드의 근거 또는 사용자 수정 범위입니다. 굵은 테두리는 범위 밖, 빗금은 미입력입니다.",
+        "Colours show the zone set points entered under process conditions, not measured or melt temperatures; zones are numbered from the hopper toward the die. Reference bands come from the selected grade source or your edits; a heavy outline marks values outside the band and hatching marks missing values."
+      ],
+      "scale_labels": {
+        "melt": [
+          "배럴·다이",
+          "Barrel & die"
+        ],
+        "tool": [
+          "칠 롤",
+          "Chill rolls"
+        ]
+      },
+      "zones": [
+        {
+          "key": "Z1",
+          "field": "zone1",
+          "label": [
+            "존 1",
+            "Zone 1"
+          ],
+          "group": "melt",
+          "shape": "half_band",
+          "x": [
+            -1.27728,
+            -1.08072
+          ],
+          "r": 0.0615,
+          "center": [
+            1.0,
+            0.0
+          ],
+          "parent": null
+        },
+        {
+          "key": "Z2",
+          "field": "zone2",
+          "label": [
+            "존 2",
+            "Zone 2"
+          ],
+          "group": "melt",
+          "shape": "half_band",
+          "x": [
+            -1.02528,
+            -0.82872
+          ],
+          "r": 0.0615,
+          "center": [
+            1.0,
+            0.0
+          ],
+          "parent": null
+        },
+        {
+          "key": "Z3",
+          "field": "zone3",
+          "label": [
+            "존 3",
+            "Zone 3"
+          ],
+          "group": "melt",
+          "shape": "half_band",
+          "x": [
+            -0.77328,
+            -0.57672
+          ],
+          "r": 0.0615,
+          "center": [
+            1.0,
+            0.0
+          ],
+          "parent": null
+        },
+        {
+          "key": "Z4",
+          "field": "zone4",
+          "label": [
+            "존 4",
+            "Zone 4"
+          ],
+          "group": "melt",
+          "shape": "half_band",
+          "x": [
+            -0.52128,
+            -0.32472
+          ],
+          "r": 0.0615,
+          "center": [
+            1.0,
+            0.0
+          ],
+          "parent": null
+        },
+        {
+          "key": "Z5",
+          "field": "zone5",
+          "label": [
+            "존 5",
+            "Zone 5"
+          ],
+          "group": "melt",
+          "shape": "half_band",
+          "x": [
+            -0.26928,
+            -0.07272
+          ],
+          "r": 0.0615,
+          "center": [
+            1.0,
+            0.0
+          ],
+          "parent": null
+        },
+        {
+          "key": "die",
+          "field": "die",
+          "label": [
+            "평다이",
+            "Flat die"
+          ],
+          "group": "melt",
+          "shape": "box",
+          "parent": null,
+          "min": [
+            0.247,
+            0.934,
+            -0.262
+          ],
+          "max": [
+            0.413,
+            1.066,
+            0.262
+          ]
+        },
+        {
+          "key": "chill_top",
+          "field": "chillTop",
+          "label": [
+            "상단 롤",
+            "Top roll"
+          ],
+          "group": "tool",
+          "shape": "roll_ends",
+          "x": 0.534,
+          "y": 1.1255,
+          "r": 0.129,
+          "z": [
+            -0.3,
+            0.3
+          ],
+          "width": 0.04
+        },
+        {
+          "key": "chill_mid",
+          "field": "chillMid",
+          "label": [
+            "중단 롤",
+            "Middle roll"
+          ],
+          "group": "tool",
+          "shape": "roll_ends",
+          "x": 0.534,
+          "y": 0.8745,
+          "r": 0.129,
+          "z": [
+            -0.3,
+            0.3
+          ],
+          "width": 0.04
+        },
+        {
+          "key": "chill_bot",
+          "field": "chillBot",
+          "label": [
+            "하단 롤",
+            "Bottom roll"
+          ],
+          "group": "tool",
+          "shape": "roll_ends",
+          "x": 0.534,
+          "y": 0.6235,
+          "r": 0.129,
+          "z": [
+            -0.3,
+            0.3
+          ],
+          "width": 0.04
+        }
+      ]
+    },
     "stages": [
       [
         "공급·용융",
@@ -815,15 +1439,20 @@ window.PHAEquipmentModels = {
       {
         "key": "screw",
         "label": [
-          "스크류·배럴",
-          "Screw & barrel"
+          "스크류·배럴 단면",
+          "Screw & barrel cutaway"
         ],
         "center": [
           -1.0,
           1.55,
           0
         ],
-        "zoom": 3.2
+        "zoom": 3.4,
+        "position": [
+          0.2,
+          6.75,
+          6.0
+        ]
       },
       {
         "key": "chill",
@@ -833,10 +1462,15 @@ window.PHAEquipmentModels = {
         ],
         "center": [
           0.55,
-          1.0990384493975585,
+          1.119,
           0
         ],
-        "zoom": 4.5
+        "zoom": 4.5,
+        "position": [
+          1.05,
+          2.019,
+          8.0
+        ]
       },
       {
         "key": "finish",
@@ -846,12 +1480,140 @@ window.PHAEquipmentModels = {
         ],
         "center": [
           2.5,
-          0.39783844939755847,
+          0.3978,
           0
         ],
-        "zoom": 3
+        "zoom": 3,
+        "position": [
+          4.0,
+          2.8978,
+          6.0
+        ]
       }
     ],
+    "heat": {
+      "input": "process",
+      "reference": "process",
+      "title": [
+        "배럴·다이 존 온도 (입력한 설정값)",
+        "Barrel and die zone temperatures (entered set points)"
+      ],
+      "note": [
+        "공정 조건에 입력한 존 설정값을 색으로 표시합니다. 실측·용융온도가 아니며, 존 번호는 호퍼 쪽부터 다이 방향입니다. 참고 범위는 선택한 그레이드의 근거 또는 사용자 수정 범위입니다. 굵은 테두리는 범위 밖, 빗금은 미입력입니다.",
+        "Colours show the zone set points entered under process conditions, not measured or melt temperatures; zones are numbered from the hopper toward the die. Reference bands come from the selected grade source or your edits; a heavy outline marks values outside the band and hatching marks missing values."
+      ],
+      "scale_labels": {
+        "melt": [
+          "배럴·다이",
+          "Barrel & die"
+        ],
+        "tool": [
+          "칠 롤",
+          "Chill roll"
+        ]
+      },
+      "zones": [
+        {
+          "key": "Z1",
+          "field": "zone1",
+          "label": [
+            "존 1",
+            "Zone 1"
+          ],
+          "group": "melt",
+          "shape": "half_band",
+          "x": [
+            -1.6088,
+            -1.2812
+          ],
+          "r": 0.0615,
+          "center": [
+            1.55,
+            0.0
+          ],
+          "parent": null
+        },
+        {
+          "key": "Z2",
+          "field": "zone2",
+          "label": [
+            "존 2",
+            "Zone 2"
+          ],
+          "group": "melt",
+          "shape": "half_band",
+          "x": [
+            -1.1888,
+            -0.8612
+          ],
+          "r": 0.0615,
+          "center": [
+            1.55,
+            0.0
+          ],
+          "parent": null
+        },
+        {
+          "key": "Z3",
+          "field": "zone3",
+          "label": [
+            "존 3",
+            "Zone 3"
+          ],
+          "group": "melt",
+          "shape": "half_band",
+          "x": [
+            -0.7688,
+            -0.4412
+          ],
+          "r": 0.0615,
+          "center": [
+            1.55,
+            0.0
+          ],
+          "parent": null
+        },
+        {
+          "key": "die",
+          "field": "die",
+          "label": [
+            "평다이",
+            "Flat die"
+          ],
+          "group": "melt",
+          "shape": "box",
+          "parent": null,
+          "min": [
+            0.44927,
+            1.3,
+            -0.262
+          ],
+          "max": [
+            0.58127,
+            1.463,
+            0.262
+          ]
+        },
+        {
+          "key": "chill",
+          "field": "chillTop",
+          "label": [
+            "칠 롤",
+            "Chill roll"
+          ],
+          "group": "tool",
+          "shape": "roll_ends",
+          "x": 0.55,
+          "y": 0.99904,
+          "r": 0.204,
+          "z": [
+            -0.3,
+            0.3
+          ],
+          "width": 0.04
+        }
+      ]
+    },
     "stages": [
       [
         "공급·용융",
@@ -1024,15 +1786,20 @@ window.PHAEquipmentModels = {
       {
         "key": "screw",
         "label": [
-          "스크류·배럴",
-          "Screw & barrel"
+          "스크류·배럴 단면",
+          "Screw & barrel cutaway"
         ],
         "center": [
           -0.6,
           1.0,
           0
         ],
-        "zoom": 3.2
+        "zoom": 3.4,
+        "position": [
+          0.6,
+          6.2,
+          6.0
+        ]
       },
       {
         "key": "die",
@@ -1042,10 +1809,15 @@ window.PHAEquipmentModels = {
         ],
         "center": [
           0.55,
-          1.25,
+          1.2,
           0
         ],
-        "zoom": 5
+        "zoom": 5,
+        "position": [
+          2.05,
+          4.2,
+          6.0
+        ]
       },
       {
         "key": "finish",
@@ -1058,9 +1830,160 @@ window.PHAEquipmentModels = {
           3.25,
           0
         ],
-        "zoom": 3.5
+        "zoom": 3.5,
+        "position": [
+          2.05,
+          5.25,
+          6.0
+        ]
       }
     ],
+    "heat": {
+      "input": "process",
+      "reference": "process",
+      "title": [
+        "배럴·다이 존 온도 (입력한 설정값)",
+        "Barrel and die zone temperatures (entered set points)"
+      ],
+      "note": [
+        "공정 조건에 입력한 존 설정값을 색으로 표시합니다. 실측·용융온도가 아니며, 존 번호는 호퍼 쪽부터 다이 방향입니다. 참고 범위는 선택한 그레이드의 근거 또는 사용자 수정 범위입니다. 굵은 테두리는 범위 밖, 빗금은 미입력입니다.",
+        "Colours show the zone set points entered under process conditions, not measured or melt temperatures; zones are numbered from the hopper toward the die. Reference bands come from the selected grade source or your edits; a heavy outline marks values outside the band and hatching marks missing values."
+      ],
+      "scale_labels": {
+        "melt": [
+          "배럴·다이",
+          "Barrel & die"
+        ],
+        "tool": [
+          "냉각 공기",
+          "Cooling air"
+        ]
+      },
+      "zones": [
+        {
+          "key": "Z1",
+          "field": "zone1",
+          "label": [
+            "존 1",
+            "Zone 1"
+          ],
+          "group": "melt",
+          "shape": "half_band",
+          "x": [
+            -1.1292,
+            -0.9108
+          ],
+          "r": 0.056,
+          "center": [
+            1.0,
+            0.0
+          ],
+          "parent": null
+        },
+        {
+          "key": "Z2",
+          "field": "zone2",
+          "label": [
+            "존 2",
+            "Zone 2"
+          ],
+          "group": "melt",
+          "shape": "half_band",
+          "x": [
+            -0.8492,
+            -0.6308
+          ],
+          "r": 0.056,
+          "center": [
+            1.0,
+            0.0
+          ],
+          "parent": null
+        },
+        {
+          "key": "Z3",
+          "field": "zone3",
+          "label": [
+            "존 3",
+            "Zone 3"
+          ],
+          "group": "melt",
+          "shape": "half_band",
+          "x": [
+            -0.5692,
+            -0.3508
+          ],
+          "r": 0.056,
+          "center": [
+            1.0,
+            0.0
+          ],
+          "parent": null
+        },
+        {
+          "key": "Z4",
+          "field": "zone4",
+          "label": [
+            "존 4",
+            "Zone 4"
+          ],
+          "group": "melt",
+          "shape": "half_band",
+          "x": [
+            -0.2892,
+            -0.0708
+          ],
+          "r": 0.056,
+          "center": [
+            1.0,
+            0.0
+          ],
+          "parent": null
+        },
+        {
+          "key": "die",
+          "field": "die",
+          "label": [
+            "환형 다이",
+            "Annular die"
+          ],
+          "group": "melt",
+          "shape": "vband",
+          "center": [
+            0.55,
+            0
+          ],
+          "y": [
+            0.78,
+            1.04
+          ],
+          "r": 0.125,
+          "parent": null,
+          "full": true
+        },
+        {
+          "key": "air",
+          "field": "airTemp",
+          "label": [
+            "에어링 공기",
+            "Air-ring air"
+          ],
+          "group": "tool",
+          "shape": "vband",
+          "center": [
+            0.55,
+            0
+          ],
+          "y": [
+            1.052,
+            1.102
+          ],
+          "r": 0.128,
+          "parent": null,
+          "full": true
+        }
+      ]
+    },
     "stages": [
       [
         "용융 공급",
@@ -1246,15 +2169,20 @@ window.PHAEquipmentModels = {
       {
         "key": "screw",
         "label": [
-          "스크류·배럴",
-          "Screw & barrel"
+          "스크류·배럴 단면",
+          "Screw & barrel cutaway"
         ],
         "center": [
           -0.6,
           1.5,
           0
         ],
-        "zoom": 3.2
+        "zoom": 3.4,
+        "position": [
+          0.6,
+          6.7,
+          6.0
+        ]
       },
       {
         "key": "finish",
@@ -1267,7 +2195,12 @@ window.PHAEquipmentModels = {
           1.215,
           0.15
         ],
-        "zoom": 4.5
+        "zoom": 4.5,
+        "position": [
+          1.55,
+          3.715,
+          6.15
+        ]
       },
       {
         "key": "head",
@@ -1280,8 +2213,308 @@ window.PHAEquipmentModels = {
           1.34,
           0
         ],
-        "zoom": 6
+        "zoom": 6,
+        "position": [
+          1.55,
+          3.34,
+          6.0
+        ]
       }
+    ],
+    "heat": {
+      "input": "process",
+      "reference": "process",
+      "title": [
+        "배럴·다이 존 온도 (입력한 설정값)",
+        "Barrel and die zone temperatures (entered set points)"
+      ],
+      "note": [
+        "공정 조건에 입력한 존 설정값을 색으로 표시합니다. 실측·용융온도가 아니며, 존 번호는 호퍼 쪽부터 다이 방향입니다. 참고 범위는 선택한 그레이드의 근거 또는 사용자 수정 범위입니다. 굵은 테두리는 범위 밖, 빗금은 미입력입니다.",
+        "Colours show the zone set points entered under process conditions, not measured or melt temperatures; zones are numbered from the hopper toward the die. Reference bands come from the selected grade source or your edits; a heavy outline marks values outside the band and hatching marks missing values."
+      ],
+      "scale_labels": {
+        "melt": [
+          "배럴·다이",
+          "Barrel & die"
+        ],
+        "tool": [
+          "금형",
+          "Mould"
+        ]
+      },
+      "zones": [
+        {
+          "key": "Z1",
+          "field": "zone1",
+          "label": [
+            "존 1",
+            "Zone 1"
+          ],
+          "group": "melt",
+          "shape": "half_band",
+          "x": [
+            -1.11893,
+            -0.82773
+          ],
+          "r": 0.056,
+          "center": [
+            1.5,
+            0.0
+          ],
+          "parent": null
+        },
+        {
+          "key": "Z2",
+          "field": "zone2",
+          "label": [
+            "존 2",
+            "Zone 2"
+          ],
+          "group": "melt",
+          "shape": "half_band",
+          "x": [
+            -0.7456,
+            -0.4544
+          ],
+          "r": 0.056,
+          "center": [
+            1.5,
+            0.0
+          ],
+          "parent": null
+        },
+        {
+          "key": "Z3",
+          "field": "zone3",
+          "label": [
+            "존 3",
+            "Zone 3"
+          ],
+          "group": "melt",
+          "shape": "half_band",
+          "x": [
+            -0.37227,
+            -0.08107
+          ],
+          "r": 0.056,
+          "center": [
+            1.5,
+            0.0
+          ],
+          "parent": null
+        },
+        {
+          "key": "head",
+          "field": "head",
+          "label": [
+            "패리슨 헤드",
+            "Parison head"
+          ],
+          "group": "melt",
+          "shape": "vband",
+          "center": [
+            0.35,
+            0
+          ],
+          "y": [
+            1.36,
+            1.58
+          ],
+          "r": 0.104,
+          "parent": null,
+          "full": true
+        },
+        {
+          "key": "die",
+          "field": "die",
+          "label": [
+            "다이 부싱",
+            "Die bushing"
+          ],
+          "group": "melt",
+          "shape": "vband",
+          "center": [
+            0.35,
+            0
+          ],
+          "y": [
+            1.34,
+            1.36
+          ],
+          "r": 0.036,
+          "parent": null,
+          "full": true
+        },
+        {
+          "key": "mold_a",
+          "field": "mold",
+          "label": [
+            "금형",
+            "Mould"
+          ],
+          "group": "tool",
+          "shape": "box",
+          "parent": "MoldLeft",
+          "min": [
+            0.258,
+            1.113,
+            -0.113
+          ],
+          "max": [
+            0.349,
+            1.317,
+            -0.0405
+          ]
+        },
+        {
+          "key": "mold_b",
+          "field": "mold",
+          "label": [
+            "금형",
+            "Mould"
+          ],
+          "group": "tool",
+          "shape": "box",
+          "parent": "MoldRight",
+          "min": [
+            0.351,
+            1.113,
+            -0.113
+          ],
+          "max": [
+            0.442,
+            1.317,
+            -0.0405
+          ]
+        }
+      ]
+    },
+    "lanes": [
+      {
+        "key": "head",
+        "ko": "헤드·패리슨",
+        "en": "Head & parison"
+      },
+      {
+        "key": "clamp",
+        "ko": "형체부",
+        "en": "Clamp"
+      },
+      {
+        "key": "shuttle",
+        "ko": "셔틀",
+        "en": "Shuttle"
+      },
+      {
+        "key": "pin",
+        "ko": "블로우 핀",
+        "en": "Blow pin"
+      },
+      {
+        "key": "takeout",
+        "ko": "취출",
+        "en": "Take-out"
+      }
+    ],
+    "steps": [
+      [
+        0.0,
+        0.4,
+        "패리슨 절단",
+        "Parison cut",
+        "head"
+      ],
+      [
+        0.4,
+        12.0,
+        "패리슨 연속 성장",
+        "Parison grows continuously",
+        "head"
+      ],
+      [
+        0.0,
+        7.0,
+        "금형 닫힘 유지",
+        "Mould closed",
+        "clamp"
+      ],
+      [
+        7.0,
+        7.5,
+        "형개",
+        "Mould opening",
+        "clamp"
+      ],
+      [
+        7.5,
+        11.5,
+        "열림 대기",
+        "Open, waiting",
+        "clamp"
+      ],
+      [
+        11.5,
+        12.0,
+        "금형 닫힘·포획",
+        "Close & capture",
+        "clamp"
+      ],
+      [
+        0.0,
+        0.5,
+        "블로우 위치로 이동",
+        "Shuttle to blow station",
+        "shuttle"
+      ],
+      [
+        8.2,
+        9.0,
+        "헤드 아래로 복귀",
+        "Return under the head",
+        "shuttle"
+      ],
+      [
+        0.5,
+        1.0,
+        "핀 삽입",
+        "Pin in",
+        "pin"
+      ],
+      [
+        1.0,
+        1.5,
+        "팽창",
+        "Inflate",
+        "pin"
+      ],
+      [
+        1.5,
+        6.5,
+        "보압·냉각",
+        "Hold & cool",
+        "pin"
+      ],
+      [
+        6.5,
+        7.0,
+        "배기",
+        "Exhaust",
+        "pin"
+      ],
+      [
+        7.0,
+        7.25,
+        "핀 복귀",
+        "Pin out",
+        "pin"
+      ],
+      [
+        7.5,
+        8.2,
+        "취출·컨베이어",
+        "Take-out to conveyor",
+        "takeout"
+      ]
     ],
     "stages": [
       [
