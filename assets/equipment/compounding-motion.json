@@ -24,12 +24,12 @@
     {
       "key": "screw",
       "label": [
-        "스크류 회전각",
-        "Screw rotation angle"
+        "압출 시작 · 주 스크류",
+        "Start extruding · main screws"
       ],
-      "max": 720,
-      "unit": "°",
-      "step": 1,
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
       "range": [
         0,
         25.125
@@ -38,22 +38,36 @@
     {
       "key": "side",
       "label": [
-        "사이드 피더 회전각",
-        "Side feeder rotation angle"
+        "사이드 피더 기동",
+        "Start the side feeder"
       ],
-      "max": 720,
-      "unit": "°",
-      "step": 1,
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
       "range": [
         0,
         25.125
       ]
     },
     {
-      "key": "flow",
+      "key": "cutter",
       "label": [
-        "수지 표시 위치",
-        "Resin marker position"
+        "커터 로터 기동",
+        "Start the cutter rotor"
+      ],
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
+      "range": [
+        0,
+        25.125
+      ]
+    },
+    {
+      "key": "nip",
+      "label": [
+        "피드 롤 가압 · 실린더",
+        "Close the feed rolls · loading cylinders"
       ],
       "max": 100,
       "unit": "%",
@@ -66,32 +80,205 @@
     {
       "key": "haul",
       "label": [
-        "피드 롤 회전각",
-        "Feed roll rotation angle"
+        "피드 롤 이송 · 첫 펠릿",
+        "Feed the strands · first pellets"
       ],
-      "max": 720,
-      "unit": "°",
-      "step": 1,
-      "range": [
-        0,
-        25.125
-      ]
-    },
-    {
-      "key": "cutter",
-      "label": [
-        "커터 로터 회전각",
-        "Cutter rotor rotation angle"
-      ],
-      "max": 360,
-      "unit": "°",
-      "step": 1,
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
       "range": [
         0,
         25.125
       ]
     }
   ],
+  "startup": {
+    "intro": [
+      "실제 라인의 기동 순서입니다. 주 스크류가 스트랜드를 다이 밖으로 밀어내면 작업자가 냉각 수조와 에어 나이프를 지나 펠릿타이저 입구까지 끌어 넣고, 커터 로터를 먼저 돌린 뒤 상부 피드 롤을 내려 스트랜드를 물리고 이송해 첫 펠릿을 만듭니다. 사이드 피더는 주 스크류가 도는 동안에만 기동합니다. 실제 라인은 블록 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.",
+      "The real start-up order: the main screws push the strands out of the die and the operator leads them through the water bath and air knife to the pelletiser inlet; the cutter rotor is started first, then the upper feed roll is lowered onto the strands and they are fed in for the first pellets. The side feeder only starts while the main screws turn. A real line only lets the screws start once every block has reached its set point and soaked (cold-start protection); the model starts after that."
+    ],
+    "steps": [
+      {
+        "key": "screw",
+        "label": [
+          "압출 시작 · 주 스크류",
+          "Start extruding · main screws"
+        ],
+        "hint": [
+          "주 스크류를 돌려 스트랜드 6가닥을 다이에서 냉각 수조와 에어 나이프를 지나 피드 롤 사이까지 보내세요. 실제로는 작업자가 손으로 수조의 가이드 롤 아래로 끌어 넣습니다.",
+          "Turn the main screws to push the six strands from the die through the water bath and air knife to the feed rolls; on a real line the operator leads them under the bath guide rolls by hand."
+        ],
+        "needs": [],
+        "locks": [],
+        "once": true,
+        "spin": {
+          "screw": [
+            60.3885,
+            0
+          ]
+        },
+        "thread": [
+          0,
+          3.01942
+        ]
+      },
+      {
+        "key": "side",
+        "label": [
+          "사이드 피더 기동",
+          "Start the side feeder"
+        ],
+        "hint": [
+          "스트랜드가 나오고 있습니다. 사이드 피더를 돌려 B5로 부원료를 넣으세요. 사이드 피더는 주 스크류가 도는 동안에만 기동합니다.",
+          "The strands are running. Turn the side feeder to add the second component at B5; it only starts while the main screws turn."
+        ],
+        "needs": [
+          "screw"
+        ],
+        "locks": [],
+        "once": true,
+        "spin": {
+          "side": [
+            3.0,
+            0
+          ],
+          "screw": [
+            6.0,
+            0
+          ]
+        }
+      },
+      {
+        "key": "cutter",
+        "label": [
+          "커터 로터 기동",
+          "Start the cutter rotor"
+        ],
+        "hint": [
+          "스트랜드를 넣기 전에 커터 로터를 먼저 돌리세요. 로터가 돌지 않으면 피드 롤을 닫을 수 없습니다.",
+          "Start the cutter rotor before feeding the strands; the feed rolls cannot close until it turns."
+        ],
+        "needs": [
+          "screw"
+        ],
+        "locks": [],
+        "once": true,
+        "spin": {
+          "cutter": [
+            8.3333,
+            0
+          ],
+          "screw": [
+            4.0,
+            0
+          ]
+        }
+      },
+      {
+        "key": "nip",
+        "label": [
+          "피드 롤 가압 · 실린더",
+          "Close the feed rolls · loading cylinders"
+        ],
+        "hint": [
+          "로터가 돌고 있습니다. 가압 실린더로 상부 피드 롤을 내려 스트랜드를 물리세요.",
+          "The rotor is turning. Lower the upper feed roll with the loading cylinders to grip the strands."
+        ],
+        "needs": [
+          "screw",
+          "cutter"
+        ],
+        "locks": [],
+        "once": false,
+        "move": "nip"
+      },
+      {
+        "key": "haul",
+        "label": [
+          "피드 롤 이송 · 첫 펠릿",
+          "Feed the strands · first pellets"
+        ],
+        "hint": [
+          "피드 롤이 스트랜드를 물었습니다. 피드 롤을 돌려 스트랜드를 커터로 보내 첫 펠릿을 만드세요. 이송이 시작되면 피드 롤을 열 수 없습니다.",
+          "The feed rolls grip the strands. Turn them to feed the strands into the cutter for the first pellets; the rolls stay closed once feeding starts."
+        ],
+        "needs": [
+          "nip"
+        ],
+        "locks": [
+          "nip"
+        ],
+        "once": true,
+        "spin": {
+          "haul": [
+            2.3873,
+            0
+          ],
+          "cutter": [
+            25.0,
+            0
+          ],
+          "screw": [
+            12.0,
+            0
+          ]
+        },
+        "thread": [
+          3.01942,
+          3.06942
+        ],
+        "release": {
+          "node": "FirstPellets",
+          "at": 0.1,
+          "path": [
+            [
+              4.435,
+              0.97,
+              0
+            ],
+            [
+              4.45,
+              0.76,
+              0
+            ],
+            [
+              4.45,
+              0.69,
+              0
+            ],
+            [
+              4.75,
+              0.66,
+              0
+            ],
+            [
+              5.05,
+              0.63,
+              0
+            ],
+            [
+              5.35,
+              0.592,
+              0
+            ]
+          ]
+        }
+      }
+    ],
+    "done": [
+      "기동 완료 · \"자동 공정으로 돌아가기\"를 누르면 정상 운전(0.1배 교육 속도)을 재생합니다.",
+      "Start-up complete. Choose \"Return to cycle\" to play steady running at the 0.1x teaching speed."
+    ],
+    "pinned": {
+      "nip": 1
+    },
+    "hidden": [
+      "flow"
+    ],
+    "follow": {
+      "resin": "screw"
+    }
+  },
   "views": [
     {
       "key": "all",
@@ -570,6 +757,8 @@
     "rotor_mm": 100,
     "rotor_blades": 8,
     "classifier_mm": "700 x 400",
+    "press_roll_lift_mm": 25.0,
+    "loading_cylinders": 2,
     "sources": "output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md"
   },
   "blender": "5.2.1 LTS",
@@ -577,6 +766,8 @@
     "cutter",
     "flow",
     "haul",
+    "nip",
+    "resin",
     "screw",
     "side"
   ]

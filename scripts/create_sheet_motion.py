@@ -10,6 +10,9 @@ Pack B sheet base (grade C teaching values; output/research/pha-equipment-realis
   the bottom roll), then over a 2 m roller table (80 mm rolls at 200 mm pitch);
 - two 15 mm edge-trim knives, 120 mm haul-off rolls and a winder on a 76 mm core (shown at 250 mm; the rpm
   falls as the roll grows to 500 mm).
+For the start-up sequence the top roll, its bearing blocks and rotary union ride a carriage that two hydraulic cylinders
+on a crosshead lower onto the sheet (30 mm gap for threading); the sheet is built in 100 mm segments tagged with their
+distance from the lip, and the wound roll grows from its core while winding starts.
 The model runs in real time at a 3 m/min line speed. Every roll turns at the same surface speed,
 n = 1000 v / (pi d), and the 250 mm stack rolls turn exactly once per loop.
 """
@@ -86,16 +89,28 @@ for side in (-1, 1):
     frame += ([kit.box('Stack side frame', (X_S, y, (Z_T + R + .12) / 2), (.48, .05, Z_T + R + .12), M['paint'], bevel=.008)] if side > 0 else
               [kit.box('Stack front post', (X_S + dx, y, (Z_T + R + .12) / 2), (.07, .05, Z_T + R + .12), M['paint'], bevel=.006)
                for dx in (-.20, .20)])
-    frame += [
-              kit.hydraulic_cylinder('Top gap adjuster', (X_S - .32, y, Z_T), (X_S - .14, y, Z_T), .03, .014, M)[0],
-              kit.hydraulic_cylinder('Bottom gap adjuster', (X_S - .32, y, Z_B), (X_S - .14, y, Z_B), .03, .014, M)[0],
+    frame += [kit.hydraulic_cylinder('Bottom gap adjuster', (X_S - .32, y, Z_B), (X_S - .14, y, Z_B), .03, .014, M)[0],
+              kit.box('Stack top rail', (X_S, y, Z_T + R + .10), (.47, .05, .04), M['paint'], bevel=.004),
+              kit.box('Gap cylinder post', (X_S, y, Z_T + .33), (.06, .05, .17), M['paint'], bevel=.004),
               kit.box('Stack rail', (X_S, y, .02), (.90, .06, .04), M['steel'])]
 frame.append(kit.box('Stack crossbeam', (X_S + .2, 0, Z_T + R + .12), (.08, FACE + .40, .08), M['paint']))
+frame.append(kit.box('Gap cylinder crosshead', (X_S, 0, Z_T + .43), (.14, FACE + .44, .04), M['paint'], bevel=.006))
 frame.append(kit.box('Stack drive', (X_S, FACE / 2 + .40, Z_M), (.30, .20, .30), M['paint_accent'], bevel=.01))
 kit.join(frame, 'StackFrame')
-kit.roll('TopRoll', X_S, Z_T, R, FACE, M, 'roll', 1, FRAMES, -1)       # bottom surface moves +X at the first nip
+top_roll = kit.roll('TopRoll', X_S, Z_T, R, FACE, M, 'roll', 1, FRAMES, -1)   # bottom surface moves +X at the first nip
 kit.roll('MiddleRoll', X_S, Z_M, R, FACE, M, 'roll', 1, FRAMES, 1)     # the web wraps its +X side, moving down
 kit.roll('BottomRoll', X_S, Z_B, R, FACE, M, 'roll', 1, FRAMES, -1)    # the web wraps its -X side, leaving along +X
+
+# Gap actuator: the top roll, its bearing blocks and rotary union ride a carriage that two hydraulic cylinders, hanging
+# from a crosshead over the stack, lower onto the sheet. For threading the gap stands 30 mm open.
+bpy.context.view_layer.update()
+nip = kit.carrier('TopRollCarriage')
+kit.mount([top_roll, bpy.data.objects['TopRoll stand']], nip)
+BLOCK_TOP = Z_T + (R * .9 + .06) / 2
+for y in (-(FACE / 2 + .07), FACE / 2 + .07):
+    kit.linked_cylinder('Top roll gap cylinder', (X_S, y, Z_T + .41), (X_S, y, Z_T + .25), (X_S, y, BLOCK_TOP), .035, .016, M, nip, inset=.05)
+OPEN = .03
+kit.actuate(nip, FRAMES, (0, 0, OPEN))
 
 # Roller table, edge trim, haul-off and winder
 for k, x in enumerate(TABLE):
@@ -126,37 +141,82 @@ path = [lip, Vector((X_S, 0, AX))]
 path += kit.arc_xz(X_S, Z_M, R + T / 2, 90, -90, 36)[1:]
 path += kit.arc_xz(X_S, Z_B, R + T / 2, 90, 270, 36)[1:]
 path += [Vector((X_TRIM, 0, Z_SHEET))]
-kit.web('SheetWeb', path, WIDTH, T * 2, M['sheet'])
+# The sheet is built in 100 mm segments tagged with their distance from the lip, split at the first nip, so the start-up
+# can grow it; the edge-trim strips appear once the sheet passes the knives.
+S_NIP = kit.path_length(path[:2])
+S_TRIM = kit.path_length(path)
+kit.thread_web('SheetWeb', kit.path_slice(path, 0, S_NIP), WIDTH, T * 2, M['sheet'])
+kit.thread_web('SheetWebDrawn', kit.path_slice(path, S_NIP, S_TRIM), WIDTH, T * 2, M['sheet'], s_from=S_NIP)
 after = [Vector((X_TRIM, 0, Z_SHEET)), Vector((X_WIND, 0, Z_SHEET))] + kit.arc_xz(X_WIND, Z_SHEET - T / 2 - WR, WR + T / 2, 90, 30, 6)[1:]
-kit.web('SheetTrimmed', after, TRIMMED, T * 2, M['sheet'])
+kit.thread_web('SheetTrimmed', after, TRIMMED, T * 2, M['sheet'], s_from=S_TRIM)
+S_END = S_TRIM + kit.path_length(after)
 for side in (-1, 1):
     y = side * (TRIMMED / 2 + .0075)
     strip = [Vector((X_TRIM, y, Z_SHEET)), Vector((X_TRIM + .12, y, Z_SHEET - .04)), Vector((X_TRIM + .25, y, .52))]
-    kit.web('EdgeTrim', [Vector((p.x, 0, p.z)) for p in strip], .015, T * 2, M['sheet']).location.y = y
+    trim_strip = kit.web('EdgeTrim', [Vector((p.x, 0, p.z)) for p in strip], .015, T * 2, M['sheet'])
+    trim_strip.location.y = y
+    trim_strip['thread_at'] = round(S_TRIM + .05, 5)
 
 # Flow markers on the sheet surface at line speed (front edge), feed pellets and melt in the screw channel
 marks = [Vector((p.x, -WIDTH / 2 + .02, p.z)) for p in path] + [Vector((X_WIND - .02, -TRIMMED / 2 + .02, Z_SHEET))]
 kit.ride('SheetMarker', marks, math.ceil(kit.path_length(marks) / (TRAVEL / 4)), TRAVEL / 4, TRAVEL, M['polymer_marker'], .006, FRAMES)
 feed = kit.catmull([(ext['throat_x'], 0, AX + .75), (ext['throat_x'], 0, AX + .35), (ext['throat_x'], 0, AX + .06)], 6)
-kit.ride('FeedPellet', feed, 8, kit.path_length(feed) / 8, 2 * kit.path_length(feed), M['pellet'], .005, FRAMES, 'pellet')
+kit.ride('FeedPellet', feed, 8, kit.path_length(feed) / 8, 2 * kit.path_length(feed), M['pellet'], .005, FRAMES, 'pellet', group='resin')
 melt = [Vector((ext['throat_x'], 0, AX + D * .42)), Vector((X_E - .01, 0, AX + D * .42))]
-kit.ride('MeltMarker', melt, 12, kit.path_length(melt) / 12, 2 * kit.path_length(melt) / 12, M['polymer_marker'], .006, FRAMES)
+kit.ride('MeltMarker', melt, 12, kit.path_length(melt) / 12, 2 * kit.path_length(melt) / 12, M['polymer_marker'], .006, FRAMES,
+         group='resin')
 
 kit.cabinet('Control cabinet', (ext['x_rear'] - .2, .45, 0), (ext['x_rear'] + .6, .85, 1.90), M)
 kit.stack_light('Stack light', (ext['x_rear'] + .2, .65, 1.90), M)
 kit.hmi_pedestal('Operator panel', (ext['x_rear'] + .3, -.70, 0), (ext['x_rear'] + .3, -.70, 1.42), M)
 kit.bake_linear()
 
-control = lines.control
+# Start-up: screw and roll turns follow the steady line ratios (10 screw turns per stack-roll turn of 785 mm).
+SCREW_PER_M, STACK_PER_M = TURNS['screw'] / TRAVEL, 1000 / (math.pi * STACK_D)
+WIND = 2.0                                           # metres of sheet wound during the winding step (compressed growth)
+STARTUP, CONTROLS = kit.startup(
+    ['실제 라인의 기동 순서입니다. 롤 갭을 연 상태에서 스크류가 용융 시트를 평다이 밖으로 밀어내 상단과 중단 롤 사이로 넣고, 유압 실린더로 '
+     '상단 롤을 내려 갭을 닫은 뒤 롤 스택을 돌려 시트를 S자로 감아 롤러 테이블, 트림, 인취를 거쳐 권취기까지 보내고 권취를 시작합니다. '
+     '실제 라인은 존과 롤 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 '
+     '보여줍니다.',
+     'The real start-up order: with the roll gap open, the screw pushes the melt sheet out of the flat die between the top '
+     'and middle rolls; the hydraulic cylinders lower the top roll to close the gap, the stack draws the sheet through its '
+     'S-wrap over the roller table, trim and haul-off to the winder, and winding starts. A real line only lets the screw '
+     'start once every zone and roll has reached its set point and soaked (cold-start protection); the model starts after that.'],
+    [kit.step('screw', ['압출 시작 · 스크류 회전', 'Start extruding · screw'],
+              ['스크류를 돌려 용융 시트를 평다이에서 열린 상단·중단 롤 사이로 보내세요.',
+               'Turn the screw to push the melt sheet from the flat die into the open gap between the top and middle rolls.'],
+              once=True, spin={'screw': [round(S_NIP * SCREW_PER_M, 4), 0]}, thread=[0, S_NIP]),
+     kit.step('nip', ['롤 갭 닫힘 · 유압 실린더', 'Close the roll gap · hydraulic cylinders'],
+              ['시트가 롤 사이에 들어왔습니다. 유압 실린더로 상단 롤을 내려 갭을 닫으세요. 롤 갭은 제품 두께와 같지 않으며 실제로는 두께를 보며 '
+               '맞춥니다.',
+               'The sheet is between the rolls. Lower the top roll with the hydraulic cylinders to close the gap; the roll gap '
+               'is not the product thickness and is set while watching the gauge.'],
+              needs=['screw'], move='nip'),
+     kit.step('roll', ['롤 스택 이송', 'Draw with the roll stack'],
+              ['갭이 닫혔습니다. 롤 스택을 돌려 시트를 S자로 감아 롤러 테이블, 트림, 인취를 거쳐 권취기까지 보내세요. 이송이 시작되면 갭을 '
+               '열 수 없습니다.',
+               'The gap is closed. Run the stack to draw the sheet through its S-wrap over the roller table, trim and haul-off '
+               'to the winder; the gap stays closed once drawing starts.'],
+              needs=['nip'], locks=['nip'], once=True, thread=[S_NIP, S_END],
+              spin={'roll': [round((S_END - S_NIP) * STACK_PER_M, 4), 0], 'screw': [round((S_END - S_NIP) * SCREW_PER_M, 4), 0]}),
+     kit.step('winder', ['권취 시작', 'Start winding'],
+              ['시트가 권취 코어에 닿았습니다. 권취기를 돌려 감으세요. 모형은 76 mm 코어에서 250 mm 권취 롤까지를 압축해 보여줍니다.',
+               'The sheet has reached the winder core. Turn the winder to wind it; the model compresses the growth from the '
+               '76 mm core to a 250 mm roll.'],
+              needs=['roll'], once=True,
+              spin={'winder': [round(WIND * 1000 / (math.pi * (CORE_D + WOUND_D) / 2), 4), 0], 'roll': [round(WIND * STACK_PER_M, 4), 0],
+                    'screw': [round(WIND * SCREW_PER_M, 4), 0]},
+              wind={'node': 'Winder_body', 'core': round(CORE_D / WOUND_D, 4)})],
+    ['기동 완료 · "자동 공정으로 돌아가기"를 누르면 정상 운전(3 m/min)을 재생합니다.',
+     'Start-up complete. Choose "Return to cycle" to play steady running at 3 m/min.'],
+    LOOP)
 centre = [(ext['x_rear'] + X_WIND + WR) / 2, .85, 0]
 META = {
     'id': 'sheet', 'duration': LOOP, 'frames': [0, FRAMES],
     'poster': 'assets/equipment/sheet-motion-poster.png', 'model': 'assets/equipment/sheet-motion.glb',
     'center': centre, 'span': [X_WIND + WR - ext['x_rear'] + .5, 2.4], 'zoom': [.7, 12],
-    'controls': [control('screw', '스크류 회전각', 'Screw rotation angle', time_range=[0, LOOP]),
-                 control('flow', '수지 표시 위치', 'Resin marker position', 100, '%', [0, LOOP]),
-                 control('roll', '3롤 스택 회전각 (250 mm)', '3-roll stack angle (250 mm)', time_range=[0, LOOP]),
-                 control('winder', '권취 롤 회전각', 'Winder rotation angle', 360, time_range=[0, LOOP])],
+    'controls': CONTROLS, 'startup': STARTUP,
     # The stack close-up looks almost square-on so the S-wrap reads in one plane.
     'views': [{'key': 'all', 'label': ['전체 라인', 'Whole line'], 'center': centre, 'zoom': 1},
               kit.camera_view('screw', ['스크류·배럴 단면', 'Screw & barrel cutaway'], (-.7, 0, AX), (1.2, -6.0, 5.2), 3.4),
@@ -180,12 +240,13 @@ META = {
     'spec': {'basis': 'Pack B grade C teaching values; brand-neutral; not an OEM drawing or PHA setting',
              'screw_d_mm': 45, 'l_d': 30, 'flat_die_mm': '500 x 160 x 120', 'lip_gap_mm': 1.0, 'stack': '3 x 250 mm, face 600 mm',
              'web_path': 'S-wrap: top-middle nip, middle roll, middle-bottom nip, bottom roll', 'roller_table': '2000 mm, 80 mm rolls at 200 mm',
-             'trim_mm_each_side': 15, 'haul_off_mm': HAUL_D, 'winder_core_mm': CORE_D, 'winder_max_mm': 500,
+             'trim_mm_each_side': 15, 'gap_threading_mm': OPEN * 1000, 'gap_cylinders': 2, 'haul_off_mm': HAUL_D, 'winder_core_mm': CORE_D, 'winder_max_mm': 500,
              'sources': 'output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md'},
 }
 
 floor = kit.floor('Floor', ext['x_rear'] - .3, X_WIND + .5, -.9, 1.0, M)
 kit.studio_world(.8, 'studio.exr')
+release = kit.hold_closed([nip])                     # the poster shows the running line
 sc.frame_set(round(FRAMES * .4))
 bpy.context.view_layer.update()
 camera = kit.ortho_camera('Line camera', (centre[0] + 5, -10, 5.4), (centre[0], 0, .8), 8)
@@ -198,6 +259,7 @@ camera.data.ortho_scale = max(max(xs) - min(xs), (max(ys) - min(ys)) * 16 / 9) *
 kit.area_light('Key light', (centre[0] - 2.5, -5, 6), (centre[0], 0, .8), 1500, 6)
 kit.area_light('Rim light', (centre[0] + 2.5, 4, 5), (centre[0], 0, .8), 650, 5, (.9, .95, 1))
 kit.render_still(OUT / 'sheet-motion-poster.png', 1280, 720, samples=48)
+release()
 for obj in [floor, camera] + [o for o in sc.objects if o.type == 'LIGHT']:
     bpy.data.objects.remove(obj, do_unlink=True)
 sc.frame_set(0)

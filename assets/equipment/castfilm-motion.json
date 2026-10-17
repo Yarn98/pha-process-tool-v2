@@ -24,22 +24,22 @@
     {
       "key": "screw",
       "label": [
-        "스크류 회전각",
-        "Screw rotation angle"
+        "압출 시작 · 스크류 회전",
+        "Start extruding · screw"
       ],
-      "max": 720,
-      "unit": "°",
-      "step": 1,
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
       "range": [
         0,
         7.541666666666667
       ]
     },
     {
-      "key": "flow",
+      "key": "nip",
       "label": [
-        "수지 표시 위치",
-        "Resin marker position"
+        "에어 나이프 접근 · 실린더",
+        "Bring in the air knife · cylinders"
       ],
       "max": 100,
       "unit": "%",
@@ -52,12 +52,12 @@
     {
       "key": "roll",
       "label": [
-        "칠 롤 회전각 (400 mm)",
-        "Chill roll angle (400 mm)"
+        "롤 이송",
+        "Draw with the rolls"
       ],
-      "max": 720,
-      "unit": "°",
-      "step": 1,
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
       "range": [
         0,
         7.541666666666667
@@ -66,18 +66,146 @@
     {
       "key": "winder",
       "label": [
-        "권취 롤 회전각",
-        "Winder rotation angle"
+        "권취 시작",
+        "Start winding"
       ],
-      "max": 360,
-      "unit": "°",
-      "step": 1,
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
       "range": [
         0,
         7.541666666666667
       ]
     }
   ],
+  "startup": {
+    "intro": [
+      "실제 라인의 기동 순서입니다. 스크류가 용융 커튼을 평다이 밖으로 밀어내 에어 갭을 지나 도는 칠 롤 위에 떨어뜨리면, 에어 나이프를 실린더로 밀어 넣어 커튼을 칠 롤에 밀착(pinning)시키고, 롤을 돌려 필름을 두께 측정, 트림, 댄서를 거쳐 권취기까지 보낸 뒤 권취를 시작합니다. 실제 라인은 존과 칠 롤 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.",
+      "The real start-up order: the screw pushes the melt curtain out of the flat die through the air gap onto the turning chill roll; the cylinders push the air knife in to pin the curtain to the roll, the rolls draw the film through the gauge, trim and dancer to the winder, and winding starts. A real line only lets the screw start once every zone and the chill roll have reached their set points and soaked (cold-start protection); the model starts after that."
+    ],
+    "steps": [
+      {
+        "key": "screw",
+        "label": [
+          "압출 시작 · 스크류 회전",
+          "Start extruding · screw"
+        ],
+        "hint": [
+          "스크류를 돌려 용융 커튼을 평다이에서 에어 갭을 지나 칠 롤 위 착지선까지 내려보내세요.",
+          "Turn the screw to let the melt curtain fall from the flat die through the air gap onto the landing line of the chill roll."
+        ],
+        "needs": [],
+        "locks": [],
+        "once": true,
+        "spin": {
+          "screw": [
+            0.5067,
+            0
+          ]
+        },
+        "thread": [
+          0,
+          0.07961
+        ]
+      },
+      {
+        "key": "nip",
+        "label": [
+          "에어 나이프 접근 · 실린더",
+          "Bring in the air knife · cylinders"
+        ],
+        "hint": [
+          "커튼이 칠 롤에 닿았습니다. 실린더로 에어 나이프를 밀어 넣어 착지선에서 커튼을 롤에 밀착시키세요. 밀착이 약하면 필름과 롤 사이에 공기가 갇혀 냉각이 고르지 않습니다.",
+          "The curtain touches the chill roll. Push the air knife in with the cylinders to pin it on the landing line; weak pinning traps air between film and roll and cools it unevenly."
+        ],
+        "needs": [
+          "screw"
+        ],
+        "locks": [],
+        "once": false,
+        "move": "nip"
+      },
+      {
+        "key": "roll",
+        "label": [
+          "롤 이송",
+          "Draw with the rolls"
+        ],
+        "hint": [
+          "커튼이 칠 롤에 밀착되었습니다. 롤을 돌려 필름을 2·3번 롤, 두께 측정, 트림, 댄서를 거쳐 권취기까지 보내세요. 이송이 시작되면 에어 나이프를 뺄 수 없습니다.",
+          "The curtain is pinned. Run the rolls to draw the film over the second and third rolls, gauge, trim and dancer to the winder; the air knife stays in once drawing starts."
+        ],
+        "needs": [
+          "nip"
+        ],
+        "locks": [
+          "nip"
+        ],
+        "once": true,
+        "spin": {
+          "roll": [
+            2.9694,
+            0
+          ],
+          "screw": [
+            23.7495,
+            0
+          ]
+        },
+        "thread": [
+          0.07961,
+          3.81109
+        ]
+      },
+      {
+        "key": "winder",
+        "label": [
+          "권취 시작",
+          "Start winding"
+        ],
+        "hint": [
+          "필름이 권취 코어에 닿았습니다. 권취기를 돌려 감으세요. 모형은 76 mm 코어에서 200 mm 권취 롤까지를 압축해 보여줍니다.",
+          "The film has reached the winder core. Turn the winder to wind it; the model compresses the growth from the 76 mm core to a 200 mm roll."
+        ],
+        "needs": [
+          "roll"
+        ],
+        "locks": [],
+        "once": true,
+        "spin": {
+          "winder": [
+            6.9198,
+            0
+          ],
+          "roll": [
+            2.3873,
+            0
+          ],
+          "screw": [
+            19.0939,
+            0
+          ]
+        },
+        "wind": {
+          "node": "Winder_body",
+          "core": 0.38
+        }
+      }
+    ],
+    "done": [
+      "기동 완료 · \"자동 공정으로 돌아가기\"를 누르면 정상 운전(10 m/min)을 재생합니다.",
+      "Start-up complete. Choose \"Return to cycle\" to play steady running at 10 m/min."
+    ],
+    "pinned": {
+      "nip": 1
+    },
+    "hidden": [
+      "flow"
+    ],
+    "follow": {
+      "resin": "screw"
+    }
+  },
   "views": [
     {
       "key": "all",
@@ -329,6 +457,8 @@
     "air_gap_mm": 80,
     "rolls_mm": "400 / 200 / 200, face 600",
     "pinning": "air knife 550 mm",
+    "air_knife_retract_mm": 50.0,
+    "air_knife_cylinders": 2,
     "chill_wrap_deg": 180,
     "gauge": "traversing O-frame 700 mm",
     "edge_trim": true,
@@ -339,6 +469,8 @@
   "groups": [
     "flow",
     "gauge",
+    "nip",
+    "resin",
     "roll",
     "screw",
     "winder"

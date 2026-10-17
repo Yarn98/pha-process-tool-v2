@@ -1,9 +1,9 @@
 {
   "status": "pass",
-  "root": "D:\\My_PJT\\Application\\pha_optimizer_convertor",
+  "root": "/home/user/pha-process-tool-v2",
   "checks": [
     "Blender GLB loaded with animation tracks and automatic playback advances",
-    "Frame governor keeps autoplay responsive on software WebGL (event-loop p90 6.0 ms, quality level 3)",
+    "Frame governor keeps autoplay responsive on software WebGL (event-loop p90 4.3 ms, quality level 3)",
     "Steady cycle on actual transforms: close and lock, fill, hold, dosing with rotation during cooling, check ring, sprue break, toggle-driven opening and ejection",
     "Cycle chart: five actuator lanes from the GLB, overlapping cooling and dosing both active, press seeks and pauses the 3D with the playhead on the same time",
     "Pause, step seek and playback-speed controls; language/grade changes preserve playback position",

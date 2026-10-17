@@ -36,23 +36,28 @@ try{
     let panel=await select(page,kind),data=await page.evaluate(()=>__phaEquipmentTest());
     const controls=await page.evaluate(kind=>PHAEquipmentModels[kind].controls,kind);
     const duration=await page.evaluate(kind=>PHAEquipmentModels[kind].duration,kind);
-    for(const control of controls){
-      assert.ok(data.groups[control.key]?.tracks>0,kind+'/'+control.key+' real Blender tracks');
-      assert.ok(Math.abs(data.groups[control.key].duration-duration)<.001,kind+'/'+control.key+' starts at zero and reaches the configured endpoint');
+    const startup=await page.evaluate(kind=>PHAEquipmentModels[kind].startup||null,kind);
+    // Start-up rigs need the clips their steps spin or move; other rigs one clip per control.
+    const driven=startup?[...new Set(startup.steps.flatMap(step=>[step.move,...Object.keys(step.spin||{})]).filter(Boolean))]:controls.map(control=>control.key);
+    for(const key of driven){
+      assert.ok(data.groups[key]?.tracks>0,kind+'/'+key+' real Blender tracks');
+      assert.ok(Math.abs(data.groups[key].duration-duration)<.001,kind+'/'+key+' starts at zero and reaches the configured endpoint');
     }
     assert.equal(await page.locator('.motion-viewport canvas').count(),1,'Only the active machine owns a canvas');
     assert.ok(data.cached.length<=2,'Bounded GLB cache');
     await panel.locator('[data-eq="play"]').click();const first=data.time;
     await page.waitForFunction(first=>PHAEquipmentMotion.getState().time>first+.1,first);
     await panel.locator('[data-eq="play"]').click();
-    // Every line's screw is a right-handed kit helix: it turns negatively about +X to convey toward the die.
-    const afterPlay=await page.evaluate(()=>__phaEquipmentTest()),forwardSign=-1;
+    // Every line's screw is a right-handed kit helix: it turns negatively about +X to convey toward the die. Two
+    // cycle positions 0.5 % apart keep the step well under half a turn, however slowly frames arrive.
+    const seekTo=async percent=>{await panel.locator('[data-eq="progress"]').evaluate((input,value)=>{input.value=String(value);input.dispatchEvent(new Event('input',{bubbles:true}));},percent);return page.evaluate(()=>__phaEquipmentTest());};
+    const beforeStep=await seekTo(20),afterPlay=await seekTo(20.5),forwardSign=-1;
     const signedX=q=>2*Math.atan2(q[0],q[3]);
     const rotationStep=(a,b)=>Math.atan2(Math.sin(signedX(b)-signedX(a)),Math.cos(signedX(b)-signedX(a)));
-    assert.ok(forwardSign*rotationStep(data.nodes.screw[0].rotation,afterPlay.nodes.screw[0].rotation)>0,kind+' automatic screw rotation matches its helix and feed-to-die direction');
+    assert.ok(forwardSign*rotationStep(beforeStep.nodes.screw[0].rotation,afterPlay.nodes.screw[0].rotation)>0,kind+' automatic screw rotation matches its helix and feed-to-die direction');
     if(kind==='compounding'){
       const screws=afterPlay.nodes.screw.filter(node=>['ScrewA','ScrewB'].includes(node.name));assert.equal(screws.length,2);
-      for(const node of screws)assert.ok(rotationStep(data.nodes.screw.find(before=>before.name===node.name).rotation,node.rotation)<0,'Both compounding screws co-rotate forward during playback');
+      for(const node of screws)assert.ok(rotationStep(beforeStep.nodes.screw.find(before=>before.name===node.name).rotation,node.rotation)<0,'Both compounding screws co-rotate forward during playback');
     }
     await panel.locator('[data-eq="manual"]').click();
     if(kind==='blowmolding'){
@@ -73,6 +78,65 @@ try{
       data=await page.evaluate(()=>__phaEquipmentTest());assert.equal(data.released,true);assert.ok(data.drop>.99);
       assert.ok(data.nodes.release.some(node=>node.visible&&Math.abs(node.position[1]-blow.release.to[1])<.01),'Released bottle lands on the take-out conveyor');
       checks.push('Blow molding: parison, clamp, pin, inflation and product release interlocks affect real nodes');
+    }else if(startup){
+      // Start-up: only the first step is open; no product yet, and the steady-state markers are hidden.
+      data=await page.evaluate(()=>__phaEquipmentTest());
+      assert.equal(data.startup.front,0);assert.equal(data.startup.shown,0,kind+' no product before extruding');
+      for(const key of startup.hidden)assert.ok((data.nodes[key]||[]).every(node=>!node.visible),kind+' steady '+key+' markers hidden during start-up');
+      const state=()=>page.evaluate(()=>__phaEquipmentTest());
+      for(const step of startup.steps){
+        const input=panel.locator(`[data-eq-axis="${step.key}"]`);
+        if(step.needs.length){
+          // Out of order: walk back the last completed step's need is impossible, so check the step before its needs complete.
+          assert.equal((await state()).startup.enabled[step.key],true,kind+'/'+step.key+' opens once '+step.needs.join(', ')+' complete');
+        }else assert.equal(await input.isDisabled(),false,kind+'/'+step.key+' is open from the start');
+        const later=startup.steps.filter(other=>other.needs.includes(step.key));
+        for(const other of later){
+          assert.equal(await panel.locator(`[data-eq-axis="${other.key}"]`).isDisabled(),true,kind+'/'+other.key+' waits for '+step.key);
+          await jog(page,panel,other.key,60);assert.equal((await state()).target[other.key],0,kind+'/'+other.key+' refuses input before '+step.key);
+        }
+        const before=await state();
+        await jog(page,panel,step.key,50);const mid=await state();
+        if(step.thread)assert.ok(Math.abs(mid.startup.front-(step.thread[0]+step.thread[1])/2)<1e-6,kind+'/'+step.key+' grows the product front: '+mid.startup.front);
+        if(step.thread)assert.ok(mid.startup.shown>before.startup.shown,kind+'/'+step.key+' shows more product');
+        for(const group of [step.move,...Object.keys(step.spin||{})].filter(Boolean))
+          assert.notDeepEqual(mid.nodes[group].map(node=>[node.world,node.rotation]),before.nodes[group].map(node=>[node.world,node.rotation]),kind+'/'+step.key+' moves the real '+group+' nodes');
+        if(step.morph)assert.ok(mid.startup.morph[step.morph].every(value=>Math.abs(value-.5)<1e-6),kind+'/'+step.key+' drives the '+step.morph+' shape keys');
+        if(step.wind)assert.ok(mid.startup.wind[0].scale[1]>step.wind.core&&mid.startup.wind[0].scale[1]<1,kind+'/'+step.key+' grows the wound roll');
+        for(const group of step.reveal||[]){
+          assert.ok(before.nodes[group].every(node=>!node.visible),kind+'/'+group+' hidden until '+step.key+' starts');
+          assert.ok(mid.nodes[group].every(node=>node.visible||node.scale[0]<.01),kind+'/'+group+' shown once '+step.key+' runs');
+        }
+        if(step.readout){
+          const r=step.readout,expected=(r.from+(r.to-r.from)*.5).toFixed(r.digits??0)+' '+r.unit;
+          assert.equal(await panel.locator(`[data-eq-value="${step.key}"]`).textContent(),expected,kind+'/'+step.key+' reads out '+expected);
+        }
+        await jog(page,panel,step.key,100);
+        if(step.once){
+          await jog(page,panel,step.key,20);const back=await state();
+          assert.equal(back.target[step.key],100,kind+'/'+step.key+' cannot be reversed');assert.match(back.startup.notice,/되돌릴 수 없습니다/);
+        }
+        for(const locked of step.locks)assert.equal(await panel.locator(`[data-eq-axis="${locked}"]`).isDisabled(),true,kind+'/'+locked+' locks once '+step.key+' starts');
+      }
+      data=await state();
+      assert.equal(data.startup.next,null);assert.match(data.startup.notice,/기동 완료/);
+      const chain=startup.steps.filter(step=>step.thread);assert.ok(Math.abs(data.startup.front-chain.at(-1).thread[1])<1e-6,kind+' product threaded to the end');
+      const release=startup.steps.find(step=>step.release)?.release;
+      if(release){
+        const piece=data.startup.release[0],end=release.path.at(-1);
+        assert.ok(piece.visible&&piece.position.every((v,i)=>Math.abs(v-end[i])<1e-3),kind+' first cut piece leaves along its path: '+JSON.stringify(piece));
+        assert.equal(data.startup.shown,data.startup.total-data.startup.extra,kind+' the lead past the cut is gone after the first cut');
+      }
+      await panel.screenshot({path:resolve(out,kind+'-startup.png')});
+      // Back to the cycle: the threaded line runs with its actuators closed and its steady markers shown.
+      await panel.locator('[data-eq="manual"]').click();data=await state();
+      assert.equal(data.startup.shown,data.startup.total-data.startup.extra,kind+' running line shows the whole product');
+      for(const key of startup.hidden)assert.ok(data.nodes[key].some(node=>node.visible),kind+' steady '+key+' markers return');
+      for(const key of Object.keys(startup.pinned))assert.ok(data.nodes[key].every(node=>node.position.every(v=>Math.abs(v)<1e-4)),kind+' '+key+' actuator closed while running');
+      assert.ok(data.startup.release.every(piece=>!piece.visible),kind+' start-up piece hidden while running');
+      await panel.locator('[data-eq="manual"]').click();
+      checks.push(kind+': start-up order with interlocks - the product grows from the die, the actuator closes on it, locks hold, '
+        +(release?'the first cut frees a piece':'the wound roll grows')+', and the running line returns closed and fully threaded');
     }else{
       for(const control of controls){
         const before=(await page.evaluate(()=>__phaEquipmentTest())).nodes[control.key];

@@ -163,7 +163,7 @@ blender --background --factory-startup --python scripts/create_injection_motion.
 
 7개 라인 모두 조사 팩(Pack B)의 교육용 치수로 실제 비율에 맞춰 다시 제작했습니다(조사 노트: `output/research/pha-equipment-realism-20261017/`). 스트로는 D50 압출기 → 4열 튜브 헤드 → 진공 사이징조 → 4 m 냉각 수조 → 벨트 인취 → 회전 커터 라인입니다(12 m/min, 200 mm). 이전에 차용한 Straw Optimizer v2 원본은 출처 기록으로 `assets/equipment/sources/`에 남겼습니다.
 
-모든 설비에 **온도 표시**가 있습니다. 공정 조건 양식(압출·시트·캐스트·블로운·블로우) 또는 패널 입력칸(컴파운딩·스트로)의 설정값을 3D 존에 색으로 칠하고, 빗금은 미입력, 굵은 테두리는 참고 범위 밖입니다. 스트로는 CB0400A 자료와 비교합니다. 블로우 성형에는 장비별 **사이클 차트**가 있고, 형체·셔틀·블로우 핀 실린더 로드가 움직이는 부품에 연결됩니다. 관찰 부위마다 근접 시점이 있습니다. [전체 설비의 조작·출처·검증 기록](docs/ALL_EQUIPMENT_MOTION_20260906.md), [실제 비율 재제작](docs/REALISTIC_EQUIPMENT_HMI_20261017.md), [사출기 수준 맞춤](docs/INJECTION_LEVEL_LINES_20261017.md).
+모든 설비에 **온도 표시**가 있습니다. 공정 조건 양식(압출·시트·캐스트·블로운·블로우) 또는 패널 입력칸(컴파운딩·스트로)의 설정값을 3D 존에 색으로 칠하고, 빗금은 미입력, 굵은 테두리는 참고 범위 밖입니다. 스트로는 CB0400A 자료와 비교합니다. 블로우 성형에는 장비별 **사이클 차트**가 있고, 형체·셔틀·블로우 핀 실린더 로드가 움직이는 부품에 연결됩니다. 관찰 부위마다 근접 시점이 있습니다. 압출·스트로·컴파운딩·시트·캐스트·블로운의 **직접 조작**은 실제 **기동 순서**를 따릅니다. 압출해 인취까지 넣고, 실린더로 인취·닙·갭·에어 나이프를 닫고, 이송한 뒤 첫 절단이나 권취를 합니다. 앞 단계가 끝나야 다음 단계가 열리며, 실린더 로드는 움직이는 부품에 붙어 함께 움직입니다. 블로운 필름에는 반결정성 PHA용 **열풍 에어링**(블로어·풍량 스위치·인라인 히터·단열 호스·PID·과열 차단, 사내 기준 60 °C)을 넣었습니다([조사](docs/research/pha-blown-film-hot-air-ring-20261017.md)). [전체 설비의 조작·출처·검증 기록](docs/ALL_EQUIPMENT_MOTION_20260906.md), [실제 비율 재제작](docs/REALISTIC_EQUIPMENT_HMI_20261017.md), [사출기 수준 맞춤](docs/INJECTION_LEVEL_LINES_20261017.md), [기동 순서·인터록](docs/STARTUP_SEQUENCE_LINES_20261017.md).
 
 ```powershell
 # 설비별 실제 비율 모델 (compounding, extrusion, sheet, castfilm, blownfilm, blowmolding, straw); 각 스크립트가 equipment-models.js도 갱신
@@ -178,7 +178,7 @@ blender --background --factory-startup --python-exit-code 1 --python tests/blend
 
 이력·배치·템플릿·물성은 브라우저 로컬 저장소에, 일부 사진은 IndexedDB와 별도 localStorage 갤러리에 저장합니다. 기기 간 자동 동기화되지 않습니다. JSON/CSV로 백업하세요. 업데이트를 위해 웹사이트 데이터를 지우면 현장 기록도 삭제될 수 있습니다.
 
-서비스워커는 HTML network-first, 버전 자산 precache를 사용합니다. v=28 / pha-cache-v28-rig-switch-fix. 첫 정상 로드와 캐시 준비 후 로컬 자료·8개 기존 설비·16개 결함 모형 및 새 두 벤트 모형의 3D 조작·계산을 사용할 수 있습니다. 외부 TARS API와 CDN Chart.js는 오프라인에서 제한됩니다. file://보다 로컬 HTTP 실행을 권장합니다.
+서비스워커는 HTML network-first, 버전 자산 precache를 사용합니다. v=29 / pha-cache-v29-startup-sequence. 첫 정상 로드와 캐시 준비 후 로컬 자료·8개 기존 설비·16개 결함 모형 및 새 두 벤트 모형의 3D 조작·계산을 사용할 수 있습니다. 외부 TARS API와 CDN Chart.js는 오프라인에서 제한됩니다. file://보다 로컬 HTTP 실행을 권장합니다.
 
 기존 체크리스트·시험 로그는 유지합니다. 의미가 바뀐 컴파운딩 체크 두 항목은 새 키를 사용하며, 이전 완료 표시는 과거 기록으로 남깁니다.
 

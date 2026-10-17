@@ -1,4 +1,4 @@
-import {TroubleshootingViewer} from './troubleshooting-viewer.js?v=28';
+import {TroubleshootingViewer} from './troubleshooting-viewer.js?v=29';
 import * as THREE from './vendor/three-0.185.1/build/three.module.js';
 
 const groups=['normal','parting','vent','ejector'];

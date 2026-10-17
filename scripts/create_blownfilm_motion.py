@@ -10,7 +10,11 @@ Pack B blown-film base (grade C teaching values; output/research/pha-equipment-r
   with a 350 mm face;
 - the two-ply lay-flat film runs down the tower over guide rolls to a winder on a 76 mm core (shown at
   150 mm; up to 450 mm).
-A steady bubble does not breathe, so the bubble keeps its BUR 2 shape at all times. An oscillating haul-off
+A steady bubble does not breathe, so the running bubble keeps its BUR 2 shape at all times. For the start-up sequence the
+right nip roll rides a carriage that two pneumatic cylinders close onto the film (40 mm open for threading), the bubble
+segments carry a shape key from the BUR 1 start-up tube to BUR 2, and the wound roll grows from its core. The air ring is a
+hot air ring: blower, airflow switch, inline heater, insulated hoses, plenum sensor, PID controller and high-limit, set to
+the in-house 60 C for semi-crystalline PHA so that the film crystallizes before the nip and does not block. An oscillating haul-off
 is optional and not shown, and no PHA BUR or frost-line range is implied. The model runs in real time at
 5 m/min: the nip rolls turn three times per loop and the winder twice.
 """
@@ -39,7 +43,7 @@ FRAMES = round(3 * math.pi * NIP_D / 1000 / V * FPS)
 LOOP = FRAMES / FPS
 TRAVEL = V * LOOP
 turns_of = lambda d_mm: TRAVEL / (math.pi * d_mm / 1000)
-TURNS = {'haul': 3, 'winder': 2, 'screw': 11}
+TURNS = {'haul': 3, 'winder': 2, 'screw': 11, 'hotair': 1}      # hotair: warm-air markers, one sweep per loop
 for _d, _t in ((NIP_D, 3), (WOUND_D, 2)):
     assert abs(turns_of(_d) - _t) / _t < .006, (_d, turns_of(_d))
 RPM = {'nip': 1000 * LINE_SPEED / (math.pi * NIP_D), 'winder_at_150': 1000 * LINE_SPEED / (math.pi * WOUND_D),
@@ -87,27 +91,63 @@ air_ring = kit.ring('Air ring', 0, .05, DIE_R + .02, .12, (0, 0), M['paint_accen
 air_ring.rotation_euler.y = -math.pi / 2
 air_ring.location = (X_D, 0, Z_DIE + .002)
 die.append(air_ring)
-die.append(kit.box('Air ring blower', (X_D - .60, .55, .30), (.40, .35, .45), M['paint_accent'], bevel=.01))
-for k in range(4):
-    a = TAU * (k + .5) / 4
-    die.append(kit.hose('Air ring hose', (X_D + .12 * math.cos(a), .12 * math.sin(a), Z_DIE + .025), (X_D - .45, .45, .45), .025,
-                        M['rubber'], sag=.15))
 kit.join(die, 'AnnularDie')
+
+# Hot air ring train (heated dual-lip ring, behind the die): inlet filter -> centrifugal blower -> airflow (differential
+# pressure) switch -> inline electric heater -> insulated manifold -> four insulated hoses -> air ring. A plenum sensor
+# feeds the PID controller; an independent manual-reset high-limit cuts the heater. The heater may only run while the
+# blower runs and the airflow switch is made (heater interlock); the blower runs on after the heater stops.
+# Sizes are teaching values (grade C): 150-300 m3/h, about 6 kW at 400 V for 20 -> 60 C air.
+M['insulation'] = kit.material('Insulation / aluminium jacket', '#C8CBCD', .6, .45)
+M['hot_air'] = kit.material('Air / warm (marker)', '#E07A2E', 0, .4, alpha=.7)
+Y_AIR, Z_HEATER = .62, .62
+hot = [kit.cylinder('Hot air blower volute', (-.30, Y_AIR, .32), .15, .14, 'Y', M['paint_accent'], segments=40),
+       kit.cylinder('Hot air blower inlet filter', (-.30, Y_AIR - .12, .32), .10, .10, 'Y', M['steel_dark'], segments=32),
+       kit.cylinder('Hot air blower inlet filter grille', (-.30, Y_AIR - .171, .32), .085, .004, 'Y', M['black'], segments=32),
+       kit.box('Hot air blower base', (-.30, Y_AIR + .06, .085), (.36, .36, .17), M['paint_dark'], bevel=.006),
+       kit.tube_path('Hot air blower outlet duct', [(-.30, Y_AIR, .46), (-.30, Y_AIR, Z_HEATER), (-.20, Y_AIR, Z_HEATER)], .05, M['steel']),
+       kit.box('Airflow switch', (-.24, Y_AIR - .085, Z_HEATER + .02), (.06, .04, .07), M['paint'], bevel=.004),
+       kit.cylinder('Airflow switch sensing tube', (-.24, Y_AIR - .055, Z_HEATER + .02), .004, .03, 'Y', M['brass'], segments=8),
+       kit.cylinder('Inline air heater', (0, Y_AIR, Z_HEATER), .075, .40, 'X', M['stainless'], segments=40),
+       kit.box('Inline air heater terminal box', (0, Y_AIR, Z_HEATER + .105), (.16, .11, .07), M['paint'], bevel=.006),
+       kit.box('Inline air heater warning label', (0, Y_AIR - .056, Z_HEATER + .105), (.08, .002, .04), M['warning'], bevel=0),
+       kit.cylinder('Heater outlet duct', (.225, Y_AIR, Z_HEATER), .055, .05, 'X', M['insulation'], segments=32),
+       kit.box('Hot air manifold', (X_D - .22, Y_AIR - .02, Z_HEATER), (.16, .24, .16), M['insulation'], bevel=.01),
+       kit.cylinder('Air ring plenum sensor', (X_D, .095, Z_DIE + .065), .005, .03, 'Z', M['copper'], segments=12),
+       kit.box('Hot air controller', (.25, .93, 1.12), (.26, .12, .30), M['paint'], bevel=.008),
+       kit.box('Hot air controller display', (.25, .868, 1.18), (.13, .004, .06), M['screen'], bevel=0),
+       kit.box('Heater high-limit cut-out', (.25, .868, 1.06), (.09, .006, .05), M['paint_dark'], bevel=.002),
+       kit.cylinder('Heater on lamp', (.17, .867, 1.06), .012, .006, 'Y', M['lamp_amber'], segments=16),
+       kit.cylinder('Blower on lamp', (.33, .867, 1.06), .012, .006, 'Y', M['lamp_green'], segments=16),
+       kit.box('Hot air controller stand', (.25, .93, .49), (.06, .06, .98), M['paint_dark'])]
+motor = kit.motor('Hot air blower motor', (0, 0, 0), .085, .20, 1, M)
+motor.location, motor.rotation_euler.z = (-.30, Y_AIR + .19, .32), -math.pi / 2
+hot.append(motor)
+for k in range(4):                                  # insulated hoses from the manifold to the four ring inlets
+    a = TAU * (k + .5) / 4
+    outlet = (X_D - .22 + (-.04 if math.cos(a) < 0 else .04), Y_AIR - .02 + (-.06 if math.sin(a) < 0 else .06), Z_HEATER - .08)
+    hot.append(kit.hose('Insulated air ring hose', (X_D + .12 * math.cos(a), .12 * math.sin(a), Z_DIE + .025), outlet, .028,
+                        M['insulation'], sag=.10))
+hot += [kit.hose('Heater power cable', (0, Y_AIR + .05, Z_HEATER + .14), (.20, .93, .97), .008, M['cable'], sag=.08),
+        kit.hose('Plenum sensor cable', (X_D, .095, Z_DIE + .08), (.30, .93, .97), .004, M['cable'], sag=.06)]
+kit.join(hot, 'HotAirRing')
 
 
 # Bubble: neck and draw-down to the frost line, steady diameter in the cage, then an elliptical collapse to the
 # lay-flat at the nip (the circumference is held constant through the collapsing frame).
-def bubble_section(h):
-    """(a, b): semi-axes of the bubble section along Y (lay-flat direction) and X at height h above the die."""
+def bubble_section(h, bur=BUR):
+    """(a, b): semi-axes of the bubble section along Y (lay-flat direction) and X at height h above the die, for a
+    blow-up ratio ``bur`` (1: the uninflated start-up tube)."""
+    radius, flat = DIE_R * bur, math.pi * DIE_R * bur / 2
     if h <= FLH:
         f = h / FLH
-        r = DIE_R + (BUBBLE_R - DIE_R) * (f * f * (3 - 2 * f))
+        r = DIE_R + (radius - DIE_R) * (f * f * (3 - 2 * f))
         return r, r
     if h <= Z_COLLAPSE - Z_DIE:
-        return BUBBLE_R, BUBBLE_R
+        return radius, radius
     f = (h - (Z_COLLAPSE - Z_DIE)) / (Z_NIP - Z_COLLAPSE)
-    a = BUBBLE_R + (LAYFLAT / 2 - BUBBLE_R) * f
-    perimeter = TAU * BUBBLE_R
+    a = radius + (flat - radius) * f
+    perimeter = TAU * radius
     # Ellipse perimeter (Ramanujan's second approximation, < 0.05 % off even when flat) held at the bubble circumference.
     lo, hi = 0.0, a
     for _ in range(40):
@@ -118,16 +158,34 @@ def bubble_section(h):
     return a, max(b, T)
 
 
-bm = bmesh.new()
-rings, heights = [], [i / 40 * FLH for i in range(41)] + [FLH + (Z_NIP - Z_DIE - FLH) * i / 60 for i in range(1, 61)]
-for h in heights:
-    a, b = bubble_section(h)
-    rings.append([bm.verts.new((X_D + b * math.sin(TAU * i / 64), a * math.cos(TAU * i / 64), Z_DIE + h)) for i in range(64)])
-for r0, r1 in zip(rings, rings[1:]):
-    for i in range(64):
-        j = (i + 1) % 64
-        bm.faces.new((r0[i], r0[j], r1[j], r1[i])).smooth = True
-bubble = kit._finish('FilmBubble', bm, M['film'])
+heights = [i / 40 * FLH for i in range(41)] + [FLH + (Z_NIP - Z_DIE - FLH) * i / 60 for i in range(1, 61)]
+
+
+def section_ring(h, bur):
+    a, b = bubble_section(h, bur)
+    return [(X_D + b * math.sin(TAU * i / 64), a * math.cos(TAU * i / 64), Z_DIE + h) for i in range(64)]
+
+
+# The bubble is built in about 100 mm height segments tagged with their distance from the die (the start-up grows the
+# tube up to the nip). Each segment's mesh is the BUR 1 start-up tube with a shape key 'Inflated' to the steady BUR 2
+# bubble, set to 1: the running line shows BUR 2 and the start-up inflates it after the nip closes.
+S_NIP = Z_NIP - Z_DIE
+cuts = sorted({0, len(heights) - 1} | {min(range(len(heights)), key=lambda i: abs(heights[i] - k * .1)) for k in range(1, 25)})
+for k, (i0, i1) in enumerate(zip(cuts, cuts[1:])):
+    bm = bmesh.new()
+    rings = [[bm.verts.new(p) for p in section_ring(h, 1.0)] for h in heights[i0:i1 + 1]]
+    for r0, r1 in zip(rings, rings[1:]):
+        for i in range(64):
+            j = (i + 1) % 64
+            bm.faces.new((r0[i], r0[j], r1[j], r1[i])).smooth = True
+    segment = kit._finish('FilmBubble%03d' % k, bm, M['film'])
+    segment.shape_key_add(name='Basis')
+    inflated = segment.shape_key_add(name='Inflated', from_mix=False)
+    for n, p in enumerate(p for h in heights[i0:i1 + 1] for p in section_ring(h, BUR)):
+        inflated.data[n].co = p
+    inflated.value = 1.0
+    segment['morph'] = 'inflate'
+    kit.thread_mark(segment, heights[i0], heights[i1])
 
 # Tower, cage, collapsing frame, nip, guide rolls and winder
 tower = []
@@ -157,7 +215,21 @@ kit.join(tower, 'Tower')
 RN = NIP_D / 2000
 # The film rises between the rolls: the left roll's +X side and the right roll's -X side both move up.
 kit.roll('NipLeft', X_D - RN - T, Z_NIP, RN, .35, M, 'haul', 3, FRAMES, -1, mat=M['rubber'], joint=False)
-kit.roll('NipRight', X_D + RN + T, Z_NIP, RN, .35, M, 'haul', 3, FRAMES, 1, mat=M['chrome'], joint=False)
+nip_right = kit.roll('NipRight', X_D + RN + T, Z_NIP, RN, .35, M, 'haul', 3, FRAMES, 1, mat=M['chrome'], joint=False)
+# Nip actuator: the right (chrome) roll and its bearing blocks ride a carriage that two pneumatic cylinders, on brackets
+# standing on the tower platform, push onto the film; for threading the nip stands 40 mm open.
+bpy.context.view_layer.update()
+nip = kit.carrier('NipRollCarriage')
+kit.mount([nip_right, bpy.data.objects['NipRight stand']], nip)
+X_R = X_D + RN + T
+nip_brackets = []
+for y in (-(.35 / 2 + .07), .35 / 2 + .07):
+    kit.linked_cylinder('Nip cylinder', (X_R + .26, y, Z_NIP), (X_R + .14, y, Z_NIP), (X_R + .0525, y, Z_NIP), .025, .01, M, nip, inset=.03)
+    nip_brackets += [kit.box('Nip cylinder bracket', (X_R + .27, y, Z_NIP), (.02, .07, .07), M['steel_dark'], bevel=.003),
+                     kit.box('Nip cylinder bracket post', (X_R + .27, y, Z_NIP - .13), (.03, .03, .195), M['steel_dark'], bevel=.002)]
+kit.join(nip_brackets, 'NipCylinderBrackets')
+OPEN = .04
+kit.actuate(nip, FRAMES, (OPEN, 0, 0))
 RG = GUIDE_D / 2000
 # The lay-flat rises from the nip tangent to the first top guide, runs across the tower top to the second guide,
 # drops outside the tower columns, wraps under the lower guide and runs to the winder.
@@ -182,13 +254,16 @@ path += kit.arc_xz(top_guide[0], top_guide[1], RG + T / 2, 180, 90, 8)[1:]
 path += kit.arc_xz(top_guide2[0], top_guide2[1], RG + T / 2, 90, 0, 8)
 path += kit.arc_xz(low_guide[0], low_guide[1], RG + T / 2, 180, 270, 8)
 path += [Vector((X_W, 0, FILM_Z))]
-kit.web('FlattenedFilmWeb', path, LAYFLAT, T * 2, M['film'])
+kit.thread_web('FlattenedFilmWeb', path, LAYFLAT, T * 2, M['film'], s_from=S_NIP)
+S_END = S_NIP + kit.path_length(path)
 
 # Flow markers: pellets, melt in the screw, film meridian lines up the bubble, then along the lay-flat film
 pellets = kit.catmull([(ext['throat_x'], 0, AX + .75), (ext['throat_x'], 0, AX + .35), (ext['throat_x'], 0, AX + .06)], 6)
-kit.ride('FeedPellet', pellets, 8, kit.path_length(pellets) / 8, 2 * kit.path_length(pellets), M['pellet'], .005, FRAMES, 'pellet')
+kit.ride('FeedPellet', pellets, 8, kit.path_length(pellets) / 8, 2 * kit.path_length(pellets), M['pellet'], .005, FRAMES, 'pellet',
+         group='resin')
 melt = [Vector((ext['throat_x'], 0, AX + D * .42)), Vector((-.01, 0, AX + D * .42))]
-kit.ride('MeltMarker', melt, 12, kit.path_length(melt) / 12, 2 * kit.path_length(melt) / 12, M['polymer_marker'], .006, FRAMES)
+kit.ride('MeltMarker', melt, 12, kit.path_length(melt) / 12, 2 * kit.path_length(melt) / 12, M['polymer_marker'], .006, FRAMES,
+         group='resin')
 for k, theta in enumerate((math.pi, math.pi / 2)):          # meridians facing the viewer: lay-flat edge (-Y) and +X
     meridian = []
     for h in heights:
@@ -198,29 +273,99 @@ for k, theta in enumerate((math.pi, math.pi / 2)):          # meridians facing t
              M['polymer_marker'], .008, FRAMES)
 lay = [Vector((p.x, -LAYFLAT / 2 + .02, p.z)) for p in path]
 kit.ride('FilmMarker', lay, math.ceil(kit.path_length(lay) / (TRAVEL / 3)), TRAVEL / 3, TRAVEL, M['polymer_marker'], .006, FRAMES)
+# Warm air from the ring lip rising along the bubble (group "hotair"): it leaves the lip at about 75 mm radius and hugs the
+# BUR 2 bubble above the draw-down, up to about 250 mm past the frost line. Three sweeps per loop (illustrative speed).
+for k, theta in enumerate((math.pi, math.pi / 2)):
+    rise = []
+    for h in [.055 + (FLH + .25 - .055) * i / 30 for i in range(31)]:
+        a, b = bubble_section(h)
+        r_y, r_x = max(.075, a + .012), max(.075, b + .012)
+        rise.append(Vector((X_D + r_x * math.sin(theta), r_y * math.cos(theta), Z_DIE + h)))
+    length = kit.path_length(rise)
+    kit.ride('HotAirMarker%s' % 'AB'[k], rise, 10, length / 10, 3 * length, M['hot_air'], .007, FRAMES, group='hotair')
 
 kit.cabinet('Control cabinet', (ext['x_rear'] - .2, .45, 0), (ext['x_rear'] + .6, .85, 1.90), M)
 kit.stack_light('Stack light', (ext['x_rear'] + .2, .65, 1.90), M)
 kit.hmi_pedestal('Operator panel', (ext['x_rear'] + .3, -.70, 0), (ext['x_rear'] + .3, -.70, 1.42), M)
 kit.bake_linear()
 
-control = lines.control
+# Start-up: screw and roll turns follow the steady line ratios (11 screw turns per 0.94 m of film). The hot air ring step
+# heats the ring air from 25 C to the in-house 60 C set point before the bubble is inflated.
+AIR_SETPOINT = 60
+SCREW_PER_M, NIP_PER_M = TURNS['screw'] / TRAVEL, 1000 / (math.pi * NIP_D)
+WIND = 2.0                                           # metres of lay-flat wound during the winding step (compressed growth)
+STARTUP, CONTROLS = kit.startup(
+    ['실제 라인의 기동 순서입니다. 스크류가 튜브를 환형 다이 밖으로 밀어내면 작업자가 케이지와 접힘 프레임을 지나 닙롤까지 끌어 올리고, '
+     '닙을 닫아 튜브 위쪽을 막고, 열풍 에어링을 60 °C로 올린 뒤 다이 중앙으로 공기를 넣어 버블을 BUR 2까지 부풀리고, 닙롤로 접힌 '
+     '필름을 권취기까지 보내 권취를 시작합니다. 실제 라인은 존 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 '
+     '이후부터 보여줍니다.',
+     'The real start-up order: the screw pushes the tube out of the annular die, the operator pulls it up through the cage '
+     'and collapsing frame to the nip rolls, the nip closes to seal the top of the tube, the hot air ring is brought to '
+     '60 °C, air through the die centre inflates the bubble to BUR 2, and the nip rolls draw the lay-flat film to the winder, where winding starts. A real '
+     'line only lets the screw start once every zone has reached its set point and soaked (cold-start protection); the '
+     'model starts after that.'],
+    [kit.step('screw', ['압출 시작 · 스크류 회전', 'Start extruding · screw'],
+              ['스크류를 돌려 튜브를 환형 다이에서 케이지와 접힘 프레임을 지나 열린 닙롤까지 올리세요. 실제로는 작업자가 튜브 끝을 묶어 위로 '
+               '끌어 올립니다.',
+               'Turn the screw to push the tube from the annular die up through the cage and collapsing frame to the open nip '
+               'rolls; on a real line the operator ties off the tube end and pulls it up.'],
+              once=True, spin={'screw': [round(S_NIP * SCREW_PER_M, 4), 0]}, thread=[0, S_NIP]),
+     kit.step('nip', ['닙롤 닫힘 · 공압 실린더', 'Close the nip · pneumatic cylinders'],
+              ['튜브가 닙롤 사이에 들어왔습니다. 공압 실린더로 오른쪽 닙롤을 밀어 닫으세요. 닫힌 닙이 튜브 위쪽을 막아야 버블에 공기를 넣을 수 '
+               '있습니다.',
+               'The tube is between the nip rolls. Close the right roll with the pneumatic cylinders; the closed nip seals the '
+               'top of the tube so the bubble can hold air.'],
+              needs=['screw'], move='nip'),
+     kit.step('air', ['열풍 에어링 기동 · 60 °C', 'Start the hot air ring · 60 °C'],
+              ['블로어를 켜고 인라인 히터로 에어링 공기를 60 °C까지 올리세요. 히터는 블로어가 돌고 풍량 스위치가 풍량을 확인해야 켜지며, '
+               '과열 차단기가 따로 지킵니다. 60 °C는 반결정성 PHA(S1000P)의 사내 운전 기준으로, 프로스트 라인 위에서 결정화를 앞당겨 닙과 '
+               '권취 롤에서의 융착(블로킹)을 막습니다. 문헌의 PHB 전체 결정화 반감기 최소(60–70 °C)와 같은 범위이며, 2–5 mol% 4HB에 대한 '
+               '측정값은 공개되어 있지 않습니다. 비결정성 A1000P에는 해당하지 않습니다.',
+               'Start the blower and let the inline heater bring the ring air to 60 °C. The heater can only switch on while the '
+               'blower runs and the airflow switch confirms flow, and an independent high-limit guards it. 60 °C is the in-house '
+               'practice for semi-crystalline PHA (S1000P): it speeds crystallization above the frost line so the film does not '
+               'fuse (block) in the nip or on the winder. It matches the 60–70 °C minimum of the overall crystallization '
+               'half-time reported for PHB; no value has been published for 2–5 mol% 4HB. It does not apply to amorphous A1000P.'],
+              needs=['screw'], spin={'hotair': [3.4, 0]}, reveal=['hotair'],
+              readout={'from': 25, 'to': AIR_SETPOINT, 'unit': '°C', 'digits': 1}),
+     kit.step('inflate', ['버블 팽창 · BUR 1→2', 'Inflate the bubble · BUR 1 to 2'],
+              ['닙이 튜브를 막았습니다. 다이 중앙으로 공기를 넣어 버블을 BUR 2(지름 160 mm, 레이플랫 251 mm)까지 부풀리세요. PHA의 BUR과 '
+               '동결선 권장 범위는 정해져 있지 않습니다.',
+               'The nip seals the tube. Blow air through the die centre to inflate the bubble to BUR 2 (160 mm bubble, 251 mm '
+               'lay-flat); no PHA BUR or frost-line range is established.'],
+              needs=['nip', 'air'], morph='inflate'),
+     kit.step('haul', ['닙롤 이송', 'Draw with the nip rolls'],
+              ['버블이 섰습니다. 닙롤을 돌려 접힌 필름을 타워 위 가이드 롤을 지나 권취기까지 보내세요. 이송이 시작되면 모형은 닙, 에어링 온도, '
+               '버블 크기를 고정합니다.',
+               'The bubble stands. Run the nip rolls to draw the lay-flat film over the tower guide rolls to the winder; the '
+               'model holds the nip, the air-ring temperature and the bubble size once drawing starts.'],
+              needs=['inflate'], locks=['nip', 'air', 'inflate'], once=True, thread=[S_NIP, S_END],
+              spin={'haul': [round((S_END - S_NIP) * NIP_PER_M, 4), 0], 'screw': [round((S_END - S_NIP) * SCREW_PER_M, 4), 0]}),
+     kit.step('winder', ['권취 시작', 'Start winding'],
+              ['필름이 권취 코어에 닿았습니다. 권취기를 돌려 두 겹 레이플랫을 감으세요. 모형은 76 mm 코어에서 150 mm 권취 롤까지를 압축해 '
+               '보여줍니다.',
+               'The film has reached the winder core. Turn the winder to wind the two-ply lay-flat; the model compresses the '
+               'growth from the 76 mm core to a 150 mm roll.'],
+              needs=['haul'], once=True,
+              spin={'winder': [round(WIND * 1000 / (math.pi * (CORE_D + WOUND_D) / 2), 4), 0], 'haul': [round(WIND * NIP_PER_M, 4), 0],
+                    'screw': [round(WIND * SCREW_PER_M, 4), 0]},
+              wind={'node': 'Winder_body', 'core': round(CORE_D / WOUND_D, 4)})],
+    ['기동 완료 · "자동 공정으로 돌아가기"를 누르면 정상 운전(5 m/min)을 재생합니다.',
+     'Start-up complete. Choose "Return to cycle" to play steady running at 5 m/min.'],
+    LOOP)
 centre = [(ext['x_rear'] + X_W + .3) / 2, 1.9, 0]
 META = {
     'id': 'blownfilm', 'duration': LOOP, 'frames': [0, FRAMES],
     'poster': 'assets/equipment/blownfilm-motion-poster.png', 'model': 'assets/equipment/blownfilm-motion.glb',
     'center': centre, 'span': [X_W + .3 - ext['x_rear'] + .4, Z_NIP + .55], 'heightRatio': .62, 'zoom': [.7, 12],
-    'controls': [control('screw', '스크류 회전각', 'Screw rotation angle', time_range=[0, LOOP]),
-                 control('flow', '수지 표시 위치', 'Resin marker position', 100, '%', [0, LOOP]),
-                 control('haul', '닙롤 회전각', 'Nip roll rotation angle', time_range=[0, LOOP]),
-                 control('winder', '권취 롤 회전각', 'Winder rotation angle', 360, time_range=[0, LOOP])],
+    'controls': CONTROLS, 'startup': STARTUP,
     'views': [{'key': 'all', 'label': ['전체 라인', 'Whole line'], 'center': centre, 'zoom': 1},
               kit.camera_view('screw', ['스크류·배럴 단면', 'Screw & barrel cutaway'], (-.6, 0, AX), (1.2, -6.0, 5.2), 3.4),
               kit.camera_view('die', ['환형 다이·에어링·동결선', 'Annular die, air ring & frost line'], (X_D, 0, Z_DIE + .15), (1.5, -6.0, 3.0), 5),
               kit.camera_view('finish', ['접힘·닙롤', 'Collapse & nip'], (X_D, 0, Z_NIP - .3), (1.5, -6.0, 2.0), 3.5)],
     'heat': {'input': 'process', 'reference': 'process',
              'title': ['배럴·다이 존 온도 (입력한 설정값)', 'Barrel and die zone temperatures (entered set points)'],
-             'note': kit.PROCESS_HEAT_NOTE, 'scale_labels': {'melt': ['배럴·다이', 'Barrel & die'], 'tool': ['냉각 공기', 'Cooling air']},
+             'note': kit.PROCESS_HEAT_NOTE, 'scale_labels': {'melt': ['배럴·다이', 'Barrel & die'], 'tool': ['에어링 공기', 'Air-ring air']},
              'zones': kit.extruder_heat(ext, ['zone1', 'zone2', 'zone3', 'zone4'])
              + [kit.heat_vband('die', 'die', ['환형 다이', 'Annular die'], X_D, 0, Z_DIE - .27, Z_DIE - .01, .125, full=True),
                 kit.heat_vband('air', 'airTemp', ['에어링 공기', 'Air-ring air'], X_D, 0, Z_DIE + .002, Z_DIE + .052, .128, group='tool', full=True)]},
@@ -232,16 +377,34 @@ META = {
                  'layflat_mm': round(LAYFLAT * 1000, 1), 'frost_line_mm': FLH * 1000, 'die_to_nip_mm': 2500, 'collapsing_mm': 700,
                  'cage_inside_mm': CAGE_R * 2000, 'rpm': {key: round(value, 3) for key, value in RPM.items()},
                  'roll_mm': {'nip': NIP_D, 'guide': GUIDE_D, 'winder_now': WOUND_D, 'core': CORE_D},
+                 'air_ring_air_c': AIR_SETPOINT,
                  'loop_note': 'Real time: steady bubble (no breathing); the nip rolls turn three times per loop and the winder twice.'},
     'spec': {'basis': 'Pack B grade C teaching values; brand-neutral; not an OEM drawing or a PHA BUR or frost-line setting',
              'screw_d_mm': 40, 'l_d': 30, 'die_mm': 80, 'air_ring_od_mm': 240, 'bur': BUR, 'layflat_mm': round(LAYFLAT * 1000, 1),
-             'frost_line_mm': 320, 'cage_inside_mm': 200, 'die_to_nip_mm': 2500, 'collapsing_mm': 700, 'nip_mm': '100, face 350',
+             'frost_line_mm': 320, 'cage_inside_mm': 200, 'die_to_nip_mm': 2500, 'collapsing_mm': 700, 'nip_mm': '100, face 350', 'nip_threading_open_mm': OPEN * 1000, 'nip_cylinders': 2,
+             'hot_air_ring': {
+                 'train': ['inlet filter', 'centrifugal blower (VFD)', 'airflow (differential pressure) switch', 'inline electric heater',
+                           'insulated manifold and four insulated hoses', 'dual-lip air ring with plenum sensor', 'PID controller (SCR)',
+                           'independent manual-reset high-limit'],
+                 'air_setpoint_c': AIR_SETPOINT,
+                 'setpoint_basis': 'In-house practice for semi-crystalline P(3HB-co-4HB) (S1000P), given by the user on 2026-10-17. '
+                                   'Literature context: PHB overall crystallization half-time minimum about 30 s at 60-70 C '
+                                   '(Macromolecules 59:379, 2026); PHBH crystallizes fastest when cooled to 50-70 C (US 10030117); '
+                                   'spherulite growth peaks at 75-90 C for PHB/PHBV; no published value for 2-5 mol% 4HB.',
+                 'air_flow_m3_h': [150, 300], 'heater_kw': 6, 'heater_sizing': 'P = Q rho cp dT (20 -> 60 C) plus 25-50 % losses',
+                 'high_limit_c': [80, 90],
+                 'interlocks': ['heater only with blower running and airflow switch made', 'independent manual-reset high-limit',
+                                'blower run-on after the heater stops', 'E-stop'],
+                 'not_for': 'amorphous A1000P (no crystallization; CJ film TDS CA1240PF uses chilled air and IBC)',
+                 'grade': 'C teaching values; not an OEM drawing',
+                 'sources': 'docs/research/pha-blown-film-hot-air-ring-20261017.md'},
              'oscillating_haul_off': 'optional, not shown', 'ibc': 'optional, not shown', 'winder': '76 mm core to 450 mm, two-ply lay-flat',
              'sources': 'output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md'},
 }
 
 floor = kit.floor('Floor', ext['x_rear'] - .3, X_W + .5, -.9, 1.0, M)
 kit.studio_world(.8, 'studio.exr')
+release = kit.hold_closed([nip])                     # the poster shows the running line
 sc.frame_set(round(FRAMES * .4))
 bpy.context.view_layer.update()
 camera = kit.ortho_camera('Line camera', (centre[0] + 5, -10, 6.5), (centre[0], 0, 1.8), 8)
@@ -254,6 +417,7 @@ camera.data.ortho_scale = max(max(xs) - min(xs), (max(ys) - min(ys)) * 16 / 9) *
 kit.area_light('Key light', (centre[0] - 2.5, -5, 7), (centre[0], 0, 1.6), 1700, 6)
 kit.area_light('Rim light', (centre[0] + 2.5, 4, 6), (centre[0], 0, 1.6), 700, 5, (.9, .95, 1))
 kit.render_still(OUT / 'blownfilm-motion-poster.png', 1280, 720, samples=48)
+release()
 for obj in [floor, camera] + [o for o in sc.objects if o.type == 'LIGHT']:
     bpy.data.objects.remove(obj, do_unlink=True)
 sc.frame_set(0)

@@ -2,18 +2,26 @@
   "status": "pass",
   "blender": "5.2.1 LTS",
   "checks": [
+    "extrusion: start-up - product segments tile the path from the die, thread steps chain, actuators key open to closed, and cylinder rods stay on axis inside their bodies through the stroke",
     "extrusion: signed screw rotation matches the helix and conveys toward the die (+X)",
     "extrusion: both belt runs that grip the profile move downstream; pulley speed = 1000 v / (pi d)",
     "extrusion: flying saw moves with the profile at line speed while cutting; one 500 mm cut per loop",
+    "compounding: start-up - product segments tile the path from the die, thread steps chain, actuators key open to closed, and cylinder rods stay on axis inside their bodies through the stroke",
     "compounding: both bilobal screws co-rotate on fixed axes at the stated centre distance and convey toward the die",
     "compounding: side-feeder screws convey toward the main barrel (-Y)",
     "compounding: feed-roll nip moves strands downstream, rotor blades pass the bed knife downward, whole turns per loop",
     "compounding: roll and rotor speeds follow line speed, roll diameter, cutting edges and pellet length within 0.6 %",
+    "sheet: start-up - product segments tile the path from the die, thread steps chain, actuators key open to closed, and cylinder rods stay on axis inside their bodies through the stroke",
     "sheet: S-wrap clearance, all nip and wrap directions, and one surface speed for stack, table, haul-off and winder",
+    "castfilm: start-up - product segments tile the path from the die, thread steps chain, actuators key open to closed, and cylinder rods stay on axis inside their bodies through the stroke",
     "castfilm: chill wrap, S-transfer, guide, dancer and winder directions; one surface speed; traversing gauge",
+    "blownfilm: start-up - product segments tile the path from the die, thread steps chain, actuators key open to closed, and cylinder rods stay on axis inside their bodies through the stroke",
+    "blownfilm: the start-up tube (shape key 0) keeps the die diameter and inflates to the BUR 2 bubble (shape key 1)",
+    "blownfilm: hot air ring train (blower, airflow switch, inline heater, high-limit) feeds the ring; warm air rises from the lip; inflation waits for the ring at its set point",
     "blownfilm: upward nip contacts, one surface speed, BUR 2 bubble inside the cage, lay-flat = pi D / 2, steady bubble",
     "blowmolding: continuous parison, capture, knife, 300 mm shuttle, 50 mm pin, 160 mm opening, bottle morph from the parison and conveyor take-out",
     "blowmolding: clamp rods ride the mould halves from their cylinders and the shuttle rod from its cylinder through the full strokes",
+    "straw: start-up - product segments tile the path from the die, thread steps chain, actuators key open to closed, and cylinder rods stay on axis inside their bodies through the stroke",
     "straw: signed screw rotation matches the helix and conveys toward the die (+X)",
     "straw: belt runs and bath guide pulleys touching the straws move downstream; drum speed = 1000 v / (pi d)",
     "straw: four lanes at 40 mm pitch, 6 mm OD; the knife passes below the straws moving downstream once per turn as each 200 mm piece is cut; five cuts per 5 s loop",
@@ -21,13 +29,20 @@
   ],
   "models": {
     "extrusion": {
-      "objects": 115,
+      "objects": 169,
       "motion_groups": [
         "cutter",
         "flow",
         "haul",
+        "nip",
+        "resin",
         "screw"
       ],
+      "startup": {
+        "segments": 42,
+        "carriers": 1,
+        "rods": 2
+      },
       "screw_direction": [
         {
           "node": "Extruder screw",
@@ -42,14 +57,21 @@
       ]
     },
     "compounding": {
-      "objects": 106,
+      "objects": 144,
       "motion_groups": [
         "cutter",
         "flow",
         "haul",
+        "nip",
+        "resin",
         "screw",
         "side"
       ],
+      "startup": {
+        "segments": 31,
+        "carriers": 1,
+        "rods": 2
+      },
       "screw_direction": [
         {
           "node": "ScrewA",
@@ -92,13 +114,20 @@
       ]
     },
     "sheet": {
-      "objects": 112,
+      "objects": 157,
       "motion_groups": [
         "flow",
+        "nip",
+        "resin",
         "roll",
         "screw",
         "winder"
       ],
+      "startup": {
+        "segments": 42,
+        "carriers": 1,
+        "rods": 2
+      },
       "screw_direction": [
         {
           "node": "Extruder screw",
@@ -113,14 +142,21 @@
       ]
     },
     "castfilm": {
-      "objects": 70,
+      "objects": 118,
       "motion_groups": [
         "flow",
         "gauge",
+        "nip",
+        "resin",
         "roll",
         "screw",
         "winder"
       ],
+      "startup": {
+        "segments": 39,
+        "carriers": 1,
+        "rods": 2
+      },
       "screw_direction": [
         {
           "node": "Extruder screw",
@@ -135,13 +171,21 @@
       ]
     },
     "blownfilm": {
-      "objects": 85,
+      "objects": 187,
       "motion_groups": [
         "flow",
         "haul",
+        "hotair",
+        "nip",
+        "resin",
         "screw",
         "winder"
       ],
+      "startup": {
+        "segments": 75,
+        "carriers": 1,
+        "rods": 2
+      },
       "screw_direction": [
         {
           "node": "Extruder screw",
@@ -182,13 +226,20 @@
       ]
     },
     "straw": {
-      "objects": 145,
+      "objects": 200,
       "motion_groups": [
         "cutter",
         "flow",
         "haul",
+        "nip",
+        "resin",
         "screw"
       ],
+      "startup": {
+        "segments": 46,
+        "carriers": 1,
+        "rods": 2
+      },
       "screw_direction": [
         {
           "node": "Extruder screw",

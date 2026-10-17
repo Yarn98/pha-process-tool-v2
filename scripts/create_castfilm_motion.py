@@ -9,6 +9,9 @@ Pack B cast-film base (grade C teaching values; output/research/pha-equipment-re
 - the film wraps the chill roll for 180 deg and transfers to a 200 mm second roll, then a 200 mm downstream roll;
 - a traversing O-frame thickness gauge (700 mm) and edge trim follow, then a dancer and a winder on a 76 mm
   core (shown at 200 mm; the rpm falls as the roll grows to 500 mm).
+For the start-up sequence the air knife and its hose ride a slide that two pneumatic cylinders push radially in to the
+chill roll (50 mm back for threading); the film is built in segments tagged with their distance from the lip, and the
+wound roll grows from its core while winding starts.
 The model runs in real time at a 10 m/min line speed. The 400 mm chill roll turns once per loop and the 200 mm
 rolls twice; every roll keeps the same surface speed, n = 1000 v / (pi d).
 """
@@ -103,9 +106,35 @@ knife_angle = math.radians(LAND - 12)
 kx, kz = X_C + (R1 + .03) * math.cos(knife_angle), Z_C + (R1 + .03) * math.sin(knife_angle)
 knife = kit.box('Air knife', (0, 0, 0), (.03, .55, .05), M['stainless'], bevel=.004)
 knife.location, knife.rotation_euler.y = (kx, 0, kz), -knife_angle
-stand += [knife, kit.hose('Air knife hose', (kx, .29, kz), (kx - .4, .70, .3), .02, M['rubber'], sag=.1),
-          kit.box('Air knife blower', (kx - .4, .75, .2), (.3, .3, .35), M['paint_accent'], bevel=.01)]
+hose = kit.hose('Air knife hose', (kx, .29, kz), (kx - .4, .70, .3), .02, M['rubber'], sag=.1)
+stand += [kit.box('Air knife blower', (kx - .4, .75, .2), (.3, .3, .35), M['paint_accent'], bevel=.01)]
+# Air knife slide: for threading the knife and its hose stand 50 mm back from the chill roll. Two pneumatic cylinders,
+# 75 mm downstream of the knife (clear of the die) on a bracket hung from the die beam, push it radially in through arms
+# on the knife to pin the curtain on the landing line.
+radial = Vector((math.cos(knife_angle), 0, math.sin(knife_angle)))
+down = Vector((math.sin(knife_angle), 0, -math.cos(knife_angle)))     # film travel over the roll top
+centre_k = Vector((kx, 0, kz))
+arms = []
+for y in (-.22, .22):
+    arm = kit.box('Air knife arm', (0, 0, 0), (.02, .04, .10), M['steel_dark'], bevel=.002)
+    arm.location, arm.rotation_euler.y = centre_k + down * .05 + radial * .01 + Vector((0, y, 0)), -knife_angle
+    arms.append(arm)
+    cap = centre_k + down * .075 + radial * .175 + Vector((0, y, 0))
+    stand += [kit.box('Air knife bracket hanger', (cap.x, y, (cap.z + .02 + AX) / 2), (.03, .03, AX - cap.z - .02), M['steel_dark'], bevel=.002),
+              kit.box('Air knife bracket hanger', ((cap.x + x_lip + .03) / 2, y, AX + .02), (cap.x - x_lip, .03, .04), M['steel_dark'], bevel=.002)]
+bracket = kit.box('Air knife cylinder bracket', (0, 0, 0), (.024, .50, .05), M['steel_dark'], bevel=.003)
+bracket.location, bracket.rotation_euler.y = centre_k + down * .075 + radial * .187, -knife_angle
+stand.append(bracket)
 kit.join(stand, 'ChillStand')
+bpy.context.view_layer.update()
+nip = kit.carrier('AirKnifeSlide')
+kit.mount([knife, hose] + arms, nip)
+for y in (-.22, .22):
+    side_k = centre_k + down * .075 + Vector((0, y, 0))
+    kit.linked_cylinder('Air knife cylinder', side_k + radial * .175, side_k + radial * .075, side_k + radial * .02, .016, .006, M, nip,
+                        inset=.03)
+OPEN = .05
+kit.actuate(nip, FRAMES, tuple(radial * OPEN))
 
 # Traversing O-frame gauge, edge trim, guide roll, dancer and winder
 gauge = [kit.box('Gauge frame top', (X_GAUGE, 0, Z_EXIT + .12), (.10, .90, .05), M['paint']),
@@ -146,34 +175,79 @@ path = [lip, land]
 path += kit.arc_xz(X_C, Z_C, R1 + T / 2, LAND, -90, 48)[1:]
 path += kit.arc_xz(X_C, Z_2, R2 + T / 2, 90, 270, 24)[1:]
 path += [Vector((X_3 - .05, 0, Z_EXIT)), Vector((X_TRIM + .2, 0, Z_EXIT))]
-kit.web('CastFilmWeb', path, WIDTH, T * 2, M['film'])
+# The film is built in 100 mm segments tagged with their distance from the lip, split at the landing line, so the
+# start-up can grow the curtain onto the chill roll and then draw it on.
+S_LAND = kit.path_length(path[:2])
+S_TRIM = kit.path_length(path)
+kit.thread_web('CastFilmWeb', kit.path_slice(path, 0, S_LAND), WIDTH, T * 2, M['film'], step=.04)
+kit.thread_web('CastFilmWebDrawn', kit.path_slice(path, S_LAND, S_TRIM), WIDTH, T * 2, M['film'], s_from=S_LAND)
 after = [Vector((X_TRIM + .2, 0, Z_EXIT)), Vector((X_DANCER - RG - T / 2, 0, dancer_z + .02))]
 after += kit.arc_xz(X_DANCER, dancer_z, RG + T / 2, 180, 270, 8)[1:]
 after += [Vector((X_DANCER + .15, 0, dancer_z - RG)), Vector((X_WIND, 0, wind_z))]
-kit.web('CastFilmTrimmed', after, TRIMMED, T * 2, M['film'])
+kit.thread_web('CastFilmTrimmed', after, TRIMMED, T * 2, M['film'], s_from=S_TRIM)
+S_END = S_TRIM + kit.path_length(after)
 
 marks = [Vector((p.x, -WIDTH / 2 + .02, p.z)) for p in path[1:]]
 kit.ride('FilmMarker', marks, math.ceil(kit.path_length(marks) / (TRAVEL / 4)), TRAVEL / 4, TRAVEL, M['polymer_marker'], .006, FRAMES)
 pellets = kit.catmull([(ext['throat_x'], 0, AX + .75), (ext['throat_x'], 0, AX + .35), (ext['throat_x'], 0, AX + .06)], 6)
-kit.ride('FeedPellet', pellets, 8, kit.path_length(pellets) / 8, 2 * kit.path_length(pellets), M['pellet'], .005, FRAMES, 'pellet')
+kit.ride('FeedPellet', pellets, 8, kit.path_length(pellets) / 8, 2 * kit.path_length(pellets), M['pellet'], .005, FRAMES, 'pellet',
+         group='resin')
 melt = [Vector((ext['throat_x'], 0, AX + D * .42)), Vector((-.36, 0, AX + D * .42))]
-kit.ride('MeltMarker', melt, 12, kit.path_length(melt) / 12, 2 * kit.path_length(melt) / 12, M['polymer_marker'], .006, FRAMES)
+kit.ride('MeltMarker', melt, 12, kit.path_length(melt) / 12, 2 * kit.path_length(melt) / 12, M['polymer_marker'], .006, FRAMES,
+         group='resin')
 
 kit.cabinet('Control cabinet', (ext['x_rear'] - .2, .45, 0), (ext['x_rear'] + .6, .85, 1.90), M)
 kit.stack_light('Stack light', (ext['x_rear'] + .2, .65, 1.90), M)
 kit.hmi_pedestal('Operator panel', (ext['x_rear'] + .3, -.70, 0), (ext['x_rear'] + .3, -.70, 1.42), M)
 kit.bake_linear()
 
-control = lines.control
+# Start-up: screw and roll turns follow the steady line ratios (8 screw turns per chill-roll turn of 1.257 m).
+SCREW_PER_M, CHILL_PER_M = TURNS['screw'] / TRAVEL, 1000 / (math.pi * CHILL_D)
+WIND = 3.0                                           # metres of film wound during the winding step (compressed growth)
+STARTUP, CONTROLS = kit.startup(
+    ['실제 라인의 기동 순서입니다. 스크류가 용융 커튼을 평다이 밖으로 밀어내 에어 갭을 지나 도는 칠 롤 위에 떨어뜨리면, 에어 나이프를 '
+     '실린더로 밀어 넣어 커튼을 칠 롤에 밀착(pinning)시키고, 롤을 돌려 필름을 두께 측정, 트림, 댄서를 거쳐 권취기까지 보낸 뒤 권취를 '
+     '시작합니다. 실제 라인은 존과 칠 롤 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 '
+     '그 이후부터 보여줍니다.',
+     'The real start-up order: the screw pushes the melt curtain out of the flat die through the air gap onto the turning '
+     'chill roll; the cylinders push the air knife in to pin the curtain to the roll, the rolls draw the film through the '
+     'gauge, trim and dancer to the winder, and winding starts. A real line only lets the screw start once every zone and '
+     'the chill roll have reached their set points and soaked (cold-start protection); the model starts after that.'],
+    [kit.step('screw', ['압출 시작 · 스크류 회전', 'Start extruding · screw'],
+              ['스크류를 돌려 용융 커튼을 평다이에서 에어 갭을 지나 칠 롤 위 착지선까지 내려보내세요.',
+               'Turn the screw to let the melt curtain fall from the flat die through the air gap onto the landing line of '
+               'the chill roll.'],
+              once=True, spin={'screw': [round(S_LAND * SCREW_PER_M, 4), 0]}, thread=[0, S_LAND]),
+     kit.step('nip', ['에어 나이프 접근 · 실린더', 'Bring in the air knife · cylinders'],
+              ['커튼이 칠 롤에 닿았습니다. 실린더로 에어 나이프를 밀어 넣어 착지선에서 커튼을 롤에 밀착시키세요. 밀착이 약하면 필름과 롤 '
+               '사이에 공기가 갇혀 냉각이 고르지 않습니다.',
+               'The curtain touches the chill roll. Push the air knife in with the cylinders to pin it on the landing line; '
+               'weak pinning traps air between film and roll and cools it unevenly.'],
+              needs=['screw'], move='nip'),
+     kit.step('roll', ['롤 이송', 'Draw with the rolls'],
+              ['커튼이 칠 롤에 밀착되었습니다. 롤을 돌려 필름을 2·3번 롤, 두께 측정, 트림, 댄서를 거쳐 권취기까지 보내세요. 이송이 시작되면 '
+               '에어 나이프를 뺄 수 없습니다.',
+               'The curtain is pinned. Run the rolls to draw the film over the second and third rolls, gauge, trim and dancer '
+               'to the winder; the air knife stays in once drawing starts.'],
+              needs=['nip'], locks=['nip'], once=True, thread=[S_LAND, S_END],
+              spin={'roll': [round((S_END - S_LAND) * CHILL_PER_M, 4), 0], 'screw': [round((S_END - S_LAND) * SCREW_PER_M, 4), 0]}),
+     kit.step('winder', ['권취 시작', 'Start winding'],
+              ['필름이 권취 코어에 닿았습니다. 권취기를 돌려 감으세요. 모형은 76 mm 코어에서 200 mm 권취 롤까지를 압축해 보여줍니다.',
+               'The film has reached the winder core. Turn the winder to wind it; the model compresses the growth from the '
+               '76 mm core to a 200 mm roll.'],
+              needs=['roll'], once=True,
+              spin={'winder': [round(WIND * 1000 / (math.pi * (CORE_D + WOUND_D) / 2), 4), 0], 'roll': [round(WIND * CHILL_PER_M, 4), 0],
+                    'screw': [round(WIND * SCREW_PER_M, 4), 0]},
+              wind={'node': 'Winder_body', 'core': round(CORE_D / WOUND_D, 4)})],
+    ['기동 완료 · "자동 공정으로 돌아가기"를 누르면 정상 운전(10 m/min)을 재생합니다.',
+     'Start-up complete. Choose "Return to cycle" to play steady running at 10 m/min.'],
+    LOOP)
 centre = [(ext['x_rear'] + X_WIND + .5) / 2, 1.0, 0]
 META = {
     'id': 'castfilm', 'duration': LOOP, 'frames': [0, FRAMES],
     'poster': 'assets/equipment/castfilm-motion-poster.png', 'model': 'assets/equipment/castfilm-motion.glb',
     'center': centre, 'span': [X_WIND + .5 - ext['x_rear'] + .4, 2.6], 'zoom': [.7, 12],
-    'controls': [control('screw', '스크류 회전각', 'Screw rotation angle', time_range=[0, LOOP]),
-                 control('flow', '수지 표시 위치', 'Resin marker position', 100, '%', [0, LOOP]),
-                 control('roll', '칠 롤 회전각 (400 mm)', 'Chill roll angle (400 mm)', time_range=[0, LOOP]),
-                 control('winder', '권취 롤 회전각', 'Winder rotation angle', 360, time_range=[0, LOOP])],
+    'controls': CONTROLS, 'startup': STARTUP,
     'views': [{'key': 'all', 'label': ['전체 라인', 'Whole line'], 'center': centre, 'zoom': 1},
               kit.camera_view('screw', ['스크류·배럴 단면', 'Screw & barrel cutaway'], (-1.0, 0, AX), (1.2, -6.0, 5.2), 3.4),
               kit.camera_view('chill', ['다이·에어 갭·칠 롤', 'Die, air gap & chill roll'], (X_C, 0, Z_C + .12), (.5, -8.0, .9), 4.5),
@@ -195,13 +269,14 @@ META = {
                  'loop_note': 'Real time: the 400 mm chill roll turns once per loop and the 200 mm rolls twice; one surface speed.'},
     'spec': {'basis': 'Pack B grade C teaching values; brand-neutral; not an OEM drawing or PHA setting',
              'screw_d_mm': 45, 'l_d': 30, 'die_width_mm': 500, 'air_gap_mm': 80, 'rolls_mm': '400 / 200 / 200, face 600',
-             'pinning': 'air knife 550 mm', 'chill_wrap_deg': 180, 'gauge': 'traversing O-frame 700 mm', 'edge_trim': True,
+             'pinning': 'air knife 550 mm', 'air_knife_retract_mm': OPEN * 1000, 'air_knife_cylinders': 2, 'chill_wrap_deg': 180, 'gauge': 'traversing O-frame 700 mm', 'edge_trim': True,
              'winder': '76 mm core to 500 mm, dancer with load cells',
              'sources': 'output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md'},
 }
 
 floor = kit.floor('Floor', ext['x_rear'] - .3, X_WIND + .7, -1.1, 1.0, M)
 kit.studio_world(.8, 'studio.exr')
+release = kit.hold_closed([nip])                     # the poster shows the running line
 sc.frame_set(round(FRAMES * .4))
 bpy.context.view_layer.update()
 camera = kit.ortho_camera('Line camera', (centre[0] + 5, -10, 5.4), (centre[0], 0, .9), 8)
@@ -214,6 +289,7 @@ camera.data.ortho_scale = max(max(xs) - min(xs), (max(ys) - min(ys)) * 16 / 9) *
 kit.area_light('Key light', (centre[0] - 2.5, -5, 6), (centre[0], 0, .8), 1500, 6)
 kit.area_light('Rim light', (centre[0] + 2.5, 4, 5), (centre[0], 0, .8), 650, 5, (.9, .95, 1))
 kit.render_still(OUT / 'castfilm-motion-poster.png', 1280, 720, samples=48)
+release()
 for obj in [floor, camera] + [o for o in sc.objects if o.type == 'LIGHT']:
     bpy.data.objects.remove(obj, do_unlink=True)
 sc.frame_set(0)
