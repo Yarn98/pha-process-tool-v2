@@ -10,6 +10,7 @@
     "compounding: both bilobal screws co-rotate on fixed axes at the stated centre distance and convey toward the die",
     "compounding: side-feeder screws convey toward the main barrel (-Y)",
     "compounding: feed-roll nip moves strands downstream, rotor blades pass the bed knife downward, whole turns per loop",
+    "compounding: rotor blades clear both feed rolls by 3 mm and cut within 1 mm of the bed knife edge; rolls and rotor clear the bed knife, its holder and the housing",
     "compounding: roll and rotor speeds follow line speed, roll diameter, cutting edges and pellet length within 0.6 %",
     "sheet: start-up - product segments tile the path from the die, thread steps chain, actuators key open to closed, and cylinder rods stay on axis inside their bodies through the stroke",
     "sheet: S-wrap clearance, all nip and wrap directions, and one surface speed for stack, table, haul-off and winder",
@@ -111,7 +112,8 @@
           "turns_per_loop": 2.5,
           "scope": "geometry direction only; not material velocity"
         }
-      ]
+      ],
+      "rotor_knife_gap_mm": 0.39
     },
     "sheet": {
       "objects": 157,

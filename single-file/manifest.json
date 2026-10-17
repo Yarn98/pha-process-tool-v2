@@ -1,9 +1,9 @@
 {
   "format": 1,
   "artifact": "single-file/PHA-Process-Single.html",
-  "bytes": 68614377,
-  "sha256": "995db2248febb47a9d5ce7ee6ed305a11c1931f66cf1d5dda1466ae38bc67c41",
-  "source_sha256": "d7d039891cb38b9c76c5bcd362e7ecda307ae8cc4581d9b23b1a9eae8500b87e",
+  "bytes": 68613986,
+  "sha256": "5e5258a864ab39a4dd481e55289d9aa77b5c694fcedb09dbd4ef73f0dd1bc9aa",
+  "source_sha256": "cec9f49625c48e33df4e2db361fb8d07ad43b3ff8b7cbedfbede7ad211f88a38",
   "hash_basis": "SHA-256 of UTF-8 text normalized to LF; binary bytes unchanged. Artifact bytes and hash use LF.",
   "embedded_assets": 155,
   "embedded_glbs": 26,
@@ -92,15 +92,15 @@
       "path": "assets/equipment/compounding-motion-poster.png",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 1000290,
-      "sha256": "8d6cd45c7058272eb5d3f601216139b4a44fd2cc9a696cdc41a67393e0d4b9ee"
+      "bytes": 1000382,
+      "sha256": "0c5670845cece7e1f81016ba5f656d82447bbf9256245727d7213c8169cc3bf9"
     },
     {
       "path": "assets/equipment/compounding-motion.glb",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 4542052,
-      "sha256": "f0c7f13fda82bd8c047bf9a69fc6e4434302c487b8979fbed3e4c3501ae0f044"
+      "bytes": 4541664,
+      "sha256": "d2cfcab1ab8ca93acde58df3e715e41483e654ec66d8932dfedba89b5c0dd88c"
     },
     {
       "path": "assets/equipment/compounding.png",
@@ -1051,22 +1051,22 @@
       "path": "equipment-models.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
-      "bytes": 101995,
-      "sha256": "79bb84515fbb6fbcc5f1950ffde473b451e1b91adf6cd51d1cb679f37b22f0c8"
+      "bytes": 102000,
+      "sha256": "d2b110fc627e2f3e4e4fb3585a8e6a08a7295b1e8593b0864bd04740b1e4f697"
     },
     {
       "path": "equipment-motion.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 37408,
-      "sha256": "5691f146d2876b8d6ba9e82915559e8bba5224554801e250c74b5324e36217ab"
+      "sha256": "77244377aba72bb2e79143806f5614a18c41bce6ababb6d166333dcfbd3d8004"
     },
     {
       "path": "equipment-study.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 11252,
-      "sha256": "b86cfef704a6afefa37bd897588115ca0714144050ba840a039708f684c2d00f"
+      "sha256": "45041b4cb6a23f32c301490f092549a78135e926377623a7f3d642e8d11c462b"
     },
     {
       "path": "flash-guide-data.js",
@@ -1087,14 +1087,14 @@
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 26424,
-      "sha256": "e62fe0b35a92cf724548965dd2e36e1e35a9893b4978860324487ef77b446225"
+      "sha256": "9e004fa6d90ad2293fe34e6cfe42689485768f4ea22216b3c4fc1738012bb8d9"
     },
     {
       "path": "flash-mold-viewer.js",
       "role": "module",
       "encoding": "utf8-lf",
       "bytes": 3913,
-      "sha256": "cd3d569d60edd8fdfbe23400be047e878c9dd45db3d3f9bf67b17e9d483eb5f4"
+      "sha256": "745fe6f0df0b11238a73945dae2d5d65dc27adc39bd8ecb3d3e266a796d07c9c"
     },
     {
       "path": "glossary.js",
@@ -1136,14 +1136,14 @@
       "role": "entry",
       "encoding": "utf8-lf",
       "bytes": 326871,
-      "sha256": "e49857361529b12424995012d1e8a3af2061af5b36528eb7257f17879c96e872"
+      "sha256": "5b6eed621be9bb42faba9e447e7d06b574a93ef619a50d5fdf2274a0e48180c0"
     },
     {
       "path": "injection-motion.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 31162,
-      "sha256": "56a0ba500432a23762769ca2ac8da4f7dd7c3fcbccbc2efcfafc4eda3082de0c"
+      "sha256": "a15e639dc5db4fc9863497590a7543028cf7df64d3769f1fd9ac39c7f8a666dc"
     },
     {
       "path": "machine-viewer.js",
@@ -1269,7 +1269,7 @@
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 25655,
-      "sha256": "38afe07b10a6edf85530d1989ef073f3bec88e43e197172eddc428f973b75615"
+      "sha256": "69cc9af58974c6a4a86ffe855059ef1446cec582466dff0ff743209b2666dcf8"
     },
     {
       "path": "vendor/chart-4.4.0/LICENSE",
@@ -1367,7 +1367,7 @@
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 6811,
-      "sha256": "361ebbddacf2cffdf403f6f292ca144c577edc77bb3f7f29766cf7b259d82a65"
+      "sha256": "12698bd29d779c1b94abf7055faa0cee6ad7d668ab22dcede9cc16c7a83ab17e"
     }
   ]
 }

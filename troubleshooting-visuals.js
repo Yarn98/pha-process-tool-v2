@@ -1,7 +1,7 @@
 /* Symptom imagery and explanation, connected to the reviewed KB by stable ID. */
 (() => {
   'use strict';
-  const VERSION='?v=29',data=window.PHATroubleVisualData;
+  const VERSION='?v=30',data=window.PHATroubleVisualData;
   if(!data?.entries?.length)return;
   const entries=new Map(data.entries.map(entry=>[entry.kb_id,entry]));
   const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

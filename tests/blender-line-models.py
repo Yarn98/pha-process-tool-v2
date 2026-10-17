@@ -9,6 +9,7 @@ from pathlib import Path
 
 import bpy
 from mathutils import Vector
+from mathutils.bvhtree import BVHTree
 
 ROOT = Path(__file__).resolve().parents[1]
 checks = []
@@ -140,6 +141,15 @@ def world_velocity(name, offset):
     local = obj.matrix_world.inverted() @ point
     frame(first+1)
     return obj.matrix_world @ local-point-(obj.matrix_world.translation-origin)
+
+
+def meshes_overlap(a, b):
+    """True when the evaluated surfaces of two meshes intersect at the current frame."""
+    trees = []
+    for name in (a, b):
+        obj = bpy.data.objects[name].evaluated_get(bpy.context.evaluated_depsgraph_get())
+        trees.append(BVHTree.FromPolygons([obj.matrix_world @ v.co for v in obj.data.vertices], [p.vertices[:] for p in obj.data.polygons]))
+    return bool(trees[0].overlap(trees[1]))
 
 
 def web_clearance(web, rolls):
@@ -283,6 +293,22 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
         for name, key in (('FeedRollLower', 'haul'), ('PelletRotor', 'cutter')):
             close(abs(objects[name].rotation_euler.x), turns[key]*math.tau)
         checks.append('compounding: feed-roll nip moves strands downstream, rotor blades pass the bed knife downward, whole turns per loop')
+        # Rotor blade circle (press roll closed, as the line runs): clear of both feed rolls by at least 3 mm, and cutting
+        # within 1 mm of the bed knife edge without touching the housing parts in the blade width.
+        axis = rotor.matrix_world.translation
+        tip = max(math.hypot(p.x-axis.x, p.z-axis.z) for p in vertices('PelletRotor_body'))
+        for name in ('FeedRollLower', 'FeedRollUpper'):
+            centre = objects[name].matrix_world.translation
+            radius = max(math.hypot(p.x-centre.x, p.z-centre.z) for p in vertices(name+'_body'))
+            gap = math.hypot(axis.x-centre.x, axis.z-centre.z)-tip-radius
+            assert gap > .003, (name, gap)
+        knife_gap = min(math.hypot(p.x-axis.x, p.z-axis.z) for p in vertices('PelletiserHousing') if abs(p.y) < .07)-tip
+        assert 0 < knife_gap < .001, knife_gap
+        reports[kind]['rotor_knife_gap_mm'] = round(knife_gap*1000, 2)
+        for name in ('FeedRollLower', 'FeedRollUpper', 'PelletRotor'):
+            assert not meshes_overlap(name+'_body', 'PelletiserHousing'), name
+        checks.append('compounding: rotor blades clear both feed rolls by 3 mm and cut within 1 mm of the bed knife edge; '
+                      'rolls and rotor clear the bed knife, its holder and the housing')
         # Teaching kinematics: n = 1000 v / (pi d) and n_r = 1000 v / (z L_p), all on one time scale.
         teaching = meta['teaching']
         close(teaching['rpm']['haul'], round(1000*teaching['line_speed_m_min']/(math.pi*teaching['feed_roll_mm']), 2), 1e-6)
