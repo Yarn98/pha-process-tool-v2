@@ -475,9 +475,9 @@ STARTUP, CONTROLS = kit.startup(
                '권취 롤에서의 융착(블로킹)을 줄이려는 설정입니다. 사내 DSC에서 S1000P(4HB 3.3–5.3 %)의 60 °C 반결정화 시간은 7–28초였고'
                '(용융 조건 미기록), CJ제일제당 공동 연구는 P(3HB-co-4HB)의 등온 결정화가 약 60 °C에서 가장 잘 진행된다고 보고했습니다. CJ는 '
                'S1000P·A1000P 압출코팅에도 결정화를 위해 65–75 °C의 따뜻한 칠롤을 권장합니다. 다만 최적 온도는 4HB 함량과 용융 이력에 따라 '
-               '달라지고(2.1 mol%는 60–90 °C에서 거의 평탄), 공기 온도는 필름 온도와 같지 않습니다. 공개된 PHBV·PHBH 블로운 필름 예는 '
-               '20–30 °C의 냉각 공기를 썼고, 60 °C 공기의 효과를 S1000P에서 검증한 공개 자료는 없습니다. 비결정성 A1000P에는 해당하지 '
-               '않습니다.',
+               '달라지고(2.1 mol%는 60–90 °C에서 거의 평탄), 공기 온도는 필름 온도와 같지 않습니다. P(3HB-co-4HB) 배합 필름에 에어링 '
+               '공기 60 °C를 쓴 특허 실시예(CN118222074A)가 있지만, PHBV·PHBH 블로운 필름 예는 20–30 °C의 냉각 공기를 썼고, 60 °C '
+               '공기의 효과를 S1000P에서 검증한 공개 자료는 없습니다. 비결정성 A1000P에는 해당하지 않습니다.',
                'Start the blower and let the inline heater bring the ring air to 60 °C. The heater can only switch on while the '
                'blower runs and the airflow switch confirms flow, and an independent high-limit guards it. 60 °C is the in-house '
                'standard for semi-crystalline PHA (S1000P); it is meant to speed crystallization above the frost line so the film '
@@ -485,9 +485,10 @@ STARTUP, CONTROLS = kit.startup(
                'S1000P (4HB 3.3–5.3 %; melt conditions not recorded), and a study co-authored by CJ CheilJedang found that '
                'P(3HB-co-4HB) crystallizes best at about 60 °C. CJ also recommends a warm 65–75 °C chill roll to crystallize its '
                'S1000P/A1000P extrusion-coating grades. The optimum still shifts with 4HB content and melt history (2.1 mol% is '
-               'nearly flat from 60 to 90 °C), and air temperature is not film temperature. Published PHBV and PHBH blown-film '
-               'examples used 20–30 °C cooling air, and no public source has tested 60 °C air on S1000P. It does not apply to '
-               'amorphous A1000P.'],
+               'nearly flat from 60 to 90 °C), and air temperature is not film temperature. A patent example blew a '
+               'P(3HB-co-4HB) compound film with 60 °C ring air (CN118222074A), but published PHBV and PHBH blown-film examples '
+               'used 20–30 °C cooling air, and no public source has tested 60 °C air on S1000P. It does not apply to amorphous '
+               'A1000P.'],
               needs=['screw'], spin={'hotair': [3.4, 0]}, reveal=['hotair'],
               readout={'from': 25, 'to': AIR_SETPOINT, 'unit': '°C', 'digits': 1}),
      kit.step('inflate', ['버블 팽창 · BUR 1→2', 'Inflate the bubble · BUR 1 to 2'],
