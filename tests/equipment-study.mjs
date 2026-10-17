@@ -130,7 +130,8 @@ try{
   checks.push('Straw cut length drives 30 cuts/min; roll circumference gives 9.55 RPM; invalid and blank fields block playback');
   checks.push('Guide roll diameter ratio preserves surface speed; injection completes the specified one-way stroke with mold closed');
   await page.evaluate(async()=>{await navigator.serviceWorker.ready;});await page.waitForFunction(()=>!!navigator.serviceWorker.controller);
-  await context.setOffline(true);await page.reload({waitUntil:'domcontentloaded'});await login(page);
+  // Wait for 'load': the app applies its start-up defaults then, and acting earlier raced them.
+  await context.setOffline(true);await page.reload({waitUntil:'load'});await login(page);
   for(const kind of kinds){panel=await select(page,kind);await panel.locator('[data-study-view="photo"]').click();await imageReady(panel);}
   checks.push('All eight Unreal images and models remain available after offline reload');
   await context.close();
