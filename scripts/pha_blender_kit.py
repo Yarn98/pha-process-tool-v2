@@ -912,17 +912,18 @@ def split_path(path, step):
     total = path_length(path)
     count = max(1, round(total / step))
     breaks = [total * k / count for k in range(count + 1)]
-    chunks = []
-    for s0, s1 in zip(breaks, breaks[1:]):
-        points = [point_at(path, s0)]
-        s = 0.0                                   # vertices strictly inside (s0, s1) keep curved paths curved
-        for a, b in zip(path, path[1:]):
-            s += (b - a).length
-            if s0 + 1e-9 < s < s1 - 1e-9:
-                points.append(b.copy())
-        points.append(point_at(path, s1))
-        chunks.append((s0, s1, points))
-    return chunks
+    return [(s0, s1, path_slice(path, s0, s1)) for s0, s1 in zip(breaks, breaks[1:])]
+
+
+def path_slice(path, s0, s1):
+    """The part of a polyline between arc lengths ``s0`` and ``s1``, with exact end points."""
+    path = [Vector(p) for p in path]
+    points, s = [point_at(path, s0)], 0.0
+    for a, b in zip(path, path[1:]):
+        s += (b - a).length
+        if s0 + 1e-9 < s < s1 - 1e-9:
+            points.append(b.copy())
+    return points + [point_at(path, s1)]
 
 
 def thread_tubes(name, paths, radius, mat, step=.1, s_from=0.0, extra_from=None, r_in=None, curved=False,

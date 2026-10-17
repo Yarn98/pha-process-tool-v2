@@ -298,6 +298,7 @@
       nodes[node.name]=node;if(node.userData.motion_group)(members[node.userData.motion_group]||=[]).push(node);
       // Start-up: product segments with their span from the die lip, and shape-key families (e.g. bubble inflation).
       const span=node.userData.thread_s;if(span)thread.push({node,s0:span[0],s1:span[1],extra:!!node.userData.thread_extra});
+      const at=node.userData.thread_at;if(at!==undefined)thread.push({node,s0:at,s1:at,extra:false});  // branch parts (edge trim)
       if(node.userData.morph)node.traverse(mesh=>{if(mesh.morphTargetInfluences)(morphs[node.userData.morph]||=[]).push(mesh);});
     });
     const groups=viewer().groupClips(THREE,gltf.scene,gltf.animations);

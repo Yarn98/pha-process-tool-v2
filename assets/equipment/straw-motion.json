@@ -24,22 +24,22 @@
     {
       "key": "screw",
       "label": [
-        "스크류 회전각",
-        "Screw rotation angle"
+        "압출 시작 · 스크류 회전",
+        "Start extruding · screw"
       ],
-      "max": 720,
-      "unit": "°",
-      "step": 1,
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
       "range": [
         0,
         5.0
       ]
     },
     {
-      "key": "flow",
+      "key": "nip",
       "label": [
-        "스트로 이동 위치",
-        "Straw travel position"
+        "인취 벨트 닫힘 · 가압 실린더",
+        "Close the belts · pressure cylinders"
       ],
       "max": 100,
       "unit": "%",
@@ -52,12 +52,12 @@
     {
       "key": "haul",
       "label": [
-        "벨트 인취 드럼 회전각",
-        "Belt haul-off drum angle"
+        "인취 이송",
+        "Haul-off draw"
       ],
-      "max": 720,
-      "unit": "°",
-      "step": 1,
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
       "range": [
         0,
         5.0
@@ -66,18 +66,164 @@
     {
       "key": "cutter",
       "label": [
-        "회전 커터 회전각",
-        "Rotary cutter angle"
+        "첫 절단 · 회전 커터",
+        "First cut · rotary cutter"
       ],
-      "max": 360,
-      "unit": "°",
-      "step": 1,
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
       "range": [
         0,
         5.0
       ]
     }
   ],
+  "startup": {
+    "intro": [
+      "실제 라인의 기동 순서입니다. 스크류가 네 가닥의 튜브를 헤드 밖으로 밀어내면 작업자가 진공 사이징조와 냉각 수조를 지나 벨트 인취까지 끌어 넣고, 상부 벨트를 내려 물린 뒤 커터 너머로 보내 첫 절단을 합니다. 실제 라인은 존 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.",
+      "The real start-up order: the screw pushes the four tubes out of the head, the operator leads them through the vacuum sizing tank and the cooling bath into the belt haul-off, the upper belts close on them and draw them past the cutter for the first cut. A real line only lets the screw start once every zone has reached its set point and soaked (cold-start protection); the model starts after that."
+    ],
+    "steps": [
+      {
+        "key": "screw",
+        "label": [
+          "압출 시작 · 스크류 회전",
+          "Start extruding · screw"
+        ],
+        "hint": [
+          "스크류를 돌려 네 가닥의 튜브를 헤드에서 진공 사이징조와 냉각 수조를 지나 벨트 인취 사이까지 보내세요. 실제로는 작업자가 손으로 끌어 넣고, 맨드렐 공기가 튜브 속을 열어 둡니다.",
+          "Turn the screw to push the four tubes from the head through the vacuum sizing tank and the bath into the belt haul-off; on a real line the operator leads them by hand while mandrel air keeps the tubes open."
+        ],
+        "needs": [],
+        "locks": [],
+        "once": true,
+        "spin": {
+          "screw": [
+            29.01,
+            0
+          ]
+        },
+        "thread": [
+          0,
+          5.802
+        ]
+      },
+      {
+        "key": "nip",
+        "label": [
+          "인취 벨트 닫힘 · 가압 실린더",
+          "Close the belts · pressure cylinders"
+        ],
+        "hint": [
+          "튜브가 벨트 사이에 들어왔습니다. 가압 실린더로 상부 벨트를 내려 네 가닥을 무세요.",
+          "The tubes are between the belts. Lower the upper belts with the pressure cylinders to grip all four."
+        ],
+        "needs": [
+          "screw"
+        ],
+        "locks": [],
+        "once": false,
+        "move": "nip"
+      },
+      {
+        "key": "haul",
+        "label": [
+          "인취 이송",
+          "Haul-off draw"
+        ],
+        "hint": [
+          "벨트가 튜브를 물었습니다. 인취를 돌려 튜브를 회전 커터 너머 배출 트레이까지 보내세요. 인취가 시작되면 벨트를 열 수 없습니다.",
+          "The belts grip the tubes. Run the haul-off to draw them past the rotary cutter onto the exit tray; the belts stay closed once hauling starts."
+        ],
+        "needs": [
+          "nip"
+        ],
+        "locks": [
+          "nip"
+        ],
+        "once": true,
+        "spin": {
+          "haul": [
+            3.8595,
+            0
+          ],
+          "screw": [
+            4.85,
+            0
+          ]
+        },
+        "thread": [
+          5.802,
+          6.772
+        ]
+      },
+      {
+        "key": "cutter",
+        "label": [
+          "첫 절단 · 회전 커터",
+          "First cut · rotary cutter"
+        ],
+        "hint": [
+          "튜브가 트레이에 올라왔습니다. 커터를 한 바퀴 돌려 첫 절단을 하세요. 칼날이 아래를 지날 때 네 가닥이 함께 잘립니다.",
+          "The tubes are on the tray. Turn the cutter once for the first cut; all four lanes are cut as the knife passes below."
+        ],
+        "needs": [
+          "haul"
+        ],
+        "locks": [],
+        "once": true,
+        "spin": {
+          "cutter": [
+            1,
+            0.5
+          ],
+          "haul": [
+            0.7958,
+            0
+          ],
+          "screw": [
+            1.0,
+            0
+          ]
+        },
+        "release": {
+          "node": "FirstStraws",
+          "at": 0.5,
+          "cut_s": 6.572,
+          "path": [
+            [
+              7.05,
+              1.0,
+              0
+            ],
+            [
+              7.35,
+              1.0,
+              0
+            ],
+            [
+              7.8,
+              0.66,
+              0
+            ]
+          ]
+        }
+      }
+    ],
+    "done": [
+      "기동 완료 · \"자동 공정으로 돌아가기\"를 누르면 정상 운전(12 m/min, 분당 240개)을 재생합니다.",
+      "Start-up complete. Choose \"Return to cycle\" to play steady running at 12 m/min, 240 straws/min."
+    ],
+    "pinned": {
+      "nip": 1
+    },
+    "hidden": [
+      "flow"
+    ],
+    "follow": {
+      "resin": "screw"
+    }
+  },
   "views": [
     {
       "key": "all",
@@ -439,7 +585,9 @@
     "haul_off": {
       "contact_mm": 400,
       "belt_width_mm": 80,
-      "pairs": 2
+      "pairs": 2,
+      "threading_lift_mm": 40.0,
+      "pressure_cylinders": 2
     },
     "cutter": {
       "d_mm": 120.0,
@@ -453,6 +601,8 @@
     "cutter",
     "flow",
     "haul",
+    "nip",
+    "resin",
     "screw"
   ]
 }

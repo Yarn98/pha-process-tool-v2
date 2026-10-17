@@ -48,14 +48,16 @@ try{
     await panel.locator('[data-eq="play"]').click();const first=data.time;
     await page.waitForFunction(first=>PHAEquipmentMotion.getState().time>first+.1,first);
     await panel.locator('[data-eq="play"]').click();
-    // Every line's screw is a right-handed kit helix: it turns negatively about +X to convey toward the die.
-    const afterPlay=await page.evaluate(()=>__phaEquipmentTest()),forwardSign=-1;
+    // Every line's screw is a right-handed kit helix: it turns negatively about +X to convey toward the die. Two
+    // cycle positions 0.5 % apart keep the step well under half a turn, however slowly frames arrive.
+    const seekTo=async percent=>{await panel.locator('[data-eq="progress"]').evaluate((input,value)=>{input.value=String(value);input.dispatchEvent(new Event('input',{bubbles:true}));},percent);return page.evaluate(()=>__phaEquipmentTest());};
+    const beforeStep=await seekTo(20),afterPlay=await seekTo(20.5),forwardSign=-1;
     const signedX=q=>2*Math.atan2(q[0],q[3]);
     const rotationStep=(a,b)=>Math.atan2(Math.sin(signedX(b)-signedX(a)),Math.cos(signedX(b)-signedX(a)));
-    assert.ok(forwardSign*rotationStep(data.nodes.screw[0].rotation,afterPlay.nodes.screw[0].rotation)>0,kind+' automatic screw rotation matches its helix and feed-to-die direction');
+    assert.ok(forwardSign*rotationStep(beforeStep.nodes.screw[0].rotation,afterPlay.nodes.screw[0].rotation)>0,kind+' automatic screw rotation matches its helix and feed-to-die direction');
     if(kind==='compounding'){
       const screws=afterPlay.nodes.screw.filter(node=>['ScrewA','ScrewB'].includes(node.name));assert.equal(screws.length,2);
-      for(const node of screws)assert.ok(rotationStep(data.nodes.screw.find(before=>before.name===node.name).rotation,node.rotation)<0,'Both compounding screws co-rotate forward during playback');
+      for(const node of screws)assert.ok(rotationStep(beforeStep.nodes.screw.find(before=>before.name===node.name).rotation,node.rotation)<0,'Both compounding screws co-rotate forward during playback');
     }
     await panel.locator('[data-eq="manual"]').click();
     if(kind==='blowmolding'){

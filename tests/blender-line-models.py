@@ -35,12 +35,14 @@ def close(a, b, tolerance=1e-4):
 
 
 def surface_velocity(name, radius_vector):
-    """Track one actual surface point over a small interval in the native rig."""
+    """Track one actual surface point over a small interval in the native rig, relative to the moving axis of a pulley on
+    an actuator carriage (held closed while the line runs)."""
     obj = bpy.data.objects[name]
     frame(1)
+    origin = obj.matrix_world.translation.copy()
     point = obj.matrix_world @ Vector(radius_vector)
     frame(2)
-    return obj.matrix_world @ Vector(radius_vector) - point
+    return obj.matrix_world @ Vector(radius_vector) - point - (obj.matrix_world.translation - origin)
 
 
 def screw_direction(owner_name, flight_name, axis, feed_sign, rotation_sign, turns):
@@ -128,20 +130,25 @@ def bilobal_direction(owner_name, mesh_name, axis, axial_range, feed_sign, rotat
 
 
 def world_velocity(name, offset):
-    """World-space motion over one frame of the surface point at ``offset`` (world) from the object origin."""
+    """World-space motion over one frame of the surface point at ``offset`` (world) from the object origin, relative to
+    the roll's own axis: an actuator carriage that moves the axis is held closed while the line runs."""
     obj = bpy.data.objects[name]
     first = bpy.context.scene.frame_start
     frame(first)
-    point = obj.matrix_world.translation+Vector(offset)
+    origin = obj.matrix_world.translation.copy()
+    point = origin+Vector(offset)
     local = obj.matrix_world.inverted() @ point
     frame(first+1)
-    return obj.matrix_world @ local-point
+    return obj.matrix_world @ local-point-(obj.matrix_world.translation-origin)
 
 
 def web_clearance(web, rolls):
-    """The web must not cut through a solid roll at a bend or transfer segment."""
-    frame(1)
-    points = vertices(web)
+    """The web must not cut through a solid roll at a bend or transfer segment (actuators closed, as the line runs).
+    ``web`` names a mesh or, for a web built in start-up segments, their common name prefix."""
+    frame(bpy.context.scene.frame_end)
+    points = [p for obj in bpy.data.objects if obj.type == 'MESH' and (obj.name == web or obj.name.startswith(web) and obj.get('thread_s'))
+              for p in vertices(obj.name)]
+    assert points, web
     for name, radius in rolls:
         center = bpy.data.objects[name].matrix_world.translation
         minimum = min(math.hypot(p.x-center.x, p.z-center.z) for p in points)
@@ -153,6 +160,11 @@ def startup_checks(kind, meta, objects):
     each actuator carrier is keyed from its open offset to rest, and every linked cylinder rod stays on its body's axis
     with its inner end inside the body through the whole stroke."""
     steps = meta['startup']['steps']
+    # Half-way through a step every spun drive must show a different pose: its turns must not be whole playback loops.
+    for s in steps:
+        for group, (count, *_) in s.get('spin', {}).items():
+            loops = count*.5/meta['turns'][group] % 1
+            assert .02 < loops < .98, (kind, s['key'], group, count, meta['turns'][group])
     chain = [s['thread'] for s in steps if 'thread' in s]
     assert chain and chain[0][0] == 0, (kind, chain)
     for a, b in zip(chain, chain[1:]):
@@ -172,7 +184,7 @@ def startup_checks(kind, meta, objects):
     end = bpy.context.scene.frame_end
     for owner in carriers:
         frame(0)
-        close((owner.location-Vector(owner['open_offset'])).length, 0, 1e-6)
+        close((owner.location-Vector(owner['open_offset'])).length, 0, 1e-4)   # offset stored to 0.01 mm
         frame(end)
         close(owner.location.length, 0, 1e-6)
     rods = [obj for obj in objects if obj.get('bore')]
@@ -342,7 +354,9 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
             assert abs(speed-step)/step < .01, (name, speed, step)
         # Steady BUR 2 bubble: draw-down to the frost line, constant diameter in the cage, collapse to the lay-flat.
         frame(bpy.context.scene.frame_start)
-        points = vertices('FilmBubble')
+        # The bubble is built in start-up segments whose shape key (value 1) gives the steady BUR 2 surface.
+        bubble_segments = sorted(o.name for o in objects if o.name.startswith('FilmBubble') and o.get('thread_s'))
+        points = [p for name in bubble_segments for p in vertices(name)]
         z0, z1 = min(p.z for p in points), max(p.z for p in points)
         close(z1-z0, teaching['die_to_nip_mm']/1000, 1e-3)
 
@@ -369,7 +383,17 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
         mid_row, _, mid_perimeter = ring((teaching['die_to_nip_mm']-teaching['collapsing_mm']/2)/1000)
         assert abs(mid_perimeter-perimeter)/perimeter < .01, 'circumference held through the collapsing frame'
         frame(bpy.context.scene.frame_end)
-        assert vertices('FilmBubble')[0] == points[0], 'steady bubble: no breathing over the loop'
+        assert vertices(bubble_segments[0])[0] == points[0], 'steady bubble: no breathing over the loop'
+        # Start-up: with the shape key at 0 the segments form the uninflated BUR 1 tube at the die diameter.
+        tube = objects[bubble_segments[len(bubble_segments)//2]]
+        tube.data.shape_keys.key_blocks['Inflated'].value = 0
+        frame(bpy.context.scene.frame_start)
+        middle = vertices(tube.name)
+        z_mid = sorted(p.z for p in middle)[len(middle)//2]
+        row = [p for p in middle if abs(p.z-z_mid) < 1e-4]
+        close(max(math.hypot(p.x-cx, p.y) for p in row)*2, teaching['die_mm']/1000, 1e-3)
+        tube.data.shape_keys.key_blocks['Inflated'].value = 1
+        checks.append('blownfilm: the start-up tube (shape key 0) keeps the die diameter and inflates to the BUR 2 bubble (shape key 1)')
         checks.append('blownfilm: upward nip contacts, one surface speed, BUR 2 bubble inside the cage, lay-flat = pi D / 2, steady bubble')
 
     elif kind == 'blowmolding':
@@ -452,8 +476,17 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
         checks.append('straw: belt runs and bath guide pulleys touching the straws move downstream; drum speed = 1000 v / (pi d)')
         # Four lanes at 40 mm pitch, 6 mm OD.
         frame(0)
-        lane = bounds('StrawLane1')
-        centres = [(lambda b: (b[0][1]+b[1][1])/2)(bounds('StrawLane%d' % i)) for i in range(1, teaching['lanes']+1)]
+        # The first lane segment holds all four lanes; split its vertices into lanes by their Y gaps.
+        points = sorted(vertices('StrawLanes000'), key=lambda p: p.y)
+        clusters = [[points[0]]]
+        for p in points[1:]:
+            if p.y-clusters[-1][-1].y < .01:
+                clusters[-1].append(p)
+            else:
+                clusters.append([p])
+        assert len(clusters) == teaching['lanes'], len(clusters)
+        lane = ([min(p[i] for p in clusters[0]) for i in range(3)], [max(p[i] for p in clusters[0]) for i in range(3)])
+        centres = [(min(p.y for p in c)+max(p.y for p in c))/2 for c in clusters]
         assert all(abs(b-a-teaching['lane_pitch_mm']/1000) < 1e-4 for a, b in zip(centres, centres[1:])), centres
         close(lane[1][2]-lane[0][2], teaching['straw_mm']['od']/1000, 2e-4)
         # Rotary cutter: at every cut frame the knife points down below the straws and moves downstream, exactly

@@ -9,6 +9,8 @@ teaching values unless noted, not an OEM drawing:
 - side feeder at B5, atmospheric vent at B4, and a vacuum vent at B9 with its condensate trap and pump skid;
 - a strand die with six 3 mm holes, a 2 m water bath and an air knife;
 - an enclosed strand pelletiser (80 mm feed roll, 8-blade 100 mm rotor) and a classifier.
+For the start-up sequence the upper feed roll rides a yoke that two pneumatic loading cylinders lower onto the strands
+(25 mm lift for threading), and the strands are built in 100 mm segments tagged with their distance from the die.
 Every speed uses one teaching time scale of 0.1x. The base values are a 120 rpm screw, a 60 rpm side feeder,
 6 m/min strands and 3 mm pellets.
 """
@@ -415,9 +417,20 @@ DIE_FACE = x0 + .091
 strand_controls = [(DIE_FACE, AX), (1.50, AX - .006), (1.57, .95), (1.64, .87), (1.75, WATER - .0665),
                    (2.62, WATER - .0665), (3.30, WATER - .045), (3.52, .895), (3.58, .9065), (3.70, .935),
                    (3.95, .975), (4.20, .996), (KNIFE_X, NIP_Z)]
-for y in STRAND_Y:
-    path = kit.catmull([(x, y, z) for x, z in strand_controls])
-    kit.tube_path('Strand', path, STRAND_R, M['polymer'], resolution=1, bevel_resolution=1)
+# Strands in 100 mm segments (all six per segment) tagged with their distance from the die, so the start-up can grow
+# them out of the die; S_NIP is where they reach the feed roll nip.
+strand_paths = [kit.catmull([(x, y, z) for x, z in strand_controls]) for y in STRAND_Y]
+S_END = kit.path_length(strand_paths[0])
+S_NIP = 0.0
+for _a, _b in zip(strand_paths[0], strand_paths[0][1:]):
+    if _b.x >= FEED_X:
+        S_NIP += (_b - _a).length * (FEED_X - _a.x) / (_b.x - _a.x)
+        break
+    S_NIP += (_b - _a).length
+# The short run from the nip to the knife is its own segment, so the strands stop at the feed rolls until fed.
+strands = (kit.thread_tubes('Strands', [kit.path_slice(path, 0, S_NIP) for path in strand_paths], STRAND_R, M['polymer'], curved=True)
+           + kit.thread_tubes('StrandsFed', [kit.path_slice(path, S_NIP, S_END) for path in strand_paths], STRAND_R, M['polymer'],
+                              step=1, s_from=S_NIP, curved=True))
 bath = [kit.box('Bath floor', ((BATH[0] + BATH[1]) / 2, 0, WATER - .122), (2.006, .306, .003), M['stainless'], bevel=0)]
 for y in (-.153, .153):
     bath.append(kit.box('Bath side', ((BATH[0] + BATH[1]) / 2, y, WATER - .05), (2.006, .003, .145), M['stainless'], bevel=0))
@@ -464,8 +477,8 @@ for dx in (-.25, .25):
         housing.append(kit.box('Pelletiser leg', (4.52 + dx, dy, .37), (.04, .04, .74), M['paint_dark']))
 housing += [kit.box('Rotor belt guard', (4.47, .26, .92), (.14, .06, .30), M['paint_accent'], bevel=.01),
             kit.box('Feed roll gearmotor', (FEED_X, .30, .96), (.10, .14, .10), M['paint_accent'], bevel=.008),
-            kit.cylinder('Upper roll loading cylinder', (FEED_X, -.07, 1.13), .018, .10, 'Z', M['chrome']),
-            kit.cylinder('Upper roll loading cylinder', (FEED_X, .07, 1.13), .018, .10, 'Z', M['chrome']),
+            kit.box('Loading cylinder bracket', (FEED_X, 0, 1.245), (.05, .18, .02), M['steel_dark'], bevel=.003),
+            kit.box('Loading cylinder hanger', (FEED_X, 0, 1.2725), (.02, .02, .035), M['steel_dark'], bevel=0),
             kit.cylinder('Pellet chute', (4.45, 0, .69), .10, .10, 'Z', M['stainless'], radius2=.05, segments=32),
             kit.tube_path('Pellet chute pipe', [(4.45, 0, .64), (4.70, 0, .66), (5.02, 0, .67)], .045, M['stainless'])]
 rotor_motor = kit.motor('Rotor motor', (0, 0, 0), .08, .22, 1, M)
@@ -488,6 +501,33 @@ for name, z, sign, mat in (('FeedRollLower', NIP_Z - STRAND_R - ROLL_R, 1, M['kn
     roll = kit.join(parts, name + '_body')
     roll.parent = owner
     kit.spin(owner, 'haul', TURNS['haul'], FRAMES, sign=sign)
+    if name == 'FeedRollUpper':
+        upper_roll = owner
+# Upper (press) roll yoke: side arms on the roll axle and a top beam. Two pneumatic loading cylinders under the
+# pelletiser top press the roll onto the strands; for threading the yoke stands 25 mm higher.
+ROLL_Z = NIP_Z + STRAND_R + ROLL_R
+YOKE_Z = ROLL_Z + ROLL_R + .014
+yoke = [upper_roll, kit.box('Press roll yoke beam', (FEED_X, 0, YOKE_Z), (.045, .156, .016), M['paint_accent'], bevel=.003)]
+for y in (-.07, .07):
+    yoke += [kit.box('Press roll yoke arm', (FEED_X, y, (ROLL_Z + YOKE_Z) / 2), (.035, .008, YOKE_Z - ROLL_Z + .02), M['paint_accent'], bevel=.002),
+             kit.cylinder('Press roll axle bearing', (FEED_X, y * .94, ROLL_Z), .012, .02, 'Y', M['steel_dark'], segments=20)]
+bpy.context.view_layer.update()
+nip = kit.carrier('PressRollYoke')
+kit.mount(yoke, nip)
+for y in (-.07, .07):
+    kit.linked_cylinder('Press roll loading cylinder', (FEED_X, y, 1.235), (FEED_X, y, 1.15), (FEED_X, y, YOKE_Z + .008), .018, .007, M, nip,
+                        inset=.025)
+OPEN = .025
+kit.actuate(nip, FRAMES, (0, 0, OPEN))
+# First pellets of the start-up: a small handful that drops from the rotor down the chute onto the classifier deck.
+first = []
+for k in range(24):
+    pellet = kit.cylinder('First pellet', (.012 * math.sin(k * 2.4), .02 * math.cos(k * 1.7), .004 * (k % 3)), STRAND_R, PELLET * MM,
+                          'Y' if k % 2 else 'X', M['pellet'], segments=8)
+    first.append(pellet)
+first = kit.join(first, 'FirstPellets')
+FIRST_PATH = [(ROTOR[0] - .01, 0, .97), (4.45, 0, .76), (4.45, 0, .69), (4.75, 0, .66), (5.05, 0, .63), (5.35, 0, .592)]
+first.location = FIRST_PATH[0]
 rotor = kit.empty('PelletRotor', (ROTOR[0], 0, ROTOR[1]), group='cutter')
 rotor.rotation_euler.z = math.pi / 2
 parts = [kit.cylinder('Rotor hub', (0, 0, 0), .035, .13, 'X', M['steel'], segments=32)]
@@ -524,10 +564,12 @@ kit.cabinet('Control cabinet', (-1.45, .52, 0), (-.65, .92, 1.90), M)
 kit.stack_light('Stack light', (-1.05, .72, 1.90), M)
 kit.hmi_pedestal('Operator panel', (-.95, -.78, 0), (-.95, -.78, 1.42), M)   # beside the drive, clear of the barrel view
 
-# Flow markers (group "flow"): feed pellets, melt in the screws, strands, pellets, vapour
+# Flow markers: feed pellets and vacuum-vent vapour (group "resin", they follow the screws during start-up); strand and
+# pellet markers (group "flow", steady running only)
 _feed = kit.catmull([(.064, .55, AX + .62), (.064, .55, AX + .40), (.064, .30, AX + .37), (.064, .12, AX + .36),
                  (.064, .02, AX + .28), (.064, 0, AX + .12), (.20, Y_A, AX + .002)], 6)
-kit.ride('FeedPellet', _feed, 10, kit.path_length(_feed) / 10, 2 * kit.path_length(_feed), M['pellet'], .0035, FRAMES, 'pellet')
+kit.ride('FeedPellet', _feed, 10, kit.path_length(_feed) / 10, 2 * kit.path_length(_feed), M['pellet'], .0035, FRAMES, 'pellet',
+         group='resin')
 for y in (STRAND_Y[0], STRAND_Y[-1]):
     _strand = kit.catmull([(x, y, z) for x, z in strand_controls])
     count = math.ceil(kit.path_length(_strand) / STRAND_TRAVEL)
@@ -539,22 +581,64 @@ kit.ride('PelletMarker', _pellets, 12, kit.path_length(_pellets) / 12, 3 * kit.p
          'pellet')
 _vapour = kit.catmull([(xv, 0, AX + .08), (xv, .035, AX + .14), (xv, .12, AX + .30), (xv + .05, .40, AX + .32),
                    (xv + .10, .62, AX + .12), (xv + .10, .66, .70)], 6)
-kit.ride('VapourMarker', _vapour, 6, kit.path_length(_vapour) / 6, 3 * kit.path_length(_vapour), M['water'], .008, FRAMES)
+kit.ride('VapourMarker', _vapour, 6, kit.path_length(_vapour) / 6, 3 * kit.path_length(_vapour), M['water'], .008, FRAMES,
+         group='resin')
 
 kit.bake_linear()
 sc.timeline_markers.new('Steady line: all drives at teaching speed (0.1x)', frame=0)
 
 # ---------------------------------------------------------------------- metadata / render
-control = lines.control
+# Start-up: drive turns follow the steady ratios per metre of strand (120 rpm screws, 250 rpm rotor at 6 m/min).
+SCREW_PER_M, HAUL_PER_M, ROTOR_PER_M = RPM['screw'] / LINE_SPEED, 1000 / (math.pi * FEED_ROLL), RPM['cutter'] / LINE_SPEED
+# Metres of strand run during the side-feeder start, the rotor spin-up and the first pellets: physical turn ratios that
+# are not whole loops of the playback clips, so every step visibly turns its drives.
+SIDE_RUN, ROTOR_RUN, RUN = .3, .2, .6
+STARTUP, CONTROLS = kit.startup(
+    ['실제 라인의 기동 순서입니다. 주 스크류가 스트랜드를 다이 밖으로 밀어내면 작업자가 냉각 수조와 에어 나이프를 지나 펠릿타이저 입구까지 '
+     '끌어 넣고, 커터 로터를 먼저 돌린 뒤 상부 피드 롤을 내려 스트랜드를 물리고 이송해 첫 펠릿을 만듭니다. 사이드 피더는 주 스크류가 '
+     '도는 동안에만 기동합니다. 실제 라인은 블록 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), '
+     '모형은 그 이후부터 보여줍니다.',
+     'The real start-up order: the main screws push the strands out of the die and the operator leads them through the '
+     'water bath and air knife to the pelletiser inlet; the cutter rotor is started first, then the upper feed roll is '
+     'lowered onto the strands and they are fed in for the first pellets. The side feeder only starts while the main '
+     'screws turn. A real line only lets the screws start once every block has reached its set point and soaked '
+     '(cold-start protection); the model starts after that.'],
+    [kit.step('screw', ['압출 시작 · 주 스크류', 'Start extruding · main screws'],
+              ['주 스크류를 돌려 스트랜드 6가닥을 다이에서 냉각 수조와 에어 나이프를 지나 피드 롤 사이까지 보내세요. 실제로는 작업자가 '
+               '손으로 수조의 가이드 롤 아래로 끌어 넣습니다.',
+               'Turn the main screws to push the six strands from the die through the water bath and air knife to the feed '
+               'rolls; on a real line the operator leads them under the bath guide rolls by hand.'],
+              once=True, spin={'screw': [round(S_NIP * SCREW_PER_M, 4), 0]}, thread=[0, S_NIP]),
+     kit.step('side', ['사이드 피더 기동', 'Start the side feeder'],
+              ['스트랜드가 나오고 있습니다. 사이드 피더를 돌려 B5로 부원료를 넣으세요. 사이드 피더는 주 스크류가 도는 동안에만 기동합니다.',
+               'The strands are running. Turn the side feeder to add the second component at B5; it only starts while the '
+               'main screws turn.'],
+              needs=['screw'], once=True,
+              spin={'side': [round(SIDE_RUN * RPM['side'] / LINE_SPEED, 4), 0], 'screw': [round(SIDE_RUN * SCREW_PER_M, 4), 0]}),
+     kit.step('cutter', ['커터 로터 기동', 'Start the cutter rotor'],
+              ['스트랜드를 넣기 전에 커터 로터를 먼저 돌리세요. 로터가 돌지 않으면 피드 롤을 닫을 수 없습니다.',
+               'Start the cutter rotor before feeding the strands; the feed rolls cannot close until it turns.'],
+              needs=['screw'], once=True,
+              spin={'cutter': [round(ROTOR_RUN * ROTOR_PER_M, 4), 0], 'screw': [round(ROTOR_RUN * SCREW_PER_M, 4), 0]}),
+     kit.step('nip', ['피드 롤 가압 · 실린더', 'Close the feed rolls · loading cylinders'],
+              ['로터가 돌고 있습니다. 가압 실린더로 상부 피드 롤을 내려 스트랜드를 물리세요.',
+               'The rotor is turning. Lower the upper feed roll with the loading cylinders to grip the strands.'],
+              needs=['screw', 'cutter'], move='nip'),
+     kit.step('haul', ['피드 롤 이송 · 첫 펠릿', 'Feed the strands · first pellets'],
+              ['피드 롤이 스트랜드를 물었습니다. 피드 롤을 돌려 스트랜드를 커터로 보내 첫 펠릿을 만드세요. 이송이 시작되면 피드 롤을 열 수 없습니다.',
+               'The feed rolls grip the strands. Turn them to feed the strands into the cutter for the first pellets; the '
+               'rolls stay closed once feeding starts.'],
+              needs=['nip'], locks=['nip'], once=True, thread=[S_NIP, S_END],
+              spin={'haul': [round(RUN * HAUL_PER_M, 4), 0], 'cutter': [round(RUN * ROTOR_PER_M, 4), 0], 'screw': [round(RUN * SCREW_PER_M, 4), 0]},
+              release={'node': 'FirstPellets', 'at': .1, 'path': [kit.three(p) for p in FIRST_PATH]})],
+    ['기동 완료 · "자동 공정으로 돌아가기"를 누르면 정상 운전(0.1배 교육 속도)을 재생합니다.',
+     'Start-up complete. Choose "Return to cycle" to play steady running at the 0.1x teaching speed.'],
+    LOOP)
 META = {
     'id': 'compounding', 'duration': LOOP, 'frames': [0, FRAMES],
     'poster': 'assets/equipment/compounding-motion-poster.png', 'model': 'assets/equipment/compounding-motion.glb',
     'center': [2.45, .95, 0], 'span': [8.6, 2.5], 'zoom': [.7, 14],
-    'controls': [control('screw', '스크류 회전각', 'Screw rotation angle', time_range=[0, LOOP]),
-                 control('side', '사이드 피더 회전각', 'Side feeder rotation angle', time_range=[0, LOOP]),
-                 control('flow', '수지 표시 위치', 'Resin marker position', 100, '%', [0, LOOP]),
-                 control('haul', '피드 롤 회전각', 'Feed roll rotation angle', time_range=[0, LOOP]),
-                 control('cutter', '커터 로터 회전각', 'Cutter rotor rotation angle', 360, time_range=[0, LOOP])],
+    'controls': CONTROLS, 'startup': STARTUP,
     'views': [{'key': 'all', 'label': ['전체 라인', 'Whole line'], 'center': [2.45, .95, 0], 'zoom': 1},
               kit.camera_view('screw', ['스크류·배럴 단면', 'Screws & barrel cutaway'], (.64, 0, AX), (1.0, -5.0, 5.2), 6),
               kit.camera_view('finish', ['수조·펠릿타이저', 'Bath & pelletiser'], (3.9, 0, .95), (1.5, -6.0, 2.5), 2.2),
@@ -586,18 +670,20 @@ META = {
              'do_di': 1.55, 'shaft_height_mm': round(AX / MM), 'elements': [list(e) for e in ELEMENTS],
              'feed': 'loss-in-weight, B1', 'atmospheric_vent': 'B4', 'side_feeder': 'B5', 'vacuum_vent': 'B9',
              'strand_holes': '6 x 3 mm, 12 mm pitch', 'bath_m': 2.0, 'feed_roll_mm': FEED_ROLL,
-             'rotor_mm': 100, 'rotor_blades': EDGES, 'classifier_mm': '700 x 400',
+             'rotor_mm': 100, 'rotor_blades': EDGES, 'classifier_mm': '700 x 400', 'press_roll_lift_mm': OPEN * 1000,
+             'loading_cylinders': 2,
              'sources': 'output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md'},
 }
 
 floor = kit.floor('Floor', -1.5, 6.5, -.95, 1.25, M)
 kit.studio_world(.8, 'studio.exr')
+release = kit.hold_closed([nip], [first])            # the poster shows the running line
 sc.frame_set(int(FRAMES * .3))
 bpy.context.view_layer.update()
 camera = kit.ortho_camera('Line camera', (2.5 + 5.6, -10.5, 5.8), (2.45, 0, .85), 8.6)
 orientation = camera.rotation_euler.to_matrix()     # matrix_world is stale until the next depsgraph update
 right, up = orientation.col[0], orientation.col[1]
-corners = [obj.matrix_world @ Vector(c) for obj in sc.objects if obj.type == 'MESH' and obj is not floor
+corners = [obj.matrix_world @ Vector(c) for obj in sc.objects if obj.type == 'MESH' and obj is not floor and not obj.hide_render
            for c in obj.bound_box]
 xs_, ys_ = [p.dot(right) for p in corners], [p.dot(up) for p in corners]
 camera.location += right * ((min(xs_) + max(xs_)) / 2 - camera.location.dot(right)) + \
@@ -606,6 +692,7 @@ camera.data.ortho_scale = max(max(xs_) - min(xs_), (max(ys_) - min(ys_)) * 16 / 
 kit.area_light('Key light', (0, -5, 6), (2.4, 0, .8), 1600, 6)
 kit.area_light('Rim light', (5, 4, 5), (2.4, 0, .8), 700, 5, (.9, .95, 1))
 kit.render_still(OUT / 'compounding-motion-poster.png', 1280, 720, samples=48)
+release()
 for obj in (floor, camera):
     bpy.data.objects.remove(obj, do_unlink=True)
 for obj in [o for o in sc.objects if o.type == 'LIGHT']:

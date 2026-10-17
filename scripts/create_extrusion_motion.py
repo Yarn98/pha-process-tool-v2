@@ -221,7 +221,9 @@ X_TIP = DIE[1] + .02
 S_CUT = profile_end - X_TIP
 S_NIP = HAUL[0] + .10 - X_TIP                       # front 100 mm inside the belts, where they can grip it
 S_END = S_CUT + CUT
-profile = kit.thread_tubes('Profile', [[(X_TIP, 0, AX), (profile_end, 0, AX)]], PROFILE_R, M['polymer'], segments=32)
+profile = (kit.thread_tubes('Profile', [[(X_TIP, 0, AX), (X_TIP + S_NIP, 0, AX)]], PROFILE_R, M['polymer'], segments=32)
+           + kit.thread_tubes('ProfileDrawn', [[(X_TIP + S_NIP, 0, AX), (profile_end, 0, AX)]], PROFILE_R, M['polymer'], s_from=S_NIP,
+                              segments=32))
 extra = kit.thread_tubes('ProfileLead', [[(profile_end, 0, AX), (profile_end + CUT, 0, AX)]], PROFILE_R, M['polymer'],
                          s_from=S_CUT, extra_from=S_CUT, segments=32)
 first_piece = kit.cylinder('FirstPiece', (0, 0, 0), PROFILE_R, CUT - .004, 'X', M['polymer'], segments=32)

@@ -513,12 +513,12 @@ window.PHAEquipmentModels = {
       {
         "key": "screw",
         "label": [
-          "스크류 회전각",
-          "Screw rotation angle"
+          "압출 시작 · 주 스크류",
+          "Start extruding · main screws"
         ],
-        "max": 720,
-        "unit": "°",
-        "step": 1,
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
         "range": [
           0,
           25.125
@@ -527,22 +527,36 @@ window.PHAEquipmentModels = {
       {
         "key": "side",
         "label": [
-          "사이드 피더 회전각",
-          "Side feeder rotation angle"
+          "사이드 피더 기동",
+          "Start the side feeder"
         ],
-        "max": 720,
-        "unit": "°",
-        "step": 1,
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
         "range": [
           0,
           25.125
         ]
       },
       {
-        "key": "flow",
+        "key": "cutter",
         "label": [
-          "수지 표시 위치",
-          "Resin marker position"
+          "커터 로터 기동",
+          "Start the cutter rotor"
+        ],
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
+        "range": [
+          0,
+          25.125
+        ]
+      },
+      {
+        "key": "nip",
+        "label": [
+          "피드 롤 가압 · 실린더",
+          "Close the feed rolls · loading cylinders"
         ],
         "max": 100,
         "unit": "%",
@@ -555,32 +569,205 @@ window.PHAEquipmentModels = {
       {
         "key": "haul",
         "label": [
-          "피드 롤 회전각",
-          "Feed roll rotation angle"
+          "피드 롤 이송 · 첫 펠릿",
+          "Feed the strands · first pellets"
         ],
-        "max": 720,
-        "unit": "°",
-        "step": 1,
-        "range": [
-          0,
-          25.125
-        ]
-      },
-      {
-        "key": "cutter",
-        "label": [
-          "커터 로터 회전각",
-          "Cutter rotor rotation angle"
-        ],
-        "max": 360,
-        "unit": "°",
-        "step": 1,
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
         "range": [
           0,
           25.125
         ]
       }
     ],
+    "startup": {
+      "intro": [
+        "실제 라인의 기동 순서입니다. 주 스크류가 스트랜드를 다이 밖으로 밀어내면 작업자가 냉각 수조와 에어 나이프를 지나 펠릿타이저 입구까지 끌어 넣고, 커터 로터를 먼저 돌린 뒤 상부 피드 롤을 내려 스트랜드를 물리고 이송해 첫 펠릿을 만듭니다. 사이드 피더는 주 스크류가 도는 동안에만 기동합니다. 실제 라인은 블록 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.",
+        "The real start-up order: the main screws push the strands out of the die and the operator leads them through the water bath and air knife to the pelletiser inlet; the cutter rotor is started first, then the upper feed roll is lowered onto the strands and they are fed in for the first pellets. The side feeder only starts while the main screws turn. A real line only lets the screws start once every block has reached its set point and soaked (cold-start protection); the model starts after that."
+      ],
+      "steps": [
+        {
+          "key": "screw",
+          "label": [
+            "압출 시작 · 주 스크류",
+            "Start extruding · main screws"
+          ],
+          "hint": [
+            "주 스크류를 돌려 스트랜드 6가닥을 다이에서 냉각 수조와 에어 나이프를 지나 피드 롤 사이까지 보내세요. 실제로는 작업자가 손으로 수조의 가이드 롤 아래로 끌어 넣습니다.",
+            "Turn the main screws to push the six strands from the die through the water bath and air knife to the feed rolls; on a real line the operator leads them under the bath guide rolls by hand."
+          ],
+          "needs": [],
+          "locks": [],
+          "once": true,
+          "spin": {
+            "screw": [
+              60.3885,
+              0
+            ]
+          },
+          "thread": [
+            0,
+            3.01942
+          ]
+        },
+        {
+          "key": "side",
+          "label": [
+            "사이드 피더 기동",
+            "Start the side feeder"
+          ],
+          "hint": [
+            "스트랜드가 나오고 있습니다. 사이드 피더를 돌려 B5로 부원료를 넣으세요. 사이드 피더는 주 스크류가 도는 동안에만 기동합니다.",
+            "The strands are running. Turn the side feeder to add the second component at B5; it only starts while the main screws turn."
+          ],
+          "needs": [
+            "screw"
+          ],
+          "locks": [],
+          "once": true,
+          "spin": {
+            "side": [
+              3.0,
+              0
+            ],
+            "screw": [
+              6.0,
+              0
+            ]
+          }
+        },
+        {
+          "key": "cutter",
+          "label": [
+            "커터 로터 기동",
+            "Start the cutter rotor"
+          ],
+          "hint": [
+            "스트랜드를 넣기 전에 커터 로터를 먼저 돌리세요. 로터가 돌지 않으면 피드 롤을 닫을 수 없습니다.",
+            "Start the cutter rotor before feeding the strands; the feed rolls cannot close until it turns."
+          ],
+          "needs": [
+            "screw"
+          ],
+          "locks": [],
+          "once": true,
+          "spin": {
+            "cutter": [
+              8.3333,
+              0
+            ],
+            "screw": [
+              4.0,
+              0
+            ]
+          }
+        },
+        {
+          "key": "nip",
+          "label": [
+            "피드 롤 가압 · 실린더",
+            "Close the feed rolls · loading cylinders"
+          ],
+          "hint": [
+            "로터가 돌고 있습니다. 가압 실린더로 상부 피드 롤을 내려 스트랜드를 물리세요.",
+            "The rotor is turning. Lower the upper feed roll with the loading cylinders to grip the strands."
+          ],
+          "needs": [
+            "screw",
+            "cutter"
+          ],
+          "locks": [],
+          "once": false,
+          "move": "nip"
+        },
+        {
+          "key": "haul",
+          "label": [
+            "피드 롤 이송 · 첫 펠릿",
+            "Feed the strands · first pellets"
+          ],
+          "hint": [
+            "피드 롤이 스트랜드를 물었습니다. 피드 롤을 돌려 스트랜드를 커터로 보내 첫 펠릿을 만드세요. 이송이 시작되면 피드 롤을 열 수 없습니다.",
+            "The feed rolls grip the strands. Turn them to feed the strands into the cutter for the first pellets; the rolls stay closed once feeding starts."
+          ],
+          "needs": [
+            "nip"
+          ],
+          "locks": [
+            "nip"
+          ],
+          "once": true,
+          "spin": {
+            "haul": [
+              2.3873,
+              0
+            ],
+            "cutter": [
+              25.0,
+              0
+            ],
+            "screw": [
+              12.0,
+              0
+            ]
+          },
+          "thread": [
+            3.01942,
+            3.06942
+          ],
+          "release": {
+            "node": "FirstPellets",
+            "at": 0.1,
+            "path": [
+              [
+                4.435,
+                0.97,
+                0
+              ],
+              [
+                4.45,
+                0.76,
+                0
+              ],
+              [
+                4.45,
+                0.69,
+                0
+              ],
+              [
+                4.75,
+                0.66,
+                0
+              ],
+              [
+                5.05,
+                0.63,
+                0
+              ],
+              [
+                5.35,
+                0.592,
+                0
+              ]
+            ]
+          }
+        }
+      ],
+      "done": [
+        "기동 완료 · \"자동 공정으로 돌아가기\"를 누르면 정상 운전(0.1배 교육 속도)을 재생합니다.",
+        "Start-up complete. Choose \"Return to cycle\" to play steady running at the 0.1x teaching speed."
+      ],
+      "pinned": {
+        "nip": 1
+      },
+      "hidden": [
+        "flow"
+      ],
+      "follow": {
+        "resin": "screw"
+      }
+    },
     "views": [
       {
         "key": "all",
@@ -1059,6 +1246,8 @@ window.PHAEquipmentModels = {
       "rotor_mm": 100,
       "rotor_blades": 8,
       "classifier_mm": "700 x 400",
+      "press_roll_lift_mm": 25.0,
+      "loading_cylinders": 2,
       "sources": "output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md"
     },
     "blender": "5.2.1 LTS",
@@ -1066,6 +1255,8 @@ window.PHAEquipmentModels = {
       "cutter",
       "flow",
       "haul",
+      "nip",
+      "resin",
       "screw",
       "side"
     ]
@@ -1096,22 +1287,22 @@ window.PHAEquipmentModels = {
       {
         "key": "screw",
         "label": [
-          "스크류 회전각",
-          "Screw rotation angle"
+          "압출 시작 · 스크류 회전",
+          "Start extruding · screw"
         ],
-        "max": 720,
-        "unit": "°",
-        "step": 1,
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
         "range": [
           0,
           15.708333333333334
         ]
       },
       {
-        "key": "flow",
+        "key": "nip",
         "label": [
-          "수지 표시 위치",
-          "Resin marker position"
+          "롤 갭 닫힘 · 유압 실린더",
+          "Close the roll gap · hydraulic cylinders"
         ],
         "max": 100,
         "unit": "%",
@@ -1124,12 +1315,12 @@ window.PHAEquipmentModels = {
       {
         "key": "roll",
         "label": [
-          "3롤 스택 회전각 (250 mm)",
-          "3-roll stack angle (250 mm)"
+          "롤 스택 이송",
+          "Draw with the roll stack"
         ],
-        "max": 720,
-        "unit": "°",
-        "step": 1,
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
         "range": [
           0,
           15.708333333333334
@@ -1138,18 +1329,146 @@ window.PHAEquipmentModels = {
       {
         "key": "winder",
         "label": [
-          "권취 롤 회전각",
-          "Winder rotation angle"
+          "권취 시작",
+          "Start winding"
         ],
-        "max": 360,
-        "unit": "°",
-        "step": 1,
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
         "range": [
           0,
           15.708333333333334
         ]
       }
     ],
+    "startup": {
+      "intro": [
+        "실제 라인의 기동 순서입니다. 롤 갭을 연 상태에서 스크류가 용융 시트를 평다이 밖으로 밀어내 상단과 중단 롤 사이로 넣고, 유압 실린더로 상단 롤을 내려 갭을 닫은 뒤 롤 스택을 돌려 시트를 S자로 감아 롤러 테이블, 트림, 인취를 거쳐 권취기까지 보내고 권취를 시작합니다. 실제 라인은 존과 롤 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.",
+        "The real start-up order: with the roll gap open, the screw pushes the melt sheet out of the flat die between the top and middle rolls; the hydraulic cylinders lower the top roll to close the gap, the stack draws the sheet through its S-wrap over the roller table, trim and haul-off to the winder, and winding starts. A real line only lets the screw start once every zone and roll has reached its set point and soaked (cold-start protection); the model starts after that."
+      ],
+      "steps": [
+        {
+          "key": "screw",
+          "label": [
+            "압출 시작 · 스크류 회전",
+            "Start extruding · screw"
+          ],
+          "hint": [
+            "스크류를 돌려 용융 시트를 평다이에서 열린 상단·중단 롤 사이로 보내세요.",
+            "Turn the screw to push the melt sheet from the flat die into the open gap between the top and middle rolls."
+          ],
+          "needs": [],
+          "locks": [],
+          "once": true,
+          "spin": {
+            "screw": [
+              1.2732,
+              0
+            ]
+          },
+          "thread": [
+            0,
+            0.1
+          ]
+        },
+        {
+          "key": "nip",
+          "label": [
+            "롤 갭 닫힘 · 유압 실린더",
+            "Close the roll gap · hydraulic cylinders"
+          ],
+          "hint": [
+            "시트가 롤 사이에 들어왔습니다. 유압 실린더로 상단 롤을 내려 갭을 닫으세요. 롤 갭은 제품 두께와 같지 않으며 실제로는 두께를 보며 맞춥니다.",
+            "The sheet is between the rolls. Lower the top roll with the hydraulic cylinders to close the gap; the roll gap is not the product thickness and is set while watching the gauge."
+          ],
+          "needs": [
+            "screw"
+          ],
+          "locks": [],
+          "once": false,
+          "move": "nip"
+        },
+        {
+          "key": "roll",
+          "label": [
+            "롤 스택 이송",
+            "Draw with the roll stack"
+          ],
+          "hint": [
+            "갭이 닫혔습니다. 롤 스택을 돌려 시트를 S자로 감아 롤러 테이블, 트림, 인취를 거쳐 권취기까지 보내세요. 이송이 시작되면 갭을 열 수 없습니다.",
+            "The gap is closed. Run the stack to draw the sheet through its S-wrap over the roller table, trim and haul-off to the winder; the gap stays closed once drawing starts."
+          ],
+          "needs": [
+            "nip"
+          ],
+          "locks": [
+            "nip"
+          ],
+          "once": true,
+          "spin": {
+            "roll": [
+              5.3088,
+              0
+            ],
+            "screw": [
+              53.0871,
+              0
+            ]
+          },
+          "thread": [
+            0.1,
+            4.26955
+          ]
+        },
+        {
+          "key": "winder",
+          "label": [
+            "권취 시작",
+            "Start winding"
+          ],
+          "hint": [
+            "시트가 권취 코어에 닿았습니다. 권취기를 돌려 감으세요. 모형은 76 mm 코어에서 250 mm 권취 롤까지를 압축해 보여줍니다.",
+            "The sheet has reached the winder core. Turn the winder to wind it; the model compresses the growth from the 76 mm core to a 250 mm roll."
+          ],
+          "needs": [
+            "roll"
+          ],
+          "locks": [],
+          "once": true,
+          "spin": {
+            "winder": [
+              3.9056,
+              0
+            ],
+            "roll": [
+              2.5465,
+              0
+            ],
+            "screw": [
+              25.4642,
+              0
+            ]
+          },
+          "wind": {
+            "node": "Winder_body",
+            "core": 0.304
+          }
+        }
+      ],
+      "done": [
+        "기동 완료 · \"자동 공정으로 돌아가기\"를 누르면 정상 운전(3 m/min)을 재생합니다.",
+        "Start-up complete. Choose \"Return to cycle\" to play steady running at 3 m/min."
+      ],
+      "pinned": {
+        "nip": 1
+      },
+      "hidden": [
+        "flow"
+      ],
+      "follow": {
+        "resin": "screw"
+      }
+    },
     "views": [
       {
         "key": "all",
@@ -1476,6 +1795,8 @@ window.PHAEquipmentModels = {
       "web_path": "S-wrap: top-middle nip, middle roll, middle-bottom nip, bottom roll",
       "roller_table": "2000 mm, 80 mm rolls at 200 mm",
       "trim_mm_each_side": 15,
+      "gap_threading_mm": 30.0,
+      "gap_cylinders": 2,
       "haul_off_mm": 120.0,
       "winder_core_mm": 76.0,
       "winder_max_mm": 500,
@@ -1484,6 +1805,8 @@ window.PHAEquipmentModels = {
     "blender": "5.2.1 LTS",
     "groups": [
       "flow",
+      "nip",
+      "resin",
       "roll",
       "screw",
       "winder"
@@ -1515,22 +1838,22 @@ window.PHAEquipmentModels = {
       {
         "key": "screw",
         "label": [
-          "스크류 회전각",
-          "Screw rotation angle"
+          "압출 시작 · 스크류 회전",
+          "Start extruding · screw"
         ],
-        "max": 720,
-        "unit": "°",
-        "step": 1,
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
         "range": [
           0,
           7.541666666666667
         ]
       },
       {
-        "key": "flow",
+        "key": "nip",
         "label": [
-          "수지 표시 위치",
-          "Resin marker position"
+          "에어 나이프 접근 · 실린더",
+          "Bring in the air knife · cylinders"
         ],
         "max": 100,
         "unit": "%",
@@ -1543,12 +1866,12 @@ window.PHAEquipmentModels = {
       {
         "key": "roll",
         "label": [
-          "칠 롤 회전각 (400 mm)",
-          "Chill roll angle (400 mm)"
+          "롤 이송",
+          "Draw with the rolls"
         ],
-        "max": 720,
-        "unit": "°",
-        "step": 1,
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
         "range": [
           0,
           7.541666666666667
@@ -1557,18 +1880,146 @@ window.PHAEquipmentModels = {
       {
         "key": "winder",
         "label": [
-          "권취 롤 회전각",
-          "Winder rotation angle"
+          "권취 시작",
+          "Start winding"
         ],
-        "max": 360,
-        "unit": "°",
-        "step": 1,
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
         "range": [
           0,
           7.541666666666667
         ]
       }
     ],
+    "startup": {
+      "intro": [
+        "실제 라인의 기동 순서입니다. 스크류가 용융 커튼을 평다이 밖으로 밀어내 에어 갭을 지나 도는 칠 롤 위에 떨어뜨리면, 에어 나이프를 실린더로 밀어 넣어 커튼을 칠 롤에 밀착(pinning)시키고, 롤을 돌려 필름을 두께 측정, 트림, 댄서를 거쳐 권취기까지 보낸 뒤 권취를 시작합니다. 실제 라인은 존과 칠 롤 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.",
+        "The real start-up order: the screw pushes the melt curtain out of the flat die through the air gap onto the turning chill roll; the cylinders push the air knife in to pin the curtain to the roll, the rolls draw the film through the gauge, trim and dancer to the winder, and winding starts. A real line only lets the screw start once every zone and the chill roll have reached their set points and soaked (cold-start protection); the model starts after that."
+      ],
+      "steps": [
+        {
+          "key": "screw",
+          "label": [
+            "압출 시작 · 스크류 회전",
+            "Start extruding · screw"
+          ],
+          "hint": [
+            "스크류를 돌려 용융 커튼을 평다이에서 에어 갭을 지나 칠 롤 위 착지선까지 내려보내세요.",
+            "Turn the screw to let the melt curtain fall from the flat die through the air gap onto the landing line of the chill roll."
+          ],
+          "needs": [],
+          "locks": [],
+          "once": true,
+          "spin": {
+            "screw": [
+              0.5067,
+              0
+            ]
+          },
+          "thread": [
+            0,
+            0.07961
+          ]
+        },
+        {
+          "key": "nip",
+          "label": [
+            "에어 나이프 접근 · 실린더",
+            "Bring in the air knife · cylinders"
+          ],
+          "hint": [
+            "커튼이 칠 롤에 닿았습니다. 실린더로 에어 나이프를 밀어 넣어 착지선에서 커튼을 롤에 밀착시키세요. 밀착이 약하면 필름과 롤 사이에 공기가 갇혀 냉각이 고르지 않습니다.",
+            "The curtain touches the chill roll. Push the air knife in with the cylinders to pin it on the landing line; weak pinning traps air between film and roll and cools it unevenly."
+          ],
+          "needs": [
+            "screw"
+          ],
+          "locks": [],
+          "once": false,
+          "move": "nip"
+        },
+        {
+          "key": "roll",
+          "label": [
+            "롤 이송",
+            "Draw with the rolls"
+          ],
+          "hint": [
+            "커튼이 칠 롤에 밀착되었습니다. 롤을 돌려 필름을 2·3번 롤, 두께 측정, 트림, 댄서를 거쳐 권취기까지 보내세요. 이송이 시작되면 에어 나이프를 뺄 수 없습니다.",
+            "The curtain is pinned. Run the rolls to draw the film over the second and third rolls, gauge, trim and dancer to the winder; the air knife stays in once drawing starts."
+          ],
+          "needs": [
+            "nip"
+          ],
+          "locks": [
+            "nip"
+          ],
+          "once": true,
+          "spin": {
+            "roll": [
+              2.9694,
+              0
+            ],
+            "screw": [
+              23.7495,
+              0
+            ]
+          },
+          "thread": [
+            0.07961,
+            3.81109
+          ]
+        },
+        {
+          "key": "winder",
+          "label": [
+            "권취 시작",
+            "Start winding"
+          ],
+          "hint": [
+            "필름이 권취 코어에 닿았습니다. 권취기를 돌려 감으세요. 모형은 76 mm 코어에서 200 mm 권취 롤까지를 압축해 보여줍니다.",
+            "The film has reached the winder core. Turn the winder to wind it; the model compresses the growth from the 76 mm core to a 200 mm roll."
+          ],
+          "needs": [
+            "roll"
+          ],
+          "locks": [],
+          "once": true,
+          "spin": {
+            "winder": [
+              6.9198,
+              0
+            ],
+            "roll": [
+              2.3873,
+              0
+            ],
+            "screw": [
+              19.0939,
+              0
+            ]
+          },
+          "wind": {
+            "node": "Winder_body",
+            "core": 0.38
+          }
+        }
+      ],
+      "done": [
+        "기동 완료 · \"자동 공정으로 돌아가기\"를 누르면 정상 운전(10 m/min)을 재생합니다.",
+        "Start-up complete. Choose \"Return to cycle\" to play steady running at 10 m/min."
+      ],
+      "pinned": {
+        "nip": 1
+      },
+      "hidden": [
+        "flow"
+      ],
+      "follow": {
+        "resin": "screw"
+      }
+    },
     "views": [
       {
         "key": "all",
@@ -1820,6 +2271,8 @@ window.PHAEquipmentModels = {
       "air_gap_mm": 80,
       "rolls_mm": "400 / 200 / 200, face 600",
       "pinning": "air knife 550 mm",
+      "air_knife_retract_mm": 50.0,
+      "air_knife_cylinders": 2,
       "chill_wrap_deg": 180,
       "gauge": "traversing O-frame 700 mm",
       "edge_trim": true,
@@ -1830,6 +2283,8 @@ window.PHAEquipmentModels = {
     "groups": [
       "flow",
       "gauge",
+      "nip",
+      "resin",
       "roll",
       "screw",
       "winder"
@@ -1862,22 +2317,36 @@ window.PHAEquipmentModels = {
       {
         "key": "screw",
         "label": [
-          "스크류 회전각",
-          "Screw rotation angle"
+          "압출 시작 · 스크류 회전",
+          "Start extruding · screw"
         ],
-        "max": 720,
-        "unit": "°",
-        "step": 1,
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
         "range": [
           0,
           11.291666666666666
         ]
       },
       {
-        "key": "flow",
+        "key": "nip",
         "label": [
-          "수지 표시 위치",
-          "Resin marker position"
+          "닙롤 닫힘 · 공압 실린더",
+          "Close the nip · pneumatic cylinders"
+        ],
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
+        "range": [
+          0,
+          11.291666666666666
+        ]
+      },
+      {
+        "key": "inflate",
+        "label": [
+          "버블 팽창 · BUR 1→2",
+          "Inflate the bubble · BUR 1 to 2"
         ],
         "max": 100,
         "unit": "%",
@@ -1890,12 +2359,12 @@ window.PHAEquipmentModels = {
       {
         "key": "haul",
         "label": [
-          "닙롤 회전각",
-          "Nip roll rotation angle"
+          "닙롤 이송",
+          "Draw with the nip rolls"
         ],
-        "max": 720,
-        "unit": "°",
-        "step": 1,
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
         "range": [
           0,
           11.291666666666666
@@ -1904,18 +2373,164 @@ window.PHAEquipmentModels = {
       {
         "key": "winder",
         "label": [
-          "권취 롤 회전각",
-          "Winder rotation angle"
+          "권취 시작",
+          "Start winding"
         ],
-        "max": 360,
-        "unit": "°",
-        "step": 1,
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
         "range": [
           0,
           11.291666666666666
         ]
       }
     ],
+    "startup": {
+      "intro": [
+        "실제 라인의 기동 순서입니다. 스크류가 튜브를 환형 다이 밖으로 밀어내면 작업자가 케이지와 접힘 프레임을 지나 닙롤까지 끌어 올리고, 닙을 닫아 튜브 위쪽을 막은 뒤 다이 중앙으로 공기를 넣어 버블을 BUR 2까지 부풀리고, 닙롤로 접힌 필름을 권취기까지 보내 권취를 시작합니다. 실제 라인은 존 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.",
+        "The real start-up order: the screw pushes the tube out of the annular die, the operator pulls it up through the cage and collapsing frame to the nip rolls, the nip closes to seal the top of the tube, air through the die centre inflates the bubble to BUR 2, and the nip rolls draw the lay-flat film to the winder, where winding starts. A real line only lets the screw start once every zone has reached its set point and soaked (cold-start protection); the model starts after that."
+      ],
+      "steps": [
+        {
+          "key": "screw",
+          "label": [
+            "압출 시작 · 스크류 회전",
+            "Start extruding · screw"
+          ],
+          "hint": [
+            "스크류를 돌려 튜브를 환형 다이에서 케이지와 접힘 프레임을 지나 열린 닙롤까지 올리세요. 실제로는 작업자가 튜브 끝을 묶어 위로 끌어 올립니다.",
+            "Turn the screw to push the tube from the annular die up through the cage and collapsing frame to the open nip rolls; on a real line the operator ties off the tube end and pulls it up."
+          ],
+          "needs": [],
+          "locks": [],
+          "once": true,
+          "spin": {
+            "screw": [
+              29.2251,
+              0
+            ]
+          },
+          "thread": [
+            0,
+            2.5
+          ]
+        },
+        {
+          "key": "nip",
+          "label": [
+            "닙롤 닫힘 · 공압 실린더",
+            "Close the nip · pneumatic cylinders"
+          ],
+          "hint": [
+            "튜브가 닙롤 사이에 들어왔습니다. 공압 실린더로 오른쪽 닙롤을 밀어 닫으세요. 닫힌 닙이 튜브 위쪽을 막아야 버블에 공기를 넣을 수 있습니다.",
+            "The tube is between the nip rolls. Close the right roll with the pneumatic cylinders; the closed nip seals the top of the tube so the bubble can hold air."
+          ],
+          "needs": [
+            "screw"
+          ],
+          "locks": [],
+          "once": false,
+          "move": "nip"
+        },
+        {
+          "key": "inflate",
+          "label": [
+            "버블 팽창 · BUR 1→2",
+            "Inflate the bubble · BUR 1 to 2"
+          ],
+          "hint": [
+            "닙이 튜브를 막았습니다. 다이 중앙으로 공기를 넣어 버블을 BUR 2(지름 160 mm, 레이플랫 251 mm)까지 부풀리세요. PHA의 BUR과 동결선 권장 범위는 정해져 있지 않습니다.",
+            "The nip seals the tube. Blow air through the die centre to inflate the bubble to BUR 2 (160 mm bubble, 251 mm lay-flat); no PHA BUR or frost-line range is established."
+          ],
+          "needs": [
+            "nip"
+          ],
+          "locks": [],
+          "once": false,
+          "morph": "inflate"
+        },
+        {
+          "key": "haul",
+          "label": [
+            "닙롤 이송",
+            "Draw with the nip rolls"
+          ],
+          "hint": [
+            "버블이 섰습니다. 닙롤을 돌려 접힌 필름을 타워 위 가이드 롤을 지나 권취기까지 보내세요. 이송이 시작되면 모형은 닙과 버블 크기를 고정합니다.",
+            "The bubble stands. Run the nip rolls to draw the lay-flat film over the tower guide rolls to the winder; the model holds the nip and the bubble size once drawing starts."
+          ],
+          "needs": [
+            "inflate"
+          ],
+          "locks": [
+            "nip",
+            "inflate"
+          ],
+          "once": true,
+          "spin": {
+            "haul": [
+              15.8701,
+              0
+            ],
+            "screw": [
+              58.2836,
+              0
+            ]
+          },
+          "thread": [
+            2.5,
+            7.48575
+          ]
+        },
+        {
+          "key": "winder",
+          "label": [
+            "권취 시작",
+            "Start winding"
+          ],
+          "hint": [
+            "필름이 권취 코어에 닿았습니다. 권취기를 돌려 두 겹 레이플랫을 감으세요. 모형은 76 mm 코어에서 150 mm 권취 롤까지를 압축해 보여줍니다.",
+            "The film has reached the winder core. Turn the winder to wind the two-ply lay-flat; the model compresses the growth from the 76 mm core to a 150 mm roll."
+          ],
+          "needs": [
+            "haul"
+          ],
+          "locks": [],
+          "once": true,
+          "spin": {
+            "winder": [
+              5.6338,
+              0
+            ],
+            "haul": [
+              6.3662,
+              0
+            ],
+            "screw": [
+              23.3801,
+              0
+            ]
+          },
+          "wind": {
+            "node": "Winder_body",
+            "core": 0.5067
+          }
+        }
+      ],
+      "done": [
+        "기동 완료 · \"자동 공정으로 돌아가기\"를 누르면 정상 운전(5 m/min)을 재생합니다.",
+        "Start-up complete. Choose \"Return to cycle\" to play steady running at 5 m/min."
+      ],
+      "pinned": {
+        "nip": 1
+      },
+      "hidden": [
+        "flow"
+      ],
+      "follow": {
+        "resin": "screw"
+      }
+    },
     "views": [
       {
         "key": "all",
@@ -2197,6 +2812,8 @@ window.PHAEquipmentModels = {
       "die_to_nip_mm": 2500,
       "collapsing_mm": 700,
       "nip_mm": "100, face 350",
+      "nip_threading_open_mm": 40.0,
+      "nip_cylinders": 2,
       "oscillating_haul_off": "optional, not shown",
       "ibc": "optional, not shown",
       "winder": "76 mm core to 450 mm, two-ply lay-flat",
@@ -2206,6 +2823,8 @@ window.PHAEquipmentModels = {
     "groups": [
       "flow",
       "haul",
+      "nip",
+      "resin",
       "screw",
       "winder"
     ]
@@ -2854,22 +3473,22 @@ window.PHAEquipmentModels = {
       {
         "key": "screw",
         "label": [
-          "스크류 회전각",
-          "Screw rotation angle"
+          "압출 시작 · 스크류 회전",
+          "Start extruding · screw"
         ],
-        "max": 720,
-        "unit": "°",
-        "step": 1,
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
         "range": [
           0,
           5.0
         ]
       },
       {
-        "key": "flow",
+        "key": "nip",
         "label": [
-          "스트로 이동 위치",
-          "Straw travel position"
+          "인취 벨트 닫힘 · 가압 실린더",
+          "Close the belts · pressure cylinders"
         ],
         "max": 100,
         "unit": "%",
@@ -2882,12 +3501,12 @@ window.PHAEquipmentModels = {
       {
         "key": "haul",
         "label": [
-          "벨트 인취 드럼 회전각",
-          "Belt haul-off drum angle"
+          "인취 이송",
+          "Haul-off draw"
         ],
-        "max": 720,
-        "unit": "°",
-        "step": 1,
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
         "range": [
           0,
           5.0
@@ -2896,18 +3515,164 @@ window.PHAEquipmentModels = {
       {
         "key": "cutter",
         "label": [
-          "회전 커터 회전각",
-          "Rotary cutter angle"
+          "첫 절단 · 회전 커터",
+          "First cut · rotary cutter"
         ],
-        "max": 360,
-        "unit": "°",
-        "step": 1,
+        "max": 100,
+        "unit": "%",
+        "step": 0.1,
         "range": [
           0,
           5.0
         ]
       }
     ],
+    "startup": {
+      "intro": [
+        "실제 라인의 기동 순서입니다. 스크류가 네 가닥의 튜브를 헤드 밖으로 밀어내면 작업자가 진공 사이징조와 냉각 수조를 지나 벨트 인취까지 끌어 넣고, 상부 벨트를 내려 물린 뒤 커터 너머로 보내 첫 절단을 합니다. 실제 라인은 존 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.",
+        "The real start-up order: the screw pushes the four tubes out of the head, the operator leads them through the vacuum sizing tank and the cooling bath into the belt haul-off, the upper belts close on them and draw them past the cutter for the first cut. A real line only lets the screw start once every zone has reached its set point and soaked (cold-start protection); the model starts after that."
+      ],
+      "steps": [
+        {
+          "key": "screw",
+          "label": [
+            "압출 시작 · 스크류 회전",
+            "Start extruding · screw"
+          ],
+          "hint": [
+            "스크류를 돌려 네 가닥의 튜브를 헤드에서 진공 사이징조와 냉각 수조를 지나 벨트 인취 사이까지 보내세요. 실제로는 작업자가 손으로 끌어 넣고, 맨드렐 공기가 튜브 속을 열어 둡니다.",
+            "Turn the screw to push the four tubes from the head through the vacuum sizing tank and the bath into the belt haul-off; on a real line the operator leads them by hand while mandrel air keeps the tubes open."
+          ],
+          "needs": [],
+          "locks": [],
+          "once": true,
+          "spin": {
+            "screw": [
+              29.01,
+              0
+            ]
+          },
+          "thread": [
+            0,
+            5.802
+          ]
+        },
+        {
+          "key": "nip",
+          "label": [
+            "인취 벨트 닫힘 · 가압 실린더",
+            "Close the belts · pressure cylinders"
+          ],
+          "hint": [
+            "튜브가 벨트 사이에 들어왔습니다. 가압 실린더로 상부 벨트를 내려 네 가닥을 무세요.",
+            "The tubes are between the belts. Lower the upper belts with the pressure cylinders to grip all four."
+          ],
+          "needs": [
+            "screw"
+          ],
+          "locks": [],
+          "once": false,
+          "move": "nip"
+        },
+        {
+          "key": "haul",
+          "label": [
+            "인취 이송",
+            "Haul-off draw"
+          ],
+          "hint": [
+            "벨트가 튜브를 물었습니다. 인취를 돌려 튜브를 회전 커터 너머 배출 트레이까지 보내세요. 인취가 시작되면 벨트를 열 수 없습니다.",
+            "The belts grip the tubes. Run the haul-off to draw them past the rotary cutter onto the exit tray; the belts stay closed once hauling starts."
+          ],
+          "needs": [
+            "nip"
+          ],
+          "locks": [
+            "nip"
+          ],
+          "once": true,
+          "spin": {
+            "haul": [
+              3.8595,
+              0
+            ],
+            "screw": [
+              4.85,
+              0
+            ]
+          },
+          "thread": [
+            5.802,
+            6.772
+          ]
+        },
+        {
+          "key": "cutter",
+          "label": [
+            "첫 절단 · 회전 커터",
+            "First cut · rotary cutter"
+          ],
+          "hint": [
+            "튜브가 트레이에 올라왔습니다. 커터를 한 바퀴 돌려 첫 절단을 하세요. 칼날이 아래를 지날 때 네 가닥이 함께 잘립니다.",
+            "The tubes are on the tray. Turn the cutter once for the first cut; all four lanes are cut as the knife passes below."
+          ],
+          "needs": [
+            "haul"
+          ],
+          "locks": [],
+          "once": true,
+          "spin": {
+            "cutter": [
+              1,
+              0.5
+            ],
+            "haul": [
+              0.7958,
+              0
+            ],
+            "screw": [
+              1.0,
+              0
+            ]
+          },
+          "release": {
+            "node": "FirstStraws",
+            "at": 0.5,
+            "cut_s": 6.572,
+            "path": [
+              [
+                7.05,
+                1.0,
+                0
+              ],
+              [
+                7.35,
+                1.0,
+                0
+              ],
+              [
+                7.8,
+                0.66,
+                0
+              ]
+            ]
+          }
+        }
+      ],
+      "done": [
+        "기동 완료 · \"자동 공정으로 돌아가기\"를 누르면 정상 운전(12 m/min, 분당 240개)을 재생합니다.",
+        "Start-up complete. Choose \"Return to cycle\" to play steady running at 12 m/min, 240 straws/min."
+      ],
+      "pinned": {
+        "nip": 1
+      },
+      "hidden": [
+        "flow"
+      ],
+      "follow": {
+        "resin": "screw"
+      }
+    },
     "views": [
       {
         "key": "all",
@@ -3269,7 +4034,9 @@ window.PHAEquipmentModels = {
       "haul_off": {
         "contact_mm": 400,
         "belt_width_mm": 80,
-        "pairs": 2
+        "pairs": 2,
+        "threading_lift_mm": 40.0,
+        "pressure_cylinders": 2
       },
       "cutter": {
         "d_mm": 120.0,
@@ -3283,6 +4050,8 @@ window.PHAEquipmentModels = {
       "cutter",
       "flow",
       "haul",
+      "nip",
+      "resin",
       "screw"
     ]
   }

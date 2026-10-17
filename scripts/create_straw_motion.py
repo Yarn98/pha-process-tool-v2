@@ -15,6 +15,10 @@ The model runs in real time: 12 m/min, 60 straws/min per lane (240/min for four 
 five cutter turns, four 80 mm haul-off pulley turns and eight 40 mm guide-pulley turns (both within 0.6 %), and five
 turns of a 60 rpm teaching screw speed.
 
+For the start-up sequence both upper belts ride a carriage on two guide columns that two pneumatic cylinders (one per
+belt pair) lower onto the lanes (40 mm lift for threading), and the lanes are built in 150 mm segments tagged with their
+distance from the die so the player can grow them out of the head.
+
 It replaces the borrowed Straw Optimizer v2 rig; that snapshot stays in assets/equipment/sources for provenance.
 """
 import json
@@ -183,17 +187,20 @@ haul = [kit.box('Haul-off frame', ((HAUL[0] + HAUL[1]) / 2, .02, AX - .30), (.70
         kit.box('Haul-off cover', ((HAUL[0] + HAUL[1]) / 2, .02, AX + .27), (.70, .38, .02), M['paint'], bevel=.006),
         kit.guard_panel('Haul-off guard', HAUL[0] - .1, HAUL[1] + .1, AX - .24, AX + .25, -.15, M, handle=True),
         kit.box('Haul-off gearmotor', (HAUL[1] - .05, .30, AX), (.14, .18, .14), M['paint_accent'], bevel=.008)]
-for y in BELTS:
-    haul.append(kit.cylinder('Belt pressure cylinder', ((HAUL[0] + HAUL[1]) / 2, y, AX + .19), .018, .10, 'Z', M['chrome']))
+for x in (HAUL[0] + .03, HAUL[1] - .03):            # the upper belt carriage slides on two rear guide columns
+    haul.append(kit.cylinder('Upper belt guide column', (x, .13, AX + .16), .009, .20, 'Z', M['chrome'], segments=16))
 haul += legs('Haul-off leg', HAUL[0] + .05, HAUL[1] - .05, AX - .32, .13)
 kit.join(haul, 'HaulOffFrame')
 Z_BELT = {'Lower': AX - STRAW_R - PULLEY_R - .002, 'Upper': AX + STRAW_R + PULLEY_R + .002}
+upper = []                                          # parts on the upper belt carriage (closed pose)
 for side, z in Z_BELT.items():
     runs = []
     for y in BELTS:
         runs += [kit.box('Belt %s top run' % side, ((HAUL[0] + HAUL[1]) / 2, y, z + PULLEY_R + .001), (HAUL[1] - HAUL[0], .08, .003), M['belt'], bevel=0),
                  kit.box('Belt %s bottom run' % side, ((HAUL[0] + HAUL[1]) / 2, y, z - PULLEY_R - .001), (HAUL[1] - HAUL[0], .08, .003), M['belt'], bevel=0)]
-    kit.join(runs, 'Belt' + side)
+    belt = kit.join(runs, 'Belt' + side)
+    if side == 'Upper':
+        upper.append(belt)
     # Lower drums: their top run moves +X (positive turn about +Y); upper drums: their bottom run moves +X.
     sign = 1 if side == 'Lower' else -1
     for x, end in ((HAUL[0], 'In'), (HAUL[1], 'Out')):
@@ -203,6 +210,8 @@ for side, z in Z_BELT.items():
                   kit.box('Pulley mark', (0, 0, PULLEY_R * .7), (.182, .012, .012), M['warning'], bevel=0)],
                  'BeltPulley%s%s_body' % (side, end)).parent = owner
         kit.spin(owner, 'haul', TURNS['haul'], FRAMES, sign=sign)
+        if side == 'Upper':
+            upper.append(owner)
     # Belt cleats on the operator-side pair ride the loop at line speed (50 mm pitch divides the 1 m per loop).
     r, inner = PULLEY_R + .003, 1 if side == 'Lower' else -1
     loop = [Vector((HAUL[0] + (HAUL[1] - HAUL[0]) * i / 16, BELTS[0] - .042, z + inner * r)) for i in range(17)]
@@ -210,6 +219,27 @@ for side, z in Z_BELT.items():
     loop += [Vector((HAUL[1] - (HAUL[1] - HAUL[0]) * i / 16, BELTS[0] - .042, z - inner * r)) for i in range(17)]
     loop += [Vector((HAUL[0] - r * math.sin(a), BELTS[0] - .042, z - inner * r * math.cos(a))) for a in [math.pi * i / 10 for i in range(1, 11)]]
     kit.ride('BeltCleat' + side, loop, math.ceil(kit.path_length(loop) / .05), .05, TRAVEL, M['warning'], .004, FRAMES, group='haul')
+    if side == 'Upper':
+        upper += [obj for obj in sc.objects if obj.name.startswith('BeltCleatUpper')]
+# Upper belt carriage: frame bars on the drum axles, a pressure beam and guide bushings carry both upper belts, their
+# drums and cleats. One pneumatic cylinder over each belt pair pushes the beam down; for threading it stands 40 mm higher.
+BEAM_Z = Z_BELT['Upper'] + PULLEY_R + .016           # pressure beam centre, 13.5 mm above the upper belts' top runs
+upper += [kit.box('Upper belt frame bar', ((HAUL[0] + HAUL[1]) / 2, y, Z_BELT['Upper']), (HAUL[1] - HAUL[0] + .04, .008, .026),
+                  M['steel'], bevel=.002) for y in (-.098, .098)]
+upper += [kit.box('Upper belt pressure beam', ((HAUL[0] + HAUL[1]) / 2, .025, BEAM_Z), (HAUL[1] - HAUL[0] - .04, .23, .02), M['paint_accent'], bevel=.003)]
+upper += [kit.ring('Upper belt guide bushing', BEAM_Z - .02, BEAM_Z + .02, .0092, .016, (0, 0), M['steel_dark'], segments=16)
+          for _ in range(2)]
+for bushing, x in zip(upper[-2:], (HAUL[0] + .03, HAUL[1] - .03)):
+    bushing.rotation_euler.y = -math.pi / 2         # ring axis X -> Z
+    bushing.location = (x, .13, 0)
+bpy.context.view_layer.update()
+nip = kit.carrier('UpperBeltCarriage')
+kit.mount(upper, nip)
+for y in BELTS:
+    kit.linked_cylinder('Belt pressure cylinder', ((HAUL[0] + HAUL[1]) / 2, y, AX + .255), ((HAUL[0] + HAUL[1]) / 2, y, AX + .17),
+                        ((HAUL[0] + HAUL[1]) / 2, y, BEAM_Z + .01), .018, .007, M, nip, inset=.025)
+OPEN = .04
+kit.actuate(nip, FRAMES, (0, 0, OPEN))
 
 # Rotary cutter: one knife on a 120 mm rotor above the lanes shears them against a bed knife once per turn.
 # The knife points down at frame 0, so it cuts at 0, 1, 2 ... s; its tip moves downstream at the bottom.
@@ -256,9 +286,22 @@ cutter += legs('Exit tray leg', TRAY_END - .02, TRAY_END - .02, AX - STRAW_R - .
 bpy.context.view_layer.update()                   # the chute and the pile carry object rotations into the join
 kit.join(cutter, 'RotaryCutter')
 
-# Straws: continuous hollow lanes from the die tips to the cutter; cut pieces leave along the tray and chute.
-for i, y in enumerate(LANES):
-    kit.ring('StrawLane%d' % (i + 1), TIP, CUT_X, STRAW_IN, STRAW_R, (y, AX), M['straw'], segments=16)
+# Straws: continuous hollow lanes from the die tips to the cutter, built in 150 mm segments (all four lanes per segment)
+# tagged with their distance from the die so the start-up can grow them; the 200 mm lead past the knife exists only
+# until the first cut. Cut pieces leave along the tray and chute.
+S_CUT = CUT_X - TIP
+S_NIP = HAUL[0] + .08 - TIP                          # fronts 80 mm inside the belts, where they can grip them
+S_END = S_CUT + CUT
+lanes = (kit.thread_tubes('StrawLanes', [[(TIP, y, AX), (TIP + S_NIP, y, AX)] for y in LANES], STRAW_R, M['straw'], step=.15,
+                          r_in=STRAW_IN, segments=16)
+         + kit.thread_tubes('StrawLanesDrawn', [[(TIP + S_NIP, y, AX), (CUT_X, y, AX)] for y in LANES], STRAW_R, M['straw'], step=.15,
+                            s_from=S_NIP, r_in=STRAW_IN, segments=16))
+extra = kit.thread_tubes('StrawLead', [[(CUT_X, y, AX), (CUT_X + CUT, y, AX)] for y in LANES], STRAW_R, M['straw'], step=.1,
+                         s_from=S_CUT, extra_from=S_CUT, r_in=STRAW_IN, segments=16)
+first = kit.join([kit.ring('First straw', -CUT / 2 + .001, CUT / 2 - .001, STRAW_IN - .0002, STRAW_R - .0001, (y, 0), M['straw'], segments=12)
+                  for y in LANES], 'FirstStraws')
+first.location = (CUT_X + CUT / 2, 0, AX)
+FIRST_PATH = [(CUT_X + CUT / 2, 0, AX), (TRAY_END, 0, AX), (CHUTE_END[0], 0, CHUTE_END[1])]
 # A piece's front end leaves the cutter at s = 0 (still uncut, inside the lane's mesh) and its rear end passes the
 # knife at s = CUT, on a cut frame; downstream it is a chain of 200 mm pieces. 1 m per loop is five pieces.
 for lane, y in enumerate(LANES):
@@ -281,9 +324,10 @@ for lane, y in enumerate(LANES):
 
 # Flow markers: pellets into the throat, melt along the screw channel, marks on the operator-side straw
 feed = kit.catmull([(ext['throat_x'], 0, AX + .75), (ext['throat_x'], 0, AX + .35), (ext['throat_x'], 0, AX + .06)], 6)
-kit.ride('FeedPellet', feed, 8, kit.path_length(feed) / 8, 2 * kit.path_length(feed), M['pellet'], .005, FRAMES, 'pellet')
+kit.ride('FeedPellet', feed, 8, kit.path_length(feed) / 8, 2 * kit.path_length(feed), M['pellet'], .005, FRAMES, 'pellet', group='resin')
 melt = [Vector((ext['throat_x'], 0, AX + D * .42)), Vector((ADAPTER[0] - .01, 0, AX + D * .42))]
-kit.ride('MeltMarker', melt, 12, kit.path_length(melt) / 12, 2 * kit.path_length(melt) / 12, M['polymer_marker'], .006, FRAMES)
+kit.ride('MeltMarker', melt, 12, kit.path_length(melt) / 12, 2 * kit.path_length(melt) / 12, M['polymer_marker'], .006, FRAMES,
+         group='resin')
 surface = [Vector((TIP + .02, LANES[0] - STRAW_R - .0008, AX)), Vector((CUT_X - .06, LANES[0] - STRAW_R - .0008, AX))]
 kit.ride('StrawMark', surface, math.ceil(kit.path_length(surface) / .5), .5, TRAVEL, M['polymer_marker'], .0025, FRAMES)
 
@@ -295,7 +339,6 @@ kit.hmi_pedestal('Operator panel', (ext['x_rear'] + .3, -.70, 0), (ext['x_rear']
 kit.bake_linear()
 sc.timeline_markers.new('Knife at the bottom: cut', frame=0)
 
-control = lines.control
 centre = [(ext['x_rear'] + END) / 2, .95, 0]
 
 
@@ -317,14 +360,46 @@ for key, (x0, x1), floor_z in (('vacuum_water', VAC, AX - .12), ('bath_water', B
     heat_zones.append(zone(key, 'bath', ['수조 물 (진공·냉각)', 'Bath water (vacuum & cooling)'], ['straw', 'waterBath'],
                            lambda k, f, l, x0=x0, x1=x1, floor_z=floor_z: kit.heat_box(k, f, l, (x0 + .01, .08, floor_z + .003), (x1 - .01, .148, WATER), group='tool')))
 
+# Start-up: screw and drum turns follow the steady line ratios (60 rpm at 12 m/min = 5 screw turns per metre). The knife
+# starts at the top (half a turn) so the first cut falls half-way through the cutter step.
+SCREW_PER_M, HAUL_PER_M = RPM['screw'] / LINE_SPEED, 1000 / (math.pi * PULLEY_D)
+STARTUP, CONTROLS = kit.startup(
+    ['실제 라인의 기동 순서입니다. 스크류가 네 가닥의 튜브를 헤드 밖으로 밀어내면 작업자가 진공 사이징조와 냉각 수조를 지나 벨트 인취까지 '
+     '끌어 넣고, 상부 벨트를 내려 물린 뒤 커터 너머로 보내 첫 절단을 합니다. 실제 라인은 존 온도가 설정값에 도달하고 균열(soak) 시간이 '
+     '지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.',
+     'The real start-up order: the screw pushes the four tubes out of the head, the operator leads them through the vacuum '
+     'sizing tank and the cooling bath into the belt haul-off, the upper belts close on them and draw them past the cutter '
+     'for the first cut. A real line only lets the screw start once every zone has reached its set point and soaked '
+     '(cold-start protection); the model starts after that.'],
+    [kit.step('screw', ['압출 시작 · 스크류 회전', 'Start extruding · screw'],
+              ['스크류를 돌려 네 가닥의 튜브를 헤드에서 진공 사이징조와 냉각 수조를 지나 벨트 인취 사이까지 보내세요. 실제로는 작업자가 '
+               '손으로 끌어 넣고, 맨드렐 공기가 튜브 속을 열어 둡니다.',
+               'Turn the screw to push the four tubes from the head through the vacuum sizing tank and the bath into the belt '
+               'haul-off; on a real line the operator leads them by hand while mandrel air keeps the tubes open.'],
+              once=True, spin={'screw': [round(S_NIP * SCREW_PER_M, 4), 0]}, thread=[0, S_NIP]),
+     kit.step('nip', ['인취 벨트 닫힘 · 가압 실린더', 'Close the belts · pressure cylinders'],
+              ['튜브가 벨트 사이에 들어왔습니다. 가압 실린더로 상부 벨트를 내려 네 가닥을 무세요.',
+               'The tubes are between the belts. Lower the upper belts with the pressure cylinders to grip all four.'],
+              needs=['screw'], move='nip'),
+     kit.step('haul', ['인취 이송', 'Haul-off draw'],
+              ['벨트가 튜브를 물었습니다. 인취를 돌려 튜브를 회전 커터 너머 배출 트레이까지 보내세요. 인취가 시작되면 벨트를 열 수 없습니다.',
+               'The belts grip the tubes. Run the haul-off to draw them past the rotary cutter onto the exit tray; the belts '
+               'stay closed once hauling starts.'],
+              needs=['nip'], locks=['nip'], once=True, thread=[S_NIP, S_END],
+              spin={'haul': [round((S_END - S_NIP) * HAUL_PER_M, 4), 0], 'screw': [round((S_END - S_NIP) * SCREW_PER_M, 4), 0]}),
+     kit.step('cutter', ['첫 절단 · 회전 커터', 'First cut · rotary cutter'],
+              ['튜브가 트레이에 올라왔습니다. 커터를 한 바퀴 돌려 첫 절단을 하세요. 칼날이 아래를 지날 때 네 가닥이 함께 잘립니다.',
+               'The tubes are on the tray. Turn the cutter once for the first cut; all four lanes are cut as the knife passes below.'],
+              needs=['haul'], once=True, spin={'cutter': [1, .5], 'haul': [round(CUT * HAUL_PER_M, 4), 0], 'screw': [round(CUT * SCREW_PER_M, 4), 0]},
+              release={'node': 'FirstStraws', 'at': .5, 'cut_s': round(S_CUT, 5), 'path': [kit.three(p) for p in FIRST_PATH]})],
+    ['기동 완료 · "자동 공정으로 돌아가기"를 누르면 정상 운전(12 m/min, 분당 240개)을 재생합니다.',
+     'Start-up complete. Choose "Return to cycle" to play steady running at 12 m/min, 240 straws/min.'],
+    LOOP)
 META = {
     'id': 'straw', 'duration': LOOP, 'frames': [0, FRAMES],
     'poster': 'assets/equipment/straw-motion-poster.png', 'model': 'assets/equipment/straw-motion.glb',
     'center': centre, 'span': [END - ext['x_rear'] + .6, 2.4], 'zoom': [.7, 18],
-    'controls': [control('screw', '스크류 회전각', 'Screw rotation angle', time_range=[0, LOOP]),
-                 control('flow', '스트로 이동 위치', 'Straw travel position', 100, '%', [0, LOOP]),
-                 control('haul', '벨트 인취 드럼 회전각', 'Belt haul-off drum angle', time_range=[0, LOOP]),
-                 control('cutter', '회전 커터 회전각', 'Rotary cutter angle', 360, time_range=[0, LOOP])],
+    'controls': CONTROLS, 'startup': STARTUP,
     'views': [{'key': 'all', 'label': ['전체 라인', 'Whole line'], 'center': centre, 'zoom': 1},
               kit.camera_view('screw', ['스크류·배럴 단면', 'Screw & barrel cutaway'], (-.9, 0, AX), (1.2, -6.0, 5.2), 3.0),
               kit.camera_view('head', ['튜브 헤드·진공 사이징', 'Tube head & vacuum sizing'], (.62, 0, AX), (1.0, -5.0, 2.4), 6),
@@ -353,25 +428,29 @@ META = {
     'spec': {'basis': 'Pack B grade C teaching values; brand-neutral; not an OEM drawing or PHA setting',
              'screw_d_mm': 50, 'l_d': 33, 'heating_zones': 3, 'shaft_height_mm': 1000, 'tube_head_mm': {'d': 150, 'length': 200},
              'vacuum_sizing_mm': 800, 'bath_mm': [4000, 300, 120], 'guide_pulleys': len(GUIDES),
-             'haul_off': {'contact_mm': 400, 'belt_width_mm': 80, 'pairs': len(BELTS)}, 'cutter': {'d_mm': KNIFE_D, 'knives': 1},
+             'haul_off': {'contact_mm': 400, 'belt_width_mm': 80, 'pairs': len(BELTS), 'threading_lift_mm': OPEN * 1000,
+                          'pressure_cylinders': len(BELTS)}, 'cutter': {'d_mm': KNIFE_D, 'knives': 1},
              'previous_rig': 'Straw Optimizer v2 snapshot (assets/equipment/sources/straw-optimizer-v2.blend), replaced by this real-scale rig',
              'sources': 'output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md'},
 }
 
 floor = kit.floor('Floor', ext['x_rear'] - .3, END + .2, -.9, 1.0, M)
 kit.studio_world(.8, 'studio.exr')
+release = kit.hold_closed([nip], extra + [first])     # the poster shows the running line
 sc.frame_set(round(FRAMES * .5))
 bpy.context.view_layer.update()
 camera = kit.ortho_camera('Line camera', (centre[0] + 5, -10, 5.4), (centre[0], 0, .85), 8)
 orientation = camera.rotation_euler.to_matrix()
 right, up = orientation.col[0], orientation.col[1]
-corners = [obj.matrix_world @ Vector(c) for obj in sc.objects if obj.type == 'MESH' and obj is not floor for c in obj.bound_box]
+corners = [obj.matrix_world @ Vector(c) for obj in sc.objects if obj.type == 'MESH' and obj is not floor and not obj.hide_render
+           for c in obj.bound_box]
 xs, ys = [p.dot(right) for p in corners], [p.dot(up) for p in corners]
 camera.location += right * ((min(xs) + max(xs)) / 2 - camera.location.dot(right)) + up * ((min(ys) + max(ys)) / 2 - camera.location.dot(up))
 camera.data.ortho_scale = max(max(xs) - min(xs), (max(ys) - min(ys)) * 16 / 9) * 1.06
 kit.area_light('Key light', (centre[0] - 2.5, -5, 6), (centre[0], 0, .8), 1500, 6)
 kit.area_light('Rim light', (centre[0] + 2.5, 4, 5), (centre[0], 0, .8), 650, 5, (.9, .95, 1))
 kit.render_still(OUT / 'straw-motion-poster.png', 1280, 720, samples=48)
+release()
 for obj in [floor, camera] + [o for o in sc.objects if o.type == 'LIGHT']:
     bpy.data.objects.remove(obj, do_unlink=True)
 sc.frame_set(0)

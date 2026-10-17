@@ -25,22 +25,36 @@
     {
       "key": "screw",
       "label": [
-        "스크류 회전각",
-        "Screw rotation angle"
+        "압출 시작 · 스크류 회전",
+        "Start extruding · screw"
       ],
-      "max": 720,
-      "unit": "°",
-      "step": 1,
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
       "range": [
         0,
         11.291666666666666
       ]
     },
     {
-      "key": "flow",
+      "key": "nip",
       "label": [
-        "수지 표시 위치",
-        "Resin marker position"
+        "닙롤 닫힘 · 공압 실린더",
+        "Close the nip · pneumatic cylinders"
+      ],
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
+      "range": [
+        0,
+        11.291666666666666
+      ]
+    },
+    {
+      "key": "inflate",
+      "label": [
+        "버블 팽창 · BUR 1→2",
+        "Inflate the bubble · BUR 1 to 2"
       ],
       "max": 100,
       "unit": "%",
@@ -53,12 +67,12 @@
     {
       "key": "haul",
       "label": [
-        "닙롤 회전각",
-        "Nip roll rotation angle"
+        "닙롤 이송",
+        "Draw with the nip rolls"
       ],
-      "max": 720,
-      "unit": "°",
-      "step": 1,
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
       "range": [
         0,
         11.291666666666666
@@ -67,18 +81,164 @@
     {
       "key": "winder",
       "label": [
-        "권취 롤 회전각",
-        "Winder rotation angle"
+        "권취 시작",
+        "Start winding"
       ],
-      "max": 360,
-      "unit": "°",
-      "step": 1,
+      "max": 100,
+      "unit": "%",
+      "step": 0.1,
       "range": [
         0,
         11.291666666666666
       ]
     }
   ],
+  "startup": {
+    "intro": [
+      "실제 라인의 기동 순서입니다. 스크류가 튜브를 환형 다이 밖으로 밀어내면 작업자가 케이지와 접힘 프레임을 지나 닙롤까지 끌어 올리고, 닙을 닫아 튜브 위쪽을 막은 뒤 다이 중앙으로 공기를 넣어 버블을 BUR 2까지 부풀리고, 닙롤로 접힌 필름을 권취기까지 보내 권취를 시작합니다. 실제 라인은 존 온도가 설정값에 도달하고 균열(soak) 시간이 지나야 스크류가 기동되며(cold-start 보호), 모형은 그 이후부터 보여줍니다.",
+      "The real start-up order: the screw pushes the tube out of the annular die, the operator pulls it up through the cage and collapsing frame to the nip rolls, the nip closes to seal the top of the tube, air through the die centre inflates the bubble to BUR 2, and the nip rolls draw the lay-flat film to the winder, where winding starts. A real line only lets the screw start once every zone has reached its set point and soaked (cold-start protection); the model starts after that."
+    ],
+    "steps": [
+      {
+        "key": "screw",
+        "label": [
+          "압출 시작 · 스크류 회전",
+          "Start extruding · screw"
+        ],
+        "hint": [
+          "스크류를 돌려 튜브를 환형 다이에서 케이지와 접힘 프레임을 지나 열린 닙롤까지 올리세요. 실제로는 작업자가 튜브 끝을 묶어 위로 끌어 올립니다.",
+          "Turn the screw to push the tube from the annular die up through the cage and collapsing frame to the open nip rolls; on a real line the operator ties off the tube end and pulls it up."
+        ],
+        "needs": [],
+        "locks": [],
+        "once": true,
+        "spin": {
+          "screw": [
+            29.2251,
+            0
+          ]
+        },
+        "thread": [
+          0,
+          2.5
+        ]
+      },
+      {
+        "key": "nip",
+        "label": [
+          "닙롤 닫힘 · 공압 실린더",
+          "Close the nip · pneumatic cylinders"
+        ],
+        "hint": [
+          "튜브가 닙롤 사이에 들어왔습니다. 공압 실린더로 오른쪽 닙롤을 밀어 닫으세요. 닫힌 닙이 튜브 위쪽을 막아야 버블에 공기를 넣을 수 있습니다.",
+          "The tube is between the nip rolls. Close the right roll with the pneumatic cylinders; the closed nip seals the top of the tube so the bubble can hold air."
+        ],
+        "needs": [
+          "screw"
+        ],
+        "locks": [],
+        "once": false,
+        "move": "nip"
+      },
+      {
+        "key": "inflate",
+        "label": [
+          "버블 팽창 · BUR 1→2",
+          "Inflate the bubble · BUR 1 to 2"
+        ],
+        "hint": [
+          "닙이 튜브를 막았습니다. 다이 중앙으로 공기를 넣어 버블을 BUR 2(지름 160 mm, 레이플랫 251 mm)까지 부풀리세요. PHA의 BUR과 동결선 권장 범위는 정해져 있지 않습니다.",
+          "The nip seals the tube. Blow air through the die centre to inflate the bubble to BUR 2 (160 mm bubble, 251 mm lay-flat); no PHA BUR or frost-line range is established."
+        ],
+        "needs": [
+          "nip"
+        ],
+        "locks": [],
+        "once": false,
+        "morph": "inflate"
+      },
+      {
+        "key": "haul",
+        "label": [
+          "닙롤 이송",
+          "Draw with the nip rolls"
+        ],
+        "hint": [
+          "버블이 섰습니다. 닙롤을 돌려 접힌 필름을 타워 위 가이드 롤을 지나 권취기까지 보내세요. 이송이 시작되면 모형은 닙과 버블 크기를 고정합니다.",
+          "The bubble stands. Run the nip rolls to draw the lay-flat film over the tower guide rolls to the winder; the model holds the nip and the bubble size once drawing starts."
+        ],
+        "needs": [
+          "inflate"
+        ],
+        "locks": [
+          "nip",
+          "inflate"
+        ],
+        "once": true,
+        "spin": {
+          "haul": [
+            15.8701,
+            0
+          ],
+          "screw": [
+            58.2836,
+            0
+          ]
+        },
+        "thread": [
+          2.5,
+          7.48575
+        ]
+      },
+      {
+        "key": "winder",
+        "label": [
+          "권취 시작",
+          "Start winding"
+        ],
+        "hint": [
+          "필름이 권취 코어에 닿았습니다. 권취기를 돌려 두 겹 레이플랫을 감으세요. 모형은 76 mm 코어에서 150 mm 권취 롤까지를 압축해 보여줍니다.",
+          "The film has reached the winder core. Turn the winder to wind the two-ply lay-flat; the model compresses the growth from the 76 mm core to a 150 mm roll."
+        ],
+        "needs": [
+          "haul"
+        ],
+        "locks": [],
+        "once": true,
+        "spin": {
+          "winder": [
+            5.6338,
+            0
+          ],
+          "haul": [
+            6.3662,
+            0
+          ],
+          "screw": [
+            23.3801,
+            0
+          ]
+        },
+        "wind": {
+          "node": "Winder_body",
+          "core": 0.5067
+        }
+      }
+    ],
+    "done": [
+      "기동 완료 · \"자동 공정으로 돌아가기\"를 누르면 정상 운전(5 m/min)을 재생합니다.",
+      "Start-up complete. Choose \"Return to cycle\" to play steady running at 5 m/min."
+    ],
+    "pinned": {
+      "nip": 1
+    },
+    "hidden": [
+      "flow"
+    ],
+    "follow": {
+      "resin": "screw"
+    }
+  },
   "views": [
     {
       "key": "all",
@@ -360,6 +520,8 @@
     "die_to_nip_mm": 2500,
     "collapsing_mm": 700,
     "nip_mm": "100, face 350",
+    "nip_threading_open_mm": 40.0,
+    "nip_cylinders": 2,
     "oscillating_haul_off": "optional, not shown",
     "ibc": "optional, not shown",
     "winder": "76 mm core to 450 mm, two-ply lay-flat",
@@ -369,6 +531,8 @@
   "groups": [
     "flow",
     "haul",
+    "nip",
+    "resin",
     "screw",
     "winder"
   ]
