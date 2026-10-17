@@ -1,9 +1,9 @@
 {
   "format": 1,
   "artifact": "single-file/PHA-Process-Single.html",
-  "bytes": 68613986,
-  "sha256": "5e5258a864ab39a4dd481e55289d9aa77b5c694fcedb09dbd4ef73f0dd1bc9aa",
-  "source_sha256": "cec9f49625c48e33df4e2db361fb8d07ad43b3ff8b7cbedfbede7ad211f88a38",
+  "bytes": 68615782,
+  "sha256": "453acfe60ac6b705e520ccc96841c1dd85978785b3baea1850576f2ecade26cc",
+  "source_sha256": "bfbee702edaf6642d78128bc5a6f3f0b29f46bb56747a4051d998afc55847568",
   "hash_basis": "SHA-256 of UTF-8 text normalized to LF; binary bytes unchanged. Artifact bytes and hash use LF.",
   "embedded_assets": 155,
   "embedded_glbs": 26,
@@ -204,29 +204,29 @@
       "path": "assets/equipment/unreal/blownfilm.webp",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 43728,
-      "sha256": "b8deb0bdb57e8443c041bc3b3c967791b17e99273ad1fc6d192f09f828fddbdb"
+      "bytes": 44478,
+      "sha256": "596ce6eb61d2fc22bae4b5428918f725a5068c6ad2185ec5b9de31c222def31b"
     },
     {
       "path": "assets/equipment/unreal/castfilm.webp",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 45640,
-      "sha256": "70d594724f91c276d69eedacd930a12b5907c65b1ed741289257daa7eb0e61bd"
+      "bytes": 45818,
+      "sha256": "ee2bf8b4b3cf667f77991e741e69a68af82adea4798111965c3a963826037e70"
     },
     {
       "path": "assets/equipment/unreal/compounding.webp",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 47556,
-      "sha256": "c83c9601066af5b18d4d1936fe44bb44f901d8dd38667d4a6ce4cdbb764f8e17"
+      "bytes": 47576,
+      "sha256": "0be2adbad5e1b252897e3c3b282324a77616f0f3246d2d1b260416561291c40d"
     },
     {
       "path": "assets/equipment/unreal/extrusion.webp",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 40728,
-      "sha256": "cc3aa306a82cf49dc2221c4150c986911eaee62873e388b9c3adac9eeb80a8f2"
+      "bytes": 40864,
+      "sha256": "b1fea6f58797c0518c64203d6b17a7ef0f56eca50ee12acd09a4b0dd3e265446"
     },
     {
       "path": "assets/equipment/unreal/injection.webp",
@@ -239,15 +239,15 @@
       "path": "assets/equipment/unreal/sheet.webp",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 51784,
-      "sha256": "10e89e3400571f8e6dad05cec1403cf19ccd0d4620d42dee0ed6004d71d2ccb7"
+      "bytes": 51750,
+      "sha256": "4774dd923dee974671e89d931febf5981557137534d926795e562d4feb81e64e"
     },
     {
       "path": "assets/equipment/unreal/straw.webp",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 41726,
-      "sha256": "7103ce724f633600d8b7323e566c748215b78e52fbb1f01d1ff7934e48609d94"
+      "bytes": 42024,
+      "sha256": "24db4ddcb1d36d7d471ffed2b8c3d872878c9375b4b40804ad30668bfa744745"
     },
     {
       "path": "assets/flash-control/ejector.webp",
@@ -1059,14 +1059,14 @@
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 37408,
-      "sha256": "77244377aba72bb2e79143806f5614a18c41bce6ababb6d166333dcfbd3d8004"
+      "sha256": "c2b85d7b2613ff5741afc776b1f8cd3ec84ed0f01607dcf51b8e4505fe187051"
     },
     {
       "path": "equipment-study.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 11252,
-      "sha256": "45041b4cb6a23f32c301490f092549a78135e926377623a7f3d642e8d11c462b"
+      "sha256": "7de179e1e6d8996a3fde8790e9845e7f835a81f1442e7a91c81812e83b2ccc5b"
     },
     {
       "path": "flash-guide-data.js",
@@ -1087,14 +1087,14 @@
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 26424,
-      "sha256": "9e004fa6d90ad2293fe34e6cfe42689485768f4ea22216b3c4fc1738012bb8d9"
+      "sha256": "a7492ea7907b14b43d1dd503e35977459ab45505bde6eafa7e17139156cff2e9"
     },
     {
       "path": "flash-mold-viewer.js",
       "role": "module",
       "encoding": "utf8-lf",
       "bytes": 3913,
-      "sha256": "745fe6f0df0b11238a73945dae2d5d65dc27adc39bd8ecb3d3e266a796d07c9c"
+      "sha256": "2f5e11d8500fc34d5eff0cceb2fe8f3d15984d3af679a8ffc24dab751347533c"
     },
     {
       "path": "glossary.js",
@@ -1136,14 +1136,14 @@
       "role": "entry",
       "encoding": "utf8-lf",
       "bytes": 326871,
-      "sha256": "5b6eed621be9bb42faba9e447e7d06b574a93ef619a50d5fdf2274a0e48180c0"
+      "sha256": "49194fbed5aa647851b449f9000d6647d171f6727acefbf193d5b2d268014288"
     },
     {
       "path": "injection-motion.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 31162,
-      "sha256": "a15e639dc5db4fc9863497590a7543028cf7df64d3769f1fd9ac39c7f8a666dc"
+      "sha256": "95c1c8be42db9658beead09eba42be206f68139ccc9358a15c861d01a5228041"
     },
     {
       "path": "machine-viewer.js",
@@ -1269,7 +1269,7 @@
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 25655,
-      "sha256": "69cc9af58974c6a4a86ffe855059ef1446cec582466dff0ff743209b2666dcf8"
+      "sha256": "c5f8cc0bd318a175040cac50bbc33fa4515aae0cf083475a60034c5c5db67a68"
     },
     {
       "path": "vendor/chart-4.4.0/LICENSE",
@@ -1367,7 +1367,7 @@
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 6811,
-      "sha256": "12698bd29d779c1b94abf7055faa0cee6ad7d668ab22dcede9cc16c7a83ab17e"
+      "sha256": "3fdaacd3bebe1bbcd2643e2205d48d7c6d837a674cc0a0b769f0173c41133c79"
     }
   ]
 }
