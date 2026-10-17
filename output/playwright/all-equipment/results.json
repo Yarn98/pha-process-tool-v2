@@ -4,8 +4,11 @@
   "checks": [
     "extrusion: start-up order with interlocks - the product grows from the die, the actuator closes on it, locks hold, the first cut frees a piece, and the running line returns closed and fully threaded",
     "sheet: start-up order with interlocks - the product grows from the die, the actuator closes on it, locks hold, the wound roll grows, and the running line returns closed and fully threaded",
+    "sheet: the bottom gap adjusters raise the bottom roll half its stroke half-way through the gap step (real GLB nodes)",
     "castfilm: start-up order with interlocks - the product grows from the die, the actuator closes on it, locks hold, the wound roll grows, and the running line returns closed and fully threaded",
+    "castfilm: the dancer roll rises half its stroke with the tension, and the turret swings the full roll down under its shaft (real GLB nodes)",
     "blownfilm: start-up order with interlocks - the product grows from the die, the actuator closes on it, locks hold, the wound roll grows, and the running line returns closed and fully threaded",
+    "blownfilm: IBC air shows inside the bubble, and the oscillating haul-off turns the nip about the bubble axis, to 90 deg at the end of the reversal (real GLB nodes)",
     "compounding: start-up order with interlocks - the product grows from the die, the actuator closes on it, locks hold, the first cut frees a piece, and the running line returns closed and fully threaded",
     "straw: start-up order with interlocks - the product grows from the die, the actuator closes on it, locks hold, the first cut frees a piece, and the running line returns closed and fully threaded",
     "Blow molding: parison, clamp, pin, inflation and product release interlocks affect real nodes",

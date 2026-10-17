@@ -1,9 +1,9 @@
 {
   "status": "passed",
   "artifact": "single-file/PHA-Process-Single.html",
-  "bytes": 68615782,
-  "sha256": "453acfe60ac6b705e520ccc96841c1dd85978785b3baea1850576f2ecade26cc",
-  "sourceHash": "bfbee702edaf6642d78128bc5a6f3f0b29f46bb56747a4051d998afc55847568",
+  "bytes": 69832189,
+  "sha256": "3674b915b1d5ba1b61c1da6667eab1cbcb01460b0a122258ce4c35ce2ff673ec",
+  "sourceHash": "239ec1bb5e25cbcd1a4657c7646cf7bd67ee9ec2b70de23a899ed9e6c4d22ec7",
   "hashBasis": "SHA-256 of UTF-8 text normalized to LF; binary bytes unchanged. Artifact bytes and hash use LF.",
   "checks": [
     "Canonical LF and CRLF checkouts generate byte-identical HTML and manifest without changing source files",
