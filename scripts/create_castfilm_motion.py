@@ -68,7 +68,7 @@ M = kit.palette()
 M['film'] = kit.material('Polymer / film (translucent)', '#3E8C5A', 0, .2, alpha=.55)
 M['core'] = kit.material('Paper / winder core', '#B89A6A', 0, .85)
 
-ext = kit.single_screw_extruder('Extruder', D, 30, -.35, AX, M, FRAMES, TURNS['screw'])
+ext = kit.single_screw_extruder('Extruder', D, 30, -.35, AX, M, FRAMES, TURNS['screw'], zones=3)   # schema zone1-zone3
 x_lip = X_LIP
 feed = [kit.cylinder('Adapter', (-.28, 0, AX), .055, .135, 'X', M['steel'], segments=40),
         kit.box('Screen changer plate', (-.25, 0, AX), (.035, .30, .13), M['steel_dark'], bevel=.004),
@@ -175,9 +175,15 @@ META = {
                  control('roll', '칠 롤 회전각 (400 mm)', 'Chill roll angle (400 mm)', time_range=[0, LOOP]),
                  control('winder', '권취 롤 회전각', 'Winder rotation angle', 360, time_range=[0, LOOP])],
     'views': [{'key': 'all', 'label': ['전체 라인', 'Whole line'], 'center': centre, 'zoom': 1},
-              {'key': 'screw', 'label': ['스크류·배럴', 'Screw & barrel'], 'center': [-1.0, AX, 0], 'zoom': 3.2},
-              {'key': 'chill', 'label': ['다이·에어 갭·칠 롤', 'Die, air gap & chill roll'], 'center': [X_C, Z_C + .1, 0], 'zoom': 4.5},
-              {'key': 'finish', 'label': ['게이지·트림·권취', 'Gauge, trim & winder'], 'center': [X_TRIM + .3, Z_EXIT - .2, 0], 'zoom': 3}],
+              kit.camera_view('screw', ['스크류·배럴 단면', 'Screw & barrel cutaway'], (-1.0, 0, AX), (1.2, -6.0, 5.2), 3.4),
+              kit.camera_view('chill', ['다이·에어 갭·칠 롤', 'Die, air gap & chill roll'], (X_C, 0, Z_C + .12), (.5, -8.0, .9), 4.5),
+              kit.camera_view('finish', ['게이지·트림·권취', 'Gauge, trim & winder'], (X_TRIM + .3, 0, Z_EXIT - .2), (1.5, -6.0, 2.5), 3)],
+    'heat': {'input': 'process', 'reference': 'process',
+             'title': ['배럴·다이 존 온도 (입력한 설정값)', 'Barrel and die zone temperatures (entered set points)'],
+             'note': kit.PROCESS_HEAT_NOTE, 'scale_labels': {'melt': ['배럴·다이', 'Barrel & die'], 'tool': ['칠 롤', 'Chill roll']},
+             'zones': kit.extruder_heat(ext, ['zone1', 'zone2', 'zone3'])
+             + [kit.heat_box('die', 'die', ['평다이', 'Flat die'], (X_LIP - .066, -.262, Z_LIP + .024), (X_LIP + .066, .262, Z_LIP + DIE_H + .003), half=False),
+                kit.heat_roll_ends('chill', 'chillTop', ['칠 롤', 'Chill roll'], X_C, Z_C, R1 + .004, FACE)]},
     'stages': [['공급·용융', 'Feed & melt'], ['에어 갭·칠 롤 고정', 'Air gap & pinning'], ['냉각·두께 측정', 'Cool & gauge'],
                ['트림·권취', 'Trim & wind']],
     'turns': TURNS,

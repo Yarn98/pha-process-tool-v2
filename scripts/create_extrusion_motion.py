@@ -4,7 +4,8 @@ blender -b --factory-startup --python scripts/create_extrusion_motion.py
 
 Pack B single-screw base (grade C teaching values, output/research/pha-equipment-realism-20261017/
 pack-b-answer-notes.md):
-- D45 screw over 30D with 5 heating zones; the shaft is 1000 mm high, with a 135 mm (3D) adapter;
+- D45 screw over 30D with 4 heating zones (Pack B lists 5; the model follows the app's zone1-zone4 inputs so the
+  heat map maps one band to one entry); the shaft is 1000 mm high, with a 135 mm (3D) adapter;
 - a tube profile die feeding a 2.5 m vacuum calibration and cooling bath;
 - a belt haul-off with 500 mm contact and 100 mm wide belts;
 - a flying saw (200 mm travel, 500 mm cut length) and a 1.5 m run-out table.
@@ -61,7 +62,7 @@ M = kit.palette()
 M['water'] = kit.material('Water / calibration bath', '#5E9EA6', 0, .05, alpha=.3)
 M['belt'] = kit.material('Rubber / haul-off belt', '#2B2D2F', 0, .75)
 
-ext = kit.single_screw_extruder('Extruder', D, 30, ADAPTER[0], AX, M, FRAMES, TURNS['screw'])
+ext = kit.single_screw_extruder('Extruder', D, 30, ADAPTER[0], AX, M, FRAMES, TURNS['screw'], zones=4)   # schema zone1-zone4
 
 # Adapter with a slide-plate screen changer and melt sensors, then the tube die
 head = [kit.cylinder('Adapter', ((ADAPTER[0] + ADAPTER[1]) / 2, 0, AX), .055, ADAPTER[1] - ADAPTER[0], 'X', M['steel'], segments=40),
@@ -239,10 +240,16 @@ META = {
                  control('flow', '수지 표시 위치', 'Resin marker position', 100, '%', [0, LOOP]),
                  control('haul', '벨트 인취 풀리 회전각', 'Belt haul-off pulley angle', time_range=[0, LOOP]),
                  control('cutter', '플라잉 톱 사이클 위치', 'Flying saw cycle position', 360, time_range=[0, LOOP])],
+    # Close-ups look down into the operator-side cutaway or along the downstream equipment (like the injection machine).
     'views': [{'key': 'all', 'label': ['전체 라인', 'Whole line'], 'center': centre, 'zoom': 1},
-              {'key': 'screw', 'label': ['스크류·배럴', 'Screw & barrel'], 'center': [-.7, AX, 0], 'zoom': 3.2},
-              {'key': 'finish', 'label': ['인취·절단', 'Haul-off & saw'], 'center': [3.9, .95, 0], 'zoom': 3.0},
-              {'key': 'die', 'label': ['다이·교정조', 'Die & calibration'], 'center': [.4, AX, 0], 'zoom': 5}],
+              kit.camera_view('screw', ['스크류·배럴 단면', 'Screw & barrel cutaway'], (-.7, 0, AX), (1.2, -6.0, 5.2), 3.4),
+              kit.camera_view('die', ['다이·교정조', 'Die & calibration'], (.3, 0, AX), (1.5, -6.0, 3.0), 6),
+              kit.camera_view('finish', ['인취·절단', 'Haul-off & saw'], (3.9, 0, AX - .05), (1.5, -6.0, 3.0), 4)],
+    'heat': {'input': 'process', 'reference': 'process',
+             'title': ['배럴·다이 존 온도 (입력한 설정값)', 'Barrel and die zone temperatures (entered set points)'],
+             'note': kit.PROCESS_HEAT_NOTE, 'scale_labels': {'melt': ['배럴·다이', 'Barrel & die'], 'tool': ['냉각', 'Cooling']},
+             'zones': kit.extruder_heat(ext, ['zone1', 'zone2', 'zone3', 'zone4'])
+             + [kit.heat_band('die', 'die', ['다이', 'Die'], DIE[0] + .01, DIE[1] - .01, .078, AX, full=True)]},
     'stages': [['공급·용융', 'Feed & melt'], ['다이·교정', 'Die & calibration'], ['냉각·인취', 'Cool & haul off'],
                ['절단·배출', 'Cut & discharge']],
     'turns': TURNS, 'cut_edges': 1,
@@ -251,7 +258,7 @@ META = {
                  'cut_length_mm': CUT * 1000, 'pulley_mm': PULLEY_D,
                  'loop_note': 'Real time: one cut per 10 s loop; the pulleys turn a whole number of times per loop (within 0.6 %).'},
     'spec': {'basis': 'Pack B grade C teaching values; brand-neutral; not an OEM drawing or PHA setting',
-             'screw_d_mm': 45, 'l_d': 30, 'heating_zones': 5, 'shaft_height_mm': 1000, 'adapter_mm': 135,
+             'screw_d_mm': 45, 'l_d': 30, 'heating_zones': 4, 'shaft_height_mm': 1000, 'adapter_mm': 135,
              'profile': 'tube 32 mm OD', 'bath_m': 2.5, 'haul_off_contact_mm': 500, 'belt_width_mm': 100,
              'saw_travel_mm': SAW_TRAVEL * 1000, 'cut_length_mm': CUT * 1000, 'run_out_mm': 1500,
              'sources': 'output/research/pha-equipment-realism-20261017/pack-b-answer-notes.md'},
