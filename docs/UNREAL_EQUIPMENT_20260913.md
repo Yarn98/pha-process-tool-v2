@@ -19,13 +19,13 @@ Interaction thesis: manual axes keep their existing interlocks; selected constan
 | Blown film | Annular die, air ring, bubble, nip and winder | Nip/winding RPM; existing mass-balance thickness calculation stays authoritative |
 | Blow molding | Parison, split mold, blow pin and bottle | Mold stroke / velocity → one-way travel time; pin and inflation interlocks retained |
 | Compounding | Co-rotating screws, side feeder, vent, bath, pelletizer | Screw RPM, puller RPM and cutting frequency; no mixing-quality prediction |
-| Straw | Reused Unreal annular-die study from Straw Optimizer v2 | Existing full-line model retained; line speed / finished length → cutting rate |
+| Straw | Four-lane line: tube head, vacuum sizing, cooling bath, belt haul-off, rotary cutter (rendered from `create_straw_motion.py` since 2026-10-17) | Line speed / finished length → cutting rate; haul-off drum RPM from line speed and diameter |
 
 The models depict example equipment arrangements. They are not dimensioned OEM drawings. Water/guards use cutaway or transparent illustration; flow markers indicate direction, not a solved velocity field. A three-roll upstack is one sheet layout, and the blow-molding rig is extrusion blow molding. Other production layouts require separate geometry and evidence.
 
 ## Reuse and reproduction
 
-Source repository: `D:\My_PJT\Application\straw-optimizer-v2`, user-selected task `01a072b6-2784-7172-903c-201486003681`, commit `8d4459dcbb3392b0535f438448327b87343c7d55`. Its completed annular-die Unreal image is copied byte-for-byte. The focused asset manifest records the exact source commit and SHA-256. The source repository remains unchanged.
+Source repository: `D:\My_PJT\Application\straw-optimizer-v2`, user-selected task `01a072b6-2784-7172-903c-201486003681`, commit `8d4459dcbb3392b0535f438448327b87343c7d55`. Its annular-die Unreal image was used for straw until 2026-10-17, when the real-scale straw rig replaced it and all eight images came from this project's rigs. The source repository remains unchanged.
 
 The Blender → FBX → Unreal DX12/Lumen workflow adapts `scripts/blender/export-die.py`, `scripts/unreal/render-die.py` and `render-die.ps1` from that repository. The seven other equipment images use this project's existing editable Blender rigs. Web controls use the existing local Three.js build, independently of Unreal.
 
