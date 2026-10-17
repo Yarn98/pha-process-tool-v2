@@ -1,9 +1,9 @@
 {
   "format": 1,
   "artifact": "single-file/PHA-Process-Single.html",
-  "bytes": 65804717,
-  "sha256": "01c29898a6652956b012470672f8285a0ff90879314c1fc9fe5904cb0c8e11b7",
-  "source_sha256": "85ad071638948f6f82b926e9d0a3f59ab3d70f1a212cbb7b20cb3f5ee02116cd",
+  "bytes": 68302767,
+  "sha256": "c106625ebb4a6f0233e9c4b1d9bb23b44282da0dd19abdf4f700c30efff23afc",
+  "source_sha256": "9859c5844ca634267a36736c6e302b83201568e0592fb7675bb1774d90057954",
   "hash_basis": "SHA-256 of UTF-8 text normalized to LF; binary bytes unchanged. Artifact bytes and hash use LF.",
   "embedded_assets": 155,
   "embedded_glbs": 26,
@@ -50,15 +50,15 @@
       "path": "assets/equipment/blownfilm-motion-poster.png",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 959028,
-      "sha256": "7e3ce416308cb97058fac618c50c86615df2712d88661ff2c038ff1d4ca16c5b"
+      "bytes": 960345,
+      "sha256": "9b949138c9100a5708c914ba3d092d7de55999a5a9755d18cd5cee97e67b2cf2"
     },
     {
       "path": "assets/equipment/blownfilm-motion.glb",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 1926144,
-      "sha256": "a7d58b3a97b1849d16c61d0c3978ad3e4ee91fae1c48c20b28a806d6ffa7e181"
+      "bytes": 2239772,
+      "sha256": "8e06ff4baba798345d654d5abc1a83fdb09600b1e0d09cd6bbd8e7f7c6f27e90"
     },
     {
       "path": "assets/equipment/blownfilm.png",
@@ -71,15 +71,15 @@
       "path": "assets/equipment/castfilm-motion-poster.png",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 998937,
-      "sha256": "6b6aa0173af244d36c70cfa25531cb5f10a132e0d9f8f9f9dd0f2c39769aa3a9"
+      "bytes": 1002039,
+      "sha256": "9d43d274306c2eb1fc99362f286fa41c592451978bbd59ea655c2bc3da6ff7c3"
     },
     {
       "path": "assets/equipment/castfilm-motion.glb",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 1586668,
-      "sha256": "dd2e8c8a45b949fae100377eb406e6a5142341bdd1c50d2a55b4ff34a91f1c9f"
+      "bytes": 1686108,
+      "sha256": "bb1f3e49f9817d63fd40fccfe9867436879dec713c49b5ac09b0ad87d1ba2665"
     },
     {
       "path": "assets/equipment/castfilm.png",
@@ -92,15 +92,15 @@
       "path": "assets/equipment/compounding-motion-poster.png",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 999932,
-      "sha256": "c73112ec40e20ffec8f43057b69587beed3277496dded2945c44eb09ec923ffd"
+      "bytes": 1000290,
+      "sha256": "8d6cd45c7058272eb5d3f601216139b4a44fd2cc9a696cdc41a67393e0d4b9ee"
     },
     {
       "path": "assets/equipment/compounding-motion.glb",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 4322516,
-      "sha256": "dd83a3c2b61460296bbb2cb5e8adf82baa1ef73bd92aaafa1be4ee88a7477a43"
+      "bytes": 4542052,
+      "sha256": "f0c7f13fda82bd8c047bf9a69fc6e4434302c487b8979fbed3e4c3501ae0f044"
     },
     {
       "path": "assets/equipment/compounding.png",
@@ -113,15 +113,15 @@
       "path": "assets/equipment/extrusion-motion-poster.png",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 967591,
-      "sha256": "ec536d54310bd3a55687b888dfe99f6839270fdc8a50917bfb8d06d294e79d62"
+      "bytes": 968029,
+      "sha256": "d5849a7d644d8585b5b9313421fcee8a9a85e318f488c317c8fff4f094470b73"
     },
     {
       "path": "assets/equipment/extrusion-motion.glb",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 1870348,
-      "sha256": "8080f264037c3cc1c9e3401283716f21cde315476756fe3aac42d4770a8f1008"
+      "bytes": 2076988,
+      "sha256": "e3ed1a2e34f3ef7e88858d9dcf1b4a31ed8bd7faf13fa3936b12077903aa0818"
     },
     {
       "path": "assets/equipment/extrusion.png",
@@ -155,15 +155,15 @@
       "path": "assets/equipment/sheet-motion-poster.png",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 1006950,
-      "sha256": "0e80e3133462117b1b1696f257a180abbaa0804c052792f230296199eb6ade10"
+      "bytes": 1010472,
+      "sha256": "9f5573d8a4ece88576fe53540dc03770292f048d89fe57d1f56fab1ea2cbd99d"
     },
     {
       "path": "assets/equipment/sheet-motion.glb",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 1944308,
-      "sha256": "280449f7a6bace61bfb547feadb2a94d7e8cc27a7f4388f13d4a5af3c3c0d6aa"
+      "bytes": 2010040,
+      "sha256": "20ec87de4caf3a7746b38106e983fa5d2dd703948812a016f5916031d5299387"
     },
     {
       "path": "assets/equipment/sheet.png",
@@ -176,15 +176,15 @@
       "path": "assets/equipment/straw-motion-poster.png",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 952996,
-      "sha256": "cc426435e2d1b15a67e1599f791c6e4054cc0df294e5f87109df1652cbaba321"
+      "bytes": 953071,
+      "sha256": "09f757e1d145acd168d9b4d75cc227ef2f5ebd176092d578c0f2a9a1571ee5d9"
     },
     {
       "path": "assets/equipment/straw-motion.glb",
       "role": "embedded-asset",
       "encoding": "binary",
-      "bytes": 2621720,
-      "sha256": "a221c2c529aa9cc438a20dd19d3860b671c075fba64a3edf4028cd62ace7cd34"
+      "bytes": 3551584,
+      "sha256": "0f97981dd81effe7d8cca08108b118597f5acb92ea50f58fbfe4662117df232a"
     },
     {
       "path": "assets/equipment/straw.png",
@@ -1051,22 +1051,22 @@
       "path": "equipment-models.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
-      "bytes": 65182,
-      "sha256": "570f5dca8276e2ca40486c220359270920b4ea3fd6d85daf980759afc6842232"
+      "bytes": 98036,
+      "sha256": "b33431b157fdb88076312dc1aac581fc284139937ef70a767333e5a4f7b45b6d"
     },
     {
       "path": "equipment-motion.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
-      "bytes": 30040,
-      "sha256": "d467efcfd32f3225b2c924ec589033b22279d4df0945bd8baad9a761a787fd9c"
+      "bytes": 36969,
+      "sha256": "63dc9294b06611f2b928269a5b0adeb8a206eabcb423972d55d6faf3d601f0bf"
     },
     {
       "path": "equipment-study.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 11252,
-      "sha256": "5b73f0a372fbe42f2d6569f6d8039a92f9ce59ad85fe5cbbeb182c535a5c5fc1"
+      "sha256": "b86cfef704a6afefa37bd897588115ca0714144050ba840a039708f684c2d00f"
     },
     {
       "path": "flash-guide-data.js",
@@ -1087,14 +1087,14 @@
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 26424,
-      "sha256": "09d9db000793a8a0e773b155fe7c86f89d9d199fc5b3032ebc1661fe7359f99e"
+      "sha256": "e62fe0b35a92cf724548965dd2e36e1e35a9893b4978860324487ef77b446225"
     },
     {
       "path": "flash-mold-viewer.js",
       "role": "module",
       "encoding": "utf8-lf",
       "bytes": 3913,
-      "sha256": "e6f8b408794c79f6491fea2e9c9d2ace7a742eade8167f7e5fb85d65e2d42698"
+      "sha256": "cd3d569d60edd8fdfbe23400be047e878c9dd45db3d3f9bf67b17e9d483eb5f4"
     },
     {
       "path": "glossary.js",
@@ -1136,14 +1136,14 @@
       "role": "entry",
       "encoding": "utf8-lf",
       "bytes": 326868,
-      "sha256": "641bbe0175b6bda5df7fa289a086721f25af66d8e57bb7824ddbe5a9d75e58e3"
+      "sha256": "376a5c09b6d948e70e17da749b8c05f00d6788e8b1666206b2edb3915a3ea1b9"
     },
     {
       "path": "injection-motion.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 31162,
-      "sha256": "0f5a192ce19b54b64c90a28c482a6cf54b15a0eea81ea46f09966baf7bd5441a"
+      "sha256": "56a0ba500432a23762769ca2ac8da4f7dd7c3fcbccbc2efcfafc4eda3082de0c"
     },
     {
       "path": "machine-viewer.js",
@@ -1177,8 +1177,8 @@
       "path": "process-atlas.css",
       "role": "stylesheet",
       "encoding": "utf8-lf",
-      "bytes": 26237,
-      "sha256": "25f45a13a30f82e113a1509e6ec3fee4f228f4d36df61348097c1d656fe97864"
+      "bytes": 26300,
+      "sha256": "129e4b3ae3b6e5972cf2524609e25602cc3df419a87ee92fbf0e71e68ce88823"
     },
     {
       "path": "process-atlas.js",
@@ -1269,7 +1269,7 @@
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 25655,
-      "sha256": "35b56d74b9d1f3562f08b1984bb65a84a9244ff11acad5a787f69bc63bda1b89"
+      "sha256": "38afe07b10a6edf85530d1989ef073f3bec88e43e197172eddc428f973b75615"
     },
     {
       "path": "vendor/chart-4.4.0/LICENSE",
@@ -1367,7 +1367,7 @@
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 6811,
-      "sha256": "6b1218c8fb353c921ef084c08e83148c1877fc9b75e55230e28297806ddebe30"
+      "sha256": "361ebbddacf2cffdf403f6f292ca144c577edc77bb3f7f29766cf7b259d82a65"
     }
   ]
 }
