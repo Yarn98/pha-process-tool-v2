@@ -19,7 +19,8 @@ film sets before the nip and does not block (in-house trials, line experience an
 docs/research/pha-blown-film-hot-air-ring-20261017.md). IBC supplies air
 through a stack on the die mandrel and draws it back into the stack top, balanced on three ultrasonic bubble sensors (no IBC
 air temperature is set). The oscillating haul-off reverses the nip and collapsing frame +-90 deg on a slewing ring (Pack B:
-180 deg total, 120 s period); the film above the nip twists back to the fixed guide roll in place of turning bars. No PHA
+180 deg total, 120 s period); in place of turning bars the lay-flat twists back over a 1.14 m free span to the fixed guide
+roll on a take-off frame above the tower roof (about 1.5 % edge strain at 90 deg). No PHA
 BUR or frost-line range is implied. The model runs in real time at 5 m/min: the nip rolls turn three times per loop and the
 winder twice.
 """
@@ -64,6 +65,7 @@ X_D = .55                                           # die axis
 Z_DIE = 1.05                                        # die lip level
 Z_NIP = Z_DIE + 2.5
 Z_COLLAPSE = Z_NIP - .70
+RISE = 1.25                                         # nip to the first fixed guide roll: the free span the lay-flat twists in
 CAGE_R = .10
 T = .0006                                           # drawn film thickness (exaggerated)
 X_W = X_D + 1.30                                    # winder
@@ -237,9 +239,11 @@ for k, (i0, i1) in enumerate(zip(cuts, cuts[1:])):
     if heights[i1] > Z_COLLAPSE - Z_DIE + 1e-9:
         collapsing.append(segment)
 
-# Tower and cage. The tower deck has a square opening for the bubble and the turning collapsing frame.
+# Tower and cage. The tower deck has a square opening for the bubble and the turning collapsing frame, the roof one for the
+# lay-flat rising to the take-off frame.
 DECK_TOP = Z_NIP - .23
 OPENING = .25                                        # half-size of the deck opening
+ROOF_Z, ROOF_OPEN = Z_NIP + .35, .18                 # roof centre height and half-size of its opening
 tower = []
 for dx in (-.45, .45):
     for dy in (-.45, .45):
@@ -247,7 +251,9 @@ for dx in (-.45, .45):
 for side in (-1, 1):
     tower += [kit.box('Tower deck', (X_D, side * (OPENING + .5) / 2, DECK_TOP - .02), (1.0, .5 - OPENING, .04), M['paint_dark']),
               kit.box('Tower deck', (X_D + side * (OPENING + .5) / 2, 0, DECK_TOP - .02), (.5 - OPENING, 2 * OPENING, .04), M['paint_dark'])]
-tower.append(kit.box('Tower top', (X_D, 0, Z_NIP + .35), (1.0, 1.0, .06), M['paint']))
+for side in (-1, 1):                                 # roof over the haul-off, open round the rising lay-flat
+    tower += [kit.box('Tower top', (X_D, side * (ROOF_OPEN + .5) / 2, ROOF_Z), (1.0, .5 - ROOF_OPEN, .06), M['paint']),
+              kit.box('Tower top', (X_D + side * (ROOF_OPEN + .5) / 2, 0, ROOF_Z), (.5 - ROOF_OPEN, 2 * ROOF_OPEN, .06), M['paint'])]
 for side in (-1, 1):
     tower.append(kit.box('Platform rail', (X_D, side * .5, Z_NIP + .25), (1.0, .03, .03), M['warning']))
 for z in [Z_DIE + FLH + .25 + .3 * k for k in range(4)]:
@@ -297,8 +303,9 @@ kit.actuate(nip, FRAMES, (OPEN, 0, 0))
 # cylinders and the collapsing frame stand on a frame that turns on a slewing ring on the tower deck, driven by a gear
 # motor through a pinion on the ring's gear rim. Reversing +-90 deg about the bubble axis spreads the bubble's
 # circumferential gauge bands across the width of the wound roll. The bubble between the frost line and the collapsing
-# frame twists with it (it is round there, so the model turns only the collapsing part), and the lay-flat between the nip
-# and the first guide roll twists back to the fixed guide (a real haul-off does this with turning bars on the frame).
+# frame twists with it (it is round there, so the model turns only the collapsing part). A real haul-off turns the film
+# back to its fixed path with turning bars; here the lay-flat twists back over a long free span to the fixed guide roll
+# (see the take-off frame below).
 OSC = math.radians(90)
 frame_parts = [vertical_ring('Oscillation slewing ring outer race', DECK_TOP + .0005, DECK_TOP + .04, .3005, .36, M['steel']),
                vertical_ring('Oscillation gear rim', DECK_TOP + .005, DECK_TOP + .035, .36, .375, M['steel_dark']),
@@ -336,15 +343,26 @@ kit.join([vertical_ring('Oscillation slewing ring inner race', DECK_TOP, DECK_TO
           kit.between('Oscillation drive gearbox', (X_D + .3905 * drive_at.x, .3905 * drive_at.y, DECK_TOP + .015),
                       (X_D + .50 * drive_at.x, .50 * drive_at.y, DECK_TOP + .015), .02, M['paint'], segments=16)], 'OscillationDrive')
 RG = GUIDE_D / 2000
-# The lay-flat rises from the nip tangent to the first top guide, runs across the tower top to the second guide,
-# drops outside the tower columns, wraps under the lower guide and runs to the winder.
-top_guide = (X_D + RG + T / 2, Z_NIP + .25)
-top_guide2 = (X_D + .55, Z_NIP + .25)
+# The lay-flat rises RISE from the nip, through the roof opening, tangent to the first top guide on the take-off frame,
+# runs across to the second guide, drops outside the tower columns, wraps under the lower guide and runs to the winder.
+top_guide = (X_D + RG + T / 2, Z_NIP + RISE)
+top_guide2 = (X_D + .55, Z_NIP + RISE)
 low_guide = (top_guide2[0] + 2 * RG + T, .45)
 FILM_Z = low_guide[1] - RG - T / 2
 kit.roll('TowerGuideRoll', top_guide[0], top_guide[1], RG, .35, M, 'haul', turns_of(GUIDE_D), FRAMES, 1, mat=M['steel'], joint=False)
 kit.roll('TowerGuideRoll2', top_guide2[0], top_guide2[1], RG, .35, M, 'haul', turns_of(GUIDE_D), FRAMES, 1, mat=M['steel'], joint=False)
 kit.roll('LowerGuideRoll', low_guide[0], low_guide[1], RG, .35, M, 'haul', turns_of(GUIDE_D), FRAMES, -1, mat=M['steel'], joint=False)
+# Take-off frame on the roof: a beam under each bearing-block line of the two top guide rolls, on four posts that stand
+# clear of the rising, twisting lay-flat (teaching values, grade C).
+GUIDE_BLOCK = kit.bearing_block(RG)
+TAKEOFF_BEAM = top_guide[1] - GUIDE_BLOCK / 2 - .021  # beam centre: its top 1 mm under the blocks
+takeoff = []
+for y in (-Y_FRAME, Y_FRAME):
+    takeoff.append(kit.box('Take-off frame beam', ((top_guide[0] + top_guide2[0]) / 2, y, TAKEOFF_BEAM),
+                           (top_guide2[0] - top_guide[0] + GUIDE_BLOCK, .04, .04), M['paint'], bevel=.004))
+    takeoff += [kit.box('Take-off frame post', (x, y, (ROOF_Z + .03 + TAKEOFF_BEAM - .02) / 2), (.04, .04, TAKEOFF_BEAM - .02 - ROOF_Z - .03),
+                        M['paint'], bevel=.004) for x in (top_guide[0], top_guide2[0])]
+kit.join(takeoff, 'TakeOffFrame')
 RW = WOUND_D / 2000
 winder = kit.roll('Winder', X_W, FILM_Z - T / 2 - RW, RW, LAYFLAT + .02, M, 'winder', 2, FRAMES, 1, mat=M['film'], marks=3,
                   joint=False)
@@ -353,22 +371,26 @@ kit.join([kit.box('Winder stand', (X_W, side * .25, winder.location.z / 2), (.12
          + [kit.box('Winder motor', (X_W, .36, winder.location.z), (.16, .14, .16), M['paint_accent'], bevel=.008)], 'WinderStand')
 
 # Lay-flat film: up out of the nip, over the top guide, down the tower, round the lower guide, to the winder. The rise from
-# the nip to the first guide is built in 6.25 mm pieces so that it can twist smoothly with the oscillating haul-off.
+# the nip to the first guide is built in 12.5 mm pieces so that it can twist smoothly with the oscillating haul-off.
 top = Vector((X_D, 0, Z_NIP))
 path = [top, Vector((X_D, 0, top_guide[1]))]
 path += kit.arc_xz(top_guide[0], top_guide[1], RG + T / 2, 180, 90, 8)[1:]
 path += kit.arc_xz(top_guide2[0], top_guide2[1], RG + T / 2, 90, 0, 8)
 path += kit.arc_xz(low_guide[0], low_guide[1], RG + T / 2, 180, 270, 8)
 path += [Vector((X_W, 0, FILM_Z))]
-RISE = top_guide[1] - Z_NIP
-rise_pieces = kit.thread_web('FlattenedFilmWebRise', path[:2], LAYFLAT, T * 2, M['film'], step=.00625, s_from=S_NIP)
+rise_pieces = kit.thread_web('FlattenedFilmWebRise', path[:2], LAYFLAT, T * 2, M['film'], step=.0125, s_from=S_NIP)
 kit.thread_web('FlattenedFilmWeb', path[1:], LAYFLAT, T * 2, M['film'], s_from=S_NIP + RISE)
 S_END = S_NIP + kit.path_length(path)
 
 # The oscillating frame carries the nip, its carriage and cylinders, the collapsing frame, the collapsing part of the
 # bubble and the lay-flat just above the nip rolls. Higher up, the rise twists back: each piece between 62.5 mm (clear
-# of the nip rolls) and 200 mm (below the first guide roll) turns with its own share of the frame angle, falling to 0.
-TWIST = (.0625, .20)
+# of the nip rolls) and 1.2 m (below the first guide roll) turns with its own share of the frame angle, falling to 0.
+# Over this 1.14 m free span (4.5 lay-flat widths) a 90 deg twist stretches the film edges by about
+# (theta W/2)^2 / (2 L^2) = 1.5 % more than the centre line; the former 137.5 mm span needed about 100 %, which no film
+# takes. A real haul-off avoids the twist with turning bars, which the model does not build.
+TWIST = (.0625, RISE - .05)
+EDGE_STRAIN = (OSC * LAYFLAT / 2) ** 2 / (2 * (TWIST[1] - TWIST[0]) ** 2)
+assert TWIST[1] - TWIST[0] > 4 * LAYFLAT and EDGE_STRAIN < .02, EDGE_STRAIN
 bpy.context.view_layer.update()
 haul_off = kit.carrier('HaulOffCarrier', group='oscillate')
 kit.mount([nip_left, bpy.data.objects['NipLeft stand'], nip, *nip_cylinders, bpy.data.objects['OscillatingFrame'],
@@ -390,7 +412,7 @@ for k, piece in enumerate(rise_pieces):
     if share == 1.0:
         kit.mount([piece], haul_off)
     elif share > 0:
-        twist = kit.carrier('HaulOffTwist%02d' % k, group='oscillate')
+        twist = kit.carrier('HaulOffTwist%03d' % k, group='oscillate')
         kit.mount([piece], twist)
         kit.turn_about(twist, FRAMES, (X_D, 0, 0), 'Z', lambda f, share=share: share * oscillation(f))
         twist['share'] = round(share, 5)
@@ -530,22 +552,23 @@ STARTUP, CONTROLS = kit.startup(
      kit.step('oscillate', ['오실레이팅 인취 · ±90° 반전', 'Oscillating haul-off · ±90° reversing'],
               ['권취가 시작되었습니다. 오실레이팅 인취를 돌리세요. 닙롤, 실린더, 접힘 프레임을 실은 프레임이 데크의 선회 베어링 위에서 버블 축을 '
                '중심으로 좌우 90°씩(총 180°, 한 주기 120 s) 천천히 반전 회전하며, 버블 둘레의 두께 편차가 권취 롤 폭 전체로 퍼집니다. 슬라이더는 '
-               '가운데 → +90° → −90°의 한 번 반전입니다. 실제 장치는 프레임 위 터닝 바가 필름 방향을 바로잡으며, 모형은 닙 위 필름의 비틀림으로 '
-               '나타냅니다.',
+               '가운데 → +90° → −90°의 한 번 반전입니다. 실제 장치는 터닝 바로 필름 방향을 바로잡지만, 모형은 닙 위 약 1.1 m 자유 구간에서 '
+               '필름이 완만하게 비틀리는 것으로 나타냅니다.',
                'Winding has started. Start the oscillating haul-off: the frame that carries the nip rolls, their cylinders and the '
                'collapsing frame turns on a slewing ring on the deck, reversing 90° each way about the bubble axis (180° total, '
                '120 s per cycle), so the bubble’s circumferential gauge bands spread across the width of the wound roll. The '
-               'slider runs one reversal: centre, +90°, then -90°. A real haul-off straightens the film with turning bars on the '
-               'frame; the model shows it as a twist of the film above the nip.'],
+               'slider runs one reversal: centre, +90°, then -90°. A real haul-off straightens the film with turning bars; the '
+               'model shows it as a gentle twist of the film over a free span of about 1.1 m above the nip.'],
               needs=['winder'], move='oscillate')],
     ['기동 완료 · "자동 공정으로 돌아가기"를 누르면 정상 운전(5 m/min)을 재생합니다.',
      'Start-up complete. Choose "Return to cycle" to play steady running at 5 m/min.'],
     LOOP, pinned={'nip': 1, 'oscillate': 0})
-centre = [(ext['x_rear'] + X_W + .3) / 2, 1.9, 0]
+MODEL_TOP = top_guide[1] + RG + .01                 # the lay-flat over the top guide rolls
+centre = [(ext['x_rear'] + X_W + .3) / 2, round(MODEL_TOP / 2, 3), 0]
 META = {
     'id': 'blownfilm', 'duration': LOOP, 'frames': [0, FRAMES],
     'poster': 'assets/equipment/blownfilm-motion-poster.png', 'model': 'assets/equipment/blownfilm-motion.glb',
-    'center': centre, 'span': [X_W + .3 - ext['x_rear'] + .4, Z_NIP + .55], 'heightRatio': .62, 'zoom': [.7, 12],
+    'center': centre, 'span': [X_W + .3 - ext['x_rear'] + .4, round(MODEL_TOP + .2, 3)], 'heightRatio': .62, 'zoom': [.7, 12],
     'controls': CONTROLS, 'startup': STARTUP,
     'views': [{'key': 'all', 'label': ['전체 라인', 'Whole line'], 'center': centre, 'zoom': 1},
               kit.camera_view('screw', ['스크류·배럴 단면', 'Screw & barrel cutaway'], (-.6, 0, AX), (1.2, -6.0, 5.2), 3.4),
@@ -566,7 +589,9 @@ META = {
                  'cage_inside_mm': CAGE_R * 2000, 'rpm': {key: round(value, 3) for key, value in RPM.items()},
                  'roll_mm': {'nip': NIP_D, 'guide': GUIDE_D, 'winder_now': WOUND_D, 'core': CORE_D},
                  'air_ring_air_c': AIR_SETPOINT,
-                 'oscillation': {'total_deg': round(math.degrees(2 * OSC)), 'period_s': 120, 'twist_mm': [TWIST[0] * 1000, TWIST[1] * 1000]},
+                 'oscillation': {'total_deg': round(math.degrees(2 * OSC)), 'period_s': 120,
+                                 'twist_mm': [round(TWIST[0] * 1000, 1), round(TWIST[1] * 1000, 1)],
+                                 'twist_edge_strain_pct': round(EDGE_STRAIN * 100, 2)},
                  'loop_note': 'Real time: steady bubble (no breathing); the nip rolls turn three times per loop and the winder twice.'},
     'spec': {'basis': 'Pack B grade C teaching values; brand-neutral; not an OEM drawing or a PHA BUR or frost-line setting',
              'screw_d_mm': 40, 'l_d': 30, 'die_mm': 80, 'air_ring_od_mm': 240, 'bur': BUR, 'layflat_mm': round(LAYFLAT * 1000, 1),
@@ -590,7 +615,8 @@ META = {
              'oscillating_haul_off': {
                  'type': 'nip, carriage, cylinders and collapsing frame on a frame turning on a slewing ring (gear motor and pinion)',
                  'total_deg': round(math.degrees(2 * OSC)), 'period_s': 120,
-                 'film_above_nip': 'twists back to the fixed guide roll between 62.5 and 200 mm above the nip (turning bars not modelled)',
+                 'film_above_nip': 'twists back to the fixed guide roll on the take-off frame over a free span 62.5-1200 mm above the '
+                                   'nip, about 1.5 % edge strain at 90 deg, (theta W/2)^2 / (2 L^2); turning bars are not modelled',
                  'grade': 'C teaching values (Pack B); not an OEM drawing'},
              'ibc': {
                  'train': ['supply blower', 'die-centre supply channel', 'stack with nozzle ring', 'stack-top exhaust intake',

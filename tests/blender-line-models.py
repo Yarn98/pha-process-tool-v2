@@ -655,37 +655,62 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
             close(r, r0, 1e-5)
             close(z, z_0, 1e-5)
             close((a-a0+180) % 360-180, expected, .05)
+        # The rise above the nip: each piece's width turns by its share of the frame angle, the full angle up to the
+        # twist span's lower end (clear of the nip rolls), falling linearly to 0 at its upper end (below the fixed guide
+        # roll). The span is at least four lay-flat widths, so a 90 deg twist stretches the film edges by under 2 % more
+        # than its centre line, (theta W/2)^2 / (2 L^2), and neighbouring pieces differ by under 1.2 deg at 90 deg.
+        rise_pieces = sorted((o for o in objects if o.name.startswith('FlattenedFilmWebRise')), key=lambda o: o['thread_s'][0])
+        lo, hi = osc['twist_mm'][0]/1000, osc['twist_mm'][1]/1000
+        layflat = teaching['layflat_mm']/1000
+        strain = (math.pi/2*layflat/2)**2/(2*(hi-lo)**2)
+        assert hi-lo >= 4*layflat and strain < .02, (hi-lo, strain)
+        close(osc['twist_edge_strain_pct'], round(strain*100, 2), .006)
+
+        def wrap(degrees):
+            return (degrees+90) % 180-90
+
+        def twist_angles(theta):
+            """Width direction of each rise piece at the current frame (deg from rest, folded into -90..90), each checked
+            against its share of the frame angle ``theta``. The direction pairs every vertex with the far edge it lies on,
+            so the film thickness does not tilt it."""
+            angles = []
+            for o in rise_pieces:
+                points = vertices(o.name)
+                centre = sum(points, Vector())/len(points)
+                ref = max(points, key=lambda p: (p-centre).length)-centre
+                width = sum(((p-centre)*(1 if (p-centre).dot(ref) > 0 else -1) for p in points), Vector())
+                phi = wrap(math.degrees(math.atan2(width.y, width.x))-90)
+                z = (o['thread_s'][0]+o['thread_s'][1])/2-teaching['die_to_nip_mm']/1000
+                share = min(1.0, max(0.0, (hi-z)/(hi-lo)))
+                assert abs(wrap(phi-share*theta)) < .5, (o.name, phi, share, theta)
+                angles.append(round(phi, 2))
+            return angles
+        azimuth(peak)
+        at_peak = twist_angles(90)
+        largest_step = max(abs(wrap(b-a)) for a, b in zip(at_peak, at_peak[1:]))
+        assert largest_step < 1.2, largest_step
         a, _, _ = azimuth(half)
         theta = (a-a0+180) % 360-180
         assert 30 < theta < 90, theta
-        # The rise above the nip, half-way through the step: each piece's width turns by its share of the frame angle,
-        # the full angle up to 62.5 mm above the nip, falling linearly to 0 at 200 mm (below the guide roll).
-        rise_pieces = sorted((o for o in objects if o.name.startswith('FlattenedFilmWebRise')), key=lambda o: o['thread_s'][0])
-        lo, hi = osc['twist_mm'][0]/1000, osc['twist_mm'][1]/1000
-        twist = []
-        for o in rise_pieces:
-            far = max(vertices(o.name), key=lambda p: math.hypot(p.x-cx, p.y))
-            phi = (math.degrees(math.atan2(far.y, far.x-cx))-90) % 180
-            phi = phi-180 if phi > 90 else phi
-            z = (o['thread_s'][0]+o['thread_s'][1])/2-teaching['die_to_nip_mm']/1000
-            share = min(1.0, max(0.0, (hi-z)/(hi-lo)))
-            assert abs(phi-share*theta) < .5, (o.name, phi, share, theta)
-            twist.append(round(phi, 2))
+        twist = twist_angles(theta)
         assert twist[0] == max(twist) and twist[-1] == min(twist) and abs(twist[-1]) < .5, twist
         turning = ['OscillatingFrame', 'CollapsingFrame', 'NipLeft_body', 'NipLeft stand', 'NipRight_body', 'NipRight stand']
         turning += [o.name for o in objects if o.name.startswith('Nip cylinder') and o.type == 'MESH']
-        fixed = ['Tower', 'OscillationDrive', 'TowerGuideRoll_body', 'TowerGuideRoll stand', 'BubbleSensors', 'HotAirRing']
+        fixed = ['Tower', 'TakeOffFrame', 'OscillationDrive', 'TowerGuideRoll_body', 'TowerGuideRoll stand', 'BubbleSensors', 'HotAirRing']
         sweep = (0, end//6, peak, half, 5*end//6, last)
         no_overlap(turning, fixed, sweep, 'oscillating haul-off')
         twisting = [o.name for o in rise_pieces if o.parent and o.parent.name.startswith('HaulOffTwist')]
         assert len(twisting) >= 8, len(twisting)
-        no_overlap(twisting, ['NipLeft_body', 'NipRight_body', 'NipLeft stand', 'NipRight stand', 'TowerGuideRoll_body', 'TowerGuideRoll stand', 'Tower'],
-                   sweep, 'film twist above the nip')
+        no_overlap(twisting, ['NipLeft_body', 'NipRight_body', 'NipLeft stand', 'NipRight stand', 'TowerGuideRoll_body', 'TowerGuideRoll stand', 'Tower',
+                              'TakeOffFrame'], sweep, 'film twist above the nip')
         no_overlap(['CollapsingFrame'], bubble_segments, (peak, last), 'collapsing frame and bubble')
-        reports[kind]['oscillation'] = {'peak_frame': peak, 'twisting_pieces': len(twisting), 'turning_bubble_segments': len(turning_bubble)}
+        reports[kind]['oscillation'] = {'peak_frame': peak, 'twisting_pieces': len(twisting), 'turning_bubble_segments': len(turning_bubble),
+                                        'twist_span_mm': round((hi-lo)*1000, 1), 'twist_edge_strain_pct': round(strain*100, 2),
+                                        'largest_piece_step_deg_at_90': round(largest_step, 2)}
         checks.append('blownfilm: the oscillating haul-off turns the nip, carriage, cylinders, collapsing frame and collapsing bubble '
-                      '+90 then -90 deg about the bubble axis; the lay-flat above the nip twists back to the fixed guide roll; '
-                      'turning parts clear the tower, deck, drive, guide roll, sensors and bubble')
+                      '+90 then -90 deg about the bubble axis; the lay-flat above the nip twists back to the fixed guide roll over a '
+                      'free span of at least four lay-flat widths (under 2 % edge strain, under 1.2 deg between pieces); turning '
+                      'parts and the twisting film clear the tower, roof, take-off frame, deck, drive, guide roll, sensors and bubble')
         checks.append('blownfilm: upward nip contacts, one surface speed, BUR 2 bubble inside the cage, lay-flat = pi D / 2, steady bubble')
 
     elif kind == 'blowmolding':

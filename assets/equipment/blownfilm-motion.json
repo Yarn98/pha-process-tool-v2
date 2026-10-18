@@ -9,12 +9,12 @@
   "model": "assets/equipment/blownfilm-motion.glb",
   "center": [
     -0.044999999999999846,
-    1.9,
+    2.43,
     0
   ],
   "span": [
     4.79,
-    4.1
+    5.06
   ],
   "heightRatio": 0.62,
   "zoom": [
@@ -284,17 +284,17 @@
         "once": true,
         "spin": {
           "haul": [
-            15.8701,
+            22.2363,
             0
           ],
           "screw": [
-            58.2836,
+            81.6637,
             0
           ]
         },
         "thread": [
           2.5,
-          7.48575
+          9.48575
         ]
       },
       {
@@ -338,8 +338,8 @@
           "Oscillating haul-off · ±90° reversing"
         ],
         "hint": [
-          "권취가 시작되었습니다. 오실레이팅 인취를 돌리세요. 닙롤, 실린더, 접힘 프레임을 실은 프레임이 데크의 선회 베어링 위에서 버블 축을 중심으로 좌우 90°씩(총 180°, 한 주기 120 s) 천천히 반전 회전하며, 버블 둘레의 두께 편차가 권취 롤 폭 전체로 퍼집니다. 슬라이더는 가운데 → +90° → −90°의 한 번 반전입니다. 실제 장치는 프레임 위 터닝 바가 필름 방향을 바로잡으며, 모형은 닙 위 필름의 비틀림으로 나타냅니다.",
-          "Winding has started. Start the oscillating haul-off: the frame that carries the nip rolls, their cylinders and the collapsing frame turns on a slewing ring on the deck, reversing 90° each way about the bubble axis (180° total, 120 s per cycle), so the bubble’s circumferential gauge bands spread across the width of the wound roll. The slider runs one reversal: centre, +90°, then -90°. A real haul-off straightens the film with turning bars on the frame; the model shows it as a twist of the film above the nip."
+          "권취가 시작되었습니다. 오실레이팅 인취를 돌리세요. 닙롤, 실린더, 접힘 프레임을 실은 프레임이 데크의 선회 베어링 위에서 버블 축을 중심으로 좌우 90°씩(총 180°, 한 주기 120 s) 천천히 반전 회전하며, 버블 둘레의 두께 편차가 권취 롤 폭 전체로 퍼집니다. 슬라이더는 가운데 → +90° → −90°의 한 번 반전입니다. 실제 장치는 터닝 바로 필름 방향을 바로잡지만, 모형은 닙 위 약 1.1 m 자유 구간에서 필름이 완만하게 비틀리는 것으로 나타냅니다.",
+          "Winding has started. Start the oscillating haul-off: the frame that carries the nip rolls, their cylinders and the collapsing frame turns on a slewing ring on the deck, reversing 90° each way about the bubble axis (180° total, 120 s per cycle), so the bubble’s circumferential gauge bands spread across the width of the wound roll. The slider runs one reversal: centre, +90°, then -90°. A real haul-off straightens the film with turning bars; the model shows it as a gentle twist of the film over a free span of about 1.1 m above the nip."
         ],
         "needs": [
           "winder"
@@ -373,7 +373,7 @@
       ],
       "center": [
         -0.044999999999999846,
-        1.9,
+        2.43,
         0
       ],
       "zoom": 1
@@ -638,8 +638,9 @@
       "period_s": 120,
       "twist_mm": [
         62.5,
-        200.0
-      ]
+        1200.0
+      ],
+      "twist_edge_strain_pct": 1.51
     },
     "loop_note": "Real time: steady bubble (no breathing); the nip rolls turn three times per loop and the winder twice."
   },
@@ -695,7 +696,7 @@
       "type": "nip, carriage, cylinders and collapsing frame on a frame turning on a slewing ring (gear motor and pinion)",
       "total_deg": 180,
       "period_s": 120,
-      "film_above_nip": "twists back to the fixed guide roll between 62.5 and 200 mm above the nip (turning bars not modelled)",
+      "film_above_nip": "twists back to the fixed guide roll on the take-off frame over a free span 62.5-1200 mm above the nip, about 1.5 % edge strain at 90 deg, (theta W/2)^2 / (2 L^2); turning bars are not modelled",
       "grade": "C teaching values (Pack B); not an OEM drawing"
     },
     "ibc": {

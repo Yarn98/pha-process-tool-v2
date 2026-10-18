@@ -29,7 +29,7 @@
     "blownfilm: the start-up tube (shape key 0) keeps the die diameter and inflates to the BUR 2 bubble (shape key 1)",
     "blownfilm: hot air ring train (blower, airflow switch, inline heater, high-limit) feeds the ring; warm air rises from the lip; inflation waits for the ring at its set point",
     "blownfilm: IBC starts at BUR 2 before drawing; its stack fits inside the start-up tube and the bubble, supply and exhaust air stay inside the film past the frost line; unit and sensors clear the die, hot air train, tower and bubble",
-    "blownfilm: the oscillating haul-off turns the nip, carriage, cylinders, collapsing frame and collapsing bubble +90 then -90 deg about the bubble axis; the lay-flat above the nip twists back to the fixed guide roll; turning parts clear the tower, deck, drive, guide roll, sensors and bubble",
+    "blownfilm: the oscillating haul-off turns the nip, carriage, cylinders, collapsing frame and collapsing bubble +90 then -90 deg about the bubble axis; the lay-flat above the nip twists back to the fixed guide roll over a free span of at least four lay-flat widths (under 2 % edge strain, under 1.2 deg between pieces); turning parts and the twisting film clear the tower, roof, take-off frame, deck, drive, guide roll, sensors and bubble",
     "blownfilm: upward nip contacts, one surface speed, BUR 2 bubble inside the cage, lay-flat = pi D / 2, steady bubble",
     "blowmolding: continuous parison, capture, knife, 300 mm shuttle, 50 mm pin, 160 mm opening, bottle morph from the parison and conveyor take-out",
     "blowmolding: clamp rods ride the mould halves from their cylinders and the shuttle rod from its cylinder through the full strokes",
@@ -202,7 +202,7 @@
       ]
     },
     "blownfilm": {
-      "objects": 288,
+      "objects": 435,
       "motion_groups": [
         "flow",
         "haul",
@@ -215,7 +215,7 @@
         "winder"
       ],
       "startup": {
-        "segments": 112,
+        "segments": 182,
         "carriers": 1,
         "rods": 2,
         "carriage_parts_clear": 6
@@ -235,8 +235,11 @@
       "nip_block_gap_mm": 11.2,
       "oscillation": {
         "peak_frame": 90,
-        "twisting_pieces": 22,
-        "turning_bubble_segments": 8
+        "twisting_pieces": 91,
+        "turning_bubble_segments": 8,
+        "twist_span_mm": 1137.5,
+        "twist_edge_strain_pct": 1.51,
+        "largest_piece_step_deg_at_90": 0.99
       }
     },
     "blowmolding": {
