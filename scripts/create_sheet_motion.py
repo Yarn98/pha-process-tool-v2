@@ -104,12 +104,19 @@ frame.append(kit.box('Stack crossbeam', (X_S + .2, 0, Z_T + R + .12), (.08, FACE
 frame.append(kit.box('Gap cylinder crosshead', (X_S, 0, Z_T + .43), (.14, FACE + .44, .04), M['paint'], bevel=.006))
 frame.append(kit.box('Stack drive', (X_S, FACE / 2 + .40, Z_M), (.30, .20, .30), M['paint_accent'], bevel=.01))
 kit.join(frame, 'StackFrame')
-top_roll = kit.roll('TopRoll', X_S, Z_T, R, FACE, M, 'roll', 1, FRAMES, -1)   # bottom surface moves +X at the first nip
+top_roll = kit.roll('TopRoll', X_S, Z_T, R, FACE, M, 'roll', 1, FRAMES, -1, joint=False)   # bottom surface moves +X at the first nip
 kit.roll('MiddleRoll', X_S, Z_M, R, FACE, M, 'roll', 1, FRAMES, 1)     # the web wraps its +X side, moving down
 bottom_roll = kit.roll('BottomRoll', X_S, Z_B, R, FACE, M, 'roll', 1, FRAMES, -1, joint=False)   # the web wraps its -X side
-# The bottom roll's rotary union and hoses ride its gap carriage; its hoses fan out wider than the top and middle rolls'
-# hoses so that they stay clear of them over the stroke.
+# The top and bottom rolls' rotary unions and hoses ride their carriages. The top roll's hoses run out over the stack drive
+# and down behind it, clear of the rear side plate and of the middle roll's hoses below; the bottom roll's fan out wider
+# than the middle roll's, so that every hose stays clear of the others over the strokes.
 jy = FACE / 2 + .14
+DRIVE_BACK = FACE / 2 + .50                         # rear face of the stack drive
+kit.join([bpy.data.objects['TopRoll stand'], kit.cylinder('TopRoll rotary union', (X_S, jy + .03, Z_T), .028, .07, 'Y', M['brass'])]
+         + [kit.tube_path('TopRoll ' + name, [(X_S, jy + .06, Z_T + dz), (X_S + side * .03, jy + .18, Z_T + dz + .02),
+                                              (X_S + side * .08, DRIVE_BACK + .06, Z_T - .06), (X_S + side * .12, DRIVE_BACK + .08, .12)],
+                          .012, M[mat]) for name, side, dz, mat in (('supply', -1, .01, 'hose_blue'), ('return', 1, -.01, 'hose_red'))],
+         'TopRoll stand')
 kit.join([bpy.data.objects['BottomRoll stand'], kit.cylinder('BottomRoll rotary union', (X_S, jy + .03, Z_B), .028, .07, 'Y', M['brass']),
           kit.hose('BottomRoll supply', (X_S, jy + .06, Z_B + .01), (X_S - .28, jy + .20, .12), .012, M['hose_blue'], sag=.05),
           kit.hose('BottomRoll return', (X_S, jy + .06, Z_B - .01), (X_S + .28, jy + .20, .12), .012, M['hose_red'], sag=.05)],
@@ -120,7 +127,7 @@ kit.join([bpy.data.objects['BottomRoll stand'], kit.cylinder('BottomRoll rotary 
 bpy.context.view_layer.update()
 nip = kit.carrier('TopRollCarriage')
 kit.mount([top_roll, bpy.data.objects['TopRoll stand']], nip)
-HALF_BLOCK = (R * .9 + .06) / 2
+HALF_BLOCK = kit.bearing_block(R) / 2
 BLOCK_TOP = Z_T + HALF_BLOCK
 for y in (-(FACE / 2 + .07), FACE / 2 + .07):
     kit.linked_cylinder('Top roll gap cylinder', (X_S, y, Z_T + .41), (X_S, y, Z_T + .25), (X_S, y, BLOCK_TOP), .035, .016, M, nip, inset=.05)

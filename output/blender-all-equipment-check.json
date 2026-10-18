@@ -14,6 +14,7 @@
     "compounding: rotor blades clear both feed rolls by 3 mm and cut within 1 mm of the bed knife edge; rolls and rotor clear the bed knife, its holder and the housing",
     "compounding: roll and rotor speeds follow line speed, roll diameter, cutting edges and pellet length within 0.6 %",
     "sheet: start-up - product segments tile the path from the die, thread steps chain, actuators key open to closed, every moved carrier stands in a new pose half-way through its step, and cylinder rods stay on axis inside their bodies through the stroke",
+    "sheet: closed and open - no two roll stands (bearing blocks, rotary unions, hoses) intersect, and no carriage part intersects a part it does not ride with (rods in their own bodies excepted)",
     "sheet: S-wrap clearance, all nip and wrap directions, and one surface speed for stack, table, haul-off and winder",
     "sheet: bottom gap adjusters raise the bottom roll from the 11 mm threading gap to the set gap (read out by the step, held while drawing and running); roll, stand, rods and clevises clear the frame, middle roll, wedge stops and sheet",
     "castfilm: start-up - product segments tile the path from the die, thread steps chain, actuators key open to closed, every moved carrier stands in a new pose half-way through its step, and cylinder rods stay on axis inside their bodies through the stroke",
@@ -139,7 +140,8 @@
       "startup": {
         "segments": 42,
         "carriers": 2,
-        "rods": 4
+        "rods": 4,
+        "carriage_parts_clear": 12
       },
       "screw_direction": [
         {
