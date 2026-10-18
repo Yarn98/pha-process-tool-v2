@@ -93,27 +93,44 @@ assert abs(lip.z - Z_LIP) < 1e-6 and abs(lip.x - X_LIP) < 1e-6
 kit.join([kit.box('Die hanger', (x_lip, side * .33, AX - .17), (.08, .04, .30), M['paint_dark']) for side in (-1, 1)]
          + [kit.box('Die beam', (x_lip, 0, AX + .02), (.10, .70, .04), M['paint_dark'])], 'DieHanger')
 
-# Chill roll, second and third rolls on a common stand; air knife pins the curtain on the landing line
-kit.roll('ChillRoll', X_C, Z_C, R1, FACE, M, 'roll', 1, FRAMES, 1)             # top moves +X: the film wraps its +X side
-kit.roll('SecondRoll', X_C, Z_2, R2, FACE, M, 'roll', turns_of(SECOND_D), FRAMES, -1)   # S-transfer, leaves along +X
-kit.roll('ThirdRoll', X_3, Z_EXIT - T / 2 - R3, R3, FACE, M, 'roll', turns_of(THIRD_D), FRAMES, 1, joint=True)
+# Chill roll, second and third rolls on a common stand; air knife pins the curtain on the landing line. The chill and
+# second rolls share an axis line, so the chill roll's cooling hoses hang wider than the second roll's.
+Z_3 = Z_EXIT - T / 2 - R3
+kit.roll('ChillRoll', X_C, Z_C, R1, FACE, M, 'roll', 1, FRAMES, 1, hose_drop=(.20, .30))   # top moves +X: the film wraps its +X side
+kit.roll('SecondRoll', X_C, Z_2, R2, FACE, M, 'roll', turns_of(SECOND_D), FRAMES, -1, hose_drop=(.10, .20))   # S-transfer, leaves along +X
+kit.roll('ThirdRoll', X_3, Z_3, R3, FACE, M, 'roll', turns_of(THIRD_D), FRAMES, 1, joint=True)
 stand = []
 for side in (-1, 1):
     y = side * (FACE / 2 + .17)
-    # Rear side is a plate; the operator side uses posts so the chill wrap stays visible.
-    stand += ([kit.box('Chill stand side', (X_C + .2, y, (Z_C + R1) / 2 + .05), (1.0, .05, Z_C + R1 + .1), M['paint'], bevel=.008)] if side > 0 else
-              [kit.box('Chill stand post', (X_C + dx, y, (Z_C + R1) / 2 + .05), (.07, .05, Z_C + R1 + .1), M['paint'], bevel=.006)
-               for dx in (-.30, .30, .70)])
+    # Rear side is a plate with a window round each roll's rotary union; the operator side uses posts so the chill wrap
+    # stays visible.
+    if side > 0:
+        plate = kit.box('Chill stand side', (X_C + .2, y, (Z_C + R1) / 2 + .05), (1.0, .05, Z_C + R1 + .1), M['paint'], bevel=.008)
+        kit.subtract(plate, [kit.box('Union window', (x, y, z), (.09, .08, .09), M['paint'], bevel=0) for x, z in ((X_C, Z_C), (X_C, Z_2), (X_3, Z_3))])
+        stand.append(plate)
+    else:
+        stand += [kit.box('Chill stand post', (X_C + dx, y, (Z_C + R1) / 2 + .05), (.07, .05, Z_C + R1 + .1), M['paint'], bevel=.006)
+                  for dx in (-.30, .30, .70)]
 stand += [kit.box('Chill drive', (X_C, FACE / 2 + .42, Z_C), (.30, .22, .30), M['paint_accent'], bevel=.01)]
 knife_angle = math.radians(LAND - 12)
 kx, kz = X_C + (R1 + .03) * math.cos(knife_angle), Z_C + (R1 + .03) * math.sin(knife_angle)
 knife = kit.box('Air knife', (0, 0, 0), (.03, .55, .05), M['stainless'], bevel=.004)
 knife.location, knife.rotation_euler.y = (kx, 0, kz), -knife_angle
-hose = kit.hose('Air knife hose', (kx, .29, kz), (kx - .4, .70, .3), .02, M['rubber'], sag=.1)
-stand += [kit.box('Air knife blower', (kx - .4, .75, .2), (.3, .3, .35), M['paint_accent'], bevel=.01)]
+# The air hose leaves the knife end, runs downstream clear of the die hangers, climbs over the rear side plate, passes
+# between the plate and the chill drive and drops to the blower outlet. It rides the slide with the knife, so it stops
+# 5 mm short of the fixed outlet (55 mm with the knife drawn back for threading).
+BLOWER = Vector((kx - .4, .75, .2))
+OUTLET_TOP = BLOWER.z + .175 + .03
+hose = kit.tube_path('Air knife hose', [(kx, .29, kz), (kx + .07, .33, kz + .10), (kx + .05, .52, Z_C + R1 + .18), (X_C - .22, .58, Z_C + .05),
+                                        (BLOWER.x, BLOWER.y - .05, OUTLET_TOP + .10), (BLOWER.x, BLOWER.y - .05, OUTLET_TOP + .005)], .02, M['rubber'])
+stand += [kit.box('Air knife blower', BLOWER, (.3, .3, .35), M['paint_accent'], bevel=.01),
+          kit.cylinder('Air knife blower outlet', (BLOWER.x, BLOWER.y - .05, OUTLET_TOP - .015), .026, .03, 'Z', M['steel_dark'], segments=24)]
 # Air knife slide: for threading the knife and its hose stand 50 mm back from the chill roll. Two pneumatic cylinders,
 # 75 mm downstream of the knife (clear of the die) on a bracket hung from the die beam, push it radially in through arms
-# on the knife to pin the curtain on the landing line.
+# on the knife to pin the curtain on the landing line. Cylinder body 190-90 mm out from the knife, clevis at 20 mm: drawn
+# back 50 mm the clevis still stands 11 mm clear of the cylinder head.
+OPEN = .05
+CYL_CAP, CYL_END, CYL_ATTACH = .19, .09, .02
 radial = Vector((math.cos(knife_angle), 0, math.sin(knife_angle)))
 down = Vector((math.sin(knife_angle), 0, -math.cos(knife_angle)))     # film travel over the roll top
 centre_k = Vector((kx, 0, kz))
@@ -122,11 +139,11 @@ for y in (-.22, .22):
     arm = kit.box('Air knife arm', (0, 0, 0), (.02, .04, .10), M['steel_dark'], bevel=.002)
     arm.location, arm.rotation_euler.y = centre_k + down * .05 + radial * .01 + Vector((0, y, 0)), -knife_angle
     arms.append(arm)
-    cap = centre_k + down * .075 + radial * .175 + Vector((0, y, 0))
+    cap = centre_k + down * .075 + radial * CYL_CAP + Vector((0, y, 0))
     stand += [kit.box('Air knife bracket hanger', (cap.x, y, (cap.z + .02 + AX) / 2), (.03, .03, AX - cap.z - .02), M['steel_dark'], bevel=.002),
               kit.box('Air knife bracket hanger', ((cap.x + x_lip + .03) / 2, y, AX + .02), (cap.x - x_lip, .03, .04), M['steel_dark'], bevel=.002)]
 bracket = kit.box('Air knife cylinder bracket', (0, 0, 0), (.024, .50, .05), M['steel_dark'], bevel=.003)
-bracket.location, bracket.rotation_euler.y = centre_k + down * .075 + radial * .187, -knife_angle
+bracket.location, bracket.rotation_euler.y = centre_k + down * .075 + radial * (CYL_CAP + .012), -knife_angle
 stand.append(bracket)
 kit.join(stand, 'ChillStand')
 bpy.context.view_layer.update()
@@ -134,9 +151,8 @@ nip = kit.carrier('AirKnifeSlide')
 kit.mount([knife, hose] + arms, nip)
 for y in (-.22, .22):
     side_k = centre_k + down * .075 + Vector((0, y, 0))
-    kit.linked_cylinder('Air knife cylinder', side_k + radial * .175, side_k + radial * .075, side_k + radial * .02, .016, .006, M, nip,
+    kit.linked_cylinder('Air knife cylinder', side_k + radial * CYL_CAP, side_k + radial * CYL_END, side_k + radial * CYL_ATTACH, .016, .006, M, nip,
                         inset=.03)
-OPEN = .05
 kit.actuate(nip, FRAMES, tuple(radial * OPEN))
 
 # Traversing O-frame gauge, edge trim, guide roll, dancer and winder

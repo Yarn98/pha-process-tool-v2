@@ -17,6 +17,7 @@
     "sheet: S-wrap clearance, all nip and wrap directions, and one surface speed for stack, table, haul-off and winder",
     "sheet: bottom gap adjusters raise the bottom roll from the 11 mm threading gap to the set gap (read out by the step, held while drawing and running); roll, stand, rods and clevises clear the frame, middle roll, wedge stops and sheet",
     "castfilm: start-up - product segments tile the path from the die, thread steps chain, actuators key open to closed, every moved carrier stands in a new pose half-way through its step, and cylinder rods stay on axis inside their bodies through the stroke",
+    "castfilm: closed and open - no two roll stands (bearing blocks, rotary unions, hoses) intersect, and no carriage part intersects a part it does not ride with (rods in their own bodies excepted)",
     "castfilm: chill wrap, S-transfer, guide, dancer and winder directions; one surface speed; traversing gauge",
     "castfilm: the dancer rises 25 mm from its stops to the working position as the tension is taken up; the film loop follows it at every pose, winding waits for it, and arm, roll and stand clear the frame, guide roll, trim and film",
     "castfilm: the turret indexes 180 deg while the line runs - the full roll swings down to the standby spindle, the empty core comes over the top to the winding position; arms, rolls and cores clear the frame, dancer and film",
@@ -174,7 +175,8 @@
       "startup": {
         "segments": 38,
         "carriers": 1,
-        "rods": 2
+        "rods": 2,
+        "carriage_parts_clear": 8
       },
       "screw_direction": [
         {

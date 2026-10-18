@@ -1178,12 +1178,15 @@ def bearing_block(radius):
     return radius * .9 + .06
 
 
-def roll(name, x, z, radius, face, mats, group, turns, frames, sign, mat=None, marks=1, joint=True, y=0.0, block=None):
+def roll(name, x, z, radius, face, mats, group, turns, frames, sign, mat=None, marks=1, joint=True, y=0.0, block=None,
+         hose_drop=(.10, .25)):
     """Driven roll on bearing blocks with an axis along world +Y.
 
     A positive ``sign`` turns the roll about +Y: its top moves +X and its bottom -X. ``marks`` painted
     stripes make the rotation visible; set it to 0 for plain rolls whose turns per loop are not whole.
-    ``joint`` adds a rotary union with temperature-control supply (blue) and return (red) hoses.
+    ``joint`` adds a rotary union with temperature-control supply (blue) and return (red) hoses; they hang to the
+    floor ``hose_drop`` = (dx, dy) from the union, the supply at -dx and the return at +dx. Rolls stacked on one axis
+    take different drops, or their hoses run through each other.
     ``block`` is the bearing block size across the axis (default ``bearing_block(radius)``). Below a radius of 54.5 mm
     the default is wider than the roll, so two such rolls closed on the product would push their blocks into each
     other: a nip pair of small rolls takes blocks narrower than the roll diameter.
@@ -1206,8 +1209,9 @@ def roll(name, x, z, radius, face, mats, group, turns, frames, sign, mat=None, m
     if joint:
         jy = y + face / 2 + .14
         static.append(cylinder(name + ' rotary union', (x, jy + .03, z), .028, .07, 'Y', mats['brass']))
-        static.append(hose(name + ' supply', (x, jy + .06, z + .01), (x - .1, jy + .25, .12), .012, mats['hose_blue'], sag=.05))
-        static.append(hose(name + ' return', (x, jy + .06, z - .01), (x + .1, jy + .25, .12), .012, mats['hose_red'], sag=.05))
+        dx, dy = hose_drop
+        static.append(hose(name + ' supply', (x, jy + .06, z + .01), (x - dx, jy + dy, .12), .012, mats['hose_blue'], sag=.05))
+        static.append(hose(name + ' return', (x, jy + .06, z - .01), (x + dx, jy + dy, .12), .012, mats['hose_red'], sag=.05))
     join(static, name + ' stand')
     return owner
 

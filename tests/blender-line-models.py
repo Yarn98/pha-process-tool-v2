@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 checks = []
 reports = {}
 # Lines checked by carriage_clearance (closed and open nips, carriages against the parts round them).
-CARRIAGE_CLEAR = ('compounding', 'blownfilm')
+CARRIAGE_CLEAR = ('compounding', 'castfilm', 'blownfilm')
 # Rolls that meet only through the product and their painted stripes once the actuators close.
 CONTACTS = {}
 
