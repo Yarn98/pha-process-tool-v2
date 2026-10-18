@@ -281,7 +281,7 @@ try{
   await op.evaluate(()=>localStorage.setItem('vent-guide-retention-fixture','preserve'));
   await op.evaluate(async()=>{await navigator.serviceWorker.ready;});
   await op.waitForFunction(async()=>{
-    const cache=await caches.open('pha-cache-v33-nip-turning-bars'),keys=await cache.keys();
+    const cache=await caches.open('pha-cache-v33-nip-clearance-takeoff'),keys=await cache.keys();
     return ['vent-guide.glb','vent-guide-without_reverse_full.webp','vent-guide-upstream_reverse_full.webp','vent-guide-data.js','vent-guide.js','vent-guide.css','data/vent_guide.json'].every(asset=>keys.some(key=>key.url.endsWith('/'+asset+'?v=33')));
   },{},{timeout:60000});
   await op.reload({waitUntil:'domcontentloaded'});await unlock(op);await enterTroubleshooting(op);
