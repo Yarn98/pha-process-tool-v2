@@ -119,8 +119,9 @@ haul = [kit.box('Haul-off frame', ((HAUL[0] + HAUL[1]) / 2, .02, AX - .32), (.80
 for x in (HAUL[0] + .05, HAUL[1] - .05):
     for y in (-.13, .13):
         haul.append(kit.box('Haul-off leg', (x, y, (AX - .34) / 2), (.04, .04, AX - .34), M['paint_dark']))
-for x in (HAUL[0] + .03, HAUL[1] - .03):            # the upper belt carriage slides on two rear guide columns
-    haul.append(kit.cylinder('Upper belt guide column', (x, .12, AX + .18), .009, .20, 'Z', M['chrome'], segments=16))
+GUIDE_X, GUIDE_Y, GUIDE_R = (HAUL[0] + .03, HAUL[1] - .03), .12, .009
+for x in GUIDE_X:                                   # the upper belt carriage slides on two rear guide columns
+    haul.append(kit.cylinder('Upper belt guide column', (x, GUIDE_Y, AX + .18), GUIDE_R, .20, 'Z', M['chrome'], segments=16))
 kit.join(haul, 'HaulOffFrame')
 upper = []                                          # parts on the upper belt carriage (closed pose)
 for side, z in (('Lower', AX - PROFILE_R - PULLEY_R - .004), ('Upper', AX + PROFILE_R + PULLEY_R + .004)):
@@ -159,12 +160,15 @@ Z_UPPER = AX + PROFILE_R + PULLEY_R + .004
 BEAM_Z = Z_UPPER + PULLEY_R + .018                  # pressure beam centre, 14 mm above the upper belt's top run
 upper += [kit.box('Upper belt frame bar', ((HAUL[0] + HAUL[1]) / 2, y, Z_UPPER), (HAUL[1] - HAUL[0] + .04, .008, .028),
                   M['steel'], bevel=.002) for y in (-.062, .062)]
-upper += [kit.box('Upper belt pressure beam', ((HAUL[0] + HAUL[1]) / 2, .03, BEAM_Z), (HAUL[1] - HAUL[0] - .04, .19, .02), M['paint_accent'], bevel=.003)]
-upper += [kit.ring('Upper belt guide bushing', BEAM_Z - .02, BEAM_Z + .02, .0092, .016, (0, 0), M['steel_dark'], segments=16)
+# The beam is bored where the guide columns pass through it inside the bushings (1 mm clearance on the column).
+beam = kit.box('Upper belt pressure beam', ((HAUL[0] + HAUL[1]) / 2, .03, BEAM_Z), (HAUL[1] - HAUL[0] - .04, .19, .02), M['paint_accent'], bevel=.003)
+kit.subtract(beam, [kit.cylinder('Guide bore', (x, GUIDE_Y, BEAM_Z), GUIDE_R + .001, .04, 'Z', M['paint_accent'], segments=16) for x in GUIDE_X])
+upper += [beam]
+upper += [kit.ring('Upper belt guide bushing', BEAM_Z - .02, BEAM_Z + .02, GUIDE_R + .0002, .016, (0, 0), M['steel_dark'], segments=16)
           for _ in range(2)]
-for bushing, x in zip(upper[-2:], (HAUL[0] + .03, HAUL[1] - .03)):
+for bushing, x in zip(upper[-2:], GUIDE_X):
     bushing.rotation_euler.y = -math.pi / 2         # ring axis X -> Z
-    bushing.location = (x, .12, 0)
+    bushing.location = (x, GUIDE_Y, 0)
 bpy.context.view_layer.update()
 nip = kit.carrier('UpperBeltCarriage')
 kit.mount(upper, nip)

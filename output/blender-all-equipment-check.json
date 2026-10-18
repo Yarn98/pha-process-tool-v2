@@ -3,6 +3,7 @@
   "blender": "5.2.1 LTS",
   "checks": [
     "extrusion: start-up - product segments tile the path from the die, thread steps chain, actuators key open to closed, every moved carrier stands in a new pose half-way through its step, and cylinder rods stay on axis inside their bodies through the stroke",
+    "extrusion: closed and open - no two roll stands (bearing blocks, rotary unions, hoses) intersect, and no carriage part intersects a part it does not ride with (rods in their own bodies excepted)",
     "extrusion: signed screw rotation matches the helix and conveys toward the die (+X)",
     "extrusion: both belt runs that grip the profile move downstream; pulley speed = 1000 v / (pi d)",
     "extrusion: flying saw moves with the profile at line speed while cutting; one 500 mm cut per loop",
@@ -33,6 +34,7 @@
     "blowmolding: continuous parison, capture, knife, 300 mm shuttle, 50 mm pin, 160 mm opening, bottle morph from the parison and conveyor take-out",
     "blowmolding: clamp rods ride the mould halves from their cylinders and the shuttle rod from its cylinder through the full strokes",
     "straw: start-up - product segments tile the path from the die, thread steps chain, actuators key open to closed, every moved carrier stands in a new pose half-way through its step, and cylinder rods stay on axis inside their bodies through the stroke",
+    "straw: closed and open - no two roll stands (bearing blocks, rotary unions, hoses) intersect, and no carriage part intersects a part it does not ride with (rods in their own bodies excepted)",
     "straw: signed screw rotation matches the helix and conveys toward the die (+X)",
     "straw: belt runs and bath guide pulleys touching the straws move downstream; drum speed = 1000 v / (pi d)",
     "straw: four lanes at 40 mm pitch, 6 mm OD; the knife passes below the straws moving downstream once per turn as each 200 mm piece is cut; five cuts per 5 s loop",
@@ -52,7 +54,8 @@
       "startup": {
         "segments": 42,
         "carriers": 1,
-        "rods": 2
+        "rods": 2,
+        "carriage_parts_clear": 12
       },
       "screw_direction": [
         {
@@ -275,7 +278,8 @@
       "startup": {
         "segments": 46,
         "carriers": 1,
-        "rods": 2
+        "rods": 2,
+        "carriage_parts_clear": 12
       },
       "screw_direction": [
         {

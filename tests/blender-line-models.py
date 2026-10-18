@@ -14,8 +14,6 @@ from mathutils.bvhtree import BVHTree
 ROOT = Path(__file__).resolve().parents[1]
 checks = []
 reports = {}
-# Lines checked by carriage_clearance (closed and open nips, carriages against the parts round them).
-CARRIAGE_CLEAR = ('compounding', 'sheet', 'castfilm', 'blownfilm')
 # Rolls that meet only through the product and their painted stripes once the actuators close.
 CONTACTS = {'sheet': [('BottomRoll_body', 'MiddleRoll_body')]}
 
@@ -290,10 +288,9 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
         checks.append(kind+': start-up - product segments tile the path from the die, thread steps chain, actuators key '
                       'open to closed, every moved carrier stands in a new pose half-way through its step, and cylinder rods '
                       'stay on axis inside their bodies through the stroke')
-        if kind in CARRIAGE_CLEAR:
-            startup_report['carriage_parts_clear'] = carriage_clearance(kind, objects, CONTACTS.get(kind, ()))
-            checks.append(kind+': closed and open - no two roll stands (bearing blocks, rotary unions, hoses) intersect, and no '
-                          'carriage part intersects a part it does not ride with (rods in their own bodies excepted)')
+        startup_report['carriage_parts_clear'] = carriage_clearance(kind, objects, CONTACTS.get(kind, ()))
+        checks.append(kind+': closed and open - no two roll stands (bearing blocks, rotary unions, hoses) intersect, and no '
+                      'carriage part intersects a part it does not ride with (rods in their own bodies excepted)')
     else:
         startup_report = None
         assert {control['key'] for control in meta['controls']} <= groups
