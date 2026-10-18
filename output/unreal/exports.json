@@ -327,11 +327,19 @@
     "blender": "5.2.1 LTS",
     "source": "assets/equipment/extrusion-motion.blend",
     "frame": 55,
-    "source_sha256": "c00b3d4cc3f717c94de895f8c884b1c3ee9ddd03491a90eb032e07633a7399f1",
+    "running_pose": {
+      "carriers": [
+        "UpperBeltCarriage"
+      ],
+      "twist_carriers": 0,
+      "hidden_start_up_pieces": 6,
+      "held_shape_keys": 0
+    },
+    "source_sha256": "621dea223326c1e6104a314322cf7f1fced73b41a0daa30e5907e5308fe54dac",
     "fbx": "output/unreal/fbx/extrusion.fbx",
-    "fbx_sha256": "2c5f1aad2f00d4bed84ffae553e5a9da58c40fb0fa8e39d576c2c0e8e800e343",
-    "objects": 160,
-    "vertices": 22112,
+    "fbx_sha256": "eb11b6732d2e52af48bd0be6ee46c52ecaf93b8423dfd6028cb833e0c917eb84",
+    "objects": 154,
+    "vertices": 21780,
     "materials": {
       "Paint / anthracite base": {
         "color": [
@@ -640,11 +648,20 @@
     "blender": "5.2.1 LTS",
     "source": "assets/equipment/sheet-motion.blend",
     "frame": 55,
-    "source_sha256": "2b0fd8270e431a9641aba8712efa4266f54ecbf2c77c94b4a18351be86487829",
+    "running_pose": {
+      "carriers": [
+        "BottomRollCarriage",
+        "TopRollCarriage"
+      ],
+      "twist_carriers": 0,
+      "hidden_start_up_pieces": 0,
+      "held_shape_keys": 0
+    },
+    "source_sha256": "a49089fe38cb213ff6869e156f68b883865c6c1b9813a9f74c634621fcd60370",
     "fbx": "output/unreal/fbx/sheet.fbx",
-    "fbx_sha256": "a9fa8cc5ac61e8bce0af0cff169d290f89ccdb6c7a21e449cadaacbeec21b003",
+    "fbx_sha256": "59ab49b88b3e309399dfd87d651c18a921232a7e726568ae4dddc52da6e41bf2",
     "objects": 143,
-    "vertices": 23490,
+    "vertices": 23370,
     "materials": {
       "Paint / anthracite base": {
         "color": [
@@ -942,12 +959,22 @@
     "kind": "castfilm",
     "blender": "5.2.1 LTS",
     "source": "assets/equipment/castfilm-motion.blend",
-    "frame": 0,
-    "source_sha256": "5b8b8c201a1c7fadfeb0a9d87044c50ed01f01bba04238aded23378af3e3aa99",
+    "frame": 55,
+    "running_pose": {
+      "carriers": [
+        "AirKnifeSlide",
+        "DancerCarrier",
+        "TurretCarrier"
+      ],
+      "twist_carriers": 0,
+      "hidden_start_up_pieces": 0,
+      "held_shape_keys": 8
+    },
+    "source_sha256": "94f380abe86f5baaf8c38ab3dbe3285651868530698fdd6be2d21656ab24ce06",
     "fbx": "output/unreal/fbx/castfilm.fbx",
-    "fbx_sha256": "9c52bfad07d49f7836798491fbff27832a844cd22377f59a020406a854220f61",
+    "fbx_sha256": "1be93ddd9ab2a44b9a2397c638537e356bd9cfe02a2f40296ce4c2bd8d55354e",
     "objects": 110,
-    "vertices": 22468,
+    "vertices": 22600,
     "materials": {
       "Paint / anthracite base": {
         "color": [
@@ -1245,12 +1272,21 @@
     "kind": "blownfilm",
     "blender": "5.2.1 LTS",
     "source": "assets/equipment/blownfilm-motion.blend",
-    "frame": 0,
-    "source_sha256": "2f248591673678d911a8289fa0260a0afa48445d6c41848f03599ccc285055db",
+    "frame": 55,
+    "running_pose": {
+      "carriers": [
+        "HaulOffCarrier",
+        "NipRollCarriage"
+      ],
+      "twist_carriers": 91,
+      "hidden_start_up_pieces": 0,
+      "held_shape_keys": 0
+    },
+    "source_sha256": "c08896744fa0fd452adc321af619e374ccc39ee7cdb21c3da735233386d35150",
     "fbx": "output/unreal/fbx/blownfilm.fbx",
-    "fbx_sha256": "6b4dc9008ad3edea56905dd2de77b111187f73cbd0c2e547277f2a592a4c521b",
-    "objects": 256,
-    "vertices": 34940,
+    "fbx_sha256": "13d3facabbb705a9f1be024c0d684f3c12b865cef78c0433b29fa76f34667844",
+    "objects": 334,
+    "vertices": 35800,
     "materials": {
       "Paint / anthracite base": {
         "color": [
@@ -1922,11 +1958,19 @@
     "blender": "5.2.1 LTS",
     "source": "assets/equipment/compounding-motion.blend",
     "frame": 55,
+    "running_pose": {
+      "carriers": [
+        "PressRollYoke"
+      ],
+      "twist_carriers": 0,
+      "hidden_start_up_pieces": 1,
+      "held_shape_keys": 0
+    },
     "source_sha256": "03a37da82aeb43928130e4d62659179d1575d414e31d46cd935f20d79f074a82",
     "fbx": "output/unreal/fbx/compounding.fbx",
-    "fbx_sha256": "adf86bdcfb65c04ad68feeea1bea85a67d34b003fae2f1195cb58456419420e6",
-    "objects": 135,
-    "vertices": 77500,
+    "fbx_sha256": "940ab33b90f2c619714c9dffef4171f50cc2d022b9d7b22118b84183d3b4f73c",
+    "objects": 134,
+    "vertices": 77116,
     "materials": {
       "Paint / anthracite base": {
         "color": [
@@ -2178,16 +2222,6 @@
         "roughness": 0.5,
         "alpha": 1.0
       },
-      "Polymer / natural pellet": {
-        "color": [
-          0.58408,
-          0.53948,
-          0.37124
-        ],
-        "metallic": 0.0,
-        "roughness": 0.45,
-        "alpha": 1.0
-      },
       "Carton / octabin": {
         "color": [
           0.47932,
@@ -2196,6 +2230,16 @@
         ],
         "metallic": 0.0,
         "roughness": 0.85,
+        "alpha": 1.0
+      },
+      "Polymer / natural pellet": {
+        "color": [
+          0.58408,
+          0.53948,
+          0.37124
+        ],
+        "metallic": 0.0,
+        "roughness": 0.45,
         "alpha": 1.0
       },
       "Lamp / red": {
@@ -2285,11 +2329,19 @@
     "blender": "5.2.1 LTS",
     "source": "assets/equipment/straw-motion.blend",
     "frame": 55,
-    "source_sha256": "0846b1848eb6e77eaa07cb17a378c913cde89cff4e1668f69e167b221a6f9d43",
+    "running_pose": {
+      "carriers": [
+        "UpperBeltCarriage"
+      ],
+      "twist_carriers": 0,
+      "hidden_start_up_pieces": 3,
+      "held_shape_keys": 0
+    },
+    "source_sha256": "0cbd6fa758789fd8e34b0babbf942a69ea819e264d9db14448096a68c4d44ae7",
     "fbx": "output/unreal/fbx/straw.fbx",
-    "fbx_sha256": "fb710e0f9aef502877506b1b7b46dff005aa7f7df41d216eb45dbc445526f0bc",
-    "objects": 189,
-    "vertices": 43174,
+    "fbx_sha256": "2c40143f73154fac2781484563df861f7c3c5ab5d8dce0af93bde585c52b7b2d",
+    "objects": 186,
+    "vertices": 42548,
     "materials": {
       "Paint / anthracite base": {
         "color": [
