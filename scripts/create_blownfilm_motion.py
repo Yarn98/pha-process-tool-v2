@@ -270,9 +270,15 @@ def vertical_ring(name, z0, z1, r_in, r_out, mat, segments=64):
 
 
 RN = NIP_D / 2000
+# Nip roll bearing blocks, 90 mm across: narrower than the 100 mm rolls, so the closed nip (axes 101.2 mm apart, the
+# two-ply film between the rolls) leaves 11.2 mm between the facing blocks. The kit's default block for a 50 mm radius is
+# 105 mm, which made the closed blocks run 3.8 mm into each other.
+NIP_BLOCK = .09
+HALF_BLOCK = NIP_BLOCK / 2
+assert 2 * (RN + T) - NIP_BLOCK > .01
 # The film rises between the rolls: the left roll's +X side and the right roll's -X side both move up.
-nip_left = kit.roll('NipLeft', X_D - RN - T, Z_NIP, RN, .35, M, 'haul', 3, FRAMES, -1, mat=M['rubber'], joint=False)
-nip_right = kit.roll('NipRight', X_D + RN + T, Z_NIP, RN, .35, M, 'haul', 3, FRAMES, 1, mat=M['chrome'], joint=False)
+nip_left = kit.roll('NipLeft', X_D - RN - T, Z_NIP, RN, .35, M, 'haul', 3, FRAMES, -1, mat=M['rubber'], joint=False, block=NIP_BLOCK)
+nip_right = kit.roll('NipRight', X_D + RN + T, Z_NIP, RN, .35, M, 'haul', 3, FRAMES, 1, mat=M['chrome'], joint=False, block=NIP_BLOCK)
 # Nip actuator: the right (chrome) roll and its bearing blocks ride a carriage on two rails, pushed onto the film by two
 # pneumatic cylinders on brackets; for threading the nip stands 40 mm open.
 bpy.context.view_layer.update()
@@ -282,8 +288,8 @@ X_R = X_D + RN + T
 Y_FRAME = .35 / 2 + .07                              # bearing-block line of the nip rolls
 nip_cylinders = []
 for y in (-Y_FRAME, Y_FRAME):
-    nip_cylinders.append(kit.linked_cylinder('Nip cylinder', (X_R + .26, y, Z_NIP), (X_R + .14, y, Z_NIP), (X_R + .0525, y, Z_NIP), .025, .01, M, nip,
-                                             inset=.03)[0])
+    nip_cylinders.append(kit.linked_cylinder('Nip cylinder', (X_R + .26, y, Z_NIP), (X_R + .14, y, Z_NIP), (X_R + HALF_BLOCK, y, Z_NIP), .025, .01, M,
+                                             nip, inset=.03)[0])
 OPEN = .04
 kit.actuate(nip, FRAMES, (OPEN, 0, 0))
 
@@ -300,11 +306,12 @@ frame_parts = [vertical_ring('Oscillation slewing ring outer race', DECK_TOP + .
 BEAM_Z = DECK_TOP + .07                              # frame beams on the base, one under each bearing-block line
 for y in (-Y_FRAME, Y_FRAME):
     frame_parts += [kit.box('Oscillating frame beam', (X_D, y, BEAM_Z), (.64, .04, .02), M['paint_accent'], bevel=.003),
-                    kit.box('Nip roll post', (X_D - RN - T, y, (BEAM_Z + .01 + Z_NIP - .0525) / 2), (.04, .04, Z_NIP - .0525 - BEAM_Z - .01),
+                    kit.box('Nip roll post', (X_D - RN - T, y, (BEAM_Z + .01 + Z_NIP - HALF_BLOCK) / 2), (.04, .04, Z_NIP - HALF_BLOCK - BEAM_Z - .01),
                             M['paint_accent'], bevel=.003),
-                    kit.box('Nip carriage rail', (X_D + .115, y, Z_NIP - .0635), (.21, .03, .02), M['steel'], bevel=.002),
-                    kit.box('Nip carriage rail post', (X_D + .21, y, (BEAM_Z + .01 + Z_NIP - .0735) / 2), (.03, .03, Z_NIP - .0735 - BEAM_Z - .01),
-                            M['paint_accent'], bevel=.002),
+                    # The carriage rail runs 1 mm under the right roll's blocks (top at Z_NIP - HALF_BLOCK - 1 mm).
+                    kit.box('Nip carriage rail', (X_D + .115, y, Z_NIP - HALF_BLOCK - .011), (.21, .03, .02), M['steel'], bevel=.002),
+                    kit.box('Nip carriage rail post', (X_D + .21, y, (BEAM_Z + .01 + Z_NIP - HALF_BLOCK - .021) / 2),
+                            (.03, .03, Z_NIP - HALF_BLOCK - .021 - BEAM_Z - .01), M['paint_accent'], bevel=.002),
                     kit.box('Nip cylinder bracket', (X_R + .27, y, Z_NIP), (.02, .07, .07), M['steel_dark'], bevel=.003),
                     kit.box('Nip cylinder bracket post', (X_R + .27, y, (BEAM_Z + .01 + Z_NIP - .035) / 2), (.03, .03, Z_NIP - .035 - BEAM_Z - .01),
                             M['steel_dark'], bevel=.002)]

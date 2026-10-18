@@ -1173,14 +1173,23 @@ def web(name, points, width, thickness, mat):
     return _finish(name, bm, mat)
 
 
-def roll(name, x, z, radius, face, mats, group, turns, frames, sign, mat=None, marks=1, joint=True, y=0.0):
+def bearing_block(radius):
+    """Default bearing block size across the axis of a roll of ``radius`` (m), in both X and Z."""
+    return radius * .9 + .06
+
+
+def roll(name, x, z, radius, face, mats, group, turns, frames, sign, mat=None, marks=1, joint=True, y=0.0, block=None):
     """Driven roll on bearing blocks with an axis along world +Y.
 
     A positive ``sign`` turns the roll about +Y: its top moves +X and its bottom -X. ``marks`` painted
     stripes make the rotation visible; set it to 0 for plain rolls whose turns per loop are not whole.
     ``joint`` adds a rotary union with temperature-control supply (blue) and return (red) hoses.
+    ``block`` is the bearing block size across the axis (default ``bearing_block(radius)``). Below a radius of 54.5 mm
+    the default is wider than the roll, so two such rolls closed on the product would push their blocks into each
+    other: a nip pair of small rolls takes blocks narrower than the roll diameter.
     Returns the rotating owner.
     """
+    block = bearing_block(radius) if block is None else block
     owner = empty(name, (x, y, z), group=group)
     owner.rotation_euler.z = math.pi / 2           # local X (spin axis) along world +Y
     parts = [cylinder(name + ' shell', (0, 0, 0), radius, face, 'X', mat or mats['chrome'], segments=48),
@@ -1193,8 +1202,7 @@ def roll(name, x, z, radius, face, mats, group, turns, frames, sign, mat=None, m
     spin(owner, group, turns, frames, sign)
     static = []
     for side in (-1, 1):
-        static.append(box(name + ' bearing block', (x, y + side * (face / 2 + .07), z), (radius * .9 + .06, .08, radius * .9 + .06),
-                          mats['steel_dark'], bevel=.006))
+        static.append(box(name + ' bearing block', (x, y + side * (face / 2 + .07), z), (block, .08, block), mats['steel_dark'], bevel=.006))
     if joint:
         jy = y + face / 2 + .14
         static.append(cylinder(name + ' rotary union', (x, jy + .03, z), .028, .07, 'Y', mats['brass']))

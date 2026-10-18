@@ -14,6 +14,10 @@ from mathutils.bvhtree import BVHTree
 ROOT = Path(__file__).resolve().parents[1]
 checks = []
 reports = {}
+# Lines checked by carriage_clearance (closed and open nips, carriages against the parts round them).
+CARRIAGE_CLEAR = ('compounding', 'blownfilm')
+# Rolls that meet only through the product and their painted stripes once the actuators close.
+CONTACTS = {}
 
 
 def frame(number):
@@ -174,6 +178,41 @@ def no_overlap(movers, fixed, frames, label):
                 assert not meshes_overlap(a, b), (label, a, b, f)
 
 
+def solid_parts(objects):
+    """Machine meshes: not the product (start-up segments, pieces) and not the flow, cleat or air markers."""
+    return [o for o in objects if o.type == 'MESH' and not o.get('thread_s') and o.get('thread_at') is None and not o.get('motion_group')]
+
+
+def descendants(obj):
+    return [c for child in obj.children for c in (child, *descendants(child))]
+
+
+def carriage_clearance(kind, objects, contacts=()):
+    """Closed pose (frame_end: every actuator at rest, as the line runs) and threading pose (frame 0): no two roll stands
+    (bearing blocks, with any rotary union and its hoses) intersect, and no part riding an actuator carriage intersects a
+    part that does not ride it. Allowed: each cylinder rod in its own body, and the ``contacts`` pairs (rolls that meet
+    only through the product and their painted stripes). Returns the number of carriage parts checked."""
+    solids = solid_parts(objects)
+    names = {o.name for o in solids}
+    stands = sorted(name for name in names if name.endswith(' stand'))
+    allowed = {frozenset(pair) for pair in contacts}
+    allowed |= {frozenset((o.name, o.name.replace(' rod', '', 1))) for o in objects if o.get('bore')}
+    carried = []
+    for owner in (o for o in objects if o.get('open_offset')):
+        riding = {o.name for o in descendants(owner)} & names
+        carried += [(a, b) for a in sorted(riding) for b in sorted(names-riding) if frozenset((a, b)) not in allowed]
+    pairs = [(a, b) for i, a in enumerate(stands) for b in stands[i+1:] if frozenset((a, b)) not in allowed] + carried
+    assert carried, kind
+    for f in (0, bpy.context.scene.frame_end):
+        frame(f)
+        box = {name: bounds(name) for name in names}
+        for a, b in pairs:
+            (la, ha), (lb, hb) = box[a], box[b]
+            if all(la[i] <= hb[i] and lb[i] <= ha[i] for i in range(3)):
+                assert not meshes_overlap(a, b), (kind, 'closed' if f else 'open', a, b)
+    return len({a for a, _ in carried})
+
+
 def startup_checks(kind, meta, objects):
     """Start-up sequence: the product segments tile their path from the die lip, the thread steps chain end to end,
     each actuator carrier is keyed from its open offset to rest, every moved carrier holds a different pose half-way
@@ -251,6 +290,10 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
         checks.append(kind+': start-up - product segments tile the path from the die, thread steps chain, actuators key '
                       'open to closed, every moved carrier stands in a new pose half-way through its step, and cylinder rods '
                       'stay on axis inside their bodies through the stroke')
+        if kind in CARRIAGE_CLEAR:
+            startup_report['carriage_parts_clear'] = carriage_clearance(kind, objects, CONTACTS.get(kind, ()))
+            checks.append(kind+': closed and open - no two roll stands (bearing blocks, rotary unions, hoses) intersect, and no '
+                          'carriage part intersects a part it does not ride with (rods in their own bodies excepted)')
     else:
         startup_report = None
         assert {control['key'] for control in meta['controls']} <= groups
@@ -493,6 +536,13 @@ for kind in ('extrusion', 'compounding', 'sheet', 'castfilm', 'blownfilm', 'blow
                              ('Winder', rw)):
             speed = world_velocity(name, (0, 0, radius)).length
             assert abs(speed-step)/step < .01, (name, speed, step)
+        # Closed nip (as the line runs): the facing bearing blocks keep a gap, measured across the nip in the turning frame.
+        frame(bpy.context.scene.frame_end)
+        local = objects['HaulOffCarrier'].matrix_world.inverted()
+        block_gap = min((local @ p).x for p in vertices('NipRight stand'))-max((local @ p).x for p in vertices('NipLeft stand'))
+        assert block_gap > .01, block_gap
+        reports[kind]['nip_block_gap_mm'] = round(block_gap*1000, 2)
+        checks.append('blownfilm: the closed nip leaves more than 10 mm between the facing bearing blocks')
         # Steady BUR 2 bubble: draw-down to the frost line, constant diameter in the cage, collapse to the lay-flat.
         frame(bpy.context.scene.frame_start)
         # The bubble is built in start-up segments whose shape key (value 1) gives the steady BUR 2 surface.
