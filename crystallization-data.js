@@ -452,7 +452,7 @@
               "Tc_C": 82.22,
               "t_half_min": 0.4083,
               "sheet": "S1000P 평가 (03.07)",
-              "note": "원자료 CSV에 두 번째 peak 1.3983 min 병기"
+              "note": "4HB 2–5 mol%를 0.1 넘음. 원자료 CSV에 두 번째 peak 1.3983 min 병기"
             },
             {
               "lot": "1A3CF240111",

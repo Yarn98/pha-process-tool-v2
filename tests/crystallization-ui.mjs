@@ -63,7 +63,7 @@ try {
   text = await page.locator('#xtalResult').innerText();
   record(/104 m\/min/.test(text) && /0\.577 s/.test(text) && /1\.904 s/.test(text), 'Korea line: 104 m/min, 0.577 s and 1.904 s residence');
   record(/3\.3 → 4\.95 m/.test(text) && /5–5\.5 m/.test(text), 'same-residence lengthening 3.3 → 4.95 m shown against the 5.0–5.5 m plan');
-  record(/W02/.test(text) && /W09/.test(text) && /미보정 참고값/.test(text) && !/미보정 · 미보정/.test(text), 'S1000P shows the uncalibrated banner with W02 and W09');
+  record(/W13/.test(text) && /W09/.test(text) && !/W02/.test(text) && /60 °C 실측 t½ 1점 보정 · lot 3ACF240209 25\.0 s/.test(text), 'S1000P shows the measured 60 °C t½ banner with W13 and W09');
   record(/상온 2차 결정화 진행/.test(text), 'secondary-crystallization badge with aging checks');
   record(await page.locator('#xtalResult .xtal-chart rect').count() >= 3, 'chart shades the 30–40, 60–70 and 80–90 °C bands');
   await page.locator('#xtalPanel').screenshot({ path: resolve(shots, 'straw-desktop.png') });
@@ -73,6 +73,10 @@ try {
   await page.locator('[data-xtal-act="run"]').click();
   text = await page.locator('#xtalResult').innerText();
   record(/W10/.test(text) && !/구간 체류/.test(text), 'A1000P disables the crystallization judgement (W10)');
+  await page.locator('#xtal_grade').selectOption('CA1180P');
+  await page.locator('[data-xtal-act="run"]').click();
+  text = await page.locator('#xtalResult').innerText();
+  record(/W14/.test(text) && !/W02/.test(text) && /PLA 매트릭스: 대상 외 · PLA 80 \/ A1000P 20, Talc 10 phr/.test(text) && !/구간 체류/.test(text), 'CA1180P is a PLA-matrix compound outside the judgement (W14)');
   await page.locator('#xtal_grade').selectOption('S1000P');
 
   // English.

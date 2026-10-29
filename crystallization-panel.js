@@ -77,7 +77,7 @@
           `<div class="group"><label for="xtal_flash">${esc(t('flash 발생 시점', 'Flash occurs during'))}</label><select id="xtal_flash" data-xtal-sel="flashTiming"><option value="">—</option>${['fill', 'hold'].map(x => `<option value="${x}"${x === s.flashTiming ? ' selected' : ''}>${esc(x === 'fill' ? t('충전 중', 'Fill') : t('보압 중', 'Hold'))}</option>`).join('')}</select></div>`
         : `<label class="xtal-check"><input type="checkbox" data-xtal-chk="plaMatrix"${s.plaMatrix ? ' checked' : ''}> ${esc(t('PLA 매트릭스 시트', 'PLA-matrix sheet'))}</label>`;
     host.innerHTML =
-      `<details class="xtal-panel"${s.open ? ' open' : ''}><summary>${esc(t('결정화 이력', 'Crystallization history'))} <span class="xtal-sub">${esc(t('수지 온도–시간 이력으로 판정 · 순수 P3HB 논문값 기반', 'Judged from the resin temperature–time history · pure-P3HB literature basis'))}</span></summary>` +
+      `<details class="xtal-panel"${s.open ? ' open' : ''}><summary>${esc(t('결정화 이력', 'Crystallization history'))} <span class="xtal-sub">${esc(t('수지 온도–시간 이력으로 판정 · P3HB 논문값 기반, S1000P는 60 °C 실측 t½ 보정', 'Judged from the resin temperature–time history · pure-P3HB literature basis, S1000P calibrated with a measured 60 °C t½'))}</span></summary>` +
       `<div class="xtal-body">` +
       `<p class="hint">${esc(t('설비 온도가 아니라 수지가 각 온도대에 실제로 머문 시간으로 판정합니다. 시작 조건은 S1000P 주성분 배합 가정의 추정안이며 현행 control과 함께 봅니다. k, ρ, h는 기본값이 없습니다.', 'Judged by how long the resin actually stays in each band, not by equipment setpoints. Start conditions are estimates for an S1000P-based compound and are shown next to the control. k, ρ and h have no defaults.'))}</p>` +
       `<div class="grid"><div class="group"><label for="xtal_process">${esc(t('공정', 'Process'))}</label><select id="xtal_process" data-xtal-sel="process">${procOpt}</select></div>` +
@@ -121,6 +121,9 @@
   /* ---------- run ---------- */
   function readInputs() {
     const s = state();
+    // The toggle event that saves `open` is async; read the live state so a re-render right after opening keeps it open.
+    const panel = host.querySelector('details.xtal-panel');
+    if (panel) s.open = panel.open;
     host.querySelectorAll('[data-xtal]').forEach(el => { s[el.dataset.xtal] = el.value; });
     host.querySelectorAll('[data-xtal-sel]').forEach(el => { s[el.dataset.xtalSel] = el.value; });
     host.querySelectorAll('[data-xtal-chk]').forEach(el => { s[el.dataset.xtalChk] = el.checked; });
@@ -204,12 +207,18 @@
     const parts = [];
     const g = r.grade;
     if (g) {
+      const a = g.measuredAnchor;
+      const preset = (window.PHACrystalData && window.PHACrystalData.presets.grades[g.gradeId]) || {};
+      const makeup = preset.composition || preset.basis;
       const mode = {
-        crystallizable: g.uncalibrated ? t('미보정 참고값 (순수 P3HB 논문값)', 'Uncalibrated reference (pure-P3HB literature)') : g.kineticsSource === 'measured' ? t('실측 kinetics', 'Measured kinetics') : t('논문값 (확인됨)', 'Literature values (confirmed)'),
+        crystallizable: g.uncalibrated ? t('미보정 참고값 (순수 P3HB 논문값)', 'Uncalibrated reference (pure-P3HB literature)')
+          : g.kineticsSource === 'measured' ? t('실측 kinetics', 'Measured kinetics')
+          : g.kineticsSource === 'measured_anchor' ? t(`${a.T_C} °C 실측 t½ 1점 보정 · lot ${a.lot} ${a.t_half_s.toFixed(1)} s`, `One measured t½ at ${a.T_C} °C · lot ${a.lot} ${a.t_half_s.toFixed(1)} s`)
+          : t('논문값 (확인됨)', 'Literature values (confirmed)'),
         blend: t('결정상 판정', 'Crystalline phase judged') + ' · ' + (g.uncalibrated ? t('미보정 참고값', 'uncalibrated reference') : t('실측 kinetics', 'measured kinetics')),
         amorphous: t('비정질: 결정화 판정 비활성', 'Amorphous: crystallization judgement off'),
         unknown: t('분류 필요: 결정화 판정 비활성', 'Classification needed: crystallization judgement off'),
-        out_of_scope: L(g.display),
+        out_of_scope: L(g.display) + (makeup ? ` · ${makeup.value}` : ''),
       }[g.mode];
       parts.push(`<div class="xtal-banner xtal-mode-${esc(g.mode)}">${esc(g.gradeId)} · ${esc(mode || '')}</div>`);
     }
