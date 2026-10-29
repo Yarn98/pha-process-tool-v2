@@ -2,8 +2,8 @@
   "format": 1,
   "artifact": "single-file/PHA-Process-Single.html",
   "bytes": 70921392,
-  "sha256": "cbbcf973005b260cdf607afdf3bca10d563bfab7fae4687bdd29b332d3544b48",
-  "source_sha256": "b74b5f5b00caf99b6120a1907ded916a2114c138151d063a2f39b7e58c94fd17",
+  "sha256": "5d3a52154405768c0398c205e4fdad0625024935b35e9cf1434adc2ab50e188a",
+  "source_sha256": "a772a150df3901a35a860813a8816fc500ab217c650977a3581827adf44bce32",
   "hash_basis": "SHA-256 of UTF-8 text normalized to LF; binary bytes unchanged. Artifact bytes and hash use LF.",
   "embedded_assets": 157,
   "embedded_glbs": 26,
@@ -1219,8 +1219,8 @@
       "path": "package.json",
       "role": "build-contract",
       "encoding": "utf8-lf",
-      "bytes": 1875,
-      "sha256": "47748731e9bf0dc8d3d3645f8b8de952b5b2d615ce7cb0daeb751771fad6f7ef"
+      "bytes": 1935,
+      "sha256": "d5c459ccb51e2aa154fc16083a7ca7c79dbcfcb0d9b0ce99e3289a6c59ba522c"
     },
     {
       "path": "pha-integration.js",
