@@ -32,7 +32,7 @@ KR/EN 전환을 지원하고, 모바일에서는 그래프와 카드를 세로�
 | 공정 기록 | `index.html` `pha_hist`(`collectEntry`), Flash `processLog`, `tars-batch-schema.js` | `crystallization-doe.js` | DOE 결과는 별도 localStorage 키 `pha_xtal_doe`에 저장(아래 미구현 참조) |
 | KR/EN | `index.html` `I18N`, 모듈별 `t(ko,en)` | 패널 내부 `t(ko,en)` | `pha-language-change` 이벤트로 다시 그림 |
 | 모바일 | `index.html` `@media (max-width:768px)`, `.force-mobile` | `crystallization-panel.css` | 같은 768px 경계와 `.force-mobile`에서 카드 1열 |
-| 배포 등록 | `build.js`, `sw.js`, `scripts/build-single-file.cjs` | 6개 파일 등록 | cache `pha-cache-v34-crystallization-history`, single file 재생성 |
+| 배포 등록 | `build.js`, `sw.js`, `scripts/build-single-file.cjs` | 6개 파일 등록 | cache `pha-cache-v34-crystallization-history`(2026-10-30 반영분은 `pha-cache-v35-crystal-measured-anchor`), single file 재생성 |
 
 ## 파일별 변경 요약
 
@@ -108,6 +108,7 @@ S1000P 60 °C 등온 DSC 반결정화 시간(첫 peak):
 | 기존 브라우저 회귀 (로컬 재확인) | `tests/tab-connections.mjs` 16/16 pass, `test:flash-guide` 데이터 3/3·UI 8/8 pass. 클라우드 실패는 컨테이너 환경 문제로 확인되어 코드 수정과 `origin/main` 비교는 하지 않았다 |
 | single-file 산출물 (로컬 재빌드) | 00d4b88의 `single-file/` 산출물은 `package.json`에 `test:crystal-ui`가 추가되기 전에 빌드되어 `build-single-file.cjs --check`가 stale로 실패했다(내장 `package.json` 1875 B, 현재 1935 B). `npm run build:single`로 다시 빌드한 뒤 `test:single` 10/10 pass |
 | 2026-10-30 반영분 | `test:crystal` 47/47(S1000P 앵커 대체·참조값 불변·W13/W14·배합 W02 유지), `test:crystal-ui` 16/16(S1000P W13 배너, CA1180P W14 조성 표시) |
+| 2026-10-30 회귀 (cache v35 `pha-cache-v35-crystal-measured-anchor`) | `check:crystal`, `test:process` 9/9, `check:kb`·`check:ts-visuals`·`check:vent-guide`, `test:kinematics` 4/4, troubleshooting·vent·flash 데이터 5/4/3, `pages-distribution` 4/4, `test:single` 10/10, flash-guide UI 8/8, vent-guide UI 8/8, troubleshooting-visuals UI 9/9, `test:ui` pass, `tab-connections` 16/16. Windows 11, Playwright 1.59.1, Chromium 147.0.7727.15 |
 | 패널 열림 상태 경합 수정 | 패널을 연 직후 공정을 바꾸면 비동기 toggle 저장보다 다시 그리기가 먼저 실행되어 패널이 닫혔다. `readInputs()`가 DOM의 열림 상태를 읽도록 고쳤다. 수정 전 UI 테스트는 첫 계산 클릭에서 2회 연속 timeout |
 
 브라우저 회귀는 클라우드 컨테이너(Linux, Playwright 1.56.1, Chromium 1194, 2026-10-29)에서 실행했다. 실행 중 다시 그려진 장비 3D 스크린샷과 측정값만 바뀐 결과 파일은 이번 변경의 증거가 아니므로 commit하지 않았다.

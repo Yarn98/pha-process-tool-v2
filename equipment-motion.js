@@ -1,7 +1,7 @@
 /* Local Blender GLB player for seven educational process lines; the stage comes from machine-viewer.js. */
 (function(){
   'use strict';
-  const VERSION='?v=34',viewer=()=>window.PHAMachineViewer;
+  const VERSION='?v=35',viewer=()=>window.PHAMachineViewer;
   const reduced=matchMedia('(prefers-reduced-motion: reduce)'),saved=new Map(),cache=new Map();
   let host=null,meta=null,state=null,asset=null,engine=null,enginePending=null,onStage=()=>{};
   let locale='ko',token=0,raf=0,lastTick=0,unwatch=null,studyPanel=null,pendingPaint=0,chart=null,chartWidth=0;
