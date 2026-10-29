@@ -22,7 +22,7 @@
     "test:vent-guide": "node --test tests/vent-guide-data.test.cjs && node tests/vent-guide-ui.mjs",
     "test:flash-guide": "node --test tests/flash-guide-data.test.cjs && node tests/flash-guide-ui.mjs",
     "check:crystal": "node scripts/sync-crystallization.cjs --check",
-    "test:crystal": "node --test tests/crystallization-data.test.cjs tests/crystallization-engine.test.cjs"
+    "test:crystal": "node --test tests/crystallization-data.test.cjs tests/crystallization-engine.test.cjs tests/crystallization-process.test.cjs"
   },
   "keywords": [
     "pha",

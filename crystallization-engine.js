@@ -46,6 +46,7 @@
     segs.forEach(s => ['A', 'B'].forEach(side => {
       const bc = s[side];
       if (bc && bc.type === 'convective' && !(finite(bc.h_W_m2K) && bc.h_W_m2K > 0) && !missing.includes('h')) missing.push('h');
+      if (bc && bc.type === 'convective' && !finite(bc.Tinf_C) && !missing.includes('T∞')) missing.push('T∞');
     }));
     if (missing.length) return { error: 'W03', missing, warnings: [warning('W03', missing.join(', '))] };
     if (!(finite(p.thickness_mm) && p.thickness_mm > 0) || !segs.length || !finite(p.T0_C)) {
