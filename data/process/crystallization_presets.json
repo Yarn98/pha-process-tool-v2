@@ -1,0 +1,86 @@
+{
+  "version": "2026-10-29",
+  "basis": "PHA 결정화 이력 기반 공정조건 코드 작업지시서 (2026-10-29). 시작 조건은 S1000P 주성분에 A1000P·필러·핵제가 들어간 배합을 가정한 공정 추정안이며 실측 최적값이 아니다.",
+  "dataPriority": ["measured", "TDS", "사내 기록", "논문(P3HB)", "estimated"],
+  "zones": {
+    "nucleation": { "value": [30, 40], "unit": "°C", "condition": "사용자 확장 상한 45°C", "userMax_C": 45, "source": "Fig. 6c", "evidence": "confirmed" },
+    "crystallization": { "value": [60, 70], "unit": "°C", "condition": "grade 실측 시 대체", "source": "Fig. 3b", "evidence": "confirmed" },
+    "growth": { "value": [80, 90], "unit": "°C", "condition": "참고 표시", "source": "§1 인용", "evidence": "confirmed" }
+  },
+  "grades": {
+    "P3HB_REF_2026": {
+      "mode": "crystallizable", "kineticsRef": "P3HB_REF_2026", "hasNucleatingAgent": false, "display": "confirmed",
+      "Mw": { "value": 500, "unit": "kg/mol", "source": "Macromolecules 2026,59,379 §2.1", "evidence": "confirmed" },
+      "Tg_C": { "value": [5, 0], "unit": "°C", "condition": "5: FSC 1000 K/s 냉각 관측, 0: 문헌", "source": "§3.1, §1", "evidence": "confirmed" },
+      "Tm0_C": { "value": 195, "unit": "°C", "source": "Table 1", "evidence": "confirmed" }
+    },
+    "S1000P": {
+      "mode": "crystallizable", "kineticsRef": null, "display": "미보정",
+      "fourHB": { "value": [2, 5], "unit": "% (원문 단위 미표기, 확인 필요)", "source": "사용자 제공", "evidence": "confirmed" }
+    },
+    "A1000P": {
+      "mode": "amorphous", "kineticsRef": null, "display": "비정질",
+      "fourHB": { "value": 30, "unit": "% (원문 단위 미표기, 확인 필요)", "source": "사용자 제공", "evidence": "confirmed" },
+      "Tg_C": { "value": [-17, -15], "unit": "°C", "source": "사용자 제공", "evidence": "confirmed" }
+    },
+    "CB0400A": {
+      "mode": "blend", "use": "straw", "components": ["S1000P", "A1000P", "CaCO3"], "kineticsRef": null, "display": "상별 표시",
+      "bath2_C": { "value": [70, 75], "unit": "°C", "source": "CB0400A TDS, June 2026 (첨부 2 인용)", "evidence": "confirmed", "note": "원문 대조 필요" }
+    },
+    "CB0104A": {
+      "mode": "blend", "use": "injection", "kineticsRef": null, "display": "상별 표시",
+      "mold_C": { "value": [60, 70], "unit": "°C", "source": "CB0104A TDS (첨부 2 인용)", "evidence": "confirmed", "note": "탈형 어려우면 70°C 권고, 원문 대조 필요" }
+    },
+    "CA1180P": { "mode": "unknown", "kineticsRef": null, "display": "분류 필요" },
+    "CA1165A": { "mode": "unknown", "kineticsRef": null, "display": "분류 필요" },
+    "CA1670P": { "mode": "unknown", "kineticsRef": null, "display": "분류 필요" },
+    "CA1680P": { "mode": "unknown", "kineticsRef": null, "display": "분류 필요" },
+    "CA1270P": { "mode": "unknown", "kineticsRef": null, "display": "분류 필요" }
+  },
+  "straw": {
+    "stages": [
+      { "key": "dieExit", "ko": "다이 출구", "en": "Die exit", "start": null, "range": [170, 190], "unit": "°C", "role": "냉각 부하·용융 이력", "evidence": null, "source": "첨부 2", "note": "입력값" },
+      { "key": "bath1", "ko": "1차 냉각수조", "en": "Bath 1 (cooling)", "start": 35, "range": [30, 40], "unit": "°C", "role": "외경·타원도 유지, 저온 구간 형성", "evidence": "estimated", "source": "첨부 2, 2.1-2 보정" },
+      { "key": "bath2", "ko": "2차 온열수조", "en": "Bath 2 (warm)", "start": 75, "range": [70, 75], "unit": "°C", "role": "결정 성장, 치수 안정화", "evidence": "judged", "source": "CB0400A TDS 70–75°C" },
+      { "key": "final", "ko": "최종 냉각(선택)", "en": "Final cooling (optional)", "start": 25, "range": [20, 30], "unit": "°C", "role": "인취·절단 시 눌림·변형 억제", "evidence": "estimated", "source": "첨부 2" }
+    ],
+    "controls": [
+      { "id": "EB_2025_09", "ko": "EB 라인, 2025-09", "en": "EB line, 2025-09", "bath1": "상온수 20–24°C", "bath1_C": [20, 24], "bath2": "70–73°C", "bath2_C": [70, 73], "speed": "450 ea/min 이상 지속, 최대 490", "speed_ea_min": [450, 490], "note": "26 cm, 두께 0.2–0.21 mm, Ø 7 mm, melt 178–180°C", "source": "EB 빨대 Tech Solution 2025-09-06 (사내 기록)", "evidence": "measured" },
+      { "id": "KR_FULL_PHA_2026_09", "ko": "한국 Full PHA, 2026-09 계획", "en": "Korea Full PHA, 2026-09 plan", "bath1": "상온, 1.0 m", "bath1_L_m": 1.0, "bath2": "60°C, 3.3 m", "bath2_C": 60, "bath2_L_m": 3.3, "speed": "약 400 --> 목표 600 ea/min", "speed_ea_min": [400, 600], "note": "2단 5.0–5.5 m 연장 검토, 절단 길이 입력 필요", "bath2Plan_L_m": [5.0, 5.5], "source": "한국 Full PHA 빨대 개발계획 2026-09 (사내 기록)", "evidence": "measured" }
+    ],
+    "assumedCutLength_m": { "value": 0.26, "unit": "m", "condition": "EB 규격 길이 가정 (2.1-1)", "source": "작업지시서 2.1-1", "evidence": "estimated" },
+    "bath1TargetResin_C": { "value": [30, 40], "unit": "°C", "condition": "첨부 2 원문 '약 35–45°C'를 논문 onset 구간으로 보정, 45°C는 사용자 확장 경계", "source": "작업지시서 2.1-2", "evidence": "judged" }
+  },
+  "injection": {
+    "moldPresets": [
+      { "T_C": 60, "situation": "flash·표면 변형 억제 우선", "criterion": "충전압·후수축까지 합격", "evidence": "estimated", "source": "CB0104A TDS 60–70°C, 첨부 2" },
+      { "T_C": 65, "situation": "기본 균형점", "criterion": "최소 양품 cycle", "evidence": "estimated", "source": "CB0104A TDS 60–70°C, 논문 P3HB 60–70°C" },
+      { "T_C": 70, "situation": "탈형 시 휨·붙음·결정화 부족", "criterion": "탈형 강성 확보시간 단축", "evidence": "judged", "source": "CB0104A TDS (탈형이 어려우면 70°C)" }
+    ],
+    "purposePresets": [
+      { "purpose": "cycle", "mold_C": [60, 70], "source": "CB0104A TDS (첨부 2 인용), process-evidence.js CB0104A injection.mold", "evidence": "confirmed" },
+      { "purpose": "cycle", "mold_C": [40, 60], "source": "Danimer 가이드 (이전 사출 도구, PHA 사출 공정조건 도구 2026-02)", "evidence": "judged", "note": "코드에 없음, 이전 대화 기록" },
+      { "purpose": "elongation", "mold_C": 80, "source": "PHBHHx DoE, 연신 최대 (이전 사출 도구 2026-02)", "evidence": "judged", "note": "코드에 없음, 이전 대화 기록" },
+      { "purpose": "HDT", "mold_C": [110, 120], "coolingTime_s": [60, 100], "source": "과거 앱 HDT 모드 (PHA process app 2025-08)", "evidence": "judged", "note": "냉각 60–100 s는 코드에 없음, 이전 대화 기록" },
+      { "purpose": "HDT", "mold_C": [110, 120], "source": "process-evidence.js CA1180P highMold / CA1165A injection.mold (TDS)", "evidence": "confirmed" }
+    ]
+  },
+  "sheet": {
+    "rolls": [
+      { "name": "R1", "role": "첫 nip, 두께·표면 안정", "start": 60, "range": [55, 60], "unit": "°C", "evidence": "estimated" },
+      { "name": "R2", "role": "주 접촉, 결정 성장", "start": 70, "range": [65, 75], "unit": "°C", "evidence": "estimated" },
+      { "name": "R3", "role": "이형, 최종 냉각", "start": 40, "range": [35, 45], "unit": "°C", "evidence": "estimated" }
+    ],
+    "note": "제조사 확정 롤 조건이 아닌 공정 추정안이다(추정됨).",
+    "stickingRule": { "R2_C": [50, 60], "hold_C": 55, "source": "PHA process app 트러블슈팅 2025-08 (이전 대화 기록)", "evidence": "judged", "inCode": false, "note": "현재 코드에서 찾지 못함. 사용자가 control로 입력하면 R2 control로 유지" }
+  },
+  "conflicts": [
+    { "id": "C1", "topic": "빨대 수조 체류시간", "workOrder": "1단 약 0.58 s, 2단 약 1.9 s (400 ea/min × 0.26 m = 104 m/min)", "existing": "첨부 2 '온열수조 3 m, 필요 10 s --> 18 m/min'", "existingSource": "첨부 2", "resolution": "식 예시로 유지, 실제 속도는 ea/min × 절단 길이로 환산" },
+    { "id": "C2", "topic": "1차 수조 수지 목표 구간", "workOrder": "30–40°C", "existing": "약 35–45°C", "existingSource": "첨부 2", "resolution": "45°C는 사용자 확장 경계값" },
+    { "id": "C3", "topic": "시트 R2 sticking", "workOrder": "R2 70°C 시작, 65·70·75°C screening", "existing": "Roller 2 50–60°C, 55°C 유지 (코드에서 찾지 못함)", "existingSource": "PHA process app 트러블슈팅 2025-08", "related": "process-evidence.js CA1670P·CA1680P 롤 온도 25–55°C", "resolution": "sticking·blocking 판정 필수, 사용자 control 입력 시 유지" },
+    { "id": "C4", "topic": "사출 금형 온도", "workOrder": "60·65·70°C (CB0104A TDS 60–70°C)", "existing": "CA1180P 40°C, CA1180P high_hdt 110–120°C, CA1165A 110–120°C (process-evidence.js); Danimer 40–60°C, PHBHHx DoE 80°C, HDT 모드 110–120°C·냉각 60–100 s (이전 기록)", "existingSource": "process-evidence.js, 이전 대화", "resolution": "목적별 프리셋으로 병기" },
+    { "id": "C5", "topic": "빨대 다이 출구 온도", "workOrder": "170–190°C (첨부 2), EB melt 178–180°C", "existing": "CB0400A TDS 빨대 die 160–165°C", "existingSource": "process-evidence.js CB0400A straw.die", "resolution": "병기, 다이 출구는 사용자 입력값으로만 사용" },
+    { "id": "C6", "topic": "60°C 결정화 반감기", "workOrder": "P3HB t1/2 최소 약 30 s (60–70°C)", "existing": "사내 DSC: S1000P 4HB 3.3–5.3 %의 60 °C 반결정화 시간 7–28초", "existingSource": "equipment-models.js 블로운 필름 운전 기준", "resolution": "병기. S1000P 실측 kinetics 입력 시 대체 후보" },
+    { "id": "C7", "topic": "빨대 2차 수조 온도", "workOrder": "75°C (70–75°C)", "existing": "한국 라인 현행 2단 60°C", "existingSource": "한국 Full PHA 빨대 개발계획 2026-09", "resolution": "현행 60°C를 control로 표시" }
+  ]
+}

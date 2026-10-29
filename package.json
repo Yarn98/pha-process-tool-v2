@@ -20,7 +20,9 @@
     "check:ts-visuals": "node scripts/sync-troubleshooting-visuals.cjs --check",
     "check:vent-guide": "node scripts/sync-vent-guide.cjs --check",
     "test:vent-guide": "node --test tests/vent-guide-data.test.cjs && node tests/vent-guide-ui.mjs",
-    "test:flash-guide": "node --test tests/flash-guide-data.test.cjs && node tests/flash-guide-ui.mjs"
+    "test:flash-guide": "node --test tests/flash-guide-data.test.cjs && node tests/flash-guide-ui.mjs",
+    "check:crystal": "node scripts/sync-crystallization.cjs --check",
+    "test:crystal": "node --test tests/crystallization-data.test.cjs"
   },
   "keywords": [
     "pha",
