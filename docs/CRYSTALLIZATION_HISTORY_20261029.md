@@ -77,9 +77,12 @@ KR/EN 전환을 지원하고, 모바일에서는 그래프와 카드를 세로�
 | thermal1d 해석해 비교 | 평판 양면 고정온도, 1 mm, 0.5 s: 중심 오차 0.17 K(21격자), 0.04 K(41격자) |
 | 기존 단위·정적 점검 | `test:process`, `test:single`, `pages-distribution`, troubleshooting·vent·flash·kinematics 데이터 테스트, KB·visual·vent sync check 통과 |
 | 기존 브라우저 회귀 (통과) | `test:ui`, `test:vent-guide`, `test:ts-visuals`, `test:myai`, `test:tools`, `test:motion`, `test:kinematics`, `test:study`, `test:equipment` |
-| 기존 브라우저 회귀 (미확인) | `tests/tab-connections.mjs` 15–16건, `test:flash-guide` 1건 실패. 수정 전 `origin/main`(73a05a3)에서도 같은 단계에서 실패해 클라우드 컨테이너 환경 문제로 판단됨. 로컬 PC에서 재확인 필요 |
+| 기존 브라우저 회귀 (로컬 재확인) | `tests/tab-connections.mjs` 16/16 pass, `test:flash-guide` 데이터 3/3·UI 8/8 pass. 클라우드 실패는 컨테이너 환경 문제로 확인되어 코드 수정과 `origin/main` 비교는 하지 않았다 |
+| single-file 산출물 (로컬 재빌드) | 00d4b88의 `single-file/` 산출물은 `package.json`에 `test:crystal-ui`가 추가되기 전에 빌드되어 `build-single-file.cjs --check`가 stale로 실패했다(내장 `package.json` 1875 B, 현재 1935 B). `npm run build:single`로 다시 빌드한 뒤 `test:single` 10/10 pass |
 
 브라우저 회귀는 클라우드 컨테이너(Linux, Playwright 1.56.1, Chromium 1194, 2026-10-29)에서 실행했다. 실행 중 다시 그려진 장비 3D 스크린샷과 측정값만 바뀐 결과 파일은 이번 변경의 증거가 아니므로 commit하지 않았다.
+
+로컬 재확인은 Windows 11 Pro 10.0.26300, Node 22.16.0, Playwright 1.59.1, Chromium 147.0.7727.15(revision 1217)에서 2026-10-29에 실행했다. 같은 환경에서 `check:crystal`, `test:crystal` 45/45, `test:crystal-ui` 15/15도 다시 통과했다.
 
 ## 미구현과 가정
 
