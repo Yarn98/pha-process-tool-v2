@@ -1,11 +1,11 @@
 {
   "format": 1,
   "artifact": "single-file/PHA-Process-Single.html",
-  "bytes": 70782468,
-  "sha256": "de59cf1de74ed798bdfca67f50c0083ad5ed19ccf74b258ad1c2d4ddaaf5e952",
-  "source_sha256": "9dc24a67cbb59adc55bff182380a860b0070d55af1de2b75780ffa819ef6bbc2",
+  "bytes": 70921392,
+  "sha256": "5d3a52154405768c0398c205e4fdad0625024935b35e9cf1434adc2ab50e188a",
+  "source_sha256": "a772a150df3901a35a860813a8816fc500ab217c650977a3581827adf44bce32",
   "hash_basis": "SHA-256 of UTF-8 text normalized to LF; binary bytes unchanged. Artifact bytes and hash use LF.",
-  "embedded_assets": 155,
+  "embedded_assets": 157,
   "embedded_glbs": 26,
   "transformations": {
     "service_worker_blocks_removed": 1,
@@ -999,11 +999,60 @@
       "sha256": "c9edeb1e4ad274169769c521a704ece5a26124209fe2c2107dc186095aad3b1b"
     },
     {
+      "path": "crystallization-data.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 24421,
+      "sha256": "0d25a6bc49de42f24f81dadc40c4e7ee48be562f08c6f2048e9d880bd7bfeb45"
+    },
+    {
+      "path": "crystallization-doe.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 11399,
+      "sha256": "66726d3123cd48281dd6b4cf8422fa47fb3e28df72cc8eb935371a40bef522ac"
+    },
+    {
+      "path": "crystallization-engine.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 17156,
+      "sha256": "eaddf68c3328cdf1f81a0556e318a7c8708b4520144e73d5d587ce29b7be23e6"
+    },
+    {
+      "path": "crystallization-panel.css",
+      "role": "stylesheet",
+      "encoding": "utf8-lf",
+      "bytes": 3681,
+      "sha256": "ff1d291205d80734e14ecddbd272901da7caf711db0d53066afb0d16700c440c"
+    },
+    {
+      "path": "crystallization-panel.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 37346,
+      "sha256": "214da24ff4685c9600aa8e16409ba94603168aecc1cb242111fa4bc287f5667e"
+    },
+    {
+      "path": "crystallization-process.js",
+      "role": "classic-script",
+      "encoding": "utf8-lf",
+      "bytes": 21452,
+      "sha256": "6548ddfeeb8f4ee6063e0aa14fa6729a13103b02824ae9fab8f522f7b4781935"
+    },
+    {
       "path": "custom.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 37579,
       "sha256": "5168214ac7e1e9943265dd0f4b107dc6c00c51c97af4c743f4dc2c647d7e5be3"
+    },
+    {
+      "path": "data/crystallization/p3hb_ref_2026.json",
+      "role": "embedded-asset",
+      "encoding": "utf8-lf",
+      "bytes": 7187,
+      "sha256": "503fa9a6a1d432701650ec3384e02dce57bfba0cae0f864a789470093889cbdc"
     },
     {
       "path": "data/grades/CA1180P_talc10_wax0p3.json",
@@ -1018,6 +1067,13 @@
       "encoding": "utf8-lf",
       "bytes": 663,
       "sha256": "39a292403f8d6ff1cb4fa0c8d5f02c9a8254ed744a350766b8e8bc347477a736"
+    },
+    {
+      "path": "data/process/crystallization_presets.json",
+      "role": "embedded-asset",
+      "encoding": "utf8-lf",
+      "bytes": 9998,
+      "sha256": "f86eba242bae2961b85cfd27a2f97bdd2862ac2922fac91d1f95175f7b213ad1"
     },
     {
       "path": "data/troubleshooting_kb.json",
@@ -1059,14 +1115,14 @@
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 37408,
-      "sha256": "54dbebe9ddf77aed0b79269b304a3d148a403bc4aa9eba909faa1ad16aaed1e5"
+      "sha256": "524d3864eef9a2db107f824c0e7eae5d48d7f25688366068d213d171b17c8335"
     },
     {
       "path": "equipment-study.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 11252,
-      "sha256": "cfbf3264eb60ddfa44a6500d6732f6aff525256fca7680e2b25fbc7c5a6eb4e5"
+      "sha256": "8cbd15fba785044647e1c22ae6e245d42f1e0c8e5deb241d0e75aea0ba8ac08c"
     },
     {
       "path": "flash-guide-data.js",
@@ -1087,14 +1143,14 @@
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 26424,
-      "sha256": "20344332661a375c827bef2827a34239fdece4f1c2675e38f90ca21d08fd9550"
+      "sha256": "cb22d57eceb99d61c91e0671c9b990392eb5981bb4774106a301a12b6d894093"
     },
     {
       "path": "flash-mold-viewer.js",
       "role": "module",
       "encoding": "utf8-lf",
       "bytes": 3913,
-      "sha256": "23e9556c5672dd44d5a99febe8ddc07a448d85354b1ef7c40371734ca0f55899"
+      "sha256": "eea3aeaba7c25e3803e918f87d337e789e5f210bcc9fa5451a512436725a9e7e"
     },
     {
       "path": "glossary.js",
@@ -1135,15 +1191,15 @@
       "path": "index.html",
       "role": "entry",
       "encoding": "utf8-lf",
-      "bytes": 327148,
-      "sha256": "b3d38f29836fff7fbc771236ba365c6bdc5f8fa0f6ebc2f315460bcd8a62106a"
+      "bytes": 327490,
+      "sha256": "52a269c782627d46db3698c24ec0def12a9aa1593c47121b1b0d64a8d50bcf3b"
     },
     {
       "path": "injection-motion.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 31162,
-      "sha256": "045d7e295bcbd213385d56ab44bf9af91f38f8dd5b6ded472440546eb525502b"
+      "sha256": "6d1c12a3bdae0839143497e3bff2d6af501b1c1686635b4900cd44099888b4c3"
     },
     {
       "path": "machine-viewer.js",
@@ -1163,8 +1219,8 @@
       "path": "package.json",
       "role": "build-contract",
       "encoding": "utf8-lf",
-      "bytes": 1622,
-      "sha256": "c8f92f5c9d4b322296b449f2106381fb7fe0816d0f8b4e75aab0dfc4d3ba64f7"
+      "bytes": 1935,
+      "sha256": "d5c459ccb51e2aa154fc16083a7ca7c79dbcfcb0d9b0ce99e3289a6c59ba522c"
     },
     {
       "path": "pha-integration.js",
@@ -1269,7 +1325,7 @@
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 25655,
-      "sha256": "77a626f9899cce3fb393c1b5560b9d3737b7c4d30321c9024b7080234ce69426"
+      "sha256": "ebf56eac64bfa783ec7494034cfdf0720ccb7b873d846a6a2f16bd705ec56dfb"
     },
     {
       "path": "vendor/chart-4.4.0/LICENSE",
@@ -1367,7 +1423,7 @@
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 6811,
-      "sha256": "5fc6e3b140f239d1c0870362de04cafc8c3a702798fa1ca48185a8f9760eac6e"
+      "sha256": "e2ed5c90af51f64c39f9e95ab63e77c19c8efe1d80186d5534b1de630a72c26b"
     }
   ]
 }

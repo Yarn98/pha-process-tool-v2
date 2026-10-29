@@ -1,0 +1,4 @@
+figure_or_test,series,T_C,time_s,method,melt_T_C,melt_time_s,cooling_K_s,evidence
+Fig3b,FSC_half_time,,,FSC,195,0.1,1000,judged
+Fig6c,nuc_onset_extrapolated,,,FSC,195,0.1,1000,judged
+S1000P_lotXXX,DSC_half_time,,,DSC,,,,measured

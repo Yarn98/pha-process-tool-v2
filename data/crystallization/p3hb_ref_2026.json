@@ -1,0 +1,73 @@
+{
+  "id": "P3HB_REF_2026",
+  "citation": {
+    "authors": "Jariyavidyanont K., Zhang R., Schick C., Androsch R.",
+    "journal": "Macromolecules",
+    "year": 2026,
+    "volume": 59,
+    "pages": "379–391",
+    "doi": "10.1021/acs.macromol.5c02381",
+    "license": "CC-BY 4.0"
+  },
+  "material": {
+    "description": "Sigma-Aldrich P3HB 분말, 무처리",
+    "Mw": { "value": 500, "unit": "kg/mol", "condition": "약", "source": "Macromolecules 2026,59,379 §2.1", "evidence": "confirmed" },
+    "methods": "Flash DSC 1·2+, Tammann 2단 핵 발현법, 고온 영역은 DSC 1",
+    "scope": "순수 P3HB 결과. S1000P와 배합 grade에는 미보정 참고값"
+  },
+  "kinetics": {
+    "Tm0_C": { "value": 195, "unit": "°C", "condition": "평형 융점, 문헌값 (468 K)", "source": "§1, Table 1", "evidence": "confirmed" },
+    "Tg_C": { "value": [5, 0], "unit": "°C", "condition": "5는 1000 K/s 냉각 중 FSC 관측, 0은 문헌 (약 0)", "source": "§3.1 / §1", "evidence": "confirmed" },
+    "CR1_K_s": { "value": 2, "unit": "K/s", "condition": "140°C --> Tg 냉각에서 결정화 0이 되는 속도 (약)", "source": "Fig. 1b", "evidence": "confirmed" },
+    "CR2_K_s": { "value": [70, 100], "unit": "K/s", "condition": "70°C --> 0°C 냉각에서 핵 형성 억제. 약 70 (Fig. 2b) / 약 100 (초록·결론). 판정은 100, 70 병기", "source": "Fig. 2b / 초록·결론", "evidence": "confirmed", "note": "확인 방법: Fig. 2b heating scan 재판독" },
+    "T_cryst_fastest_C": { "value": [60, 70], "unit": "°C", "condition": "등온 결정화 t1/2 최소", "source": "Fig. 3b", "evidence": "confirmed" },
+    "t_half_min_s": { "value": 30, "unit": "s", "condition": "약. 1000 K/s 냉각 후 등온, 상대 전환 50%", "source": "Fig. 3b", "evidence": "confirmed" },
+    "T_nuc_fastest_C": { "value": [30, 40], "unit": "°C", "condition": "균일 핵생성 onset 최소 (약 Tg + 30 K)", "source": "Fig. 6c, 초록", "evidence": "confirmed" },
+    "t_nuc_onset_min_s": { "value": 1, "unit": "s", "condition": "약. 최대 기울기 외삽 onset, 결정화 onset보다 약 2 order 짧음", "source": "Fig. 6b–c", "evidence": "confirmed" },
+    "T_growth_max_C": { "value": [80, 90], "unit": "°C", "condition": "구정 성장속도 최대", "source": "§1 선행연구 인용", "evidence": "confirmed" },
+    "G_max_um_s": { "value": 4, "unit": "μm/s", "condition": "약. 구정 성장속도 최대 구간", "source": "§1", "evidence": "confirmed" },
+    "growth_stage": { "value": [70, 5], "unit": "°C, s", "condition": "70°C × 5 s. 핵 검출용 성장 단계, 제품 완성 시간 아님", "source": "§3.2–3.3", "evidence": "confirmed" },
+    "crystStudyRange_C": { "value": [[10, 80], [110, 130]], "unit": "°C", "condition": "t1/2 측정 범위: 10–80 (FSC), 110–130 (DSC)", "source": "§3.2", "evidence": "confirmed" },
+    "nucStudyRange_C": { "value": [0, 50], "unit": "°C", "condition": "핵생성 속도 측정 범위, 전달 1000 K/s", "source": "§3.3", "evidence": "confirmed" }
+  },
+  "literature": [
+    { "text": "DSC 냉각 40–2.5 K/min에서 결정화는 60–110°C에서 일어나고 결정화도는 20–60%다.", "source": "refs 28–30", "evidence": "confirmed" },
+    { "text": "200 K/min 이상으로 급랭하면 Tg 아래에서 완전히 유리화한다. 500 K/min 이상이라는 보고도 있으며, 저자는 첨가제·핵제 차이로 본다.", "source": "refs 30–34", "evidence": "confirmed" },
+    { "text": "유리화 시료를 수십 K/min으로 가열하면 50–60°C에서 cold-crystallization peak가 나온다.", "source": "§1", "evidence": "confirmed" },
+    { "text": "Tg가 상온보다 낮아 보관 중 2차 결정화로 결정화도가 계속 증가한다. 24 h·7 d 추적의 근거다.", "source": "refs 25–26", "evidence": "confirmed" }
+  ],
+  "nucleiStability": [
+    { "item": "핵 수 유지", "value": "spike 약 120°C까지 거의 일정", "condition": "형성 0·10·20·30°C, spike 0.01 s, 전달 1000 K/s", "source": "Fig. 7c, 8" },
+    { "item": "급감 폭", "value": "120°C 초과 후 10–15 K 안에 급감", "condition": "위와 동일", "source": "§3.4" },
+    { "item": "완전 소실", "value": "140°C 초과", "condition": "20°C 형성, 1000 s 형성 시 급감 구간 130–140°C", "source": "Fig. 7b–c, 9b" },
+    { "item": "형성온도 기준 표현", "value": "형성온도보다 90–120 K 높은 온도에서 소실", "condition": "PLLA·PBSA·PBI는 85–90 K", "source": "§3.4" },
+    { "item": "소실 구간 폭", "value": "P3HB 15 K 미만", "condition": "PLLA 25, PBSA 30, PBI 40 K", "source": "§3.4" },
+    { "item": "임계 전달 가열속도", "value": "30°C 형성 수십, 20°C 약 100, 10°C 약 500, 0°C 약 1000, −10°C 10,000 초과", "condition": "K/s, 성장 70°C × 5 s", "source": "Fig. 4c, 5" },
+    { "item": "느린 전달", "value": "20 --> 70°C를 1 K/s로 올리면 형성시간과 무관하게 큰 결정화량", "condition": "전달 중 핵 추가 형성·안정화", "source": "Fig. 4c" }
+  ],
+  "cnt": {
+    "Tm0_K": { "value": 468, "unit": "K", "condition": "T = Tm0 값", "source": "Table 1, ref 17, 64, 65", "evidence": "confirmed" },
+    "sigma_J_m2": { "value": 0.044, "unit": "J/m²", "condition": "액상–고상 계면 자유에너지, T = Tm0 값", "source": "Table 1, ref 17, 66, 67", "evidence": "confirmed" },
+    "dhm_J_mol": { "value": 12570, "unit": "J/mol", "condition": "T = Tm0 값", "source": "Table 1, ref 63", "evidence": "confirmed" },
+    "dhm_J_m3": { "value": 1.85e8, "unit": "J/m³", "condition": "T = Tm0 값", "source": "Table 1, ref 17", "evidence": "confirmed" },
+    "dsm_J_K_mol": { "value": 26.859, "unit": "J/K/mol", "condition": "Δsm = Δhm/Tm0", "source": "Table 1", "evidence": "confirmed" },
+    "cp_solid_J_gK": { "value": 1.858, "unit": "J/g/K", "condition": "T = Tm0 값", "source": "Table 1, ref 68", "evidence": "confirmed" },
+    "cp_liquid_J_gK": { "value": 2.073, "unit": "J/g/K", "condition": "T = Tm0 값", "source": "Table 1, ref 68", "evidence": "confirmed" },
+    "V_m3_mol": { "value": 7.5e-5, "unit": "m³/mol", "condition": "V(P3HB)", "source": "Table 1, ref 64", "evidence": "confirmed" },
+    "repeatUnit_g_mol": { "value": 86.09, "unit": "g/mol", "condition": "반복단위 C4H6O2", "source": "작업지시서 5.5", "evidence": "confirmed" },
+    "note": "Rc는 상온에서 약 1.5 nm다. 20°C에서 1000 s 형성한 최대 핵은 약 4 nm, 짧은 형성시간은 약 3.5 nm다(Fig. 9). 저자는 구형 가정과 CNT 파라미터 때문에 크기가 과대평가됐을 수 있다고 밝힌다."
+  },
+  "engine": {
+    "anchors": {
+      "T_cryst_fastest_C": [60, 70], "t_half_min_s": 30,
+      "T_nuc_fastest_C": [30, 40], "t_nuc_onset_min_s": 1,
+      "T_growth_max_C": [80, 90], "G_max_um_s": 4,
+      "CR1_K_s": 2, "CR2_K_s": [70, 100],
+      "crystStudyRange_C": [10, 130], "nucStudyRange_C": [0, 50]
+    },
+    "curves": { "t_half": [], "t_nuc_onset": [] },
+    "survival": { "T_keep_C": 120, "T_loss_C": [130, 140], "exposure_s": 0.01, "formedAt_C": [0, 30] },
+    "source": "Macromolecules 2026, 59, 379-391",
+    "evidence": "confirmed"
+  }
+}

@@ -1,0 +1,53 @@
+/* Crystallization-history panel (crystallization-panel.js). Uses the app's existing tokens. */
+.xtal-panel{border:1px solid var(--border);border-radius:var(--radius);background:#fff;margin:12px 0}
+.xtal-panel>summary{cursor:pointer;padding:12px 14px;font-weight:700;color:var(--primary);list-style-position:inside}
+.xtal-sub{display:block;font-weight:400;font-size:13px;color:#5b5648;margin-top:2px}
+.xtal-body{padding:0 14px 14px}
+.xtal-h{margin:14px 0 4px;font-size:15px}
+.xtal-unit{font-weight:400;color:#6b6556;font-size:12px}
+.xtal-checks{gap:16px;flex-wrap:wrap}
+.xtal-check{display:flex;align-items:center;gap:6px;font-size:14px}
+.xtal-check input{width:auto}
+.xtal-sub-details{margin:10px 0;border-top:1px solid var(--border);padding-top:8px}
+.xtal-sub-details>summary{cursor:pointer;font-weight:600}
+.xtal-sub-details textarea{width:100%;font-family:ui-monospace,monospace;font-size:13px;padding:8px;border:2px solid var(--border);border-radius:8px;box-sizing:border-box}
+.xtal-badge{display:inline-block;font-size:11px;font-weight:600;padding:1px 6px;border-radius:2px;border:1px solid currentColor;vertical-align:middle}
+.xtal-ev-confirmed{color:#2C5D3F}.xtal-ev-measured{color:#1f4e79}.xtal-ev-judged{color:#6b5a1a}.xtal-ev-estimated{color:#9A4F24}
+.xtal-note{font-size:11px;color:#9A4F24;margin-left:4px}
+.xtal-src{font-size:12px;color:#6b6556}
+.xtal-list{margin:6px 0 0;padding-left:18px;font-size:14px}
+.xtal-result{margin-top:12px}
+.xtal-banner{padding:8px 12px;background:var(--light);border-left:4px solid var(--primary);font-weight:600;margin-bottom:8px}
+.xtal-mode-amorphous,.xtal-mode-unknown,.xtal-mode-out_of_scope{border-left-color:var(--warning)}
+.xtal-error{color:var(--danger);font-weight:600}
+.xtal-chart-wrap{overflow:hidden}
+.xtal-chart{display:block;max-width:100%;height:auto;background:#fff}
+.xtal-chart .xtal-band-nuc{fill:rgba(31,78,121,.12)}
+.xtal-chart .xtal-band-cryst{fill:rgba(44,93,63,.16)}
+.xtal-chart .xtal-band-growth{fill:rgba(154,79,36,.12)}
+.xtal-grid{stroke:#e6e0d2;stroke-width:1}
+.xtal-axis{font-size:11px;fill:#5b5648}
+.xtal-seg{stroke:#8a8270;stroke-width:1;stroke-dasharray:4 3}
+.xtal-seg-label{font-size:10px;fill:#5b5648}
+.xtal-line-surface,.xtal-line-center,.xtal-line-mean{fill:none;stroke-width:2}
+.xtal-line-surface{stroke:#1f4e79}.xtal-line-center{stroke:#8E2B2B}.xtal-line-mean{stroke:#2C5D3F;stroke-dasharray:6 3}
+.xtal-legend{font-size:12px;color:#5b5648;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;margin:4px 0 8px}
+.xtal-key{display:inline-block;width:14px;height:10px;vertical-align:middle;margin-right:2px}
+.xtal-key-surface{background:#1f4e79}.xtal-key-center{background:#8E2B2B}.xtal-key-mean{background:#2C5D3F}
+.xtal-key.xtal-band-nuc{background:rgba(31,78,121,.25)}.xtal-key.xtal-band-cryst{background:rgba(44,93,63,.3)}.xtal-key.xtal-band-growth{background:rgba(154,79,36,.25)}
+.xtal-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+.xtal-card{border:1px solid var(--border);border-radius:var(--radius);padding:10px 12px;background:#fff;font-size:14px;min-width:0}
+.xtal-card h5{margin:0 0 6px;font-size:14px}
+.xtal-card p{margin:4px 0}
+.xtal-card ul{margin:4px 0;padding-left:18px}
+.xtal-card table{font-size:13px}
+.xtal-card th,.xtal-card td{padding:4px 6px}
+.xtal-warnings{margin-top:10px;border-left:4px solid var(--warning);padding:6px 12px;background:#fbf6ec}
+.xtal-warnings h5{margin:0 0 4px}
+.xtal-warnings ul{margin:0;padding-left:18px;font-size:14px}
+.xtal-ref,.xtal-doe{margin-top:10px}
+@media (max-width:768px){
+  .xtal-cards{grid-template-columns:1fr}
+  .xtal-body{padding:0 10px 12px}
+}
+.force-mobile .xtal-cards{grid-template-columns:1fr}
