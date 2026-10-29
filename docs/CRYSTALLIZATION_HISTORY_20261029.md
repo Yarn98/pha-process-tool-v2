@@ -75,7 +75,11 @@ KR/EN 전환을 지원하고, 모바일에서는 그래프와 카드를 세로�
 | `npm run check:crystal` | 생성 모듈과 JSON 일치 |
 | `npm run test:crystal-ui` | 15/15 pass. 한국 빨대 예제, A1000P 분기, EN, 사출 W11, 시트 R2 1.885 s, DOE, 모바일 390 px |
 | thermal1d 해석해 비교 | 평판 양면 고정온도, 1 mm, 0.5 s: 중심 오차 0.17 K(21격자), 0.04 K(41격자) |
-| 기존 브라우저 회귀 | 실행 중. 결과는 후속 commit에서 이 표에 기록 |
+| 기존 단위·정적 점검 | `test:process`, `test:single`, `pages-distribution`, troubleshooting·vent·flash·kinematics 데이터 테스트, KB·visual·vent sync check 통과 |
+| 기존 브라우저 회귀 (통과) | `test:ui`, `test:vent-guide`, `test:ts-visuals`, `test:myai`, `test:tools`, `test:motion`, `test:kinematics`, `test:study`, `test:equipment` |
+| 기존 브라우저 회귀 (미확인) | `tests/tab-connections.mjs` 15–16건, `test:flash-guide` 1건 실패. 수정 전 `origin/main`(73a05a3)에서도 같은 단계에서 실패해 클라우드 컨테이너 환경 문제로 판단됨. 로컬 PC에서 재확인 필요 |
+
+브라우저 회귀는 클라우드 컨테이너(Linux, Playwright 1.56.1, Chromium 1194, 2026-10-29)에서 실행했다. 실행 중 다시 그려진 장비 3D 스크린샷과 측정값만 바뀐 결과 파일은 이번 변경의 증거가 아니므로 commit하지 않았다.
 
 ## 미구현과 가정
 
