@@ -338,7 +338,7 @@
     }
   },
   "presets": {
-    "version": "2026-10-29",
+    "version": "2026-10-30",
     "basis": "PHA 결정화 이력 기반 공정조건 코드 작업지시서 (2026-10-29). 시작 조건은 S1000P 주성분에 A1000P·필러·핵제가 들어간 배합을 가정한 공정 추정안이며 실측 최적값이 아니다.",
     "dataPriority": [
       "measured",
@@ -418,8 +418,8 @@
             2,
             5
           ],
-          "unit": "% (원문 단위 미표기, 확인 필요)",
-          "source": "사용자 제공",
+          "unit": "mol%",
+          "source": "사용자 제공. 단위: TARS DB grades.hb4_mol_pct (S1000P 3.5), TARS README 'confirmed 3.3 mol%'",
           "evidence": "confirmed"
         }
       },
@@ -429,9 +429,10 @@
         "display": "비정질",
         "fourHB": {
           "value": 30,
-          "unit": "% (원문 단위 미표기, 확인 필요)",
-          "source": "사용자 제공",
-          "evidence": "confirmed"
+          "unit": "mol%",
+          "source": "사용자 제공, TARS DB grades.hb4_mol_pct (A1000P 30)",
+          "evidence": "confirmed",
+          "note": "사내 실험 기록(TARS raw Data_all1230)의 A1000P 4HB는 34"
         },
         "Tg_C": {
           "value": [
@@ -481,29 +482,123 @@
         }
       },
       "CA1180P": {
-        "mode": "unknown",
+        "mode": "out_of_scope",
+        "matrix": "PLA",
+        "components": [
+          "PLA",
+          "A1000P",
+          "Talc"
+        ],
         "kineticsRef": null,
-        "display": "분류 필요"
+        "display": {
+          "ko": "PLA 매트릭스: 대상 외",
+          "en": "PLA matrix: out of scope"
+        },
+        "basis": {
+          "value": "PLA + amorphous PHA compound",
+          "unit": "-",
+          "source": "CJ TDS CA1180P (process-evidence.js)",
+          "evidence": "confirmed"
+        },
+        "composition": {
+          "value": "PLA 80 / A1000P 20, Talc 10 phr",
+          "unit": "wt%, phr",
+          "source": "TARS formulations CA1180P (tars-api /api/formulations, 100 wt% 환산 PLA 72.73 / A1000P 18.18 / Talc 9.09)",
+          "evidence": "confirmed"
+        }
       },
       "CA1165A": {
-        "mode": "unknown",
+        "mode": "out_of_scope",
+        "matrix": "PLA",
+        "components": [
+          "PLA",
+          "A1000P",
+          "CaCO3",
+          "Talc"
+        ],
         "kineticsRef": null,
-        "display": "분류 필요"
+        "display": {
+          "ko": "PLA 매트릭스: 대상 외",
+          "en": "PLA matrix: out of scope"
+        },
+        "basis": {
+          "value": "aPHA + PLA + minerals compound",
+          "unit": "-",
+          "source": "CJ TDS CA1165A (process-evidence.js)",
+          "evidence": "confirmed"
+        },
+        "composition": {
+          "value": "PLA 약 70 / A1000P 약 20, CaCO3 20 phr + Talc 10 phr",
+          "unit": "wt%, phr",
+          "source": "TARS formulations CA1165A (원기록, 100 wt% 환산 PLA 58.33 / A1000P 16.67 / 무기물 25)",
+          "evidence": "confirmed"
+        }
       },
       "CA1670P": {
-        "mode": "unknown",
+        "mode": "out_of_scope",
+        "matrix": "PLA",
+        "components": [
+          "PLA",
+          "aPHA"
+        ],
         "kineticsRef": null,
-        "display": "분류 필요"
+        "display": {
+          "ko": "PLA 매트릭스: 대상 외",
+          "en": "PLA matrix: out of scope"
+        },
+        "basis": {
+          "value": "PLA + aPHA compound · sheet / thermoforming / ISBM",
+          "unit": "-",
+          "source": "CJ TDS CA1670P (process-evidence.js)",
+          "evidence": "confirmed"
+        },
+        "note": "조성비 기록 없음. 사내 실험 기록 1건(TARS raw Data_all1230 row 492)은 'H8 기반, 4HB 8'로 TDS와 다르나 Tg2 52.6 °C로 PLA 상이 있음. TDS 분류를 따름"
       },
       "CA1680P": {
-        "mode": "unknown",
+        "mode": "out_of_scope",
+        "matrix": "PLA",
+        "components": [
+          "PLA",
+          "aPHA"
+        ],
         "kineticsRef": null,
-        "display": "분류 필요"
+        "display": {
+          "ko": "PLA 매트릭스: 대상 외",
+          "en": "PLA matrix: out of scope"
+        },
+        "basis": {
+          "value": "PLA + aPHA compound · sheet / thermoforming / ISBM",
+          "unit": "-",
+          "source": "CJ TDS CA1680P (process-evidence.js)",
+          "evidence": "confirmed"
+        },
+        "composition": {
+          "value": "PLA 80 / aPHA 20",
+          "unit": "wt%",
+          "source": "사내 실험 기록 'CA1680 (PLA 80, aPHA 20)' (TARS raw Data_all1230 row 485, CA1680_2003D혼합테스트)",
+          "evidence": "judged",
+          "note": "작업지시서·실험 기록의 CA1680은 CA1680P로 판단"
+        }
       },
       "CA1270P": {
-        "mode": "unknown",
+        "mode": "out_of_scope",
+        "matrix": "PLA",
+        "components": [
+          "PLA",
+          "aPHA"
+        ],
         "kineticsRef": null,
-        "display": "분류 필요"
+        "display": {
+          "ko": "PLA 매트릭스: 대상 외",
+          "en": "PLA matrix: out of scope"
+        },
+        "basis": {
+          "value": "PLA + aPHA compound · blown / cast film",
+          "unit": "-",
+          "source": "CJ TDS CA1270P (process-evidence.js), TARS 건조 표 'PLA-aPHA compounds'",
+          "evidence": "confirmed"
+        },
+        "note": "조성비 기록 없음"
       }
     },
     "straw": {
@@ -750,10 +845,10 @@
           60
         ],
         "hold_C": 55,
-        "source": "PHA process app 트러블슈팅 2025-08 (이전 대화 기록)",
+        "source": "PHA process app 트러블슈팅 2025-08 (이전 대화 기록); Sheet process 저장소 src/materials.js processPrior",
         "evidence": "judged",
         "inCode": false,
-        "note": "현재 코드에서 찾지 못함. 사용자가 control로 입력하면 R2 control로 유지"
+        "note": "이 저장소 코드에는 없음. 같은 수치가 Sheet process 저장소에 S1000P-rich 시트 첫 시험 롤 표면 engineering prior로 있음(롤 표면 50–60 °C, 선호 55 °C, R2 출구 시트 평균 목표 60–65 °C, 실측 근거 미기재). 사용자가 control로 입력하면 R2 control로 유지"
       }
     },
     "conflicts": [
@@ -777,8 +872,8 @@
         "id": "C3",
         "topic": "시트 R2 sticking",
         "workOrder": "R2 70°C 시작, 65·70·75°C screening",
-        "existing": "Roller 2 50–60°C, 55°C 유지 (코드에서 찾지 못함)",
-        "existingSource": "PHA process app 트러블슈팅 2025-08",
+        "existing": "Roller 2 50–60°C, 55°C 유지 (이 저장소 코드에는 없음)",
+        "existingSource": "PHA process app 트러블슈팅 2025-08; Sheet process src/materials.js 롤 표면 engineering prior 50–60 °C·55 °C",
         "related": "process-evidence.js CA1670P·CA1680P 롤 온도 25–55°C",
         "resolution": "sticking·blocking 판정 필수, 사용자 control 입력 시 유지"
       },

@@ -1,5 +1,5 @@
 {
-  "version": "2026-10-29",
+  "version": "2026-10-30",
   "basis": "PHA 결정화 이력 기반 공정조건 코드 작업지시서 (2026-10-29). 시작 조건은 S1000P 주성분에 A1000P·필러·핵제가 들어간 배합을 가정한 공정 추정안이며 실측 최적값이 아니다.",
   "dataPriority": ["measured", "TDS", "사내 기록", "논문(P3HB)", "estimated"],
   "zones": {
@@ -16,11 +16,11 @@
     },
     "S1000P": {
       "mode": "crystallizable", "kineticsRef": null, "display": "미보정",
-      "fourHB": { "value": [2, 5], "unit": "% (원문 단위 미표기, 확인 필요)", "source": "사용자 제공", "evidence": "confirmed" }
+      "fourHB": { "value": [2, 5], "unit": "mol%", "source": "사용자 제공. 단위: TARS DB grades.hb4_mol_pct (S1000P 3.5), TARS README 'confirmed 3.3 mol%'", "evidence": "confirmed" }
     },
     "A1000P": {
       "mode": "amorphous", "kineticsRef": null, "display": "비정질",
-      "fourHB": { "value": 30, "unit": "% (원문 단위 미표기, 확인 필요)", "source": "사용자 제공", "evidence": "confirmed" },
+      "fourHB": { "value": 30, "unit": "mol%", "source": "사용자 제공, TARS DB grades.hb4_mol_pct (A1000P 30)", "evidence": "confirmed", "note": "사내 실험 기록(TARS raw Data_all1230)의 A1000P 4HB는 34" },
       "Tg_C": { "value": [-17, -15], "unit": "°C", "source": "사용자 제공", "evidence": "confirmed" }
     },
     "CB0400A": {
@@ -31,11 +31,31 @@
       "mode": "blend", "use": "injection", "kineticsRef": null, "display": "상별 표시",
       "mold_C": { "value": [60, 70], "unit": "°C", "source": "CB0104A TDS (첨부 2 인용)", "evidence": "confirmed", "note": "탈형 어려우면 70°C 권고, 원문 대조 필요" }
     },
-    "CA1180P": { "mode": "unknown", "kineticsRef": null, "display": "분류 필요" },
-    "CA1165A": { "mode": "unknown", "kineticsRef": null, "display": "분류 필요" },
-    "CA1670P": { "mode": "unknown", "kineticsRef": null, "display": "분류 필요" },
-    "CA1680P": { "mode": "unknown", "kineticsRef": null, "display": "분류 필요" },
-    "CA1270P": { "mode": "unknown", "kineticsRef": null, "display": "분류 필요" }
+    "CA1180P": {
+      "mode": "out_of_scope", "matrix": "PLA", "components": ["PLA", "A1000P", "Talc"], "kineticsRef": null, "display": { "ko": "PLA 매트릭스: 대상 외", "en": "PLA matrix: out of scope" },
+      "basis": { "value": "PLA + amorphous PHA compound", "unit": "-", "source": "CJ TDS CA1180P (process-evidence.js)", "evidence": "confirmed" },
+      "composition": { "value": "PLA 80 / A1000P 20, Talc 10 phr", "unit": "wt%, phr", "source": "TARS formulations CA1180P (tars-api /api/formulations, 100 wt% 환산 PLA 72.73 / A1000P 18.18 / Talc 9.09)", "evidence": "confirmed" }
+    },
+    "CA1165A": {
+      "mode": "out_of_scope", "matrix": "PLA", "components": ["PLA", "A1000P", "CaCO3", "Talc"], "kineticsRef": null, "display": { "ko": "PLA 매트릭스: 대상 외", "en": "PLA matrix: out of scope" },
+      "basis": { "value": "aPHA + PLA + minerals compound", "unit": "-", "source": "CJ TDS CA1165A (process-evidence.js)", "evidence": "confirmed" },
+      "composition": { "value": "PLA 약 70 / A1000P 약 20, CaCO3 20 phr + Talc 10 phr", "unit": "wt%, phr", "source": "TARS formulations CA1165A (원기록, 100 wt% 환산 PLA 58.33 / A1000P 16.67 / 무기물 25)", "evidence": "confirmed" }
+    },
+    "CA1670P": {
+      "mode": "out_of_scope", "matrix": "PLA", "components": ["PLA", "aPHA"], "kineticsRef": null, "display": { "ko": "PLA 매트릭스: 대상 외", "en": "PLA matrix: out of scope" },
+      "basis": { "value": "PLA + aPHA compound · sheet / thermoforming / ISBM", "unit": "-", "source": "CJ TDS CA1670P (process-evidence.js)", "evidence": "confirmed" },
+      "note": "조성비 기록 없음. 사내 실험 기록 1건(TARS raw Data_all1230 row 492)은 'H8 기반, 4HB 8'로 TDS와 다르나 Tg2 52.6 °C로 PLA 상이 있음. TDS 분류를 따름"
+    },
+    "CA1680P": {
+      "mode": "out_of_scope", "matrix": "PLA", "components": ["PLA", "aPHA"], "kineticsRef": null, "display": { "ko": "PLA 매트릭스: 대상 외", "en": "PLA matrix: out of scope" },
+      "basis": { "value": "PLA + aPHA compound · sheet / thermoforming / ISBM", "unit": "-", "source": "CJ TDS CA1680P (process-evidence.js)", "evidence": "confirmed" },
+      "composition": { "value": "PLA 80 / aPHA 20", "unit": "wt%", "source": "사내 실험 기록 'CA1680 (PLA 80, aPHA 20)' (TARS raw Data_all1230 row 485, CA1680_2003D혼합테스트)", "evidence": "judged", "note": "작업지시서·실험 기록의 CA1680은 CA1680P로 판단" }
+    },
+    "CA1270P": {
+      "mode": "out_of_scope", "matrix": "PLA", "components": ["PLA", "aPHA"], "kineticsRef": null, "display": { "ko": "PLA 매트릭스: 대상 외", "en": "PLA matrix: out of scope" },
+      "basis": { "value": "PLA + aPHA compound · blown / cast film", "unit": "-", "source": "CJ TDS CA1270P (process-evidence.js), TARS 건조 표 'PLA-aPHA compounds'", "evidence": "confirmed" },
+      "note": "조성비 기록 없음"
+    }
   },
   "straw": {
     "stages": [
@@ -72,12 +92,12 @@
       { "name": "R3", "role": "이형, 최종 냉각", "start": 40, "range": [35, 45], "unit": "°C", "evidence": "estimated" }
     ],
     "note": "제조사 확정 롤 조건이 아닌 공정 추정안이다(추정됨).",
-    "stickingRule": { "R2_C": [50, 60], "hold_C": 55, "source": "PHA process app 트러블슈팅 2025-08 (이전 대화 기록)", "evidence": "judged", "inCode": false, "note": "현재 코드에서 찾지 못함. 사용자가 control로 입력하면 R2 control로 유지" }
+    "stickingRule": { "R2_C": [50, 60], "hold_C": 55, "source": "PHA process app 트러블슈팅 2025-08 (이전 대화 기록); Sheet process 저장소 src/materials.js processPrior", "evidence": "judged", "inCode": false, "note": "이 저장소 코드에는 없음. 같은 수치가 Sheet process 저장소에 S1000P-rich 시트 첫 시험 롤 표면 engineering prior로 있음(롤 표면 50–60 °C, 선호 55 °C, R2 출구 시트 평균 목표 60–65 °C, 실측 근거 미기재). 사용자가 control로 입력하면 R2 control로 유지" }
   },
   "conflicts": [
     { "id": "C1", "topic": "빨대 수조 체류시간", "workOrder": "1단 약 0.58 s, 2단 약 1.9 s (400 ea/min × 0.26 m = 104 m/min)", "existing": "첨부 2 '온열수조 3 m, 필요 10 s --> 18 m/min'", "existingSource": "첨부 2", "resolution": "식 예시로 유지, 실제 속도는 ea/min × 절단 길이로 환산" },
     { "id": "C2", "topic": "1차 수조 수지 목표 구간", "workOrder": "30–40°C", "existing": "약 35–45°C", "existingSource": "첨부 2", "resolution": "45°C는 사용자 확장 경계값" },
-    { "id": "C3", "topic": "시트 R2 sticking", "workOrder": "R2 70°C 시작, 65·70·75°C screening", "existing": "Roller 2 50–60°C, 55°C 유지 (코드에서 찾지 못함)", "existingSource": "PHA process app 트러블슈팅 2025-08", "related": "process-evidence.js CA1670P·CA1680P 롤 온도 25–55°C", "resolution": "sticking·blocking 판정 필수, 사용자 control 입력 시 유지" },
+    { "id": "C3", "topic": "시트 R2 sticking", "workOrder": "R2 70°C 시작, 65·70·75°C screening", "existing": "Roller 2 50–60°C, 55°C 유지 (이 저장소 코드에는 없음)", "existingSource": "PHA process app 트러블슈팅 2025-08; Sheet process src/materials.js 롤 표면 engineering prior 50–60 °C·55 °C", "related": "process-evidence.js CA1670P·CA1680P 롤 온도 25–55°C", "resolution": "sticking·blocking 판정 필수, 사용자 control 입력 시 유지" },
     { "id": "C4", "topic": "사출 금형 온도", "workOrder": "60·65·70°C (CB0104A TDS 60–70°C)", "existing": "CA1180P 40°C, CA1180P high_hdt 110–120°C, CA1165A 110–120°C (process-evidence.js); Danimer 40–60°C, PHBHHx DoE 80°C, HDT 모드 110–120°C·냉각 60–100 s (이전 기록)", "existingSource": "process-evidence.js, 이전 대화", "resolution": "목적별 프리셋으로 병기" },
     { "id": "C5", "topic": "빨대 다이 출구 온도", "workOrder": "170–190°C (첨부 2), EB melt 178–180°C", "existing": "CB0400A TDS 빨대 die 160–165°C", "existingSource": "process-evidence.js CB0400A straw.die", "resolution": "병기, 다이 출구는 사용자 입력값으로만 사용" },
     { "id": "C6", "topic": "60°C 결정화 반감기", "workOrder": "P3HB t1/2 최소 약 30 s (60–70°C)", "existing": "사내 DSC: S1000P 4HB 3.3–5.3 %의 60 °C 반결정화 시간 7–28초", "existingSource": "equipment-models.js 블로운 필름 운전 기준", "resolution": "병기. S1000P 실측 kinetics 입력 시 대체 후보" },

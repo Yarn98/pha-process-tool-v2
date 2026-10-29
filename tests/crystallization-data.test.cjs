@@ -83,14 +83,24 @@ test('every quantity carries value, unit, source and a valid evidence grade', ()
   }
 });
 
-test('grade classification follows chapter 7 and keeps existing grades as unknown', () => {
+test('grade classification follows chapter 7; CA grades are PLA-matrix compounds from the TDS', () => {
   const g = presets.grades;
   assert.equal(g.P3HB_REF_2026.mode, 'crystallizable');
   assert.equal(g.S1000P.mode, 'crystallizable');
   assert.equal(g.S1000P.kineticsRef, null);
   assert.equal(g.A1000P.mode, 'amorphous');
   assert.deepEqual(g.A1000P.Tg_C.value, [-17, -15]);
-  for (const id of ['CA1180P', 'CA1165A', 'CA1670P', 'CA1680P', 'CA1270P']) assert.equal(g[id].mode, 'unknown');
+  // 4HB content is mol% (TARS DB grades.hb4_mol_pct); the stored values are unchanged.
+  assert.deepEqual([g.S1000P.fourHB.value, g.S1000P.fourHB.unit], [[2, 5], 'mol%']);
+  assert.deepEqual([g.A1000P.fourHB.value, g.A1000P.fourHB.unit], [30, 'mol%']);
+  for (const id of ['CA1180P', 'CA1165A', 'CA1670P', 'CA1680P', 'CA1270P']) {
+    assert.equal(g[id].mode, 'out_of_scope', id);
+    assert.equal(g[id].matrix, 'PLA', id);
+    assert.ok(g[id].components.includes('PLA'), id);
+    assert.match(g[id].basis.source, new RegExp(`CJ TDS ${id}`), id);
+    assert.deepEqual(Object.keys(g[id].display), ['ko', 'en'], id);
+  }
+  assert.ok(!Object.values(g).some(x => x.mode === 'unknown'));
 });
 
 test('no thermal property defaults without a source', () => {

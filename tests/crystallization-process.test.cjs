@@ -27,7 +27,8 @@ test('grade branching: S1000P runs on uncalibrated P3HB values (W02) until measu
   assert.equal(m.kineticsSource, 'measured');
   assert.ok(!m.warnings.some(w => w.code === 'W02'));
   assert.equal(P.gradeProfile('P3HB_REF_2026').uncalibrated, false);
-  assert.equal(P.gradeProfile('CA1270P').mode, 'unknown');
+  assert.equal(P.gradeProfile('CA1270P').mode, 'out_of_scope');
+  assert.equal(P.gradeProfile('CA1270P').moduleOn, false);
   assert.equal(P.gradeProfile('X', { matrix: 'PLA' }).mode, 'out_of_scope');
 });
 
