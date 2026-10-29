@@ -412,7 +412,7 @@
       "S1000P": {
         "mode": "crystallizable",
         "kineticsRef": null,
-        "display": "미보정",
+        "display": "60°C 실측 t½ 1점 보정",
         "fourHB": {
           "value": [
             2,
@@ -421,6 +421,49 @@
           "unit": "mol%",
           "source": "사용자 제공. 단위: TARS DB grades.hb4_mol_pct (S1000P 3.5), TARS README 'confirmed 3.3 mol%'",
           "evidence": "confirmed"
+        },
+        "tHalf60": {
+          "value": 0.4166,
+          "unit": "min",
+          "T_C": 60,
+          "lot": "3ACF240209",
+          "condition": "대표 lot (4HB 3.6 mol%, 560 kDa, 냉각 Tc 91.35 °C). Sheet process의 S1000P cooling Tc nominal과 같은 lot",
+          "method": "DSC 등온 60 °C, 첫 peak 반결정화 시간",
+          "source": "PHA_물성_통합정리.xlsx 원본데이터 '4HB 함량별 물성 평가 (5.31)' → TARS outputs/score_driven_20260927/step5_thermal/tc_source_metadata_v1/workbook-raw-extract.json",
+          "evidence": "measured",
+          "lots": [
+            {
+              "lot": "3A3CF231219",
+              "fourHB_molPct": 3.3,
+              "Tc_C": 89.1,
+              "t_half_min": 0.4583,
+              "sheet": "S1000P 평가 (03.07)"
+            },
+            {
+              "lot": "2A3CF231229",
+              "fourHB_molPct": 4.1,
+              "Tc_C": 104.17,
+              "t_half_min": 0.1183,
+              "sheet": "S1000P 평가 (03.07)"
+            },
+            {
+              "lot": "2A3CF240120",
+              "fourHB_molPct": 5.1,
+              "Tc_C": 82.22,
+              "t_half_min": 0.4083,
+              "sheet": "S1000P 평가 (03.07)",
+              "note": "원자료 CSV에 두 번째 peak 1.3983 min 병기"
+            },
+            {
+              "lot": "1A3CF240111",
+              "fourHB_molPct": 6.8,
+              "Tc_C": 71.34,
+              "t_half_min": 0.4783,
+              "sheet": "S1000P 평가 (03.07)",
+              "note": "4HB 2–5 mol% 범위 밖. 두 번째 peak 1.9083 min 병기"
+            }
+          ],
+          "note": "용융 온도·유지 시간·냉각 속도는 기록 없음. 60 °C 한 점이라 곡선 모드에는 쓰지 못하고 앵커 t½만 대체한다"
         }
       },
       "A1000P": {
@@ -898,8 +941,8 @@
         "topic": "60°C 결정화 반감기",
         "workOrder": "P3HB t1/2 최소 약 30 s (60–70°C)",
         "existing": "사내 DSC: S1000P 4HB 3.3–5.3 %의 60 °C 반결정화 시간 7–28초",
-        "existingSource": "equipment-models.js 블로운 필름 운전 기준",
-        "resolution": "병기. S1000P 실측 kinetics 입력 시 대체 후보"
+        "existingSource": "equipment-models.js 블로운 필름 운전 기준; 원자료 PHA_물성_통합정리.xlsx 'S1000P 평가 (03.07)' 4HB 3.3–5.1 mol% lot 7.10–27.50 s",
+        "resolution": "S1000P는 대표 lot 3ACF240209의 60 °C 실측 t½ 0.4166 min(25.0 s)으로 앵커 대체(W13). 온도별 곡선은 실측이 없어 논문 구간 유지"
       },
       {
         "id": "C7",

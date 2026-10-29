@@ -15,8 +15,22 @@
       "Tm0_C": { "value": 195, "unit": "°C", "source": "Table 1", "evidence": "confirmed" }
     },
     "S1000P": {
-      "mode": "crystallizable", "kineticsRef": null, "display": "미보정",
-      "fourHB": { "value": [2, 5], "unit": "mol%", "source": "사용자 제공. 단위: TARS DB grades.hb4_mol_pct (S1000P 3.5), TARS README 'confirmed 3.3 mol%'", "evidence": "confirmed" }
+      "mode": "crystallizable", "kineticsRef": null, "display": "60°C 실측 t½ 1점 보정",
+      "fourHB": { "value": [2, 5], "unit": "mol%", "source": "사용자 제공. 단위: TARS DB grades.hb4_mol_pct (S1000P 3.5), TARS README 'confirmed 3.3 mol%'", "evidence": "confirmed" },
+      "tHalf60": {
+        "value": 0.4166, "unit": "min", "T_C": 60, "lot": "3ACF240209",
+        "condition": "대표 lot (4HB 3.6 mol%, 560 kDa, 냉각 Tc 91.35 °C). Sheet process의 S1000P cooling Tc nominal과 같은 lot",
+        "method": "DSC 등온 60 °C, 첫 peak 반결정화 시간",
+        "source": "PHA_물성_통합정리.xlsx 원본데이터 '4HB 함량별 물성 평가 (5.31)' → TARS outputs/score_driven_20260927/step5_thermal/tc_source_metadata_v1/workbook-raw-extract.json",
+        "evidence": "measured",
+        "lots": [
+          { "lot": "3A3CF231219", "fourHB_molPct": 3.3, "Tc_C": 89.1, "t_half_min": 0.4583, "sheet": "S1000P 평가 (03.07)" },
+          { "lot": "2A3CF231229", "fourHB_molPct": 4.1, "Tc_C": 104.17, "t_half_min": 0.1183, "sheet": "S1000P 평가 (03.07)" },
+          { "lot": "2A3CF240120", "fourHB_molPct": 5.1, "Tc_C": 82.22, "t_half_min": 0.4083, "sheet": "S1000P 평가 (03.07)", "note": "원자료 CSV에 두 번째 peak 1.3983 min 병기" },
+          { "lot": "1A3CF240111", "fourHB_molPct": 6.8, "Tc_C": 71.34, "t_half_min": 0.4783, "sheet": "S1000P 평가 (03.07)", "note": "4HB 2–5 mol% 범위 밖. 두 번째 peak 1.9083 min 병기" }
+        ],
+        "note": "용융 온도·유지 시간·냉각 속도는 기록 없음. 60 °C 한 점이라 곡선 모드에는 쓰지 못하고 앵커 t½만 대체한다"
+      }
     },
     "A1000P": {
       "mode": "amorphous", "kineticsRef": null, "display": "비정질",
@@ -100,7 +114,7 @@
     { "id": "C3", "topic": "시트 R2 sticking", "workOrder": "R2 70°C 시작, 65·70·75°C screening", "existing": "Roller 2 50–60°C, 55°C 유지 (이 저장소 코드에는 없음)", "existingSource": "PHA process app 트러블슈팅 2025-08; Sheet process src/materials.js 롤 표면 engineering prior 50–60 °C·55 °C", "related": "process-evidence.js CA1670P·CA1680P 롤 온도 25–55°C", "resolution": "sticking·blocking 판정 필수, 사용자 control 입력 시 유지" },
     { "id": "C4", "topic": "사출 금형 온도", "workOrder": "60·65·70°C (CB0104A TDS 60–70°C)", "existing": "CA1180P 40°C, CA1180P high_hdt 110–120°C, CA1165A 110–120°C (process-evidence.js); Danimer 40–60°C, PHBHHx DoE 80°C, HDT 모드 110–120°C·냉각 60–100 s (이전 기록)", "existingSource": "process-evidence.js, 이전 대화", "resolution": "목적별 프리셋으로 병기" },
     { "id": "C5", "topic": "빨대 다이 출구 온도", "workOrder": "170–190°C (첨부 2), EB melt 178–180°C", "existing": "CB0400A TDS 빨대 die 160–165°C", "existingSource": "process-evidence.js CB0400A straw.die", "resolution": "병기, 다이 출구는 사용자 입력값으로만 사용" },
-    { "id": "C6", "topic": "60°C 결정화 반감기", "workOrder": "P3HB t1/2 최소 약 30 s (60–70°C)", "existing": "사내 DSC: S1000P 4HB 3.3–5.3 %의 60 °C 반결정화 시간 7–28초", "existingSource": "equipment-models.js 블로운 필름 운전 기준", "resolution": "병기. S1000P 실측 kinetics 입력 시 대체 후보" },
+    { "id": "C6", "topic": "60°C 결정화 반감기", "workOrder": "P3HB t1/2 최소 약 30 s (60–70°C)", "existing": "사내 DSC: S1000P 4HB 3.3–5.3 %의 60 °C 반결정화 시간 7–28초", "existingSource": "equipment-models.js 블로운 필름 운전 기준; 원자료 PHA_물성_통합정리.xlsx 'S1000P 평가 (03.07)' 4HB 3.3–5.1 mol% lot 7.10–27.50 s", "resolution": "S1000P는 대표 lot 3ACF240209의 60 °C 실측 t½ 0.4166 min(25.0 s)으로 앵커 대체(W13). 온도별 곡선은 실측이 없어 논문 구간 유지" },
     { "id": "C7", "topic": "빨대 2차 수조 온도", "workOrder": "75°C (70–75°C)", "existing": "한국 라인 현행 2단 60°C", "existingSource": "한국 Full PHA 빨대 개발계획 2026-09", "resolution": "현행 60°C를 control로 표시" }
   ]
 }

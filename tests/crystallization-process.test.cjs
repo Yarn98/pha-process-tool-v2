@@ -19,17 +19,45 @@ test('grade branching: A1000P disables the crystallization module with W10', () 
   assert.ok(codes(r).includes('W10'));
 });
 
-test('grade branching: S1000P runs on uncalibrated P3HB values (W02) until measured curves arrive', () => {
+test('grade branching: S1000P replaces only the t½ anchor with its measured 60 °C value (W13)', () => {
+  const E = require('../crystallization-engine.js');
   const g = P.gradeProfile('S1000P');
-  assert.equal(g.moduleOn, true); assert.equal(g.uncalibrated, true);
-  assert.ok(g.warnings.some(w => w.code === 'W02'));
+  assert.equal(g.moduleOn, true); assert.equal(g.uncalibrated, false);
+  assert.equal(g.kineticsSource, 'measured_anchor');
+  assert.deepEqual([g.measuredAnchor.lot, g.measuredAnchor.T_C], ['3ACF240209', 60]);
+  near(g.kinetics.anchors.t_half_min_s, 0.4166 * 60, 1e-9, 't½');
+  assert.equal(g.kinetics.anchors.t_nuc_onset_min_s, 1);
+  assert.deepEqual(g.kinetics.anchors.T_cryst_fastest_C, [60, 70]);
+  assert.equal(E.kinetics('P3HB_REF_2026').anchors.t_half_min_s, 30, 'reference data is not mutated');
+  assert.deepEqual(codes(g), ['W13']);
+  // Measured curves still take precedence over the one-point anchor.
   const m = P.gradeProfile('S1000P', { measuredKinetics: { t_half: [{ T_C: 50, time_s: 20 }, { T_C: 70, time_s: 10 }] } });
   assert.equal(m.kineticsSource, 'measured');
-  assert.ok(!m.warnings.some(w => w.code === 'W02'));
+  assert.equal(m.warnings.length, 0);
   assert.equal(P.gradeProfile('P3HB_REF_2026').uncalibrated, false);
-  assert.equal(P.gradeProfile('CA1270P').mode, 'out_of_scope');
-  assert.equal(P.gradeProfile('CA1270P').moduleOn, false);
-  assert.equal(P.gradeProfile('X', { matrix: 'PLA' }).mode, 'out_of_scope');
+});
+
+test('grade branching: blends stay on uncalibrated P3HB values (W02); PLA-matrix grades are out of scope (W14)', () => {
+  const b = P.gradeProfile('CB0400A');
+  assert.equal(b.uncalibrated, true); assert.deepEqual(codes(b), ['W02']);
+  for (const id of ['CA1180P', 'CA1165A', 'CA1670P', 'CA1680P', 'CA1270P']) {
+    const g = P.gradeProfile(id);
+    assert.equal(g.mode, 'out_of_scope', id); assert.equal(g.moduleOn, false, id);
+    assert.deepEqual(codes(g), ['W14'], id);
+    assert.equal(g.display.ko, 'PLA 매트릭스: 대상 외', id);
+  }
+  assert.deepEqual(codes(P.gradeProfile('X', { matrix: 'PLA' })), ['W14']);
+  const inj = P.injection({ gradeId: 'CA1180P', melt_C: 185, moldSurface_C: 115, wall_mm: 2, fillTime_s: 1, holdTime_s: 5, coolingTime_s: 30, thermal });
+  assert.equal(inj.history, null);
+  assert.ok(codes(inj).includes('W14') && !codes(inj).includes('W02'));
+});
+
+test('S1000P anchor ratio uses the measured t½ (25.0 s), not the P3HB 30 s', () => {
+  const run = extra => P.injection(Object.assign({ melt_C: 170, moldSurface_C: 65, wall_mm: 2, fillTime_s: 1, holdTime_s: 5, coolingTime_s: 30, thermal }, extra));
+  const s = run({ gradeId: 'S1000P' }).history.positions.center;
+  const ref = run({ gradeId: 'P3HB_REF_2026' }).history.positions.center;
+  near(s.residence.crystallization.total, ref.residence.crystallization.total, 1e-12, 'same thermal history');
+  near(s.anchorRatio.crystallization, ref.anchorRatio.crystallization * 30 / (0.4166 * 60), 1e-9, 'ratio');
 });
 
 test('Tg-shift nucleation zone is estimated and off by default', () => {

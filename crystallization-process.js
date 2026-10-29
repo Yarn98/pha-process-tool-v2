@@ -10,25 +10,37 @@
   const uniq = list => { const seen = new Set(); return list.filter(w => !seen.has(w.code) && seen.add(w.code)); };
 
   /* ---------- chapter 7: grade branching ---------- */
+  // A grade's single measured isothermal t½ (preset tHalf60, in min) replaces only the crystallization anchor.
+  function measuredAnchor(g) {
+    const m = g.tHalf60;
+    if (!m || m.unit !== 'min' || !finite(m.value)) return null;
+    return { t_half_s: m.value * 60, T_C: m.T_C, lot: m.lot, evidence: m.evidence };
+  }
   function gradeProfile(gradeId, opts) {
     const o = opts || {};
     const presets = D().presets;
-    if (o.matrix === 'PLA') return { gradeId, mode: 'out_of_scope', moduleOn: false, display: msg('PLA 매트릭스: 대상 외', 'PLA matrix: out of scope'), warnings: [] };
-    const g = presets.grades[gradeId] || { mode: 'unknown', kineticsRef: null, display: '분류 필요' };
+    const g = o.matrix === 'PLA' ? { mode: 'out_of_scope', display: msg('PLA 매트릭스: 대상 외', 'PLA matrix: out of scope') }
+      : presets.grades[gradeId] || { mode: 'unknown', kineticsRef: null, display: '분류 필요' };
+    if (g.mode === 'out_of_scope') return { gradeId, mode: g.mode, moduleOn: false, display: g.display, warnings: [E.warning('W14')] };
     const warnings = [];
     let moduleOn = g.mode === 'crystallizable' || g.mode === 'blend';
-    let kineticsSource = 'paper', kin = E.kinetics('P3HB_REF_2026');
+    let kineticsSource = 'paper', kin = E.kinetics('P3HB_REF_2026'), anchor = null;
     if (o.measuredKinetics && ((o.measuredKinetics.t_half || []).length >= 2 || (o.measuredKinetics.t_nuc_onset || []).length >= 2)) {
       kin = JSON.parse(JSON.stringify(kin));
       kin.curves = { t_half: o.measuredKinetics.t_half || [], t_nuc_onset: o.measuredKinetics.t_nuc_onset || [] };
       kineticsSource = 'measured';
+    } else if ((anchor = measuredAnchor(g))) {
+      kin = JSON.parse(JSON.stringify(kin));
+      kin.anchors.t_half_min_s = anchor.t_half_s;
+      kineticsSource = 'measured_anchor';
     }
     if (g.mode === 'amorphous') { moduleOn = false; warnings.push(E.warning('W10')); }
+    else if (kineticsSource === 'measured_anchor') warnings.push(E.warning('W13', `${anchor.lot} · t½ ${anchor.t_half_s.toFixed(1)} s @ ${anchor.T_C} °C`));
     else if (gradeId !== 'P3HB_REF_2026' && kineticsSource === 'paper') warnings.push(E.warning('W02'));
     let nucleationZone = null;
     if (o.tgShift && finite(o.Tg_C)) nucleationZone = { value: [o.Tg_C + 25, o.Tg_C + 35], unit: '°C', evidence: 'estimated', source: 'Tg + 30 K relation (Fig. 6c), measured Tg' };
     return {
-      gradeId, mode: g.mode, moduleOn, display: g.display, kineticsSource, kinetics: kin,
+      gradeId, mode: g.mode, moduleOn, display: g.display, kineticsSource, kinetics: kin, measuredAnchor: anchor,
       hasNucleatingAgent: !!(o.hasNucleatingAgent || g.hasNucleatingAgent), nucleationZone,
       uncalibrated: gradeId !== 'P3HB_REF_2026' && kineticsSource === 'paper', warnings,
     };
@@ -236,7 +248,7 @@
     // H4: existing sticking rule kept as control.
     const control = finite(p.stickingControl_R2_C) ? p.stickingControl_R2_C : null;
     result.rules.push({ rule: 'H4', control_R2_C: control, existing: presets.stickingRule, text: control === null
-      ? msg('기존 sticking 규칙(R2 50–60°C, 55°C)은 코드에서 찾지 못함. 현행 R2를 control로 입력', 'The R2 50–60 °C / 55 °C sticking rule is not in the code. Enter the current R2 as control')
+      ? msg('기존 sticking 규칙(R2 50–60°C, 55°C)은 이 저장소 코드에 없고 Sheet process의 롤 표면 engineering prior와 같은 값. 현행 R2를 control로 입력', 'The R2 50–60 °C / 55 °C sticking rule is not in this code; it matches the Sheet process roll-surface engineering prior. Enter the current R2 as control')
       : msg(`현행 R2 ${control}°C를 control로 유지. 65·70·75°C screening에 sticking·blocking 판정 필수`, `Keep current R2 ${control} °C as control. Sticking and blocking checks are mandatory in the 65/70/75 °C screening`) });
     if (control !== null && r2 && control !== r2.T_C) warnings.push(E.warning('W07', `R2 ${r2.T_C} °C vs control ${control} °C`));
     // H5: post-process reheat (thermoforming preheat).
