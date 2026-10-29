@@ -4,7 +4,7 @@
   'use strict';
   const viewer=()=>window.PHAMachineViewer;
   // Shares the service worker's precached asset version (sw.js ASSET_V).
-  const VERSION='?v=33',MODEL='./assets/equipment/injection-motion.glb'+VERSION;
+  const VERSION='?v=34',MODEL='./assets/equipment/injection-motion.glb'+VERSION;
   // Timing, strokes, part path and views come from the GLB (MachineControls.pha_machine).
   let STARTS=[0,4,6,10],DURATION=14,meta=null;
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
