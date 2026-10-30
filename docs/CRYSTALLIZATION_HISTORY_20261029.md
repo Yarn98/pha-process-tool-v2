@@ -58,7 +58,7 @@ KR/EN 전환을 지원하고, 모바일에서는 그래프와 카드를 세로�
 | 항목 | 작업지시서 | 기존 값과 위치 |
 |---|---|---|
 | 빨대 다이 출구 | 170–190°C (첨부 2), EB melt 178–180°C | CB0400A TDS 빨대 die 160–165°C (`process-evidence.js`) |
-| 60°C 결정화 반감기 | P3HB t1/2 최소 약 30 s | 사내 DSC: S1000P 4HB 3.3–5.3 %의 60 °C 반결정화 시간 7–28초 (`equipment-models.js`, 블로운 필름). 원자료는 lot 4개 4HB 3.3–5.1 mol%에서 7.10–27.50 s. S1000P 앵커를 대표 lot 25.0 s로 대체(2026-10-30) |
+| 60°C 결정화 반감기 | P3HB t1/2 최소 약 30 s | 사내 DSC: S1000P 4HB 3.3–5.3 mol%의 60 °C 반결정화 시간 7–28초 (`equipment-models.js`, 블로운 필름). 원자료는 lot 4개 4HB 3.3–5.1 mol%에서 7.10–27.50 s. S1000P 앵커를 대표 lot 25.0 s로 대체(2026-10-30) |
 | 사출 금형 | 60·65·70°C (CB0104A TDS 60–70°C) | CA1180P 40°C, CA1180P high_hdt·CA1165A 110–120°C (`process-evidence.js`) |
 | 시트 R2 sticking | R2 65·70·75°C screening | "R2 50–60°C, 55°C 유지"는 이 저장소 코드에 없음. 같은 수치가 Sheet process 저장소에 롤 표면 engineering prior로 있음. 현행 R2를 control로 입력 |
 | 빨대 2차 수조 | 75°C (70–75°C) | 한국 라인 현행 2단 60°C (사내 계획 2026-09) |
@@ -124,6 +124,8 @@ CB0400A 대리값 근거(TARS raw `Data_all1230`, PHA 물성 원자료):
 | 2026-10-30 반영분 | `test:crystal` 47/47(S1000P 앵커 대체·참조값 불변·W13/W14·배합 W02 유지), `test:crystal-ui` 16/16(S1000P W13 배너, CA1180P W14 조성 표시) |
 | 2026-10-30 회귀 (cache v35 `pha-cache-v35-crystal-measured-anchor`) | `check:crystal`, `test:process` 9/9, `check:kb`·`check:ts-visuals`·`check:vent-guide`, `test:kinematics` 4/4, troubleshooting·vent·flash 데이터 5/4/3, `pages-distribution` 4/4, `test:single` 10/10, flash-guide UI 8/8, vent-guide UI 8/8, troubleshooting-visuals UI 9/9, `test:ui` pass, `tab-connections` 16/16. Windows 11, Playwright 1.59.1, Chromium 147.0.7727.15 |
 | 패널 열림 상태 경합 수정 | 패널을 연 직후 공정을 바꾸면 비동기 toggle 저장보다 다시 그리기가 먼저 실행되어 패널이 닫혔다. `readInputs()`가 DOM의 열림 상태를 읽도록 고쳤다. 수정 전 UI 테스트는 첫 계산 클릭에서 2회 연속 timeout |
+| 2026-10-30 CB0400A 대리값 | `test:crystal` 48/48(CB0400A `proxy_anchor`·W15, CB0104A W02 유지), `test:crystal-ui` 17/17(CB0400A 빨대 W15 배너). 블로운 필름 링 공기 안내의 4HB 범위를 mol%로 표기(`create_blownfilm_motion.py`, `blownfilm-motion.json`, `equipment-models.js` 재생성) |
+| 2026-10-30 회귀 (cache v36 `pha-cache-v36-cb0400a-proxy`) | `check:crystal`, `test:process` 9/9, `check:kb`·`check:ts-visuals`·`check:vent-guide`, `test:kinematics` 4/4, troubleshooting·vent·flash 데이터 5/4/3, `pages-distribution` 4/4, `test:single` 10/10, flash-guide UI 8/8, vent-guide UI 8/8, troubleshooting-visuals UI 9/9, `test:ui` pass, `tab-connections` 16/16, `test:study` 13/13. 같은 Windows·Chromium 환경 |
 
 브라우저 회귀는 클라우드 컨테이너(Linux, Playwright 1.56.1, Chromium 1194, 2026-10-29)에서 실행했다. 실행 중 다시 그려진 장비 3D 스크린샷과 측정값만 바뀐 결과 파일은 이번 변경의 증거가 아니므로 commit하지 않았다.
 

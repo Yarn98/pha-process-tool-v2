@@ -1,9 +1,9 @@
 {
   "format": 1,
   "artifact": "single-file/PHA-Process-Single.html",
-  "bytes": 70935443,
-  "sha256": "22003e18c8185f4f275e2d2f999e46ba254dfbf49ad7660085cf2dee5657bf09",
-  "source_sha256": "8be2860ff363b5f9426ecf27afb956a1b34bc315a816208e67344b370b3fa970",
+  "bytes": 70939751,
+  "sha256": "734be7d842ddc84976514616ff83b27bdc9b4b9f5f6567ad279effef8adca597",
+  "source_sha256": "1dbfaadfd6ea1ec17c9c477f8f3936ffbb1761f236d3c573baf14a9374cb6720",
   "hash_basis": "SHA-256 of UTF-8 text normalized to LF; binary bytes unchanged. Artifact bytes and hash use LF.",
   "embedded_assets": 157,
   "embedded_glbs": 26,
@@ -1002,8 +1002,8 @@
       "path": "crystallization-data.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
-      "bytes": 30213,
-      "sha256": "9402bebe11fcbc22e6e1ed82228241565257dc0f2a27038b8aa292760f649496"
+      "bytes": 31895,
+      "sha256": "d5a7bc314c204809a1ff246ac61d6073bc30e99e5cd3e61abde620bf2127958f"
     },
     {
       "path": "crystallization-doe.js",
@@ -1016,8 +1016,8 @@
       "path": "crystallization-engine.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
-      "bytes": 17591,
-      "sha256": "a010cd2747b2861545041df561b0d0433541d749ca0b2c4a40652b5bbd926776"
+      "bytes": 17869,
+      "sha256": "3e84c3f5e7ba52f62ec644ca43c930e231b7986bd428cee204138f27e4b73a9f"
     },
     {
       "path": "crystallization-panel.css",
@@ -1030,15 +1030,15 @@
       "path": "crystallization-panel.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
-      "bytes": 38109,
-      "sha256": "d1e91db9c6cfab28c54ed31a01fb76bb35f3aa6951b6a3a033a7baba92314889"
+      "bytes": 38336,
+      "sha256": "4b523732da8b29bcf4a604fa522b3c008219b1309e5e9c12acacd91560b95125"
     },
     {
       "path": "crystallization-process.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
-      "bytes": 22373,
-      "sha256": "a632057c438c41188f8539689197e4f75bd9d6f1697d4fa147bb7427adf9e1e6"
+      "bytes": 22700,
+      "sha256": "3f47b2ae084b6fb205732b485a1bc9c414fa22b8805b9367cb252beba3a6c596"
     },
     {
       "path": "custom.js",
@@ -1072,8 +1072,8 @@
       "path": "data/process/crystallization_presets.json",
       "role": "embedded-asset",
       "encoding": "utf8-lf",
-      "bytes": 14602,
-      "sha256": "34e5e69c094708622cbfac4e3f93f8b6b68d581267bc70410e3dc997a77d999c"
+      "bytes": 15944,
+      "sha256": "0eb42bb29533469283643cc1065cc63d60b9baea30d858ba4fce660dfc155a01"
     },
     {
       "path": "data/troubleshooting_kb.json",
@@ -1107,22 +1107,22 @@
       "path": "equipment-models.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
-      "bytes": 114881,
-      "sha256": "cc7cac617fcc4295571365fb8dd5c880cde0cc0bc80b143f0cc288ea0248a917"
+      "bytes": 114887,
+      "sha256": "55fcb92aef458ba1a123c41a4b7a6055a291cb41ff1586ab544c84f13f6b5756"
     },
     {
       "path": "equipment-motion.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 37408,
-      "sha256": "67f5f6057c7950edf87f52b169166a5bfbd13d40dea817a8e68e775d05b2c851"
+      "sha256": "bfaae2b87b26615b4d95d13319aa7eb9043c817758947edcfbd6362bb6148f40"
     },
     {
       "path": "equipment-study.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 11252,
-      "sha256": "5f1c1e737526033dcec1a9ec931105a2418d704343aeb2e465015922c87bbe20"
+      "sha256": "8d41903638f5d378ff4c1f3aa528b64078f6f9b79dfb3cb03a78bef63bdf658c"
     },
     {
       "path": "flash-guide-data.js",
@@ -1143,14 +1143,14 @@
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 26424,
-      "sha256": "cf8b8038f43e9f501f53df414ed087631aa2ab1a571fbd952e43db71a07a157e"
+      "sha256": "9d50c07c9a365b6b9a9ec264bd24be761ecd71c4fbd2d17d883f632d98d98d4a"
     },
     {
       "path": "flash-mold-viewer.js",
       "role": "module",
       "encoding": "utf8-lf",
       "bytes": 3913,
-      "sha256": "7f84f1b65616d660af286b3bf2a6a90276098a37f1fecf9bb0dc294b4c7a375d"
+      "sha256": "0e4f94867e56a635fcf787233dcf35f549a00a8caf47c5b6171683f772ea7b3c"
     },
     {
       "path": "glossary.js",
@@ -1192,14 +1192,14 @@
       "role": "entry",
       "encoding": "utf8-lf",
       "bytes": 327490,
-      "sha256": "e00800a83284383ab783c0da93267a445f0b69f9ffa3f37929e3fecc555cecaf"
+      "sha256": "fce2a6291f8da1c01b232133c307c996e4345af7443bdd24f572602dd1507876"
     },
     {
       "path": "injection-motion.js",
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 31162,
-      "sha256": "b5c6e6eb615d0e42dc3f4c1940282a2e5cb1f4a8aaf74e4fc292cfd7e28daed8"
+      "sha256": "79485c65e93b781569c8611db8577366f9c91210ccc69b45e155133e6ffc1df4"
     },
     {
       "path": "machine-viewer.js",
@@ -1325,7 +1325,7 @@
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 25655,
-      "sha256": "5a5487d3fe78f2b7a6b0b7da95bffc1aed3489388d04df420a9897891d4668fc"
+      "sha256": "cccaa20af0c3a7609e0c4f60618e138224167ec8e927d55acc28a0499a094cc9"
     },
     {
       "path": "vendor/chart-4.4.0/LICENSE",
@@ -1423,7 +1423,7 @@
       "role": "classic-script",
       "encoding": "utf8-lf",
       "bytes": 6811,
-      "sha256": "d170497eb2b10b630b00b7de8afa88366ba450911d430907a3896afd6f79bca3"
+      "sha256": "e4c29807ce37a132ab1f89296db3d8b2d7d8b92c9f0e65ce5448def0eb4de0b0"
     }
   ]
 }
