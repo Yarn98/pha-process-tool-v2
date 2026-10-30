@@ -503,7 +503,7 @@ STARTUP, CONTROLS = kit.startup(
               ['블로어를 켜고 인라인 히터로 에어링 공기를 60 °C까지 올리세요. 히터는 블로어가 돌고 풍량 스위치가 풍량을 확인해야 켜지며, '
                '과열 차단기가 따로 지킵니다. 목표는 프로스트 라인 위에서 수지(필름) 온도를 60 °C로 맞추는 것입니다. 반결정성 PHA(S1000P)는 '
                '60 °C에서 결정화가 빨라져 빨리 굳고, 굳은 필름은 닙과 권취 롤에서 서로 붙지(블로킹) 않습니다. 60 °C는 사내 실험·운전 경험·DSC '
-               '데이터에 근거한 사내 운전 기준입니다(사내 DSC: S1000P 4HB 3.3–5.3 %의 60 °C 반결정화 시간 7–28초). 공개 문헌도 '
+               '데이터에 근거한 사내 운전 기준입니다(사내 DSC: S1000P 4HB 3.3–5.3 mol%의 60 °C 반결정화 시간 7–28초). 공개 문헌도 '
                'P(3HB-co-4HB)가 약 60 °C에서 빠르게 결정화한다고 보고하며(CJ제일제당 공동 연구 등), P(3HB-co-4HB) 배합 필름에 에어링 공기 '
                '60 °C를 쓴 특허 실시예(CN118222074A)도 있습니다. 공기가 너무 차가우면 필름이 60 °C 아래로 빨리 식어 결정화가 느려질 수 '
                '있습니다. 비결정성 A1000P에는 해당하지 않습니다.',
@@ -512,7 +512,7 @@ STARTUP, CONTROLS = kit.startup(
                'temperature of 60 °C above the frost line. Semi-crystalline PHA (S1000P) crystallizes fast at 60 °C, so the film '
                'sets quickly and does not stick to itself (block) in the nip or on the winder. 60 °C is the in-house operating '
                'standard, based on in-house trials, line experience and DSC data (in-house DSC: 60 °C crystallization half-time of '
-               '7–28 s for S1000P with 3.3–5.3 % 4HB). Published work also finds that P(3HB-co-4HB) crystallizes fast at about '
+               '7–28 s for S1000P with 3.3–5.3 mol% 4HB). Published work also finds that P(3HB-co-4HB) crystallizes fast at about '
                '60 °C (including a study co-authored by CJ CheilJedang), and a patent example blew a P(3HB-co-4HB) compound film '
                'with 60 °C ring air (CN118222074A). Air that is too cold can cool the film below 60 °C quickly and slow its '
                'crystallization. It does not apply to amorphous A1000P.'],

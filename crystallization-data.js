@@ -979,7 +979,7 @@
         "id": "C6",
         "topic": "60°C 결정화 반감기",
         "workOrder": "P3HB t1/2 최소 약 30 s (60–70°C)",
-        "existing": "사내 DSC: S1000P 4HB 3.3–5.3 %의 60 °C 반결정화 시간 7–28초",
+        "existing": "사내 DSC: S1000P 4HB 3.3–5.3 mol%의 60 °C 반결정화 시간 7–28초",
         "existingSource": "equipment-models.js 블로운 필름 운전 기준; 원자료 PHA_물성_통합정리.xlsx 'S1000P 평가 (03.07)' 4HB 3.3–5.1 mol% lot 7.10–27.50 s",
         "resolution": "S1000P는 대표 lot 3ACF240209의 60 °C 실측 t½ 0.4166 min(25.0 s)으로 앵커 대체(W13). 온도별 곡선은 실측이 없어 논문 구간 유지"
       },
