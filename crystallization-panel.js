@@ -210,12 +210,13 @@
       const a = g.measuredAnchor;
       const preset = (window.PHACrystalData && window.PHACrystalData.presets.grades[g.gradeId]) || {};
       const makeup = preset.composition || preset.basis;
+      const kinetics = g.kineticsSource === 'measured' ? t('실측 kinetics', 'Measured kinetics')
+        : g.kineticsSource === 'measured_anchor' ? t(`${a.T_C} °C 실측 t½ 1점 보정 · lot ${a.lot} ${a.t_half_s.toFixed(1)} s`, `One measured t½ at ${a.T_C} °C · lot ${a.lot} ${a.t_half_s.toFixed(1)} s`)
+        : g.kineticsSource === 'proxy_anchor' ? t(`유사 배합 대리값 (판단됨) · ${a.proxyOf} ${a.t_half_s.toFixed(1)} s @ ${a.T_C} °C`, `Similar-compound proxy (judged) · ${a.proxyOf} ${a.t_half_s.toFixed(1)} s at ${a.T_C} °C`)
+        : t('논문값 (확인됨)', 'Literature values (confirmed)');
       const mode = {
-        crystallizable: g.uncalibrated ? t('미보정 참고값 (순수 P3HB 논문값)', 'Uncalibrated reference (pure-P3HB literature)')
-          : g.kineticsSource === 'measured' ? t('실측 kinetics', 'Measured kinetics')
-          : g.kineticsSource === 'measured_anchor' ? t(`${a.T_C} °C 실측 t½ 1점 보정 · lot ${a.lot} ${a.t_half_s.toFixed(1)} s`, `One measured t½ at ${a.T_C} °C · lot ${a.lot} ${a.t_half_s.toFixed(1)} s`)
-          : t('논문값 (확인됨)', 'Literature values (confirmed)'),
-        blend: t('결정상 판정', 'Crystalline phase judged') + ' · ' + (g.uncalibrated ? t('미보정 참고값', 'uncalibrated reference') : t('실측 kinetics', 'measured kinetics')),
+        crystallizable: g.uncalibrated ? t('미보정 참고값 (순수 P3HB 논문값)', 'Uncalibrated reference (pure-P3HB literature)') : kinetics,
+        blend: t('결정상 판정', 'Crystalline phase judged') + ' · ' + (g.uncalibrated ? t('미보정 참고값', 'uncalibrated reference') : kinetics),
         amorphous: t('비정질: 결정화 판정 비활성', 'Amorphous: crystallization judgement off'),
         unknown: t('분류 필요: 결정화 판정 비활성', 'Classification needed: crystallization judgement off'),
         out_of_scope: L(g.display) + (makeup ? ` · ${makeup.value}` : ''),

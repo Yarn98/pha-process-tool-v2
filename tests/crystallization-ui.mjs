@@ -77,6 +77,10 @@ try {
   await page.locator('[data-xtal-act="run"]').click();
   text = await page.locator('#xtalResult').innerText();
   record(/W14/.test(text) && !/W02/.test(text) && /PLA 매트릭스: 대상 외 · PLA 80 \/ A1000P 20, Talc 10 phr/.test(text) && !/구간 체류/.test(text), 'CA1180P is a PLA-matrix compound outside the judgement (W14)');
+  await page.locator('#xtal_grade').selectOption('CB0400A');
+  await page.locator('[data-xtal-act="run"]').click();
+  text = await page.locator('#xtalResult').innerText();
+  record(/W15/.test(text) && !/W02/.test(text) && /결정상 판정 · 유사 배합 대리값 \(판단됨\) · CB0190PN25 26\.9 s @ 60 °C/.test(text) && /구간 체류/.test(text), 'CB0400A straw runs on the CB0190PN25 proxy t½ (W15)');
   await page.locator('#xtal_grade').selectOption('S1000P');
 
   // English.

@@ -42,14 +42,14 @@ KR/EN 전환을 지원하고, 모바일에서는 그래프와 카드를 세로�
 | `data/crystallization/curves_template.csv` | Fig. 3b·6c 디지타이즈와 실측 DSC 입력 형식 |
 | `data/process/crystallization_presets.json` | 구간 정의, grade 분류, 빨대·사출·시트 시작 조건과 control, 충돌 목록 C1–C7 |
 | `scripts/sync-crystallization.cjs`, `crystallization-data.js` | JSON → 브라우저 모듈 생성과 동기화 확인 |
-| `crystallization-engine.js` | thermal1d, 구간 체류, CR1·CR2, 앵커 비율·N·P, 핵 생존, 속도·체류, 임계 반경, 경고 W01–W14 |
+| `crystallization-engine.js` | thermal1d, 구간 체류, CR1·CR2, 앵커 비율·N·P, 핵 생존, 속도·체류, 임계 반경, 경고 W01–W15 |
 | `crystallization-process.js` | grade 분기(7장), 빨대·사출·시트 모듈, 확장 공정 스텁 |
 | `crystallization-doe.js` | screening 실험표, 속도 상승 단계, CCD, 판정(평균 ± SD, n, Welch t) |
 | `crystallization-panel.js`, `crystallization-panel.css` | 공정조건 탭 패널 |
 | `index.html`, `build.js`, `sw.js` | 신규 파일 등록, `?v=34` |
 | `equipment-*.js`, `flash-*.js`, `injection-motion.js`, `troubleshooting-visuals.js`, `vent-guide.js`, 기존 테스트, `README.md` | cache 이름·`?v=` 토큰만 v33 → v34 |
 | `single-file/*` | 재생성 |
-| `tests/crystallization-*.test.cjs`, `tests/crystallization-ui.mjs` | 단위 47건, 브라우저 16건 (2026-10-30 기준) |
+| `tests/crystallization-*.test.cjs`, `tests/crystallization-ui.mjs` | 단위 48건, 브라우저 17건 (2026-10-30 기준) |
 
 ## 기존 코드값과 신규값 충돌 (W07, 병기)
 
@@ -91,7 +91,21 @@ S1000P 60 °C 등온 DSC 반결정화 시간(첫 peak):
 
 - 대표 lot은 Sheet process가 S1000P cooling Tc nominal로 쓰는 lot과 같다.
 - 60 °C 한 점이라 곡선 모드에는 쓸 수 없다. 결정화 구간(60–70 °C), 핵생성 onset 1 s, 핵 생존 기준은 P3HB 논문값 그대로다.
-- 배합 grade(CB0400A·CB0104A)는 필러·핵제로 kinetics가 바뀌므로 S1000P 값을 물려받지 않고 W02를 유지한다.
+- 배합 grade는 필러·핵제로 kinetics가 바뀌므로 S1000P 값을 물려받지 않는다. CB0104A는 W02를 유지한다.
+- CB0400A는 자체 실측이 없어, 사용자 승인(2026-10-30)에 따라 유사 배합 CB0190PN25의 60 °C t½를 대리값으로 쓴다(판단됨, W15). 아래 표 참조.
+
+CB0400A 대리값 근거(TARS raw `Data_all1230`, PHA 물성 원자료):
+
+| 항목 | CB0190PN25 (대리) | CB0400A |
+|---|---|---|
+| PHA | S1000P 67.5 / A1000P 7.5 | S1000P 73.8 / A1000P 5 |
+| PHA 4HB | 약 5.3 mol% | 5.18 mol% (TARS DB) |
+| 필러 | Talc 25 phr (핵제 역할) | CaCO₃ 20 wt% |
+| 첨가제 | ATBC 2.5 phr | Crodamide ER 0.2 %, MS0001N 1 % |
+| 60 °C t½ | Ref 시료 0.4483 min(26.9 s), 가공 변형 5건 0.4066–0.4483 min | 실측 없음 |
+
+- 같은 S1000P lot(4HB 3.3 mol%) 단독 t½는 0.4583 min이다. 이 자료에서는 Talc 25 phr가 60 °C t½를 크게 바꾸지 않았다. 그래서 필러가 다른데도 60 °C 대리값으로 쓴다(판단됨).
+- CB0400A 실측이 생기면 `tHalf60`를 그 값으로 바꾸고 `proxyOf`를 지운다.
 - 용융 온도·유지 시간·냉각 속도는 원자료에 기록이 없다.
 - TARS 예측 도구는 Tc(DSC 냉각 peak), Tm, Tg, ΔH, Xc를 예측하지만 반결정화 시간은 예측하지 않는다. TARS는 t½를 학습에서 의도적으로 제외한다(`ingest_inhouse_formulation_panel_20260518.py`, sidecar-only).
 
