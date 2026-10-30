@@ -21,6 +21,7 @@
     W12: { ko: '100°C 이상 노출 > 0.01 s: 핵 생존 장시간 미검증', en: 'Exposure above 100 °C exceeds 0.01 s: long-exposure survival not verified' },
     W13: { ko: '60°C 실측 t½ 1점 보정: 구간·핵생성·핵 생존 기준은 P3HB 논문값', en: 'Calibrated with one measured t½ at 60 °C: zones, nucleation and nuclei survival stay on pure-P3HB values' },
     W14: { ko: 'PLA 매트릭스 배합: P3HB 결정화 판정 대상 외 (PLA 결정화는 미모델)', en: 'PLA-matrix compound: outside the P3HB crystallization judgement (PLA crystallization is not modelled)' },
+    W15: { ko: '유사 배합 실측 t½ 대리값 1점 보정 (판단됨): 구간·핵생성·핵 생존 기준은 P3HB 논문값', en: 'Calibrated with one measured t½ from a similar compound (judged proxy): zones, nucleation and nuclei survival stay on pure-P3HB values' },
   };
   function warning(code, detail) { return Object.assign({ code }, WARNINGS[code], detail ? { detail } : {}); }
 

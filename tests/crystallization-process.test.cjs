@@ -37,9 +37,19 @@ test('grade branching: S1000P replaces only the t½ anchor with its measured 60 
   assert.equal(P.gradeProfile('P3HB_REF_2026').uncalibrated, false);
 });
 
-test('grade branching: blends stay on uncalibrated P3HB values (W02); PLA-matrix grades are out of scope (W14)', () => {
-  const b = P.gradeProfile('CB0400A');
+test('grade branching: CB0400A uses the CB0190PN25 proxy t½ (W15); CB0104A stays on P3HB values (W02)', () => {
+  const p = P.gradeProfile('CB0400A');
+  assert.equal(p.mode, 'blend'); assert.equal(p.moduleOn, true); assert.equal(p.uncalibrated, false);
+  assert.equal(p.kineticsSource, 'proxy_anchor');
+  assert.deepEqual([p.measuredAnchor.proxyOf, p.measuredAnchor.evidence], ['CB0190PN25', 'judged']);
+  near(p.kinetics.anchors.t_half_min_s, 0.4483 * 60, 1e-9, 'proxy t½');
+  assert.deepEqual(codes(p), ['W15']);
+  assert.match(p.warnings[0].detail, /^CB0190PN25 \(CB0190PN25_Ref_20\/250\) · t½ 26\.9 s @ 60 °C$/);
+  const b = P.gradeProfile('CB0104A');
   assert.equal(b.uncalibrated, true); assert.deepEqual(codes(b), ['W02']);
+});
+
+test('grade branching: PLA-matrix grades are out of scope (W14)', () => {
   for (const id of ['CA1180P', 'CA1165A', 'CA1670P', 'CA1680P', 'CA1270P']) {
     const g = P.gradeProfile(id);
     assert.equal(g.mode, 'out_of_scope', id); assert.equal(g.moduleOn, false, id);

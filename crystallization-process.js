@@ -11,10 +11,11 @@
 
   /* ---------- chapter 7: grade branching ---------- */
   // A grade's single measured isothermal t½ (preset tHalf60, in min) replaces only the crystallization anchor.
+  // proxyOf marks a value measured on a similar compound rather than the grade itself.
   function measuredAnchor(g) {
     const m = g.tHalf60;
     if (!m || m.unit !== 'min' || !finite(m.value)) return null;
-    return { t_half_s: m.value * 60, T_C: m.T_C, lot: m.lot, evidence: m.evidence };
+    return { t_half_s: m.value * 60, T_C: m.T_C, lot: m.lot, evidence: m.evidence, proxyOf: m.proxyOf || null };
   }
   function gradeProfile(gradeId, opts) {
     const o = opts || {};
@@ -32,10 +33,11 @@
     } else if ((anchor = measuredAnchor(g))) {
       kin = JSON.parse(JSON.stringify(kin));
       kin.anchors.t_half_min_s = anchor.t_half_s;
-      kineticsSource = 'measured_anchor';
+      kineticsSource = anchor.proxyOf ? 'proxy_anchor' : 'measured_anchor';
     }
     if (g.mode === 'amorphous') { moduleOn = false; warnings.push(E.warning('W10')); }
     else if (kineticsSource === 'measured_anchor') warnings.push(E.warning('W13', `${anchor.lot} · t½ ${anchor.t_half_s.toFixed(1)} s @ ${anchor.T_C} °C`));
+    else if (kineticsSource === 'proxy_anchor') warnings.push(E.warning('W15', `${anchor.proxyOf} (${anchor.lot}) · t½ ${anchor.t_half_s.toFixed(1)} s @ ${anchor.T_C} °C`));
     else if (gradeId !== 'P3HB_REF_2026' && kineticsSource === 'paper') warnings.push(E.warning('W02'));
     let nucleationZone = null;
     if (o.tgShift && finite(o.Tg_C)) nucleationZone = { value: [o.Tg_C + 25, o.Tg_C + 35], unit: '°C', evidence: 'estimated', source: 'Tg + 30 K relation (Fig. 6c), measured Tg' };

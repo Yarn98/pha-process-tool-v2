@@ -39,7 +39,22 @@
     },
     "CB0400A": {
       "mode": "blend", "use": "straw", "components": ["S1000P", "A1000P", "CaCO3"], "kineticsRef": null, "display": "상별 표시",
-      "bath2_C": { "value": [70, 75], "unit": "°C", "source": "CB0400A TDS, June 2026 (첨부 2 인용)", "evidence": "confirmed", "note": "원문 대조 필요" }
+      "bath2_C": { "value": [70, 75], "unit": "°C", "source": "CB0400A TDS, June 2026 (첨부 2 인용)", "evidence": "confirmed", "note": "원문 대조 필요" },
+      "tHalf60": {
+        "value": 0.4483, "unit": "min", "T_C": 60, "lot": "CB0190PN25_Ref_20/250", "proxyOf": "CB0190PN25",
+        "condition": "유사 배합 대리값. CB0190PN25 = S1000P 67.5 / A1000P 7.5 + Talc 25 phr + ATBC 2.5 phr (PHA 4HB 약 5.3 mol%, Tc 87.37 °C). CB0400A = S1000P 73.8 / A1000P 5 + CaCO3 20 wt% (PHA 4HB 5.18 mol%, TARS DB)",
+        "method": "DSC 등온 60 °C, 반결정화 시간",
+        "source": "PHA 물성 원자료 'CB0190PN25 튜닝(7.15)' → TARS raw Data_all1230 row 191",
+        "evidence": "judged",
+        "variants": [
+          { "name": "CB0190PN25 20/200rpm", "t_half_min": 0.43, "sheet": "CB0190PN25개선(6.12)" },
+          { "name": "CB0190PN25 20/250rpm", "t_half_min": 0.43, "sheet": "CB0190PN25개선(6.12)" },
+          { "name": "CB0190PN25 20/300rpm", "t_half_min": 0.41, "sheet": "CB0190PN25개선(6.12)" },
+          { "name": "CB0190PN25_20/400", "t_half_min": 0.4366, "sheet": "CB0190PN25 튜닝(7.15)" },
+          { "name": "No ATBC", "t_half_min": 0.4066, "sheet": "CB0190PN25 튜닝(7.15)" }
+        ],
+        "note": "필러가 다르다: CB0190PN25는 핵제 역할을 하는 Talc, CB0400A는 CaCO3. 같은 S1000P lot(4HB 3.3 mol%) 단독 t½ 0.4583 min과 차이가 작아 60 °C 값의 대리로 쓴다(판단됨). CB0400A 실측이 생기면 대체"
+      }
     },
     "CB0104A": {
       "mode": "blend", "use": "injection", "kineticsRef": null, "display": "상별 표시",
